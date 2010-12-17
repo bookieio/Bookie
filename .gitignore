@@ -1,0 +1,28 @@
+# Directories
+/data/sessions
+/data/templates
+/dist
+*.egg-info
+*.egg
+*.EGG
+*.EGG-INFO
+bin
+build
+develop-eggs
+downloads
+eggs
+fake-eggs
+parts
+.ropeproject
+.hg
+.bzr
+.svn
+
+# Files
+*.swp
+*.pyc
+*.mo
+.installed.cfg
+*.pyo
+*.tmp*
+*.mp3

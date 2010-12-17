@@ -1,0 +1,11 @@
+- Need full admin views for the sections that get rendered
+
+- qfiles/upload needs a section specific view /qfiles/section/id
+    - list the current files in the section
+    - allow for uploading new files/removing the older files
+    - also need to be able to edit the files in the section (popup)
+
+- qcontent/$slug/edit needs to have an ajax save method for all sections 
+    so you can adjust their name/title/etc and hit the save button
+- Edit page form submissions needs to function
+

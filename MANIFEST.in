@@ -1,0 +1,3 @@
+include bookie/config/deployment.ini_tmpl
+recursive-include bookie/public *
+recursive-include bookie/templates *

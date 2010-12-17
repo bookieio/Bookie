@@ -1,0 +1,575 @@
+/* Colors used:
+ *
+ * Light Blue   #D0E1F5
+ * Mid Blue     #477CA0
+ * Dark Blue    #1A4279
+ *
+*/
+
+/*
+ * LAYOUT
+ *
+ * */
+html {
+    height: 100%;
+    background-color: #000;
+}
+
+body {
+    margin: auto;
+    width: 960px;
+    height: 100%;
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0.15, rgb(255,255,255)),
+        color-stop(0.79, rgb(71,124,160))
+    );
+
+    background: -moz-linear-gradient(
+        center top,
+        rgb(255,255,255) 15%,
+        rgb(71,124,160) 79%
+    );
+}
+
+body {
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+h2 {
+    margin: .5em;
+}
+
+h3 {
+    margin: .3em;
+}
+
+div#header {
+    margin-bottom: 1em;
+    margin-right: .5em;
+    height: 45px;
+    background: url('/img/logo_small.gif') no-repeat right top;
+
+    /* border-bottom: 2px solid #1A4279; */
+}
+
+div#header div#nav_links {
+    float: left;
+    color: #333333;
+    margin-left: .5em;
+}
+
+#navlist {
+    padding: 2px 0;
+    margin-left: 0;
+    font: bold 12px Verdana, sans-serif;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#navlist li {
+    list-style: none;
+    margin: 0;
+    display: inline;
+}
+
+#navlist li a {
+    padding: 3px 5px;
+    border: 1px solid #1A4279;
+    background: #477CA0;
+    text-decoration: none;
+    border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+}
+
+#navlist li a:link { color: #D0E1F5; }
+#navlist li a:visited { color: #D0E1F5; }
+#navlist li a:hover {
+    color: #FFF;
+    border-color: #000;
+}
+
+#navlist li a#current {
+    background: white;
+    border-bottom: 1px solid white;
+}
+
+
+.link_home {
+    color: #000000;
+    text-decoration: none;
+    font-size: 1.3em;
+}
+
+div#body {
+    min-height: 20em;
+    margin: 0 .5em;
+}
+
+div#footer {
+    border-top: 1px solid #CCCCCC;
+    color: #D0E1F5;
+    padding: .1em 1em 1em .5em;
+}
+
+div#footer .right {
+    float: right;
+}
+
+#footer a {
+    color: #D0E1F5;
+}
+
+div#footer .left{
+    float: left;
+}
+
+div#javascript {
+    display: none;
+}
+
+.content_body {
+    background-color: #FFFFFF;
+    border: 1px solid #999;
+    padding: 1em;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+/*
+ * FORMS
+ *
+ * */
+span.error {
+    display: none;
+    background-color: red;
+    padding: .2em;
+    color: #FFFFFF;
+}
+
+/*
+ * jQuery UI Overrides
+ *
+ */
+.ui-button, .ui-button-text {
+    line-height: 1.0;
+
+}
+
+.ui-widget {
+    font-size: .9em;
+}
+
+
+/**
+ * mor framework css
+ *
+ */
+#mor_message {
+    height: 3em;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    z-index: 1000;
+    position: fixed;
+
+    display: none;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#mor_message:hover {
+    cursor: pointer;
+}
+
+#mor_message div.mor_message {
+    padding: 0 5px;
+    border-left: 1px solid #666666;
+    border-right: 1px solid #666666;
+    border-bottom: 1px solid #666666;
+    -moz-border-radius-bottomleft: 1em;
+    -moz-border-radius-bottomright: 1em;
+    -webkit-border-bottom-left-radius: 1em;
+    -webkit-border-bottom-right-radius: 1em;
+}
+
+div.mor_message div {
+    padding: 1em 2em;
+    padding-left: 20px;
+}
+
+div.mor_message_error {
+    background-color: #FFA07A;
+}
+
+div.mor_message_error div {
+    background: url(tango/status/dialog-warning.png) center left no-repeat;
+}
+
+div.mor_message_note {
+    background-color: #90EE90;
+}
+
+div.mor_message_note div {
+    background: url(tango/status/dialog-information.png) center left no-repeat;
+}
+
+div.mor_message_loading {
+    background-color: #FFFACD;
+}
+
+div.mor_message_loading div {
+    background: url(tango/actions/view-refresh.png) center left no-repeat;
+}
+
+
+
+
+/* ULA FORM CSS  -------------------------------------------------------------------------------------------------------------------------------------------- */
+form.form {
+	margin: 1em 3em 1em .5em;
+}
+
+form.form label {
+    font-size:		12px;
+    font-weight:	bold;
+	text-align:		right;
+}
+
+fieldset {
+    float:			left;
+    clear:			both;
+    margin:			0 0 5px 0;
+    border:			none;
+    width:			475px;
+	padding-bottom:	30px;
+	border-top:		1 px dashed #666;
+	background:		#FFFFFF;
+	background-position:right;
+	border:			1px solid #c2cbe9;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.yui3-g fieldset {
+    float: none;
+    width: auto;
+    padding-bottom: 0px;
+}
+
+fieldset.fieldsetsubmit {
+    border:			none;
+    background:		none;
+}
+
+fieldset input, fieldset select, fieldset textarea, fieldset password {
+    width:			200px;
+    vertical-align: top;
+    margin:			0px;
+    height:         auto;
+}
+
+fieldset input[type="checkbox"] {
+    width:			auto;
+}
+
+div.multiplecheckbox {
+    float:			left;
+}
+
+
+.helptext, .errortext {
+    display:		none;
+
+}
+
+.helptext {
+  position:			absolute;
+  width:			200px;
+  border:			1px solid #c93;
+  padding:			10px 12px;
+  background-color: #ffc;
+  z-index:			100;
+}
+
+/* Only here to override the old rules in default.css */
+.form_error {
+    color:			#000000;
+    background:		#FFB6C1;
+    padding:		.2em;
+}
+
+.errortext {
+    display:		inline;
+    background:		#FFB6C1;
+    color:			#000000;
+    border:			1px solid #990000;
+    display:		none;
+    padding:		.2em;
+}
+
+.errortext div {
+    display:		inline;
+}
+
+.error input {
+    background:		#990000 !important;
+    color:			#FFFFFF;
+    margin: 0px;
+}
+
+input.error {
+    padding: 0px;
+}
+
+label {
+    position:		relative;
+    float:			left;
+    margin-right:	1em;
+}
+
+label em {
+    position:		absolute;
+    /* Moved left 10em to hold the required star which is 10px wide */
+    left:			10em;
+    top:			0;
+}
+
+legend{
+	padding:		5px;
+	font-weight:	bold;
+    position:       -100px;
+}
+
+.fieldset_legend{
+	padding:		5px;
+	font-weight:	bold;
+}
+
+fieldset ol {
+    padding:		0px 1em 0px 1em;
+    margin:			0px;
+    list-style:		none;
+}
+
+fieldset li {
+    float:			left;
+    clear:			left;
+    width:			100%;
+    padding:		15px 0 0;
+    list-style:     none;
+}
+
+fieldset li.odd {
+    background:		#90C1F0;
+    border-bottom:	1px solid #DCDCDC;
+}
+
+fieldset li.even {
+    background:		#FFFFFF;
+    border-bottom:	1px solid #DCDCDC;
+}
+
+fieldset input[type="submit"] {
+    width:			auto;
+	font-size:		13px;
+}
+
+input.idlefield, textarea.idlefield, select.idlefield {
+    background:		#fff;
+    color:			#383838;
+    border:			solid 1px #c2cbe9;
+	font-size:		13px;
+}
+
+input.focusfield, textarea.focusfield, select.focusfield {
+    border:			solid 1px #5A6790;
+    background:		#FFFACD;
+    color:			#000;
+	font-size:		13px;
+}
+
+.error input, .error input.idlefield, .error.focusfield {
+    background:		#990000 !important;
+    color:			#FFFFFF;
+}
+
+input.ula_default, textarea.ula_default {
+    color:			#666666;
+	font-size:		13px;
+}
+
+/* select.idlefield, select.focusfield { */
+/* 	height:			20px; */
+/* } */
+
+#filterform{
+	height:		20px;
+}
+#filterform div input {
+	padding-right:25px;
+}
+
+#filterform div input#zero_clicks {
+	float:		left;
+}
+
+/** override blueprint on this one **/
+input[type="text"], input[type="password"], input.text, input.title, textarea, select {
+    margin: auto;
+    padding: .2em;
+}
+
+form .yui3-g textarea {
+    margin: .3em 0em;
+}
+
+form .yui3-g label {
+    font-weight: bold;
+    vertical-align: top;
+}
+
+/*
+ * App Specific
+ *
+ *
+ */
+table.data {
+    width: 100%;
+}
+
+.zebra td {
+    border-bottom: #CCCCCC solid 1px;
+}
+
+.zebra tr:hover, .zebra tr:hover td {
+    background-color: #FFFACD;
+}
+
+.zebra .even {
+    background-color: #D0E1F5;
+}
+
+td.center, th.center {
+    text-align: center;
+}
+
+.tabs {
+    display: none;
+}
+
+.clear_both {
+    clear: both;
+}
+
+thead th {
+    background-color: #477CA0;
+}
+
+/** QFiles
+ *
+ */
+div#file_permissions {
+    margin: 1em 0;
+    border-top: 1px #666 solid;
+    padding: .5em 0;
+}
+
+/* We need to override the default UL styles for the group list */
+#file_permissions ul {
+    margin: 0 2em;
+}
+
+#file_permissions li {
+    list-style: disc;
+    float: none;
+    clear: both;
+    padding: 0;
+}
+
+input {
+    vertical-align: top;
+}
+
+.yui-button {
+    margin-top: .2em;
+}
+
+.yui-skin-sam .yui-button a.add {
+    background: url('tango/actions/list-add.png') no-repeat left center;
+    padding-left: 18px;
+}
+
+.yui-skin-sam .yui-button a.add:visited {
+    padding-left: 18px;
+}
+
+.yui-skin-sam .yui-button a.delete {
+    background: url('tango/actions/list-remove.png') no-repeat left center;
+    padding-left: 18px;
+}
+
+.yui-skin-sam .yui-button a.add:visited {
+    padding-left: 18px;
+}
+
+.yui-skin-sam .yui-button a.edit {
+    background: url('tango/apps/accessories-text-editor.png') no-repeat left center;
+    padding-left: 18px;
+}
+
+.yui-skin-sam .yui-button a.add:visited {
+    padding-left: 18px;
+}
+
+ul.draggable_list {
+    padding: .2em .5em;
+    margin: 0px;
+}
+.draggable_list li {
+    border: 1px solid #333;
+    border-left: 7px solid #333;
+    list-style: none;
+    display: block;
+    padding: .3em;
+    margin-left: 0px;
+    margin-bottom: .2em;
+    background-color: #FFFFFF;
+
+}
+
+.draggable_list li:hover {
+    cursor: pointer;
+}
+
+/** These are drop zones for section elements **/
+.qcontent_admin_part {
+    border: 1px dashed #333;
+    background-color: #CCCCCC;
+}
+
+.qpart {
+    padding: 1em;
+}
+
+/** These are draggable elements to arrange within a layout **/
+.qcontent_admin_section {
+    border: 1px solid #999;
+    border-top: 20px solid #333;
+    margin-bottom: 1em;
+    padding: 1em;
+    background-color: #FFF;
+}
+
+.qsection h2 {
+    margin: .3em 0em;
+}
+
+
+.section_changed {
+    background: #EEE8AA;
+}
