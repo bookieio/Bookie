@@ -1,0 +1,9 @@
+Fabric==0.9.2
+Mako==0.3.6
+nose
+pep8
+pyramid==1.0
+ropevim
+Sphinx
+SQLAlchemy==0.6.6
+sqlalchemy-migrate
