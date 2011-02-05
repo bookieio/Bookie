@@ -2,6 +2,7 @@ from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
 from bookie.models import initialize_sql
+from bookie.routes import build_routes
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -10,8 +11,6 @@ def main(global_config, **settings):
     initialize_sql(engine)
     config = Configurator(settings=settings)
     config.add_static_view('static', 'bookie:static')
-    config.add_route('home', '/', view='bookie.views.my_view',
-                     view_renderer='templates/mytemplate.pt')
+
+    config = build_routes(config)
     return config.make_wsgi_app()
-
-
