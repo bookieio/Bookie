@@ -12,3 +12,4 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
 # IMPORT the rest of the commands we have available to us
 from docs import *
 from database import *
+from tests import *

@@ -11,8 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   started
    database
-   fabfile
+   fabric
    tests
 
 Indices and tables

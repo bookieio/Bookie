@@ -1,4 +1,4 @@
-BOokie Database Notes
+Bookie Database Notes
 =====================
 
 The goal is for this to be self hostable. Ideally, it'd support MySQL,
