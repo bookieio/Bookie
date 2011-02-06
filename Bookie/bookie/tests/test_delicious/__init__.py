@@ -30,8 +30,31 @@ class DelPostTest(unittest.TestCase):
         from webtest import TestApp
         self.testapp = TestApp(app)
 
-    # def test_post_add(self):
-    #     """Basic add of a new post"""
-    #     res = self.testapp.get('/delapi/posts/add')
-    #     eq_(res.status == 200, 'Post Add status is 200')
+    def test_post_add(self):
+        """Basic add of a new post
 
+        Success response:
+            <result code="done" />
+
+        Failed response:
+            <result code="something went wrong" />
+
+        Not supporting optional params right now
+            dt, replace, shared
+
+        """
+        success = ""
+        failed = '<result code="something went wrong" />'
+        prms = {
+                'url': '',
+                'description': '',
+                'extended': '',
+                'tags': '',
+        }
+
+        in_list = [key + '=' + val for key, val in prms.iteritems()]
+        req_params = '&'.join(in_list)
+
+        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        eq_(res.status, 200, msg='Post Add status is 200')
+        eq_(res.body, failed, msg="Request should return failed msg")
