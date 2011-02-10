@@ -95,15 +95,11 @@ class DelPostTest(unittest.TestCase):
         except NoResultFound:
             assert False, "No result found for the bookmark"
 
-#         # now we need to verify the tags got set correctly
-#         def _test_new_bmark_tags():
-#             """Manually check db for new bmark tags set"""
-#             from bookie.models import Bmark
-#             res = Bmark.query.filter(Bmark.url == unicode(prms['url'])).one()
-#
-#             if 'python' in res.tags and 'search' in res.tags:
-#                 return True
-#             else:
-#                 return False
-#
-#         ok_(_test_new_bmark_tags(), "Found both tags on the bookmark")
+    def test_new_bmark_tags(self):
+        """Manually check db for new bmark tags set"""
+        self._get_good_request()
+
+        res = Bmark.query.filter(Bmark.url == unicode(prms['url'])).one()
+
+        ok_('python' in res.tags, 'Found the python tag in the bmark')
+        ok_('search' in res.tags, 'Found the search tag in the bmark')
