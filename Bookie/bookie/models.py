@@ -105,14 +105,30 @@ class TagsMgr(object):
         Currently it only supports space delimited
 
         """
-
         tag_list = tag_str.split(" ")
         tag_objects = {}
-        for tag in tag_list:
-            # let's start by trying just to create them and return them
-            tag_objects[tag] = Tags(tag)
+
+        for tag in TagsMgr.find(tags=tag_list):
+            # remove the tag from the tag_list as we find it
+            tag_objects[tag.name] = tag
+            tag_list.remove(tag.name)
+
+        # any tags left in the list are new
+        for new_tag in tag_list:
+            tag_objects[new_tag] = Tags(new_tag)
 
         return tag_objects
+
+    @staticmethod
+    def find(tags=None):
+        """Find all of the tags in the system"""
+        qry = Tags.query
+
+        if tags:
+            # limit to only the tag names in this list
+            qry.filter(Tags.name.in_(tags))
+
+        return qry.all()
 
 
 class Tags(Base):

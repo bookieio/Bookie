@@ -7,6 +7,7 @@ from bookie.tests import settings, global_config
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
+from bookie.models import Tags
 
 
 class DelPostTest(unittest.TestCase):
@@ -99,7 +100,17 @@ class DelPostTest(unittest.TestCase):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == unicode(prms['url'])).one()
+        res = Bmark.query.filter(Bmark.url == unicode('http://google.com')).one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
+
+    def test_skip_dupe_tags(self):
+        """Make sure we don't end up with duplicate tags in the system"""
+        self._get_good_request()
+        self._get_good_request()
+
+        all_tags = Tags.query.all()
+
+        ok_(len(all_tags) == 2, 'We only have two tags in the system')
+
