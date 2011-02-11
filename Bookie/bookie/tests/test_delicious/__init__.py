@@ -132,7 +132,6 @@ class DelPostTest(unittest.TestCase):
         ok_(res.updated >= now,
                 "Stored time is now or close to now {0}".format(res.updated))
 
-
     def test_remove_bmark(self):
         """Remove a bmark from the system"""
         assert False
