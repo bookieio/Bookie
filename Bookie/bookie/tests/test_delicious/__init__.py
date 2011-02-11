@@ -1,4 +1,5 @@
 """Test that we're meeting delicious API specifications"""
+from datetime import datetime
 import transaction
 import unittest
 import urllib
@@ -7,7 +8,7 @@ from bookie.tests import settings, global_config
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
-from bookie.models import Tags
+from bookie.models import Tag
 
 
 class DelPostTest(unittest.TestCase):
@@ -110,7 +111,28 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
         self._get_good_request()
 
-        all_tags = Tags.query.all()
+        all_tags = Tag.query.all()
 
         ok_(len(all_tags) == 2, 'We only have two tags in the system')
 
+    def test_datestimes_set(self):
+        """Test that we get the new datetime fields as we work"""
+        self._get_good_request()
+        now = datetime.now()
+        res = Bmark.query.filter(Bmark.url == unicode('http://google.com')).one()
+
+        ok_(res.stored >= now,
+                "Stored time is now or close to now {0}".format(res.stored))
+
+        res.url = "Somethingnew.com"
+        session = DBSession()
+        session.flush()
+
+        # now hopefully have an updated value
+        ok_(res.updated >= now,
+                "Stored time is now or close to now {0}".format(res.updated))
+
+
+    def test_remove_bmark(self):
+        """Remove a bmark from the system"""
+        assert False

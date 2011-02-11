@@ -1,6 +1,8 @@
+from datetime import datetime
 import transaction
 
 from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import UnicodeText
@@ -28,23 +30,7 @@ def initialize_sql(engine):
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
 
-# class MyModel(Base):
-#     __tablename__ = 'models'
-#     id = Column(Integer, primary_key=True)
-#     name = Column(Unicode(255), unique=True)
-#     value = Column(Integer)
-#
-#     def __init__(self, name, value):
-#         self.name = name
-#         self.value = value
-#
-# def populate():
-#     session = DBSession()
-#     model = MyModel(name=u'root', value=55)
-#     session.add(model)
-#     session.flush()
-#     transaction.commit()
-#
+
 def todict(self):
     """Method to turn an SA instance into a dict so we can output to json"""
 
@@ -95,7 +81,7 @@ bmarks_tags = Table('bmark_tags', Base.metadata,
 )
 
 
-class TagsMgr(object):
+class TagMgr(object):
     """Handle all non-instance related tags functions"""
 
     @staticmethod
@@ -108,30 +94,30 @@ class TagsMgr(object):
         tag_list = tag_str.split(" ")
         tag_objects = {}
 
-        for tag in TagsMgr.find(tags=tag_list):
+        for tag in TagMgr.find(tags=tag_list):
             # remove the tag from the tag_list as we find it
             tag_objects[tag.name] = tag
             tag_list.remove(tag.name)
 
         # any tags left in the list are new
         for new_tag in tag_list:
-            tag_objects[new_tag] = Tags(new_tag)
+            tag_objects[new_tag] = Tag(new_tag)
 
         return tag_objects
 
     @staticmethod
     def find(tags=None):
         """Find all of the tags in the system"""
-        qry = Tags.query
+        qry = Tag.query
 
         if tags:
             # limit to only the tag names in this list
-            qry.filter(Tags.name.in_(tags))
+            qry.filter(Tag.name.in_(tags))
 
         return qry.all()
 
 
-class Tags(Base):
+class Tag(Base):
     """Bookmarks can have many many tags"""
     __tablename__ = "tags"
 
@@ -142,6 +128,15 @@ class Tags(Base):
         self.name = tag_name
 
 
+class BmarkMgr(object):
+    """Class to handle non-instance Bmark functions"""
+
+    @staticmethod
+    def get_by_url(url):
+        """Get a bmark from the system via the url"""
+        return Bmark.query.find(url).one()
+
+
 class Bmark(Base):
     """Basic bookmark table object"""
     __tablename__ = "bmarks"
@@ -150,8 +145,10 @@ class Bmark(Base):
     url = Column(UnicodeText(), unique=True)
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
+    stored = Column(DateTime, default=datetime.now)
+    updated = Column(DateTime, onupdate=datetime.now)
 
-    tags = relation(Tags,
+    tags = relation(Tag,
             backref="bmark",
             collection_class=attribute_mapped_collection('name'),
             secondary=bmarks_tags,
@@ -172,4 +169,4 @@ class Bmark(Base):
         self.extended = ext
 
         # tags are space separated
-        self.tags = TagsMgr.from_string(tags)
+        self.tags = TagMgr.from_string(tags)

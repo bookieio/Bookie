@@ -8,7 +8,7 @@ global_config = {}
 
 ini = ConfigParser.ConfigParser()
 ini.read('test.ini')
-settings = dict(ini.items('app:Bookie'))
+settings = dict(ini.items('app:bookie'))
 
 def setup_db(settings):
     """ We need to create the test sqlite database to run our tests against
