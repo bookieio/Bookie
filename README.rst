@@ -9,3 +9,10 @@ It's all out not even started yet, but this is all placeholder info as we work
 to get the parts together.
 
 
+Using Bookie
+-------------
+For right now, I've forked over an open sourced Google Chrome plugin that does
+simple posts to a delicious api compatible service. It works to save, but
+doesn't do things like detect if you've already added it, etc.
+
+https://github.com/mitechie/delicious-chrome-extension
