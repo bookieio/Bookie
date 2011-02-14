@@ -21,7 +21,7 @@ def db_init():
     parse_ini(env["ini_file"])
 
     local("migrate version_control --url={0} --repository={1}".format(
-        env.ini.get('app:Bookie', 'sqlalchemy.url'),
+        env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations'))
 
 
@@ -42,7 +42,7 @@ def db_add(desc):
     parse_ini(env["ini_file"])
 
     local('migrate script --url={0} --repository={1} "{2}"'.format(
-        env.ini.get('app:Bookie', 'sqlalchemy.url'),
+        env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations',
         desc,))
 
@@ -67,7 +67,7 @@ def db_test():
     parse_ini(env["ini_file"])
 
     local('migrate test --url={0} --repository={1} '.format(
-        env.ini.get('app:Bookie', 'sqlalchemy.url'),
+        env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations',))
 
 
@@ -89,5 +89,5 @@ def db_upgrade():
     parse_ini(env["ini_file"])
 
     local('migrate upgrade --url={0} --repository={1} '.format(
-        env.ini.get('app:Bookie', 'sqlalchemy.url'),
+        env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations',))

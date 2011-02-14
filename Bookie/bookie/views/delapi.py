@@ -61,10 +61,8 @@ def posts_get(request):
             if not bmark:
                 raise HTTPNotFound()
 
-            return {
-                    'datefound': bmark.stored.strftime('%Y-%m-%d'),
-                    'posts': [bmark],
-                    }
+            return { 'datefound': bmark.stored.strftime('%Y-%m-%d'),
+                    'posts': [bmark], }
         else:
             request.override_renderer = 'string'
             return '<result code="Not Found" />'
