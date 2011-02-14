@@ -88,7 +88,7 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
 
         try:
-            res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+            res = Bmark.query.filter(Bmark.url == u'google.com').one()
             ok_(res, 'We found a result in the db for this bookmark')
             if res:
                 return True
@@ -101,7 +101,7 @@ class DelPostTest(unittest.TestCase):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == unicode('http://google.com')).one()
+        res = Bmark.query.filter(Bmark.url == unicode('google.com')).one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
@@ -119,7 +119,7 @@ class DelPostTest(unittest.TestCase):
         """Test that we get the new datetime fields as we work"""
         self._get_good_request()
         now = datetime.now()
-        res = Bmark.query.filter(Bmark.url == unicode('http://google.com')).one()
+        res = Bmark.query.filter(Bmark.url == unicode('google.com')).one()
 
         ok_(res.stored >= now,
                 "Stored time is now or close to now {0}".format(res.stored))
