@@ -11,10 +11,13 @@ def build_routes(config):
     # DELAPI Routes
     config.add_route("del_post_add", "/delapi/posts/add",
                      view="bookie.views.delapi.posts_add",
-                     view_renderer="string")
+                     view_renderer="string",)
     config.add_route("del_post_delete", "/delapi/posts/delete",
                      view="bookie.views.delapi.posts_delete",
-                     view_renderer="string")
+                     view_renderer="string",)
+    config.add_route("del_post_get", "/delapi/posts/get",
+                     view="bookie.views.delapi.posts_get",
+                     view_renderer="/delapi/posts_get.mako",)
 
     # config.add_route("rick_2",
     #                  "/rick/{sometext}",

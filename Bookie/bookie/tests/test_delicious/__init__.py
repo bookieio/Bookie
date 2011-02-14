@@ -135,3 +135,25 @@ class DelPostTest(unittest.TestCase):
     def test_remove_bmark(self):
         """Remove a bmark from the system"""
         assert False
+
+    def test_get_post_byurl(self):
+        """Verify we can fetch a post back via a url
+
+        While this is delicious api compat, we're going to default to json
+        response I think
+
+        We'll add xml support to the output later on
+
+        """
+        self._get_good_request()
+        prms = {
+                'url': u'http://google.com',
+        }
+
+        req_params = urllib.urlencode(prms)
+
+        res = self.testapp.get('/delapi/posts/get?' + req_params)
+
+        ok_('href' in res.body, "we have an href link in there")
+        ok_('python' in res.body, "we have the python tag")
+        ok_('search' in res.body, "we have the search tag")

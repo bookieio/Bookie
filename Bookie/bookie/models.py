@@ -136,7 +136,43 @@ class BmarkMgr(object):
     @staticmethod
     def get_by_url(url):
         """Get a bmark from the system via the url"""
-        return Bmark.query.find(url).one()
+        # normalize the url
+        clean_url = BmarkTools.normalize_url(url)
+        return Bmark.query.filter(Bmark.url == clean_url).one()
+
+    @staticmethod
+    def find():
+        """Search for specific sets of bookmarks"""
+        qry = Tag.query
+
+        # if tags:
+        #     # limit to only the tag names in this list
+        #     qry = qry.filter(Tag.name.in_(tags))
+
+        return qry.all()
+
+
+class BmarkTools(object):
+    """Some stupid tools to help work with bookmarks"""
+
+    @staticmethod
+    def normalize_url(url):
+        """We need to clean the url so that we can easily find/check for dupes
+
+        Things to do:
+        - Strip the http/https/...
+        - strip any trailing spaces
+        - Leave any query params, but think about removing common ones like
+          google analytics stuff utm_*
+
+        """
+        url = url.strip().strip('/')
+        parsed = urlparse(url)
+
+        # get the scheme and strip it
+        scheme = parsed.scheme
+        url = re.sub('^' + scheme + '://', "", url)
+        return url
 
 
 class Bmark(Base):
@@ -166,27 +202,13 @@ class Bmark(Base):
         :param tags: Space sep list of Bookmark tags, optional
 
         """
-        self.url = self._normalize_url(url)
+        self.url = BmarkTools.normalize_url(url)
         self.description = desc
         self.extended = ext
 
         # tags are space separated
         self.tags = TagMgr.from_string(tags)
 
-    def _normalize_url(self, url):
-        """We need to clean the url so that we can easily find/check for dupes
-
-        Things to do:
-        - Strip the http/https/...
-        - strip any trailing spaces
-        - Leave any query params, but think about removing common ones like
-          google analytics stuff utm_*
-
-        """
-        url = url.strip().strip('/')
-        parsed = urlparse(url)
-
-        # get the scheme and strip it
-        scheme = parsed.scheme
-        url = re.sub('^' + scheme + '://', "", url)
-        return url
+    def tag_string(self):
+        """Generate a single spaced string of our tags"""
+        return " ".join([tag for tag in self.tags.iterkeys()])
