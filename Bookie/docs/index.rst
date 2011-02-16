@@ -5,6 +5,10 @@
 
 Welcome to Bookie's documentation!
 ==================================
+Bookie is my attempt to rid myself of Delicious, and be able host my bookmarks
+which I hold dear myself.
+
+Beyond that, there's some features I think that are long overdue.
 
 Contents:
 
@@ -23,3 +27,11 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Using Bookie
+============
+So far, there's no real web interface. Personally, I use a Chrome extension for
+most of my bookmark use and I'm starting there first. I've forked an open
+source Chrome bookmark you can use to work with Bookie.
+
+https://github.com/mitechie/delicious-chrome-extension
