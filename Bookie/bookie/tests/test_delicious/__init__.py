@@ -39,8 +39,8 @@ class DelPostTest(unittest.TestCase):
         }
 
         req_params = urllib.urlencode(prms)
-
         res = self.testapp.get('/delapi/posts/add?' + req_params)
+
         return res
 
     def test_post_add_fail(self):
@@ -117,12 +117,12 @@ class DelPostTest(unittest.TestCase):
 
     def test_datestimes_set(self):
         """Test that we get the new datetime fields as we work"""
-        self._get_good_request()
         now = datetime.now()
+        self._get_good_request()
         res = Bmark.query.filter(Bmark.url == unicode('google.com')).one()
 
         ok_(res.stored >= now,
-                "Stored time is now or close to now {0}".format(res.stored))
+                "Stored time is now or close to now {0}:{1}".format(res.stored, now))
 
         res.url = "Somethingnew.com"
         session = DBSession()
@@ -130,11 +130,23 @@ class DelPostTest(unittest.TestCase):
 
         # now hopefully have an updated value
         ok_(res.updated >= now,
-                "Stored time is now or close to now {0}".format(res.updated))
+                "Stored time is now or close to now {0}:{1}".format(res.updated, now))
 
     def test_remove_bmark(self):
         """Remove a bmark from the system"""
-        assert False
+        self._get_good_request()
+
+        # now send in the delete squad
+        prms = {
+                'url': 'google.com',
+        }
+
+        req_params = urllib.urlencode(prms)
+
+        res = self.testapp.get('/delapi/posts/delete?' + req_params)
+        eq_(res.status, "200 OK", msg='Post Delete status is 200, ' + res.status)
+        ok_('done' in res.body, msg="Request should return done msg: " + res.body)
+
 
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url

@@ -16,6 +16,7 @@ def posts_add(request):
                )
         session = DBSession()
         session.add(mark)
+        session.flush()
         return '<result code="done" />'
     else:
         return '<result code="Bad Request: missing url" />'
@@ -28,10 +29,11 @@ def posts_delete(request):
 
     if 'url' in params and params['url']:
         try:
-            bmark = BmarksMgr.get(params['url'])
+            bmark = BmarkMgr.get_by_url(params['url'])
 
             session = DBSession()
             session.delete(bmark)
+            session.flush()
 
             return '<result code="done" />'
 

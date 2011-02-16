@@ -30,7 +30,6 @@ Base = declarative_base()
 def initialize_sql(engine):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-    Base.metadata.create_all(engine)
 
 
 def todict(self):
@@ -208,6 +207,9 @@ class Bmark(Base):
 
         # tags are space separated
         self.tags = TagMgr.from_string(tags)
+
+    def __str__(self):
+        return "<Bmark: {0}:{1}>".format(self.bid, self.url)
 
     def tag_string(self):
         """Generate a single spaced string of our tags"""
