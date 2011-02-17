@@ -21,4 +21,11 @@ test`. It will run all tests defined in the tests directory.
 they get run during the large test run. Once I get a ci server up, it'll just
 run the one test pass and all tests should get tested/passed during each build.
 
+Testing Docs
+~~~~~~~~~~~~~
+A bit confusing. There's lots of docs, but none of them seem to agree on how to
+bootstrap the environment properly.
+
 http://docs.pylonsproject.org/projects/pyramid/dev/narr/testing.html
+https://bitbucket.org/sluggo/pyramid_sqla/src/d826ad458869/demos/SimpleDemo/simpledemo/tests.py
+http://docs.pylonsproject.org/projects/pyramid/1.0/tutorials/wiki2/definingviews.html#adding-tests

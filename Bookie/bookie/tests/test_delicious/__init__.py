@@ -4,33 +4,37 @@ import transaction
 import unittest
 import urllib
 from nose.tools import ok_, eq_
-from bookie.tests import settings, global_config
+from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
-from bookie.models import Tag
+from bookie.models import Tag, bmarks_tags
 
 
 class DelPostTest(unittest.TestCase):
     """Test post related calls"""
 
     def setUp(self):
-        from bookie import main
-        app = main(global_config, **settings)
+        from pyramid.paster import get_app
+        app = get_app('test.ini', 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
-        transaction.begin()
+        testing.setUp()
 
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
+        testing.tearDown()
+
         session = DBSession()
-        session.execute('DELETE FROM bmarks')
-        session.execute('DELETE FROM tags')
-        session.execute('DELETE FROM bmark_tags')
+        Bmark.query.delete()
+        Tag.query.delete()
+        session.execute(bmarks_tags.delete())
+        session.flush()
         transaction.commit()
 
     def _get_good_request(self):
         """Return the basics for a good add bookmark request"""
+        session = DBSession()
         prms = {
                 'url': u'http://google.com',
                 'description': u'This is my google desc',
@@ -40,7 +44,7 @@ class DelPostTest(unittest.TestCase):
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
-
+        session.flush()
         return res
 
     def test_post_add_fail(self):
@@ -101,7 +105,7 @@ class DelPostTest(unittest.TestCase):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == unicode('google.com')).one()
+        res = Bmark.query.filter(Bmark.url == u'google.com').one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
@@ -119,12 +123,12 @@ class DelPostTest(unittest.TestCase):
         """Test that we get the new datetime fields as we work"""
         now = datetime.now()
         self._get_good_request()
-        res = Bmark.query.filter(Bmark.url == unicode('google.com')).one()
+        res = Bmark.query.filter(Bmark.url == u'google.com').one()
 
         ok_(res.stored >= now,
                 "Stored time is now or close to now {0}:{1}".format(res.stored, now))
 
-        res.url = "Somethingnew.com"
+        res.url = u"Somethingnew.com"
         session = DBSession()
         session.flush()
 
@@ -138,7 +142,7 @@ class DelPostTest(unittest.TestCase):
 
         # now send in the delete squad
         prms = {
-                'url': 'google.com',
+                'url': u'google.com',
         }
 
         req_params = urllib.urlencode(prms)

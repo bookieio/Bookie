@@ -16,7 +16,6 @@ def posts_add(request):
                )
         session = DBSession()
         session.add(mark)
-        session.flush()
         return '<result code="done" />'
     else:
         return '<result code="Bad Request: missing url" />'
@@ -33,7 +32,6 @@ def posts_delete(request):
 
             session = DBSession()
             session.delete(bmark)
-            session.flush()
 
             return '<result code="done" />'
 
