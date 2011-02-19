@@ -214,3 +214,7 @@ class Bmark(Base):
     def tag_string(self):
         """Generate a single spaced string of our tags"""
         return " ".join([tag for tag in self.tags.iterkeys()])
+
+    def update_tags(self, tag_string):
+        """Given a tag string, split and update our tags to be these"""
+        self.tags = TagMgr.from_string(tag_string)

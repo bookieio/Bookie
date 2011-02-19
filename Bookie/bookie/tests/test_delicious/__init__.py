@@ -151,7 +151,6 @@ class DelPostTest(unittest.TestCase):
         eq_(res.status, "200 OK", msg='Post Delete status is 200, ' + res.status)
         ok_('done' in res.body, msg="Request should return done msg: " + res.body)
 
-
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url
 
@@ -173,3 +172,36 @@ class DelPostTest(unittest.TestCase):
         ok_('href' in res.body, "we have an href link in there")
         ok_('python' in res.body, "we have the python tag")
         ok_('search' in res.body, "we have the search tag")
+
+    def test_update_post(self):
+        """Updates allowed over the last one
+
+        If you /post/add to an existing bookmark, the new data overrides the
+        old data
+
+        """
+        self._get_good_request()
+
+        # now build a new version of the request we can check
+        session = DBSession()
+        prms = {
+                'url': u'http://google.com',
+                'description': u'This is my updated google desc',
+                'extended': 'updated extended notes about it in full form',
+                'tags': u'python search updated',
+        }
+
+        req_params = urllib.urlencode(prms)
+        self.testapp.get('/delapi/posts/add?' + req_params)
+        session.flush()
+
+        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+
+        ok_('updated' in res.description,
+                'Updated description took: ' + res.description)
+        ok_('updated' in res.extended,
+                'Updated extended took: ' + res.extended)
+        ok_('python' in res.tags, 'Found the python tag in the bmark')
+        ok_('search' in res.tags, 'Found the search tag in the bmark')
+        ok_('updated' in res.tags, 'Found the updated tag in the bmark')
+

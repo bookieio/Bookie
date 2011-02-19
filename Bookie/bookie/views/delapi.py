@@ -8,14 +8,27 @@ def posts_add(request):
     request.response_content_type = 'text/xml'
 
     if 'url' in params and params['url']:
-        # then let's store this thing
-        mark = Bmark(params['url'],
-                     desc=params['description'],
-                     ext=params['extended'],
-                     tags=params['tags'],
-               )
-        session = DBSession()
-        session.add(mark)
+        # check if we already have this
+        try:
+            mark = BmarkMgr.get_by_url(params['url'])
+
+            mark.description = params.get('description', mark.description)
+            mark.extended = params.get('extended', mark.extended)
+
+            new_tags = params.get('tags', None)
+            if new_tags:
+                mark.update_tags(new_tags)
+
+        except NoResultFound:
+            # then let's store this thing
+            mark = Bmark(params['url'],
+                         desc=params.get('description', ''),
+                         ext=params.get('exteneded', ''),
+                         tags=params.get('tags', ''),
+                   )
+            session = DBSession()
+            session.add(mark)
+
         return '<result code="done" />'
     else:
         return '<result code="Bad Request: missing url" />'
@@ -38,6 +51,7 @@ def posts_delete(request):
         except NoResultFound:
             # if it's not found, then there's not a bookmark to delete
             return '<result code="Bad Request: bookmark not found" />'
+
 
 def posts_get(request):
     """Return one or more bmarks based on search criteria
