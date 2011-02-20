@@ -23,7 +23,7 @@ def posts_add(request):
             # then let's store this thing
             mark = Bmark(params['url'],
                          desc=params.get('description', ''),
-                         ext=params.get('exteneded', ''),
+                         ext=params.get('extended', ''),
                          tags=params.get('tags', ''),
                    )
             session = DBSession()

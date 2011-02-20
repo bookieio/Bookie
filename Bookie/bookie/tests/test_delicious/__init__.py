@@ -94,6 +94,8 @@ class DelPostTest(unittest.TestCase):
         try:
             res = Bmark.query.filter(Bmark.url == u'google.com').one()
             ok_(res, 'We found a result in the db for this bookmark')
+            ok_('extended' in res.extended,
+                    'Extended value was set to bookmark')
             if res:
                 return True
             else:
