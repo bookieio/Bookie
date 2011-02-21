@@ -10,3 +10,4 @@ ropevim
 Sphinx
 SQLAlchemy==0.6.6
 sqlalchemy-migrate
+WebTest
