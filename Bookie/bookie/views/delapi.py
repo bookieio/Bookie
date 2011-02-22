@@ -1,3 +1,4 @@
+from datetime import datetime
 from bookie.models import DBSession, NoResultFound
 from bookie.models import Bmark, BmarkMgr
 from pyramid.httpexceptions import HTTPNotFound
@@ -28,6 +29,13 @@ def posts_add(request):
                    )
             session = DBSession()
             session.add(mark)
+
+            # if we have a dt param then set the date to be that manual date
+            if 'dt' in request.params:
+                # date format by delapi specs:
+                # CCYY-MM-DDThh:mm:ssZ
+                fmt = "%Y-%m-%dT%I:%M:%SZ"
+                mark.stored = datetime.strptime(request.params['dt'], fmt)
 
         return '<result code="done" />'
     else:

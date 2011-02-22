@@ -1,5 +1,6 @@
 """Process an html delicious export and import them into bookie"""
 import codecs
+from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from sys import argv
 import urllib
@@ -27,12 +28,18 @@ def process(filename):
 
 def call_system(link_tag, extended):
     """Given a parsed <a> tag, store this"""
+    date_fmt = "%Y-%m-%dT%I:%M:%SZ"
+    add_date = datetime.fromtimestamp(float(link_tag['add_date']))
+
     prms = {
             'url': link_tag['href'].encode('utf-8'),
             'description': link_tag.text.encode('utf-8'),
             'extended': extended.encode('utf-8'),
             'tags': " ".join(link_tag['tags'].split(',')).encode('utf-8'),
+            'dt': add_date.strftime(date_fmt),
     }
+
+
 
     req_params = urllib.urlencode(prms)
 

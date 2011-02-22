@@ -1,5 +1,5 @@
 """Test that we're meeting delicious API specifications"""
-from datetime import datetime
+from datetime import datetime, timedelta
 import transaction
 import unittest
 import urllib
@@ -54,7 +54,7 @@ class DelPostTest(unittest.TestCase):
             <result code="something went wrong" />
 
         Not supporting optional params right now
-            dt, replace, shared
+            replace, shared
 
         """
         failed = '<result code="Bad Request: missing url" />'
@@ -78,7 +78,7 @@ class DelPostTest(unittest.TestCase):
             <result code="done" />
 
         Not supporting optional params right now
-            dt, replace, shared
+            replace, shared
 
         """
         success = '<result code="done" />'
@@ -86,6 +86,47 @@ class DelPostTest(unittest.TestCase):
 
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
         eq_(res.body, success, msg="Request should return done msg")
+
+    def test_post_add_with_dt(self):
+        """Make sure if we provide a date it works
+
+        Success response:
+            <result code="done" />
+
+        Not supporting optional params right now
+            replace, shared
+
+        """
+
+        success = '<result code="done" />'
+        session = DBSession()
+
+        # pick a date that is tomorrow
+        today = datetime.now()
+        yesterday = today - timedelta(days=1)
+        dt = yesterday.strftime("%Y-%m-%dT%I:%M:%SZ")
+        prms = {
+                'url': u'http://google.com',
+                'description': u'This is my google desc',
+                'extended': u'And some extended notes about it in full form',
+                'tags': u'python search',
+                'dt': dt,
+        }
+
+        req_params = urllib.urlencode(prms)
+        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        session.flush()
+
+        eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
+        eq_(res.body, success, msg="Request should return done msg")
+
+        # now pull up the bmark and check the date is yesterday
+        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+        eq_(res.stored.strftime('%Y-%m-%d'), yesterday.strftime('%Y-%m-%d'),
+            "The stored date {0} is the same as the requested {1}".format(
+                res.stored,
+                yesterday))
+
 
     def test_new_bmark(self):
         # go save the thing
