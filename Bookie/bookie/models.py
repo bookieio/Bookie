@@ -14,6 +14,7 @@ from sqlalchemy import Table
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
+from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -140,13 +141,22 @@ class BmarkMgr(object):
         return Bmark.query.filter(Bmark.url == clean_url).one()
 
     @staticmethod
-    def find():
+    def find(order_by=None, limit=50, with_tags=False):
         """Search for specific sets of bookmarks"""
-        qry = Tag.query
+        qry = Bmark.query
 
-        # if tags:
-        #     # limit to only the tag names in this list
-        #     qry = qry.filter(Tag.name.in_(tags))
+        if with_tags:
+
+            qry = qry.join(Bmark.tags).\
+                      options(contains_eager(Bmark.tags))
+
+        if order_by is not None:
+            # limit to only the tag names in this list
+            qry = qry.order_by(order_by)
+        else:
+            qry = qry.order_by(Bmark.bid.desc())
+
+        qry = qry.limit(limit)
 
         return qry.all()
 

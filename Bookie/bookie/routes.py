@@ -19,10 +19,8 @@ def build_routes(config):
                      view="bookie.views.delapi.posts_get",
                      view_renderer="/delapi/posts_get.mako",)
 
-    # config.add_route("rick_2",
-    #                  "/rick/{sometext}",
-    #                  view="bookie.views.rickme",
-    #                  view_renderer="/rick.mako")
-
+    config.add_route("bmark_recent", "/recent",
+                     view="bookie.views.bmarks.recent",
+                     view_renderer="/bmark/recent.mako",)
 
     return config
