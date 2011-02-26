@@ -104,7 +104,7 @@ class DelPostTest(unittest.TestCase):
         # pick a date that is tomorrow
         today = datetime.now()
         yesterday = today - timedelta(days=1)
-        dt = yesterday.strftime("%Y-%m-%dT%I:%M:%SZ")
+        dt = yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
         prms = {
                 'url': u'http://google.com',
                 'description': u'This is my google desc',

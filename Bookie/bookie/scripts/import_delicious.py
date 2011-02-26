@@ -28,7 +28,7 @@ def process(filename):
 
 def call_system(link_tag, extended):
     """Given a parsed <a> tag, store this"""
-    date_fmt = "%Y-%m-%dT%I:%M:%SZ"
+    date_fmt = "%Y-%m-%dT%H:%M:%SZ"
     add_date = datetime.fromtimestamp(float(link_tag['add_date']))
 
     prms = {

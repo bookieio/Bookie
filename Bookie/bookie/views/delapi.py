@@ -34,7 +34,7 @@ def posts_add(request):
             if 'dt' in request.params:
                 # date format by delapi specs:
                 # CCYY-MM-DDThh:mm:ssZ
-                fmt = "%Y-%m-%dT%I:%M:%SZ"
+                fmt = "%Y-%m-%dT%H:%M:%SZ"
                 mark.stored = datetime.strptime(request.params['dt'], fmt)
 
         return '<result code="done" />'
