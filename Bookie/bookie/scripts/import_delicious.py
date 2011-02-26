@@ -39,8 +39,6 @@ def call_system(link_tag, extended):
             'dt': add_date.strftime(date_fmt),
     }
 
-
-
     req_params = urllib.urlencode(prms)
 
     call = urllib.urlopen(DELAPI + req_params)

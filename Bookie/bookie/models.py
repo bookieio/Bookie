@@ -145,18 +145,16 @@ class BmarkMgr(object):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
 
-        if with_tags:
+        qry = qry.limit(limit).from_self()
 
+        if with_tags:
             qry = qry.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags))
-
         if order_by is not None:
             # limit to only the tag names in this list
             qry = qry.order_by(order_by)
         else:
             qry = qry.order_by(Bmark.bid.desc())
-
-        qry = qry.limit(limit)
 
         return qry.all()
 
