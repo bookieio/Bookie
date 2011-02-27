@@ -145,17 +145,34 @@ class BmarkMgr(object):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
 
+        if order_by is not None:
+            qry = qry.order_by(order_by)
+        else:
+            qry = qry.order_by(Bmark.bid.desc())
+
         offset = limit * page
         qry = qry.limit(limit).offset(offset).from_self()
 
         if with_tags:
             qry = qry.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags))
-        if order_by is not None:
-            # limit to only the tag names in this list
-            qry = qry.order_by(order_by)
-        else:
-            qry = qry.order_by(Bmark.bid.desc())
+
+        return qry.all()
+
+    @staticmethod
+    def recent(limit=50, page=0, with_tags=False):
+        """Get a recent set of bookmarks"""
+        qry = Bmark.query
+
+        offset = limit * page
+        qry = qry.order_by(Bmark.stored.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        if with_tags:
+            qry = qry.outerjoin(Bmark.tags).\
+                      options(contains_eager(Bmark.tags))
 
         return qry.all()
 

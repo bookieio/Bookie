@@ -21,8 +21,7 @@ def recent(request):
     # check if we have a page count submitted
     page = int(rdict.get('page', '0'))
 
-    recent = BmarkMgr.find(order_by=Bmark.stored.desc(),
-                           limit=RESULTS_MAX,
+    recent = BmarkMgr.recent(limit=RESULTS_MAX,
                            with_tags=True,
                            page=page)
 
