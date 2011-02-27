@@ -16,6 +16,10 @@
             .data_list .bmark {
                 padding: .2em;
             }
+
+            #body {
+                margin: 1em;
+            }
         </style>
 
     </head>

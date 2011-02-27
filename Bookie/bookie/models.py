@@ -108,13 +108,18 @@ class TagMgr(object):
         return tag_objects
 
     @staticmethod
-    def find(tags=None):
+    def find(order_by=None, tags=None):
         """Find all of the tags in the system"""
         qry = Tag.query
 
         if tags:
             # limit to only the tag names in this list
             qry = qry.filter(Tag.name.in_(tags))
+
+        if order_by is not None:
+            qry = qry.order_by(order_by)
+        else:
+            qry = qry.order_by(Tag.name)
 
         return qry.all()
 
@@ -156,6 +161,24 @@ class BmarkMgr(object):
         if with_tags:
             qry = qry.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags))
+
+        return qry.all()
+
+    @staticmethod
+    def by_tag(tag, limit=50, page=0):
+        """Get a recent set of bookmarks"""
+        qry = Bmark.query.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags)).\
+                  filter(Tag.name == tag)
+
+        offset = limit * page
+        qry = qry.order_by(Bmark.stored.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        qry = qry.outerjoin(Bmark.tags).\
+                  options(contains_eager(Bmark.tags))
 
         return qry.all()
 
