@@ -2,7 +2,7 @@
 <%namespace file="../bmark/func.mako" import="bmark_block"/>
 <%def name="title()">Bookmarks for: ${tag}</%def>
 
-<h1>Bookmarks</h1>
+<h1>Bookmarks: ${tag}</h1>
 
 <div class="yui3-g data_list">
     <div class="yui3-u-7-8">&nbsp;</div>
