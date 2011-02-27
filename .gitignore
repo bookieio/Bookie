@@ -27,3 +27,5 @@ parts
 *.tmp*
 *.mp3
 *.db
+.coverage
+.noseids
