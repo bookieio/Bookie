@@ -26,4 +26,4 @@ parts
 *.pyo
 *.tmp*
 *.mp3
-bookie.db
+*.db
