@@ -87,6 +87,22 @@ class DelPostTest(unittest.TestCase):
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
         eq_(res.body, success, msg="Request should return done msg")
 
+    def test_new_bmark(self):
+        # go save the thing
+        self._get_good_request()
+
+        try:
+            res = Bmark.query.filter(Bmark.url == u'google.com').one()
+            ok_(res, 'We found a result in the db for this bookmark')
+            ok_('extended' in res.extended,
+                    'Extended value was set to bookmark')
+            if res:
+                return True
+            else:
+                assert False, "Could not find our bookmark we saved"
+        except NoResultFound:
+            assert False, "No result found for the bookmark"
+
     def test_post_add_with_dt(self):
         """Make sure if we provide a date it works
 
@@ -126,23 +142,6 @@ class DelPostTest(unittest.TestCase):
             "The stored date {0} is the same as the requested {1}".format(
                 res.stored,
                 yesterday))
-
-
-    def test_new_bmark(self):
-        # go save the thing
-        self._get_good_request()
-
-        try:
-            res = Bmark.query.filter(Bmark.url == u'google.com').one()
-            ok_(res, 'We found a result in the db for this bookmark')
-            ok_('extended' in res.extended,
-                    'Extended value was set to bookmark')
-            if res:
-                return True
-            else:
-                assert False, "Could not find our bookmark we saved"
-        except NoResultFound:
-            assert False, "No result found for the bookmark"
 
     def test_new_bmark_tags(self):
         """Manually check db for new bmark tags set"""
