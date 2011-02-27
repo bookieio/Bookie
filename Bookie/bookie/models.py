@@ -1,7 +1,5 @@
+"""Sqlalchemy Models for objects stored with Bookie"""
 from datetime import datetime
-import re
-import transaction
-from urlparse import urlparse
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -29,6 +27,7 @@ Base = declarative_base()
 
 
 def initialize_sql(engine):
+    """Called by the app on startup to setup bindings to the DB"""
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 
@@ -44,7 +43,7 @@ def todict(self):
             return ""
 
     for col in self.__table__.columns:
-        if isinstance(col.type, sa.DateTime):
+        if isinstance(col.type, DateTime):
             value = convert_datetime(getattr(self, col.name))
         else:
             value = getattr(self, col.name)

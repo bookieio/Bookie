@@ -1,15 +1,12 @@
-from bookie.models import DBSession
-from bookie.models import NoResultFound
+"""Controllers related to viewing Tag information"""
 from bookie.models import BmarkMgr
-from bookie.models import Tag
 from bookie.models import TagMgr
 
-from pyramid.httpexceptions import HTTPNotFound
 
 RESULTS_MAX = 50
 
 
-def list(request):
+def tag_list(request):
     """Display a list of your tags"""
     tag_list = TagMgr.find()
 
@@ -28,12 +25,12 @@ def bmark_list(request):
     tag = rdict.get('tag')
     page = int(rdict.get('page', 0))
 
-    bmark_list = BmarkMgr.by_tag(tag,
+    bmarks = BmarkMgr.by_tag(tag,
                            limit=RESULTS_MAX,
                            page=page)
 
     return { 'tag': tag,
-             'bmark_list': bmark_list,
+             'bmark_list': bmarks,
              'count': RESULTS_MAX,
              'page': page,
              'route_url': request.route_url,
