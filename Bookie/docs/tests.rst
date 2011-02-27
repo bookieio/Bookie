@@ -17,9 +17,9 @@ Functional tests are larger scope tests that make sure the application is
 responding correctly as a whole. These are run through the fabric command `fab
 test`. It will run all tests defined in the tests directory.
 
-*Note:* that all unit tests should be added to the `tests/__init__.py` so that
-they get run during the large test run. Once I get a ci server up, it'll just
-run the one test pass and all tests should get tested/passed during each build.
+*Note:* All unit tests should be added to the `tests/__init__.py` so that they
+get run during the large test run. This way the ci server will just need to run
+the one test pass and all tests will run during each build.
 
 Testing Docs
 ~~~~~~~~~~~~~
