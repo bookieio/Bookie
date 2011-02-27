@@ -1,9 +1,10 @@
 Bookie Database Notes
 =====================
 
-The goal is for this to be self hostable. Ideally, it'd support MySQL,
-Postgres, and Sqlite. Personally, I just want great working Postgres, but I can
-see people wanting little sites running locally just for managing bookmarks.
+The goal is for this to be self hostable. Ideally, Bookie will support MySQL,
+Postgres, and Sqlite. Initially, we will work on a great working Postgres, but 
+we can see people wanting little sites running locally just for managing 
+bookmarks.
 
 Migrations
 ----------
