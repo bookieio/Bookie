@@ -141,11 +141,12 @@ class BmarkMgr(object):
         return Bmark.query.filter(Bmark.url == clean_url).one()
 
     @staticmethod
-    def find(order_by=None, limit=50, with_tags=False):
+    def find(order_by=None, limit=50, page=0, with_tags=False):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
 
-        qry = qry.limit(limit).from_self()
+        offset = limit * page
+        qry = qry.limit(limit).offset(offset).from_self()
 
         if with_tags:
             qry = qry.join(Bmark.tags).\

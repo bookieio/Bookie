@@ -6,8 +6,8 @@
                 <a href="${bmark.url}">${bmark.description}</a>
             </div>
             <div class="yui3-u-1-8">
-                <input type="checkbox"></input>
-                <input type="checkbox"></input>
+                <span><a href="#">edit</a></span>
+                <span><a href="#">delete</a></span>
             </div>
 
             <div class="yui3-u-1-8">&nbsp;</div>
