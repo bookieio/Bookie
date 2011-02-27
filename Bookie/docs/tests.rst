@@ -1,6 +1,15 @@
 Bookie Tests
 ============
 
+Running Tests
+--------------
+Running the test suite for Bookie is very simple:
+
+::
+
+  $ cd Bookie/Bookie/
+  $ fab test
+
 Test Types
 -----------
 
@@ -26,6 +35,6 @@ Testing Docs
 A bit confusing. There's lots of docs, but none of them seem to agree on how to
 bootstrap the environment properly.
 
-http://docs.pylonsproject.org/projects/pyramid/dev/narr/testing.html
-https://bitbucket.org/sluggo/pyramid_sqla/src/d826ad458869/demos/SimpleDemo/simpledemo/tests.py
-http://docs.pylonsproject.org/projects/pyramid/1.0/tutorials/wiki2/definingviews.html#adding-tests
+* http://docs.pylonsproject.org/projects/pyramid/dev/narr/testing.html
+* https://bitbucket.org/sluggo/pyramid_sqla/src/d826ad458869/demos/SimpleDemo/simpledemo/tests.py
+* http://docs.pylonsproject.org/projects/pyramid/1.0/tutorials/wiki2/definingviews.html#adding-tests
