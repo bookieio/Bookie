@@ -167,18 +167,12 @@ class BmarkTools(object):
         """We need to clean the url so that we can easily find/check for dupes
 
         Things to do:
-        - Strip the http/https/...
         - strip any trailing spaces
         - Leave any query params, but think about removing common ones like
           google analytics stuff utm_*
 
         """
         url = url.strip().strip('/')
-        parsed = urlparse(url)
-
-        # get the scheme and strip it
-        scheme = parsed.scheme
-        url = re.sub('^' + scheme + '://', "", url)
         return url
 
 
