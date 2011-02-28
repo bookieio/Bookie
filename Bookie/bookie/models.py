@@ -1,7 +1,5 @@
+"""Sqlalchemy Models for objects stored with Bookie"""
 from datetime import datetime
-import re
-import transaction
-from urlparse import urlparse
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -29,6 +27,7 @@ Base = declarative_base()
 
 
 def initialize_sql(engine):
+    """Called by the app on startup to setup bindings to the DB"""
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 
@@ -44,7 +43,7 @@ def todict(self):
             return ""
 
     for col in self.__table__.columns:
-        if isinstance(col.type, sa.DateTime):
+        if isinstance(col.type, DateTime):
             value = convert_datetime(getattr(self, col.name))
         else:
             value = getattr(self, col.name)
@@ -108,13 +107,18 @@ class TagMgr(object):
         return tag_objects
 
     @staticmethod
-    def find(tags=None):
+    def find(order_by=None, tags=None):
         """Find all of the tags in the system"""
         qry = Tag.query
 
         if tags:
             # limit to only the tag names in this list
             qry = qry.filter(Tag.name.in_(tags))
+
+        if order_by is not None:
+            qry = qry.order_by(order_by)
+        else:
+            qry = qry.order_by(Tag.name)
 
         return qry.all()
 
@@ -141,20 +145,56 @@ class BmarkMgr(object):
         return Bmark.query.filter(Bmark.url == clean_url).one()
 
     @staticmethod
-    def find(order_by=None, limit=50, with_tags=False):
+    def find(order_by=None, limit=50, page=0, with_tags=False):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
 
-        qry = qry.limit(limit).from_self()
+        if order_by is not None:
+            qry = qry.order_by(order_by)
+        else:
+            qry = qry.order_by(Bmark.bid.desc())
+
+        offset = limit * page
+        qry = qry.limit(limit).offset(offset).from_self()
 
         if with_tags:
             qry = qry.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags))
-        if order_by is not None:
-            # limit to only the tag names in this list
-            qry = qry.order_by(order_by)
-        else:
-            qry = qry.order_by(Bmark.bid.desc())
+
+        return qry.all()
+
+    @staticmethod
+    def by_tag(tag, limit=50, page=0):
+        """Get a recent set of bookmarks"""
+        qry = Bmark.query.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags)).\
+                  filter(Tag.name == tag)
+
+        offset = limit * page
+        qry = qry.order_by(Bmark.stored.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        qry = qry.outerjoin(Bmark.tags).\
+                  options(contains_eager(Bmark.tags))
+
+        return qry.all()
+
+    @staticmethod
+    def recent(limit=50, page=0, with_tags=False):
+        """Get a recent set of bookmarks"""
+        qry = Bmark.query
+
+        offset = limit * page
+        qry = qry.order_by(Bmark.stored.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        if with_tags:
+            qry = qry.outerjoin(Bmark.tags).\
+                      options(contains_eager(Bmark.tags))
 
         return qry.all()
 
@@ -167,18 +207,12 @@ class BmarkTools(object):
         """We need to clean the url so that we can easily find/check for dupes
 
         Things to do:
-        - Strip the http/https/...
         - strip any trailing spaces
         - Leave any query params, but think about removing common ones like
           google analytics stuff utm_*
 
         """
         url = url.strip().strip('/')
-        parsed = urlparse(url)
-
-        # get the scheme and strip it
-        scheme = parsed.scheme
-        url = re.sub('^' + scheme + '://', "", url)
         return url
 
 

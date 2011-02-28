@@ -8,19 +8,19 @@ import urllib
 DELAPI = 'http://127.0.0.1:6543/delapi/posts/add?'
 
 
-def process(filename):
+def process(fname):
     """Given a file, process it"""
-    bmark_file = codecs.open( filename, "r", "utf-8" ).read()
+    bmark_file = codecs.open(fname, "r", "utf-8").read()
     soup = BeautifulSoup(bmark_file)
 
-    for dt in soup.findAll('dt'):
+    for tag in soup.findAll('dt'):
         # if we have a dd as next sibling, get it's content
-        if dt.nextSibling and dt.nextSibling.name == 'dd':
-            extended = dt.nextSibling.text
+        if tag.nextSibling and tag.nextSibling.name == 'dd':
+            extended = tag.nextSibling.text
         else:
             extended = ""
 
-        link = dt.a
+        link = tag.a
 
         # now get the link tag
         call_system(link, extended)

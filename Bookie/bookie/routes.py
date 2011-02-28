@@ -19,8 +19,24 @@ def build_routes(config):
                      view="bookie.views.delapi.posts_get",
                      view_renderer="/delapi/posts_get.mako",)
 
+    # bmark routes
     config.add_route("bmark_recent", "/recent",
                      view="bookie.views.bmarks.recent",
                      view_renderer="/bmark/recent.mako",)
+    config.add_route("bmark_recent_page", "/recent/{page}",
+                     view="bookie.views.bmarks.recent",
+                     view_renderer="/bmark/recent.mako",)
+
+
+    # tag related routes
+    config.add_route("tag_list", "/tags",
+                     view="bookie.views.tags.tag_list",
+                     view_renderer="/tag/list.mako",)
+    config.add_route("tag_bmarks", "/tags/{tag}",
+                     view="bookie.views.tags.bmark_list",
+                     view_renderer="/tag/bmarks.mako",)
+    config.add_route("tag_bmarks_page", "/tags/{tag}/{page}",
+                     view="bookie.views.tags.bmark_list",
+                     view_renderer="/tag/bmarks.mako",)
 
     return config

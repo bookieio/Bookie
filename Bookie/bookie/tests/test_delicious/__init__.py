@@ -87,6 +87,22 @@ class DelPostTest(unittest.TestCase):
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
         eq_(res.body, success, msg="Request should return done msg")
 
+    def test_new_bmark(self):
+        # go save the thing
+        self._get_good_request()
+
+        try:
+            res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+            ok_(res, 'We found a result in the db for this bookmark')
+            ok_('extended' in res.extended,
+                    'Extended value was set to bookmark')
+            if res:
+                return True
+            else:
+                assert False, "Could not find our bookmark we saved"
+        except NoResultFound:
+            assert False, "No result found for the bookmark"
+
     def test_post_add_with_dt(self):
         """Make sure if we provide a date it works
 
@@ -121,34 +137,17 @@ class DelPostTest(unittest.TestCase):
         eq_(res.body, success, msg="Request should return done msg")
 
         # now pull up the bmark and check the date is yesterday
-        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
         eq_(res.stored.strftime('%Y-%m-%d'), yesterday.strftime('%Y-%m-%d'),
             "The stored date {0} is the same as the requested {1}".format(
                 res.stored,
                 yesterday))
 
-
-    def test_new_bmark(self):
-        # go save the thing
-        self._get_good_request()
-
-        try:
-            res = Bmark.query.filter(Bmark.url == u'google.com').one()
-            ok_(res, 'We found a result in the db for this bookmark')
-            ok_('extended' in res.extended,
-                    'Extended value was set to bookmark')
-            if res:
-                return True
-            else:
-                assert False, "Could not find our bookmark we saved"
-        except NoResultFound:
-            assert False, "No result found for the bookmark"
-
     def test_new_bmark_tags(self):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
@@ -166,7 +165,7 @@ class DelPostTest(unittest.TestCase):
         """Test that we get the new datetime fields as we work"""
         now = datetime.now()
         self._get_good_request()
-        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
 
         ok_(res.stored >= now,
                 "Stored time is now or close to now {0}:{1}".format(res.stored, now))
@@ -185,7 +184,7 @@ class DelPostTest(unittest.TestCase):
 
         # now send in the delete squad
         prms = {
-                'url': u'google.com',
+                'url': u'http://google.com',
         }
 
         req_params = urllib.urlencode(prms)
@@ -238,7 +237,7 @@ class DelPostTest(unittest.TestCase):
         self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
 
-        res = Bmark.query.filter(Bmark.url == u'google.com').one()
+        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
 
         ok_('updated' in res.description,
                 'Updated description took: ' + res.description)
