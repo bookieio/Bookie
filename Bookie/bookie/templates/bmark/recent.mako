@@ -9,10 +9,10 @@
     <div class="yui3-u-1-8">
         % if page != 0:
         <% prev = page - 1 %>
-            <a href="${route_url('bmark_recent_page', page=prev)}">Prev</a>
+            <a href="${request.route_url('bmark_recent_page', page=prev)}">Prev</a>
         % endif
         <% next = page + 1%>
-        <a href="${route_url('bmark_recent_page', page=next)}">Next</a>
+        <a href="${request.route_url('bmark_recent_page', page=next)}">Next</a>
     </div>
 
     % for mark in bmarks:
@@ -23,9 +23,9 @@
     <div class="yui3-u-1-8">
         % if page != 0:
         <% prev = page - 1 %>
-            <a href="${route_url('bmark_recent_page', page=prev)}">Prev</a>
+            <a href="${request.route_url('bmark_recent_page', page=prev)}">Prev</a>
         % endif
         <% next = page + 1%>
-        <a href="${route_url('bmark_recent_page', page=next)}">Next</a>
+        <a href="${request.route_url('bmark_recent_page', page=next)}">Next</a>
     </div>
 </div>

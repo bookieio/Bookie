@@ -13,7 +13,6 @@ def tag_list(request):
     return {
         'tag_list': tag_list,
         'tag_count': len(tag_list),
-        'route_url': request.route_url,
     }
 
 
@@ -33,5 +32,4 @@ def bmark_list(request):
              'bmark_list': bmarks,
              'count': RESULTS_MAX,
              'page': page,
-             'route_url': request.route_url,
            }

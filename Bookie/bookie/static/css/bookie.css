@@ -1,0 +1,72 @@
+/* BASIC PROPERTIES */
+#body {
+    margin: 1em;
+}
+
+/* NAVIGATION */
+.navigation {
+    text-align: right;
+}
+
+.navigation a {
+    text-decoration: none;
+}
+
+.logo {
+    font-size: 2em;
+    text-decoration: none;
+}
+
+/* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */
+.button_minimal {
+  background: #e3e3e3;
+  border: 1px solid #bbb;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+  -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+  box-shadow: inset 0 0 1px 1px #f6f6f6;
+  color: #333;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 8px 10px 9px;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
+  width: 150px;
+  vertical-align: bottom;
+}
+
+.button_minimal:hover {
+  background: #d9d9d9;
+  -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+  -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+  box-shadow: inset 0 0 1px 1px #eaeaea;
+  color: #222;
+  cursor: pointer;
+}
+
+.button_minimal:active {
+  background: #d0d0d0;
+  -moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
+  -webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
+  box-shadow: inset 0 0 1px 1px #e3e3e3;
+  color: #000;
+}
+
+
+/* FORM PROPERTIES */
+
+
+/* DATA LISTS */
+.data_list {
+    width: 80%;
+}
+
+.data_list .bmark {
+    padding: .2em;
+}
+
+

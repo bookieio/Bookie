@@ -13,7 +13,7 @@
             <div class="yui3-u-1-8">&nbsp;</div>
             <div class="yui3-u-3-4">
                 % for tag in bmark.tags:
-                    <a href="${route_url('tag_bmarks', tag=tag, page=prev)}">${tag}</a>
+                    <a href="${request.route_url('tag_bmarks', tag=tag, page=prev)}">${tag}</a>
                 %endfor
             </div>
             <div class="yui3-u-1-8">${bmark.stored.strftime('%H:%M%P')}</div>

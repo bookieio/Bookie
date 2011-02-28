@@ -24,5 +24,4 @@ def recent(request):
     return { 'bmarks': recent_list,
              'count': RESULTS_MAX,
              'page': page,
-             'route_url': request.route_url,
            }

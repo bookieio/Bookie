@@ -39,5 +39,4 @@ def build_routes(config):
                      view="bookie.views.tags.bmark_list",
                      view_renderer="/tag/bmarks.mako",)
 
-
     return config
