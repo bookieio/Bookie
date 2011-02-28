@@ -2,6 +2,7 @@
 /data/sessions
 /data/templates
 /dist
+/Bookie/docs/_build/
 *.egg-info
 *.egg
 *.EGG
