@@ -19,6 +19,7 @@ Contents:
    database
    fabric
    tests
+   todo
 
 .. Indices and tables
 .. ==================
