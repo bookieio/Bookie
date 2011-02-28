@@ -41,7 +41,7 @@ If you're running Ubuntu, here's some actual commands to get you started.
   $ source ../../bin/activate
   $ paster serve --reload development.ini
 
-You should not be able to pull up:
+You should now be able to pull up:
 
 http://127.0.0.1:6543
 
