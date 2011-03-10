@@ -1,4 +1,7 @@
 """Controllers related to viewing lists of bookmarks"""
+import logging
+
+from pyramid.httpexceptions import HTTPUnauthorized
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.settings import asbool
@@ -7,7 +10,22 @@ from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 
+LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
+
+def _is_authed(request):
+    """Verify that the request is auth'd to alter
+
+    If the .ini setting for ui edits is not true, then no authed
+
+    """
+    allow_edit = asbool(request.registry.settings.get('allow_edit', False))
+
+    LOG.debug(allow_edit)
+    if allow_edit:
+        return True
+    else:
+        return False
 
 
 def list(request):
@@ -35,6 +53,9 @@ def recent(request):
 def delete(request):
     """Remove the bookmark in question"""
     rdict = request.matchdict
+
+    if not _is_authed(request):
+        return HTTPUnauthorized("Auth to edit is not enabled")
 
     # make sure we have an id value
     bid = int(rdict.get('bid', 0))
