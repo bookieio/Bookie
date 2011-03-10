@@ -6,8 +6,10 @@
                 <a href="${bmark.url}">${bmark.description}</a>
             </div>
             <div class="yui3-u-1-8">
-                <span><a href="#">edit</a></span>
-                <span><a href="#">delete</a></span>
+                % if allow_edit:
+                    <span><a href="#">edit</a></span>
+                    <span><a href="${request.route_url('bmark_delete', bid=bmark.bid)}">delete</a></span>
+                % endif
             </div>
 
             <div class="yui3-u-1-8">&nbsp;</div>

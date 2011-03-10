@@ -81,7 +81,7 @@ def posts_get(request):
             bmark = BmarkMgr.get_by_url(url=url)
 
             if not bmark:
-                raise HTTPNotFound()
+                return HTTPNotFound()
 
             return { 'datefound': bmark.stored.strftime('%Y-%m-%d'),
                     'posts': [bmark], }

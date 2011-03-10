@@ -26,6 +26,8 @@ def build_routes(config):
     config.add_route("bmark_recent_page", "/recent/{page}",
                      view="bookie.views.bmarks.recent",
                      view_renderer="/bmark/recent.mako",)
+    config.add_route("bmark_delete", "/bmark/delete/{bid}",
+                     view="bookie.views.bmarks.delete",)
 
 
     # tag related routes

@@ -4,6 +4,7 @@
 
 <h1>Showing ${count} bookmarks</h1>
 
+${allow_edit}
 <div class="yui3-g data_list">
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8">
