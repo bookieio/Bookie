@@ -15,6 +15,7 @@ requires = [
     'zope.sqlalchemy',
     'WebError',
     'WebTest',
+    'Chameleon<1.9999',
     ]
 
 if sys.version_info[:3] < (2,5,0):
