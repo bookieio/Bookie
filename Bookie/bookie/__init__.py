@@ -1,4 +1,5 @@
 from pyramid.config import Configurator
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from sqlalchemy import engine_from_config
 
 from bookie.models import initialize_sql
@@ -10,7 +11,10 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     initialize_sql(engine)
-    config = Configurator(settings=settings)
+
+    unencrypt = UnencryptedCookieSessionFactoryConfig('itsaseekreet')
+
+    config = Configurator(settings=settings, session_factory=unencrypt)
     config = build_routes(config)
     config.add_static_view('static', 'bookie:static')
 

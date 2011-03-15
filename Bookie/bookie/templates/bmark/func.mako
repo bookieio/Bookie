@@ -24,7 +24,6 @@
              style="border-top: 1px solid #999999;"
          % endif
     >
-
         <div class="yui3-g bmark">
             <div class="yui3-u-1-8">
                 <div class="center">

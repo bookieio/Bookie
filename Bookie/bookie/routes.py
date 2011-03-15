@@ -51,4 +51,7 @@ def build_routes(config):
                      view="bookie.views.tags.bmark_list",
                      view_renderer="/tag/bmarks.mako",)
 
+    config.add_route("utils_import", "/utils/import",
+                     view="bookie.views.utils.import_bmarks",
+                     view_renderer="/utils/import.mako",)
     return config
