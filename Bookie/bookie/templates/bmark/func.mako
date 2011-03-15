@@ -7,10 +7,11 @@
     <div class="yui3-g">
         % for bmark in bmark_list:
             ${bmark_block(bmark, last_date)}
-
             <%
                 last_date = bmark.stored.strftime("%m/%d")
             %>
+
+           <div class="yui3-u-1">${last_date}</div>
         % endfor
     </div>
 </%def>
@@ -20,7 +21,6 @@
         is_new = (last_date != bmark.stored.strftime("%m/%d"))
     %>
     <div class="yui3-u-1"
-
          % if is_new:
              style="border-top: 1px solid #999999;"
          % endif

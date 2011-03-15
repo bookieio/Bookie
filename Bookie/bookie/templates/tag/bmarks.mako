@@ -15,9 +15,7 @@
                         url_params=url_params)}
     </div>
 
-    % for mark in bmark_list:
-        ${display_bmark_list(bmark_list)}
-    % endfor
+    ${display_bmark_list(bmark_list)}
 
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8">
