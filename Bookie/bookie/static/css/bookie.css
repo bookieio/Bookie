@@ -97,3 +97,32 @@
     text-align: center;
     padding: .1em .2em;
 }
+
+
+.tags {
+    padding: .3em;
+    padding-left: 2em;
+    font-size: .8em;
+    text-align: right;
+}
+
+a.tag {
+    padding: .2em;
+    border: 1px solid #666666;
+    border-radius: 5px;
+    background: #CCCCCC;
+    color: #333333;
+    text-decoration: none;
+}
+
+a.bmark {
+    font-size: 1.1em;
+    text-decoration: none;
+}
+
+.bmark .time {
+    text-align: right;
+    font-size: .7em;
+    font-color: #333;
+}
+

@@ -37,7 +37,7 @@
             <div class="yui3-u-7-8">
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
-                        <a href="${bmark.url}">${bmark.description}</a>
+                        <a class="bmark" href="${bmark.url}">${bmark.description}</a>
                     </div>
 
                     <div class="yui3-u-1-8">
@@ -48,12 +48,16 @@
                     </div>
 
                     <div class="yui3-u-7-8">
-                        % for tag in bmark.tags:
-                            <a href="${request.route_url('tag_bmarks', tag=tag, page=prev)}">${tag}</a>
-                        %endfor
+                        <div class="tags">
+                            % for tag in bmark.tags:
+                                <a class="tag" href="${request.route_url('tag_bmarks', tag=tag, page=prev)}">${tag}</a>
+                            %endfor
+                        </div>
                     </div>
 
-                    <div class="yui3-u-1-8">${bmark.stored.strftime('%H:%M%P')}</div>
+                    <div class="yui3-u-1-8">
+                        <div class="bmark time">${bmark.stored.strftime('%H:%M%P')}</div>
+                    </div>
                 </div>
             </div>
         </div>
