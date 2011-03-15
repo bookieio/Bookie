@@ -69,4 +69,31 @@
     padding: .2em;
 }
 
+.center {
+    text-align: center;
+}
 
+.calendar {
+    border: 2px solid #333;
+    border-radius: 5px;
+    margin: 0px .4em;
+    width: 4em;
+}
+
+.calendar h2 {
+    background-color: #red;
+    color: #FFF;
+    font-size: .9em;
+    font-weight: bold;
+    text-align: left;
+    padding: .1em .2em;
+    border-bottom: 1px solid #999999;
+}
+
+.calendar div {
+    background-color: #CCCCCC;
+    color: #000000;
+    font-size: 1.3em;
+    text-align: center;
+    padding: .1em .2em;
+}

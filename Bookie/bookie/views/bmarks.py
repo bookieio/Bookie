@@ -40,7 +40,8 @@ def recent(request):
                            page=page)
 
     return { 'bmarks': recent_list,
-             'count': RESULTS_MAX,
+             'max_count': RESULTS_MAX,
+             'count': len(recent_list),
              'page': page,
              'allow_edit': asbool(request.registry.settings.get('allow_edit', 0)),
            }

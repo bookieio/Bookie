@@ -1,31 +1,27 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="../bmark/func.mako" import="bmark_block"/>
+<%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
 <%def name="title()">Bookmarks for: ${tag}</%def>
+
+<%
+    url_params = {'tag': tag}
+%>
 
 <h1>Bookmarks: ${tag}</h1>
 
 <div class="yui3-g data_list">
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8">
-        % if page != 0:
-        <% prev = page - 1 %>
-            <a href="${request.route_url('tag_bmarks_page', tag=tag, page=prev)}">Prev</a>
-        % endif
-        <% next = page + 1%>
-        <a href="${request.route_url('tag_bmarks_page', tag=tag,  page=next)}">Next</a>
+        ${bmarknextprev(page, max_count, count, 'tag_bmarks_page',
+                        url_params=url_params)}
     </div>
 
     % for mark in bmark_list:
-        ${bmark_block(mark)}
+        ${display_bmark_list(bmark_list)}
     % endfor
 
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8">
-        % if page != 0:
-        <% prev = page - 1 %>
-            <a href="${request.route_url('tag_bmarks_page', tag=tag, page=prev)}">Prev</a>
-        % endif
-        <% next = page + 1%>
-        <a href="${request.route_url('tag_bmarks_page', tag=tag, page=next)}">Next</a>
+        ${bmarknextprev(page, max_count, count, 'tag_bmarks_page',
+                        url_params=url_params)}
     </div>
 </div>

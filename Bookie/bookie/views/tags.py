@@ -32,9 +32,7 @@ def bmark_list(request):
     # 404 if the tag isn't found
     exists = TagMgr.find(tags=[tag])
 
-    LOG.debug(exists)
     if not exists:
-        LOG.debug('not found')
         raise HTTPNotFound()
 
     bmarks = BmarkMgr.by_tag(tag,
@@ -43,6 +41,7 @@ def bmark_list(request):
 
     return { 'tag': tag,
              'bmark_list': bmarks,
-             'count': RESULTS_MAX,
+             'max_count': RESULTS_MAX,
+             'count': len(bmarks),
              'page': page,
            }
