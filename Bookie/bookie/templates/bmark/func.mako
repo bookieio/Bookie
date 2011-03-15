@@ -11,7 +11,6 @@
                 last_date = bmark.stored.strftime("%m/%d")
             %>
 
-           <div class="yui3-u-1">${last_date}</div>
         % endfor
     </div>
 </%def>
