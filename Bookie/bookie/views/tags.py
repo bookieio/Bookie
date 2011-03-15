@@ -1,8 +1,12 @@
 """Controllers related to viewing Tag information"""
+import logging
+from pyramid.exceptions import NotFound
+from pyramid.httpexceptions import HTTPNotFound
+
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 
-
+LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
 
@@ -23,6 +27,15 @@ def bmark_list(request):
     # check if we have a page count submitted
     tag = rdict.get('tag')
     page = int(rdict.get('page', 0))
+
+    # verify the tag exists before we go on
+    # 404 if the tag isn't found
+    exists = TagMgr.find(tags=[tag])
+
+    LOG.debug(exists)
+    if not exists:
+        LOG.debug('not found')
+        raise HTTPNotFound()
 
     bmarks = BmarkMgr.by_tag(tag,
                            limit=RESULTS_MAX,

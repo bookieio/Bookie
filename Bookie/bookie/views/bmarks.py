@@ -28,11 +28,6 @@ def _is_authed(request):
         return False
 
 
-def list(request):
-    """Display a list of bookmarks"""
-    pass
-
-
 def recent(request):
     """Most recent list of bookmarks capped at MAX"""
     rdict = request.matchdict
