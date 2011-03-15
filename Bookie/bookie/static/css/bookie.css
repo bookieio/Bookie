@@ -88,6 +88,7 @@
     text-align: left;
     padding: .1em .2em;
     border-bottom: 1px solid #999999;
+    margin: 0px;
 }
 
 .calendar div {
@@ -126,3 +127,30 @@ a.bmark {
     font-color: #333;
 }
 
+.body form {
+    padding: .5em 1em;
+
+}
+
+.note {
+    border: 1px solid #666;
+    background: #CCC;
+    padding: .5em;
+}
+
+fieldset legend {
+    font-size: .9em;
+    font-weight: bold;
+    border-bottom: 1px solid #999;
+    margin-bottom: 2em;
+}
+
+form ul {
+    margin-left: 0px;
+}
+
+form li {
+    list-style: none;
+    margin-left: 0px;
+    padding-left: 0px;
+}
