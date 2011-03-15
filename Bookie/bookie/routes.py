@@ -15,7 +15,7 @@ def build_routes(config):
                     renderer="exceptions/404.mako")
 
 
-    config.add_route("home", "/", view="bookie.views.my_view",
+    config.add_route("home", "", view="bookie.views.my_view",
                      view_renderer="/testmako.mako")
 
     # DELAPI Routes
