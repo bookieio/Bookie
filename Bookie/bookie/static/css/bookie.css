@@ -152,5 +152,9 @@ form ul {
 form li {
     list-style: none;
     margin-left: 0px;
-    padding-left: 0px;
+    padding: .2em 0em;
+}
+
+form li label {
+    font-weight: bold;
 }

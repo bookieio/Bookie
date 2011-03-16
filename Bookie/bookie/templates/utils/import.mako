@@ -26,6 +26,11 @@
                                 <input type="file" name="import_file" id="import_file" />
                             </li>
                             <li>
+                                <label for="api_key">Api Key</label>
+                                <input type="input" name="api_key" id="api_key" />
+                            </li>
+
+                            <li>
                                 <input type="submit" name="upload" value="Upload" id="upload" />
                             </li>
                         </ul>

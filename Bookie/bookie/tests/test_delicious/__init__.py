@@ -40,6 +40,7 @@ class DelPostTest(unittest.TestCase):
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
+                'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
@@ -63,6 +64,7 @@ class DelPostTest(unittest.TestCase):
                 'description': '',
                 'extended': '',
                 'tags': '',
+                'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
@@ -127,6 +129,7 @@ class DelPostTest(unittest.TestCase):
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'dt': dt,
+                'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
@@ -185,6 +188,7 @@ class DelPostTest(unittest.TestCase):
         # now send in the delete squad
         prms = {
                 'url': u'http://google.com',
+                'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
@@ -231,6 +235,7 @@ class DelPostTest(unittest.TestCase):
                 'description': u'This is my updated google desc',
                 'extended': 'updated extended notes about it in full form',
                 'tags': u'python search updated',
+                'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
