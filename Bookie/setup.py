@@ -16,7 +16,7 @@ requires = [
     'WebError',
     'WebTest',
     'Chameleon<1.9999',
-    'BeautifulSoup',
+    'BeautifulSoup==3.2.0',
     ]
 
 if sys.version_info[:3] < (2,5,0):
