@@ -20,6 +20,7 @@ Contents:
    fabric
    tests
    todo
+   user
 
 .. Indices and tables
 .. ==================
