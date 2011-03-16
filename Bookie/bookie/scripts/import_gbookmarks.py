@@ -1,9 +1,7 @@
 """Process an html google bookmarks export and import them into bookie"""
 import codecs
-import time
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
-from collections import defaultdict
 from sys import argv
 import urllib
 
@@ -28,15 +26,16 @@ def process(fname):
     # occurs once per tag. loop through and aggregate the tags for each url
     for tag in soup.findAll('h3'): 
         links = tag.findNextSibling('dl').findAll("a")
-        for l in links:
-            url = l["href"]
+        for link in links:
+            url = link["href"]
+            timestamp_added = float(link['add_date'])/1e6
             if url in urls:
                 urls[url]['tags'].append(tag.text) 
             else:
                 urls[url] = {
-                    'description': l.text,
+                    'description': link.text,
                     'tags': [tag.text] if tag.text != 'Unlabeled' else [],
-                    'date_added': datetime.fromtimestamp(float(l['add_date'])/1e6),
+                    'date_added': datetime.fromtimestamp(timestamp_added),
                 }
 
     call_system(urls)
@@ -44,7 +43,7 @@ def process(fname):
 def call_system(urls):
     """Given a dictionary of url data, store it"""
     date_fmt = "%Y-%m-%dT%H:%M:%SZ"
-    for url,metadata in urls.items():
+    for url, metadata in urls.items():
         prms = {
                 'url': url.encode('utf-8'),
                 'description': metadata['description'].encode('utf-8'),
