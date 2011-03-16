@@ -27,7 +27,7 @@
                             </li>
                             <li>
                                 <label for="api_key">Api Key</label>
-                                <input type="input" name="api_key" id="api_key" />
+                                <input type="password" name="api_key" id="api_key" />
                             </li>
 
                             <li>
