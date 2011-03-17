@@ -10,8 +10,36 @@ from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
 
+from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
 from bookie.lib.importer import GBookmarkImporter
+
+
+class ImporterBaseTest(unittest.TestCase):
+    """Verify the base import class is working"""
+
+    def test_factory_gives_delicious(self):
+        """"Verify that the base importer will give DelImporter"""
+        loc = os.path.dirname(__file__)
+        del_file = os.path.join(loc, 'delicious.html')
+
+        with open(del_file) as del_io:
+            imp = Importer(del_io)
+
+            ok_(isinstance(imp, DelImporter),
+                    "Instance should be a delimporter instance")
+
+    def test_factory_gives_google(self):
+        """"Verify that the base importer will give GBookmarkImporter"""
+        loc = os.path.dirname(__file__)
+        google_file = os.path.join(loc, 'googlebookmarks.html')
+
+        with open(google_file) as google_io:
+            imp = Importer(google_io)
+
+            ok_(isinstance(imp, GBookmarkImporter),
+                    "Instance should be a GBookmarkImporter instance")
+
 
 class ImportDeliciousTest(unittest.TestCase):
     """Test the Bookie importer for delicious"""

@@ -4,12 +4,34 @@ from BeautifulSoup import BeautifulSoup
 from bookie.models import DBSession
 from bookie.models import Bmark
 
-class DelImporter(object):
-    """Process a delicious html file"""
+
+class Importer(object):
+    """The actual factory object we use for handling imports"""
 
     def __init__(self, import_io):
-        """Prepare to process"""
+        """work on getting an importer instance"""
         self.file_handle = import_io
+
+    def __new__(cls, *args, **kwargs):
+        """Overriding new we return a subclass based on the file content"""
+        if DelImporter.can_handle(args[0]):
+            return super(Importer, cls).__new__(DelImporter)
+
+        if GBookmarkImporter.can_handle(args[0]):
+            return super(Importer, cls).__new__(GBookmarkImporter)
+
+    @staticmethod
+    def can_handle(file_io):
+        """This is meant to be implemented in subclasses"""
+        raise NotImplementedError("Please implement this in your importer")
+
+    def process(self):
+        """Meant to be implemented in subclasses"""
+        raise NotImplementedError("Please implement this in your importer")
+
+
+class DelImporter(Importer):
+    """Process a delicious html file"""
 
     @staticmethod
     def can_handle(file_io):
@@ -61,12 +83,8 @@ class DelImporter(object):
             session.add(mark)
 
 
-class GBookmarkImporter(object):
+class GBookmarkImporter(Importer):
     """Process a Google Bookmark export html file"""
-
-    def __init__(self, import_io):
-        """Prepare to process the input file"""
-        self.file_handle = import_io
 
     @staticmethod
     def can_handle(file_io):
