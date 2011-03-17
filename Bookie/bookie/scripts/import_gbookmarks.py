@@ -9,7 +9,7 @@ DELAPI = 'http://127.0.0.1:6543/delapi/posts/add?'
 
 
 def process(fname):
-    """Given a filename in google bookmark's export format, import it 
+    """Given a filename in google bookmark's export format, import it
 
     The export format is a tag as a heading, with urls that have that tag
     under that heading. If a url has N tags, it will appear N times, once
@@ -20,17 +20,17 @@ def process(fname):
     if not soup.contents[0] == "DOCTYPE NETSCAPE-Bookmark-file-1":
         raise Exception("File does not appear to be a google bookmarks export")
 
-    urls = dict() # url:url_metadata
+    urls = dict()  # url:url_metadata
 
-    # we don't want to just import all the available urls, since each url 
+    # we don't want to just import all the available urls, since each url
     # occurs once per tag. loop through and aggregate the tags for each url
-    for tag in soup.findAll('h3'): 
+    for tag in soup.findAll('h3'):
         links = tag.findNextSibling('dl').findAll("a")
         for link in links:
             url = link["href"]
-            timestamp_added = float(link['add_date'])/1e6
+            timestamp_added = float(link['add_date']) / 1e6
             if url in urls:
-                urls[url]['tags'].append(tag.text) 
+                urls[url]['tags'].append(tag.text)
             else:
                 urls[url] = {
                     'description': link.text,
@@ -39,6 +39,7 @@ def process(fname):
                 }
 
     call_system(urls)
+
 
 def call_system(urls):
     """Given a dictionary of url data, store it"""
