@@ -75,13 +75,14 @@
 
 .calendar {
     border: 2px solid #333;
+    -moz-border-radius: 5px;
     border-radius: 5px;
     margin: 0px .4em;
     width: 4em;
 }
 
 .calendar h2 {
-    background-color: #red;
+    background-color: red;
     color: #FFF;
     font-size: .9em;
     font-weight: bold;
@@ -110,6 +111,7 @@
 a.tag {
     padding: .2em;
     border: 1px solid #666666;
+    -moz-border-radius: 5px;
     border-radius: 5px;
     background: #CCCCCC;
     color: #333333;
