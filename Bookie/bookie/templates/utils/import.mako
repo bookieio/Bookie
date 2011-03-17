@@ -2,7 +2,7 @@
 <%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
 <%def name="title()">Import Bookmarks</%def>
 
-<h1>Import Delicious export file</h1>
+<h1>Import Bookmarks</h1>
 
 <div class="yui3-g">
     <div class="yui3-u-3-4">
@@ -42,11 +42,17 @@
     </div>
     <div class="yui3-u-1-4">
         <div class="note">
-            <p>You can submit an html import file stored from Delicious. To get this file
-            you can click on <em>Settings</em> and then click on the <em>Export / Backup
-            Bookmarks</em> link under the <em>Bookmarks</em> heading</p>
+            <p>Use the <em>Import Bookmarks</em> tool to import your bookmarks from Delicious 
+            or Google Bookmarks.</p>
+            <p>You will need an html export file from either of these services.</p>
+            <h2>Delicious</h2>
+            <p>To get an html file from Delicious, click on <em>Settings</em> and then click on 
+            the <em>Export / Backup Bookmarks</em> link under the <em>Bookmarks</em> heading.</p>
+            <h2>Google Bookmarks</h2>
+            <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>
+            under the <em>Tools</em> heading on the sidebar.</p>
 
-            <p>Note that this might take a bit of time on large sets of bookmarks</p>
+            <p>Note that the import process might take a bit of time on large sets of bookmarks.</p>
         </div>
     </div>
 </div>
