@@ -280,3 +280,28 @@ class DelImportTest(unittest.TestCase):
         assert True
 
 
+class GBookmarkImportTest(unittest.TestCase):
+    """Test that we can successfully import data from delicious"""
+
+    def setUp(self):
+        from pyramid.paster import get_app
+        app = get_app('test.ini', 'main')
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+        testing.setUp()
+
+    def tearDown(self):
+        """We need to empty the bmarks table on each run"""
+        testing.tearDown()
+
+        session = DBSession()
+        Bmark.query.delete()
+        Tag.query.delete()
+        session.execute(bmarks_tags.delete())
+        session.flush()
+        transaction.commit()
+
+    def test_import(self):
+        """Grab our test data file, import it, and check it out"""
+        # need to start work on adding this, but passing for build now
+        assert True

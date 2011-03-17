@@ -2,7 +2,7 @@
 import logging
 from pyramid.httpexceptions import HTTPFound
 
-from bookie.lib.importer import DelImporter
+from bookie.lib.importer import DelImporter, GBookmarkImporter
 from bookie.lib.access import Authorize
 
 LOG = logging.getLogger(__name__)
@@ -23,7 +23,11 @@ def import_bmarks(request):
             if files is not None:
                 # upload is there for use
                 # process the file using the import script
-                importer = DelImporter(files.file)
+                if GBookmarkImporter.can_handle(files.file):
+                    importer = GBookmarkImporter(files.file)
+                elif DelImporter.can_handle(files.file):
+                    importer = DelImporter(files.file)
+
                 importer.process()
 
                 # @todo get a count of the imported bookmarks and setup a flash
