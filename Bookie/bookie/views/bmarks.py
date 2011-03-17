@@ -46,6 +46,12 @@ def recent(request):
              'allow_edit': asbool(request.registry.settings.get('allow_edit', 0)),
            }
 
+def confirmdelete(request):
+    rdict = request.matchdict
+    bid = int(rdict.get('bid'))
+    print "And the answer is " + str(bid)
+    return { 'bid': bid }
+
 def delete(request):
     """Remove the bookmark in question"""
     rdict = request.matchdict
