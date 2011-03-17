@@ -20,6 +20,8 @@ class Importer(object):
         if GBookmarkImporter.can_handle(args[0]):
             return super(Importer, cls).__new__(GBookmarkImporter)
 
+        return super(Importer, cls).__new__(Importer)
+
     @staticmethod
     def can_handle(file_io):
         """This is meant to be implemented in subclasses"""
@@ -45,16 +47,16 @@ class DelImporter(Importer):
         uses <h3> tags and Delicious does not in order to differentiate these
         two formats.
         """
+        delicious_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
+
         soup = BeautifulSoup(file_io)
         can_handle = False
-        delicious_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
-        if soup.contents[0] == delicious_doctype and not soup.find('h3'):
+        if soup.contents and soup.contents[0] == delicious_doctype and not soup.find('h3'):
             can_handle = True
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
         return can_handle
-
 
     def process(self):
         """Given a file, process it"""
@@ -101,7 +103,7 @@ class GBookmarkImporter(Importer):
         soup = BeautifulSoup(file_io)
         can_handle = False
         gbookmark_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
-        if soup.contents[0] == gbookmark_doctype and soup.find('h3'):
+        if soup.contents and soup.contents[0] == gbookmark_doctype and soup.find('h3'):
             can_handle = True
 
         # make sure we reset the file_io object so that we can use it again

@@ -3,8 +3,7 @@ import os
 import StringIO
 import transaction
 import unittest
-from nose.tools import ok_, eq_
-from pyramid import testing
+from nose.tools import ok_, raises
 
 from bookie.models import DBSession
 from bookie.models import Bmark
@@ -17,6 +16,18 @@ from bookie.lib.importer import GBookmarkImporter
 
 class ImporterBaseTest(unittest.TestCase):
     """Verify the base import class is working"""
+
+    @raises(NotImplementedError)
+    def test_doesnt_implement_can_handle(self):
+        """Verify we get the exception expected when running can_handle"""
+        Importer.can_handle("")
+
+    @raises(NotImplementedError)
+    def test_doesnt_implement_process(self):
+        """Verify we get the exception expected when running process"""
+        some_io = StringIO.StringIO()
+        imp = Importer(some_io)
+        imp.process()
 
     def test_factory_gives_delicious(self):
         """"Verify that the base importer will give DelImporter"""
