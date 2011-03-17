@@ -89,5 +89,5 @@ class BookieViewsTest(unittest.TestCase):
         res = self.testapp.get('/recent')
 
         # the delete link should not render if allow_edits is false
-        ok_(delete_str in res.body,
+        ok_(delete_str not in res.body,
             msg="The delete link should NOT be visible:" + res.body)
