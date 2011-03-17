@@ -13,6 +13,7 @@ from bookie.models import BmarkMgr
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
+
 def _is_authed(request):
     """Verify that the request is auth'd to alter
 
@@ -39,18 +40,23 @@ def recent(request):
                            with_tags=True,
                            page=page)
 
-    return { 'bmarks': recent_list,
+    return {
+             'bmarks': recent_list,
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
              'allow_edit': asbool(request.registry.settings.get('allow_edit', 0)),
            }
 
+
 def confirmdelete(request):
     """Confirm deletion of bookmark"""
     rdict = request.matchdict
     bid = int(rdict.get('bid'))
-    return { 'bid': bid }
+    return {
+            'bid': bid,
+           }
+
 
 def delete(request):
     """Remove the bookmark in question"""
