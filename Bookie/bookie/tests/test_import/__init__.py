@@ -172,17 +172,21 @@ class ImportGoogleTest(unittest.TestCase):
 
         # now let's do some db sanity checks
         res = Bmark.query.all()
-        eq_(len(res), 7,
-            "We should have 7 results, we got: " + str(len(res)))
+        eq_(len(res), 10,
+            "We should have 10 results, we got: " + str(len(res)))
 
         # verify we can find a bookmark by url and check tags, etc
-        check_url = 'http://www.linuxjournal.com/video/remote-graphical-application-deployment-nx'
+        check_url = 'http://www.alistapart.com'
         found = Bmark.query.filter(Bmark.url == check_url).one()
 
         ok_(found.url == check_url, "The url should match our search")
-        eq_(len(found.tags), 2,
-            "We should have gotten 1 tags, got: " + str(len(found.tags)))
+        eq_(len(found.tags), 4,
+            "We should have gotten 4 tags, got: " + str(len(found.tags)))
 
         # and check we have a right tag or two
-        ok_('linux' in found.tag_string(),
-                'typesetting should be a valid tag in the bookmark')
+        ok_('html' in found.tag_string(),
+                'html should be a valid tag in the bookmark')
+
+        # and check the long description field
+        ok_("make websites" in found.extended,
+            "'make websites' should be in the extended description")
