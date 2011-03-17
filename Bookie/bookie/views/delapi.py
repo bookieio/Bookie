@@ -7,10 +7,11 @@ from pyramid.httpexceptions import HTTPNotFound
 
 def posts_add(request):
     params = request.GET
-    request.response_content_type = 'text/xml'
 
     with Authorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
+
+        request.response_content_type = 'text/xml'
         if 'url' in params and params['url']:
             # check if we already have this
             try:

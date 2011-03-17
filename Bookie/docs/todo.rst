@@ -7,7 +7,6 @@ Still todo
 - Implement basic search
 - Implement fulltext search
 - webui add
-- webui delete
 - webui edit
 - mobile ui
 - our own json API, forget delicious compatible going forward
@@ -32,3 +31,4 @@ Completed
 - started webui
 - chrome extesion works, but want to figure out how to update icon ui
 - delicious import
+- webui delete

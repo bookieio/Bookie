@@ -1,7 +1,7 @@
 """Controllers related to viewing lists of bookmarks"""
 import logging
 
-from pyramid.httpexceptions import HTTPUnauthorized
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.settings import asbool
@@ -57,7 +57,7 @@ def delete(request):
     rdict = request.matchdict
 
     if not _is_authed(request):
-        return HTTPUnauthorized("Auth to edit is not enabled")
+        raise HTTPForbidden("Auth to edit is not enabled")
 
     # make sure we have an id value
     bid = int(rdict.get('bid', 0))

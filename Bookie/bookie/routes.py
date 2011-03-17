@@ -1,7 +1,11 @@
 """Create routes here and gets returned into __init__ main()"""
 from pyramid.exceptions import NotFound
+from pyramid.exceptions import Forbidden
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPForbidden
 from bookie.views.exceptions import resource_not_found
+from bookie.views.exceptions import resource_forbidden
+
 
 def build_routes(config):
     """Add any routes to the config"""
@@ -14,6 +18,13 @@ def build_routes(config):
                     context=HTTPNotFound,
                     renderer="exceptions/404.mako")
 
+    config.add_view(resource_forbidden,
+                    context=Forbidden,
+                    renderer="exceptions/403.mako")
+
+    config.add_view(resource_forbidden,
+                    context=HTTPForbidden,
+                    renderer="exceptions/403.mako")
 
     config.add_route("home", "", view="bookie.views.my_view",
                      view_renderer="/testmako.mako")

@@ -1,7 +1,7 @@
 <%def name="display_bmark_list(bmark_list)">
     <%
         from datetime import datetime
-        current_date = datetime.now().strftime("%m/%d")
+        current_date = datetime(1900, 1, 1).strftime("%m/%d")
         last_date = current_date
     %>
     <div class="yui3-g">
