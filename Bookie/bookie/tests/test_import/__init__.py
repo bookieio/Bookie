@@ -19,6 +19,32 @@ from bookie.lib.importer import GBookmarkImporter
 
 LOG = logging.getLogger(__name__)
 
+
+def _delicious_data_test():
+    """Test that we find the correct set of declicious data after import"""
+    # blatant copy/paste, but I'm ona plane right now so oh well
+    # now let's do some db sanity checks
+    res = Bmark.query.all()
+    eq_(len(res), 19,
+        "We should have 19 results, we got: " + str(len(res)))
+
+    # verify we can find a bookmark by url and check tags, etc
+    check_url = 'http://www.ndftz.com/nickelanddime.png'
+    found = Bmark.query.filter(Bmark.url == check_url).one()
+
+    ok_(found.url == check_url, "The url should match our search")
+    eq_(len(found.tags), 7,
+        "We should have gotten 7 tags, got: " + str(len(found.tags)))
+
+    # and check we have a right tag or two
+    ok_('canonical' in found.tag_string(),
+            'Canonical should be a valid tag in the bookmark')
+
+    # and check the long description field
+    ok_("description" in found.extended,
+        "The extended attrib should have a nice long string in it")
+
+
 class ImporterBaseTest(unittest.TestCase):
     """Verify the base import class is working"""
 
@@ -107,25 +133,7 @@ class ImportDeliciousTest(unittest.TestCase):
         imp.process()
 
         # now let's do some db sanity checks
-        res = Bmark.query.all()
-        eq_(len(res), 19,
-            "We should have 19 results, we got: " + str(len(res)))
-
-        # verify we can find a bookmark by url and check tags, etc
-        check_url = 'http://www.ndftz.com/nickelanddime.png'
-        found = Bmark.query.filter(Bmark.url == check_url).one()
-
-        ok_(found.url == check_url, "The url should match our search")
-        eq_(len(found.tags), 7,
-            "We should have gotten 7 tags, got: " + str(len(found.tags)))
-
-        # and check we have a right tag or two
-        ok_('canonical' in found.tag_string(),
-                'Canonical should be a valid tag in the bookmark')
-
-        # and check the long description field
-        ok_("description" in found.extended,
-            "The extended attrib should have a nice long string in it")
+        _delicious_data_test()
 
 
 class ImportGoogleTest(unittest.TestCase):
@@ -225,30 +233,13 @@ class ImportViews(unittest.TestCase):
                                                'delicious.html',
                                                del_file.read())],
         )
+
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
         session.flush()
-        LOG.error(res)
 
-        # blatant copy/paste, but I'm ona plane right now so oh well
-        # now let's do some db sanity checks
-        res = Bmark.query.all()
-        eq_(len(res), 19,
-            "We should have 19 results, we got: " + str(len(res)))
+        # test all the data we want to test after the import
+        _delicious_data_test()
 
-        # verify we can find a bookmark by url and check tags, etc
-        check_url = 'http://www.ndftz.com/nickelanddime.png'
-        found = Bmark.query.filter(Bmark.url == check_url).one()
 
-        ok_(found.url == check_url, "The url should match our search")
-        eq_(len(found.tags), 7,
-            "We should have gotten 7 tags, got: " + str(len(found.tags)))
-
-        # and check we have a right tag or two
-        ok_('canonical' in found.tag_string(),
-                'Canonical should be a valid tag in the bookmark')
-
-        # and check the long description field
-        ok_("description" in found.extended,
-            "The extended attrib should have a nice long string in it")
