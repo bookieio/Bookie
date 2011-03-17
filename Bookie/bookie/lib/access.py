@@ -1,5 +1,5 @@
 """Handle auth and authz activities in bookie"""
-from pyramid.httpexceptions import HTTPUnauthorized
+from pyramid.httpexceptions import HTTPForbidden
 
 
 class Authorize(object):
@@ -21,7 +21,7 @@ class Authorize(object):
     def __enter__(self):
         """Verify api key set in constructor"""
         if self.api_key != self.check_key:
-            raise HTTPUnauthorized('Invalid Authorization')
+            raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
         """No cleanup work to do after usage"""

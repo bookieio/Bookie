@@ -17,7 +17,7 @@ def import_bmarks(request):
         with Authorize(request.registry.settings.get('api_key', ''),
                        post.get('api_key', None)):
 
-            # if auth fails, it'll raise an HTTPUnauthorized exception
+            # if auth fails, it'll raise an HTTPForbidden exception
             files = post.get('import_file', None)
 
             if files is not None:
