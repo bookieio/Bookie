@@ -4,12 +4,17 @@ User Docs
 
 Importing
 ----------
-Currently importing only supports the delicious html export format. You can do
-that by going to `Settings` and clicking the `Import / Upload Bookmarks` link
+Bookie currently supports the Delicious export and the Google Bookmarks export
+formats.
+
+
+- Delicious: You can export from Delicious by going to `Settings` and clicking the `Import / Upload Bookmarks` link
 under the `Bookmarks` section.
 
-The importer might take a bit on large sets of bookmarks. Let me know if you
-run into any issues.
+- Google Bookmarks: TBD
+
+The importer might take a bit on large sets of bookmarks. Let us know if you
+run into any issues so we can improve our import process.
 
 Settings to think about
 ------------------------
