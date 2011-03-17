@@ -47,9 +47,9 @@ def recent(request):
            }
 
 def confirmdelete(request):
+    """Confirm deletion of bookmark"""
     rdict = request.matchdict
     bid = int(rdict.get('bid'))
-    print "And the answer is " + str(bid)
     return { 'bid': bid }
 
 def delete(request):
