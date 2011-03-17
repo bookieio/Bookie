@@ -120,6 +120,10 @@ class ImportDeliciousTest(unittest.TestCase):
         ok_('canonical' in found.tag_string(),
                 'Canonical should be a valid tag in the bookmark')
 
+        # and check the long description field
+        ok_("description" in found.extended,
+            "The extended attrib should have a nice long string in it")
+
 
 class ImportGoogleTest(unittest.TestCase):
     """Test the Bookie importer for google bookmarks"""
