@@ -247,4 +247,27 @@ class ImportViews(unittest.TestCase):
         # test all the data we want to test after the import
         _delicious_data_test()
 
+    def test_google_import(self):
+        """Test that we can upload our google file"""
+        session = DBSession()
+        loc = os.path.dirname(__file__)
+        del_file = open(os.path.join(loc, 'googlebookmarks.html'))
 
+        post = {
+            'api_key': 'testapi',
+        }
+
+        res = self.testapp.post('/utils/import',
+                                params=post,
+                                upload_files=[('import_file',
+                                               'googlebookmarks.html',
+                                               del_file.read())],
+        )
+
+        eq_(res.status, "302 Found",
+            msg='Import status is 302 redirect by home, ' + res.status)
+
+        session.flush()
+
+        # test all the data we want to test after the import
+        _google_data_test()
