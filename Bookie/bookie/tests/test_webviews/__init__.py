@@ -1,8 +1,9 @@
 """Test that we're meeting delicious API specifications"""
 from datetime import datetime, timedelta
+import logging
 import transaction
 import unittest
-from mock import Mock
+from mock import Mock, patch
 from nose.tools import ok_, eq_
 from pyramid import testing
 
@@ -11,6 +12,7 @@ from bookie.models import Bmark
 from bookie.models import Tag
 from bookie.models import bmarks_tags
 
+LOG = logging.getLogger(__name__)
 
 class BookieViewsTest(unittest.TestCase):
     """Test the normal web views user's user"""
@@ -76,16 +78,14 @@ class BookieViewsTest(unittest.TestCase):
         ok_(body_str in res.body,
             msg="Page 1 should contain body_str: " + res.body)
 
-    def test_allow_edit_requests(self):
+    @patch('bookie.views.bmarks._is_authed')
+    def test_allow_edit_requests(self, mocked_auth):
         """Verify that if allow_edit is false we don't get edit/delete links"""
         self._add_bmark()
 
-        from bookie.views import bmarks
-        bmarks._is_authed = Mock
-        bmarks._is_authed.return_value = False
+        mocked_auth.return_value = False
 
         delete_str = "/bmark/confirm/delete"
-
         res = self.testapp.get('/recent')
 
         # the delete link should not render if allow_edits is false

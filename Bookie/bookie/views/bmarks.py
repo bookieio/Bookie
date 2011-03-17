@@ -45,7 +45,7 @@ def recent(request):
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
-             'allow_edit': asbool(request.registry.settings.get('allow_edit', 0)),
+             'allow_edit': _is_authed(request),
            }
 
 
