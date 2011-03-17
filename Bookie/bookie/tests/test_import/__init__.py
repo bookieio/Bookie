@@ -3,7 +3,9 @@ import os
 import StringIO
 import transaction
 import unittest
-from nose.tools import ok_, raises
+from nose.tools import ok_
+from nose.tools import eq_
+from nose.tools import raises
 
 from bookie.models import DBSession
 from bookie.models import Bmark
@@ -94,6 +96,29 @@ class ImportDeliciousTest(unittest.TestCase):
             "DelImporter cannot handle this file")
 
         bad_file.close()
+
+    def test_import_process(self):
+        """Verify importer inserts the correct records"""
+        good_file = self._get_del_file()
+        imp = Importer(good_file)
+        imp.process()
+
+        # now let's do some db sanity checks
+        res = Bmark.query.all()
+        eq_(len(res), 19,
+            "We should have 10 results, we got: " + str(len(res)))
+
+        # verify we can find a bookmark by url and check tags, etc
+        check_url = 'http://www.ndftz.com/nickelanddime.png'
+        found = Bmark.query.filter(Bmark.url == check_url).one()
+
+        ok_(found.url == check_url, "The url should match our search")
+        eq_(len(found.tags), 7,
+            "We should have gotten 7 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        ok_('canonical' in found.tag_string(),
+                'Canonical should be a valid tag in the bookmark')
 
 
 class ImportGoogleTest(unittest.TestCase):
