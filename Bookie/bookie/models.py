@@ -92,7 +92,10 @@ class TagMgr(object):
         Currently it only supports space delimited
 
         """
-        tag_list = tag_str.split(" ")
+        if tag_str == '':
+            return {}
+
+        tag_list = set(tag_str.split(" "))
         tag_objects = {}
 
         for tag in TagMgr.find(tags=tag_list):
