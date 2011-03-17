@@ -16,10 +16,10 @@ class DelImporter(object):
         """Check if this file is a google bookmarks format file
 
         In order to check the file we have to read it and check it's content
-        type. 
-        
+        type.
+
         Google Bookmarks and Delicious both have the same content type, but
-        they use different formats. We use the fact that Google Bookmarks 
+        they use different formats. We use the fact that Google Bookmarks
         uses <h3> tags and Delicious does not in order to differentiate these
         two formats.
         """
@@ -76,7 +76,7 @@ class GBookmarkImporter(object):
         type
 
         Google Bookmarks and Delicious both have the same content type, but
-        they use different formats. We use the fact that Google Bookmarks 
+        they use different formats. We use the fact that Google Bookmarks
         uses <h3> tags and Delicious does not in order to differentiate these
         two formats.
         """
@@ -102,15 +102,15 @@ class GBookmarkImporter(object):
 
         urls = dict() # url:url_metadata
 
-        # we don't want to just import all the available urls, since each url 
+        # we don't want to just import all the available urls, since each url
         # occurs once per tag. loop through and aggregate the tags for each url
-        for tag in soup.findAll('h3'): 
+        for tag in soup.findAll('h3'):
             links = tag.findNextSibling('dl').findAll("a")
             for link in links:
                 url = link["href"]
                 timestamp_added = float(link['add_date'])/1e6
                 if url in urls:
-                    urls[url]['tags'].append(tag.text) 
+                    urls[url]['tags'].append(tag.text)
                 else:
                     urls[url] = {
                         'description': link.text,
