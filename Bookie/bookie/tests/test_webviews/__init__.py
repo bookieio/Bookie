@@ -40,19 +40,19 @@ class BookieViewsTest(unittest.TestCase):
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
-        # session = DBSession()
-        # Bmark.query.delete()
-        # Tag.query.delete()
-        # session.execute(bmarks_tags.delete())
-        # session.flush()
-        # transaction.commit()
+        session = DBSession()
+        Bmark.query.delete()
+        Tag.query.delete()
+        session.execute(bmarks_tags.delete())
+        session.flush()
+        transaction.commit()
 
     def test_bookmark_recent(self):
         """Verify we can call the /recent url """
         self._add_bmark()
 
         body_str = "Recent Bookmarks"
-        delete_str = "/bmark/delete"
+        delete_str = "bmark/confirm/delete"
 
         res = self.testapp.get('/recent')
 
@@ -84,10 +84,10 @@ class BookieViewsTest(unittest.TestCase):
         bmarks._is_authed = Mock
         bmarks._is_authed.return_value = False
 
-        delete_str = "/bmark/delete"
+        delete_str = "bmark/confirm/delete"
 
         res = self.testapp.get('/recent')
 
         # the delete link should not render if allow_edits is false
-        ok_(delete_str in res.body,
+        ok_(delete_str not in res.body,
             msg="The delete link should NOT be visible:" + res.body)
