@@ -49,7 +49,7 @@ def build_routes(config):
                      view_renderer="/bmark/recent.mako",)
     config.add_route("bmark_delete", "/bmark/delete/{bid}",
                      view="bookie.views.bmarks.delete",)
-    config.add_route("bmark_confirmdelete", "/bmark/confim/delete/{bid}",
+    config.add_route("bmark_confirmdelete", "/bmark/confirm/delete/{bid}",
                      view="bookie.views.bmarks.confirmdelete",
                      view_renderer="/bmark/confirmdelete.mako",)
 
