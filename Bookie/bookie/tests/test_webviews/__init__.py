@@ -22,7 +22,7 @@ class BookieViewsTest(unittest.TestCase):
         import logging
         log = logging.getLogger(__name__)
         log.error('called to add bmark')
-        bmark_us = Bmark('http://bmark/us',
+        bmark_us = Bmark('http://bmark.us',
                          desc="Bookie Website",
                          ext= "Bookie Documentation Home",
                          tags = "bookmarks")
@@ -90,3 +90,16 @@ class BookieViewsTest(unittest.TestCase):
         # the delete link should not render if allow_edits is false
         ok_(delete_str not in res.body,
             msg="The delete link should NOT be visible:" + res.body)
+
+    def test_delete_auth_failed(self):
+        """Veryify that without the right API key we get forbidden"""
+        post = {
+            'api_key': 'wrong_key'
+        }
+
+        res = self.testapp.post('/utils/import', params=post)
+
+        LOG.error(res)
+
+        eq_(res.status, "403 Forbidden",
+            msg='Import status is 403, ' + res.status)

@@ -1,4 +1,5 @@
 """Test that we're meeting delicious API specifications"""
+import logging
 import os
 import StringIO
 import transaction
@@ -6,6 +7,7 @@ import unittest
 from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import raises
+from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark
@@ -15,6 +17,7 @@ from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
 from bookie.lib.importer import GBookmarkImporter
 
+LOG = logging.getLogger(__name__)
 
 class ImporterBaseTest(unittest.TestCase):
     """Verify the base import class is working"""
@@ -157,12 +160,6 @@ class ImportGoogleTest(unittest.TestCase):
         """And that it returns false when it should"""
         bad_file = StringIO.StringIO()
         bad_file.write('failing tests please')
-        bad_file.seek(0)
-
-        ok_(not GBookmarkImporter.can_handle(bad_file),
-            "GBookmarkImporter cannot handle this file")
-
-        bad_file.close()
 
     def test_import_process(self):
         """Verify importer inserts the correct google bookmarks"""
@@ -190,3 +187,68 @@ class ImportGoogleTest(unittest.TestCase):
         # and check the long description field
         ok_("make websites" in found.extended,
             "'make websites' should be in the extended description")
+
+
+class ImportViews(unittest.TestCase):
+    """Test the web import"""
+
+    def setUp(self):
+        from pyramid.paster import get_app
+        app = get_app('test.ini', 'main')
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+        testing.setUp()
+
+    def tearDown(self):
+        """We need to empty the bmarks table on each run"""
+        testing.tearDown()
+        session = DBSession()
+        Bmark.query.delete()
+        Tag.query.delete()
+        session.execute(bmarks_tags.delete())
+        session.flush()
+        transaction.commit()
+
+    def test_delicious_import(self):
+        """Test that we can upload/import our test file"""
+        session = DBSession()
+        loc = os.path.dirname(__file__)
+        del_file = open(os.path.join(loc, 'delicious.html'))
+
+        post = {
+            'api_key': 'testapi',
+        }
+
+        res = self.testapp.post('/utils/import',
+                                params=post,
+                                upload_files=[('import_file',
+                                               'delicious.html',
+                                               del_file.read())],
+        )
+        eq_(res.status, "302 Found",
+            msg='Import status is 302 redirect by home, ' + res.status)
+
+        session.flush()
+        LOG.error(res)
+
+        # blatant copy/paste, but I'm ona plane right now so oh well
+        # now let's do some db sanity checks
+        res = Bmark.query.all()
+        eq_(len(res), 19,
+            "We should have 19 results, we got: " + str(len(res)))
+
+        # verify we can find a bookmark by url and check tags, etc
+        check_url = 'http://www.ndftz.com/nickelanddime.png'
+        found = Bmark.query.filter(Bmark.url == check_url).one()
+
+        ok_(found.url == check_url, "The url should match our search")
+        eq_(len(found.tags), 7,
+            "We should have gotten 7 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        ok_('canonical' in found.tag_string(),
+                'Canonical should be a valid tag in the bookmark')
+
+        # and check the long description field
+        ok_("description" in found.extended,
+            "The extended attrib should have a nice long string in it")

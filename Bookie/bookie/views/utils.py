@@ -11,7 +11,8 @@ def import_bmarks(request):
     """Allow users to upload a delicious bookmark export"""
     data = {}
     post = request.POST
-
+    LOG.error(request.registry.settings.get('api_key', ''))
+    LOG.error(post.get('api_key'))
     if post:
         # we have some posted values
         with Authorize(request.registry.settings.get('api_key', ''),
