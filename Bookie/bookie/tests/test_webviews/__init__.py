@@ -52,7 +52,7 @@ class BookieViewsTest(unittest.TestCase):
         self._add_bmark()
 
         body_str = "Recent Bookmarks"
-        delete_str = "/bmark/delete"
+        delete_str = "/bmark/confirm/delete"
 
         res = self.testapp.get('/recent')
 
@@ -84,7 +84,7 @@ class BookieViewsTest(unittest.TestCase):
         bmarks._is_authed = Mock
         bmarks._is_authed.return_value = False
 
-        delete_str = "/bmark/delete"
+        delete_str = "/bmark/confirm/delete"
 
         res = self.testapp.get('/recent')
 
