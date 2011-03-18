@@ -128,13 +128,27 @@ class GBookmarkImporter(Importer):
             links = tag.findNextSibling('dl').findAll("a")
             for link in links:
                 url = link["href"]
-                timestamp_added = float(link['add_date'])/1e6
+                tag_text = tag.text.replace(" ","-")
                 if url in urls:
-                    urls[url]['tags'].append(tag.text)
+                    urls[url]['tags'].append(tag_text)
                 else:
+                    tags = [tag_text] if tag_text != 'Unlabeled' else []
+
+                    # get extended description
+                    has_extended = (link.parent.nextSibling and
+                            link.parent.nextSibling.name == 'dd')
+                    if has_extended:
+                        extended = link.parent.nextSibling.text
+                    else:
+                        extended = ""
+
+                    # date the site was bookmarked
+                    timestamp_added = float(link['add_date'])/1e6
+
                     urls[url] = {
                         'description': link.text,
-                        'tags': [tag.text] if tag.text != 'Unlabeled' else [],
+                        'tags': tags,
+                        'extended': extended,
                         'date_added': datetime.fromtimestamp(timestamp_added),
                     }
 
@@ -142,7 +156,8 @@ class GBookmarkImporter(Importer):
         for url, metadata in urls.items():
             mark = Bmark(url,
                  desc=metadata['description'],
-                 tags=" ".join(metadata['tags'])
+                 tags=" ".join(metadata['tags']),
+                 ext=metadata['extended']
             )
 
             mark.stored = metadata['date_added']
