@@ -4,7 +4,7 @@ from migrate import *
 
 def for_sqlite(engine):
     """Add the table structure for sqlite db"""
-    sql = """CREATE VIRTUAL TABLE fulltext USING fts3(bid, description, extended, tags);"""
+    sql = """CREATE VIRTUAL TABLE fulltext USING fts3(bid, description, extended, tag_string);"""
     engine.execute(sql)
 
 

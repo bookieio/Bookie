@@ -57,9 +57,10 @@ def search(request):
     phrase = rdict.get('phrase', '')
 
     res = SqliteFulltext.search(phrase)
+    res_list = (mark.bmark for mark in res)
 
     return {
-        'search_results': res,
+        'search_results': res_list,
         'result_count': len(res),
         'phrase': phrase,
     }

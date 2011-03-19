@@ -4,16 +4,11 @@ This is going to be dependant on the db model found so we'll setup a factory
 and API as we did in the importer
 
 """
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import Integer
-from sqlalchemy import Unicode
-from sqlalchemy import UnicodeText
-from sqlalchemy import ForeignKey
-from sqlalchemy import Table
+from sqlalchemy.orm import contains_eager
 
-from bookie.models import Base
-from bookie.models import Base, DBSession
+from bookie.models import DBSession
+from bookie.models import SqliteModel
+
 
 class Fulltext(object):
     """Factory/API for the fulltext searches"""
@@ -53,27 +48,8 @@ class SqliteFulltext(Fulltext):
     @staticmethod
     def search(phrase):
         """Perform the search on the index"""
-        res = SqliteModel.query.filter(SqliteModel.description.match(phrase))
+        res = SqliteModel.query.\
+                    filter(SqliteModel.description.match(phrase)).\
+                    join(SqliteModel.bmark).\
+                    options(contains_eager(SqliteModel.bmark))
         return res.all()
-
-
-class SqliteModel(Base):
-    """An SA model for the fulltext table used in sqlite"""
-    __tablename__ = "fulltext"
-
-    bid = Column(Integer, primary_key=True)
-    description = Column(UnicodeText())
-    extended = Column(UnicodeText())
-    tags = Column(UnicodeText())
-
-    def __init__(self, bid, description, extended, tag_string):
-        """Expecting the properties to come from a Bmark instance
-
-        tag_string is expected to be a concat list of strings from
-        Bmark.tag_string()
-
-        """
-        self.bid = bid
-        self.description = description
-        self.extended = extended
-        self.tags = tag_string

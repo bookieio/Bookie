@@ -1,11 +1,8 @@
-<div>
+<%inherit file="/main_wrap.mako" />
+<%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
+<%def name="title()">Saerch results for: ${phrase}</%def>
 
 <h2>Found ${result_count} results for ${phrase}:</h2>
-<ul>
-% for res in search_results:
-    % if res:
-        <li>${res.bid}: ${res.description}</li>
-    % endif
-% endfor
-</ul>
+<div class="yui3-g data_list">
+    ${display_bmark_list(search_results)}
 </div>

@@ -263,3 +263,30 @@ class Bmark(Base):
     def update_tags(self, tag_string):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
+
+
+class SqliteModel(Base):
+    """An SA model for the fulltext table used in sqlite"""
+    __tablename__ = "fulltext"
+
+    bid = Column(Integer,
+                    ForeignKey('bmarks.bid'),
+                    primary_key=True,)
+    description = Column(UnicodeText())
+    extended = Column(UnicodeText())
+    tags = Column(UnicodeText())
+    bmark = relation(Bmark,
+                     backref='fulltext',
+                     uselist=False,)
+
+    def __init__(self, bid, description, extended, tag_string):
+        """Expecting the properties to come from a Bmark instance
+
+        tag_string is expected to be a concat list of strings from
+        Bmark.tag_string()
+
+        """
+        self.bid = bid
+        self.description = description
+        self.extended = extended
+        self.tag_string = tag_string
