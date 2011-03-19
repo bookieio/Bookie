@@ -14,11 +14,18 @@
 
     <body>
         <div id="navigation" class="yui3-g">
-            <div class="yui3-u-3-4"><a href="/recent" class="logo">Logo/Title</a></div>
-            <div class="yui3-u-1-4 navigation">
+            <div class="yui3-u-2-3"><a href="/recent" class="logo">Logo/Title</a></div>
+            <div class="yui3-u-1-3 navigation">
                 <span class="item"><a href="/recent" class="button_minimal">Recent</a></span>
                 <span class="item"><a href="/tags" class="button_minimal">Tags</a></span>
                 <span class="item"><a href="/utils/import" class="button_minimal">Import</a></span>
+                <span class="item">
+                    <span class="button_minimal">
+                         <form action="${request.route_url('search')}" method="get"/>
+                             <input type="search" name="search" id="search" placeholder="search.." />
+                         </form>
+                    </span>
+                </span>
             </div>
         </div>
         <div id="body">

@@ -12,6 +12,10 @@
     text-decoration: none;
 }
 
+.navigation form {
+    display: inline;
+}
+
 .logo {
     font-size: 2em;
     text-decoration: none;

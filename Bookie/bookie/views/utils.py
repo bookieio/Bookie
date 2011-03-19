@@ -51,10 +51,10 @@ def import_bmarks(request):
 
 def search(request):
     """Search for the content in the matchdict"""
-    rdict = request.matchdict
+    rdict = request.GET
 
     # check if we have a page count submitted
-    phrase = rdict.get('phrase', '')
+    phrase = rdict.get('search', '')
 
     res = SqliteFulltext.search(phrase)
     res_list = (mark.bmark for mark in res)
