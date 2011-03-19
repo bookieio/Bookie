@@ -274,7 +274,7 @@ class SqliteModel(Base):
                     primary_key=True,)
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
-    tags = Column(UnicodeText())
+    tag_string = Column(UnicodeText())
     bmark = relation(Bmark,
                      backref='fulltext',
                      uselist=False,)
