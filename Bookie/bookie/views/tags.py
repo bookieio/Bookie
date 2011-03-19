@@ -2,6 +2,7 @@
 import logging
 from pyramid.exceptions import NotFound
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.settings import asbool
 
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
@@ -9,6 +10,19 @@ from bookie.models import TagMgr
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
+def _is_authed(request):
+    """Verify that the request is auth'd to alter
+
+    If the .ini setting for ui edits is not true, then no authed
+
+    """
+    allow_edit = asbool(request.registry.settings.get('allow_edit', False))
+
+    LOG.debug(allow_edit)
+    if allow_edit:
+        return True
+    else:
+        return False
 
 def tag_list(request):
     """Display a list of your tags"""
@@ -44,4 +58,5 @@ def bmark_list(request):
              'max_count': RESULTS_MAX,
              'count': len(bmarks),
              'page': page,
+             'allow_edit': _is_authed(request),
            }

@@ -20,6 +20,7 @@ def _is_authed(request):
     If the .ini setting for ui edits is not true, then no authed
 
     """
+    # FIXME: Move into lib/access.py
     allow_edit = asbool(request.registry.settings.get('allow_edit', False))
 
     LOG.debug(allow_edit)
