@@ -48,6 +48,9 @@ class SqliteFulltext(Fulltext):
     @staticmethod
     def search(phrase):
         """Perform the search on the index"""
+        #we need to adjust the phrase to be a set of OR per word
+        phrase = " OR ".join(phrase.split())
+
         res = SqliteModel.query.\
                     filter(SqliteModel.description.match(phrase)).\
                     join(SqliteModel.bmark).\
