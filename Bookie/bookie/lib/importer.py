@@ -32,6 +32,15 @@ class Importer(object):
         """Meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
+    def save_bookmark(self, mark):
+        """Save the bookmark to the db"""
+        session = DBSession()
+        session.add(mark)
+        session.flush()
+
+        # now index it into the fulltext db as well
+        SqliteFulltext.store(mark)
+
 
 class DelImporter(Importer):
     """Process a delicious html file"""
@@ -82,12 +91,8 @@ class DelImporter(Importer):
             add_date = datetime.fromtimestamp(float(link['add_date']))
             mark.stored = add_date
 
-            session = DBSession()
-            session.add(mark)
-            session.flush()
-
             # now index it into the fulltext db as well
-            SqliteFulltext.store(mark)
+            self.save_bookmark(mark)
 
 
 class GBookmarkImporter(Importer):
@@ -167,5 +172,4 @@ class GBookmarkImporter(Importer):
 
             mark.stored = metadata['date_added']
 
-            session = DBSession()
-            session.add(mark)
+            self.save_bookmark(mark)
