@@ -3,6 +3,7 @@ from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from bookie.models import DBSession
 from bookie.models import Bmark
+from bookie.models.fulltext import SqliteFulltext
 
 
 class Importer(object):
@@ -83,6 +84,10 @@ class DelImporter(Importer):
 
             session = DBSession()
             session.add(mark)
+            session.flush()
+
+            # now index it into the fulltext db as well
+            SqliteFulltext.store(mark)
 
 
 class GBookmarkImporter(Importer):
@@ -120,7 +125,7 @@ class GBookmarkImporter(Importer):
         if not soup.contents[0] == "DOCTYPE NETSCAPE-Bookmark-file-1":
             raise Exception("File is not a google bookmarks file")
 
-        urls = dict() # url:url_metadata
+        urls = dict()  # url:url_metadata
 
         # we don't want to just import all the available urls, since each url
         # occurs once per tag. loop through and aggregate the tags for each url
@@ -128,7 +133,7 @@ class GBookmarkImporter(Importer):
             links = tag.findNextSibling('dl').findAll("a")
             for link in links:
                 url = link["href"]
-                tag_text = tag.text.replace(" ","-")
+                tag_text = tag.text.replace(" ", "-")
                 if url in urls:
                     urls[url]['tags'].append(tag_text)
                 else:
@@ -143,7 +148,7 @@ class GBookmarkImporter(Importer):
                         extended = ""
 
                     # date the site was bookmarked
-                    timestamp_added = float(link['add_date'])/1e6
+                    timestamp_added = float(link['add_date']) / 1e6
 
                     urls[url] = {
                         'description': link.text,

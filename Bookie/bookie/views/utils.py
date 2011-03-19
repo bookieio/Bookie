@@ -4,8 +4,10 @@ from pyramid.httpexceptions import HTTPFound
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
+from bookie.models.fulltext import SqliteFulltext
 
 LOG = logging.getLogger(__name__)
+
 
 def import_bmarks(request):
     """Allow users to upload a delicious bookmark export"""
@@ -45,3 +47,20 @@ def import_bmarks(request):
     else:
         # just display the form
         return {}
+
+
+def search(request):
+    """Search for the content in the matchdict"""
+    rdict = request.matchdict
+
+    # check if we have a page count submitted
+    phrase = rdict.get('phrase', '')
+
+    res = SqliteFulltext.search(phrase)
+
+    return {
+        'search_results': res,
+        'result_count': len(res),
+        'phrase': phrase,
+    }
+

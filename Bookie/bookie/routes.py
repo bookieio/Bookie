@@ -68,4 +68,9 @@ def build_routes(config):
     config.add_route("utils_import", "/utils/import",
                      view="bookie.views.utils.import_bmarks",
                      view_renderer="/utils/import.mako",)
+
+    config.add_route("search", "/search/{phrase}",
+                     view="bookie.views.utils.search",
+                     view_renderer="/utils/results.mako",)
+
     return config
