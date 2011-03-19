@@ -10,24 +10,13 @@ from bookie.models import DBSession
 from bookie.models import SqliteModel
 
 
-class Fulltext(object):
-    """Factory/API for the fulltext searches"""
-
-    def __init__(self):
-        """Init the object instance"""
-        pass
-
-    def __new__(self, cls, *args, **kwargs):
-        """Determine the right type of fulltext to return"""
-        # if DelImporter.can_handle(args[0]):
-        return super(SqliteFulltext, cls).__new__(SqliteFulltext)
-
-    def search(self, phrase):
-        """Perform the search on the fulltext indexes"""
-        raise NotImplementedError
+def get_fulltext_handler(engine):
+    """Based on the engine, figure out the type of fulltext interface"""
+    if 'sqlite' in engine:
+        return SqliteFulltext()
 
 
-class SqliteFulltext(Fulltext):
+class SqliteFulltext(object):
     """Extend the fulltext api object to implement searches for sqlite db
 
     The sqlite db uses the table fulltext to perform searches. We need to
@@ -37,16 +26,14 @@ class SqliteFulltext(Fulltext):
 
     """
 
-    @staticmethod
-    def store(bmark):
+    def store(self, bmark):
         """Store the bmark instance into the fulltext db"""
         DBSession.add(SqliteModel(bmark.bid,
                                   bmark.description,
                                   bmark.extended,
                                   bmark.tag_string()))
 
-    @staticmethod
-    def search(phrase):
+    def search(self, phrase):
         """Perform the search on the index"""
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
@@ -56,5 +43,7 @@ class SqliteFulltext(Fulltext):
                     join(SqliteModel.bmark).\
                     options(contains_eager(SqliteModel.bmark)).\
                     order_by('bmarks.stored')
+                    # outerjoin('bmarks.tags').\
+                    # options(contains_eager('bmarks.tags')).\
 
         return res.all()

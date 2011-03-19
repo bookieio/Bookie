@@ -4,7 +4,9 @@ from pyramid.httpexceptions import HTTPFound
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
+from bookie.models.fulltext import get_fulltext_handler
 from bookie.models.fulltext import SqliteFulltext
+from bookie.models import DBSession, Base
 
 LOG = logging.getLogger(__name__)
 
@@ -56,7 +58,10 @@ def search(request):
     # check if we have a page count submitted
     phrase = rdict.get('search', '')
 
-    res = SqliteFulltext.search(phrase)
+    conn_str = request.registry.settings.get('sqlalchemy.url', False)
+    searcher = get_fulltext_handler(conn_str)
+
+    res = searcher.search(phrase)
     res_list = (mark.bmark for mark in res)
 
     return {
@@ -64,4 +69,3 @@ def search(request):
         'result_count': len(res),
         'phrase': phrase,
     }
-

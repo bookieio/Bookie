@@ -13,7 +13,7 @@
 }
 
 .navigation form {
-    display: inline;
+    display: inline-block;
 }
 
 .logo {
