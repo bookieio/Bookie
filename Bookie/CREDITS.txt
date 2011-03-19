@@ -1,3 +1,5 @@
 Thanks to these people that have contributed code/assistance to bookie
 
+- Will Fuqua
 - Greg Grossmeier
+- Craig Maloney
