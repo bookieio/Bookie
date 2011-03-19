@@ -42,7 +42,7 @@
                     <div class="yui3-u-1-8">
                         % if allow_edit:
                             <span><a href="#">edit</a></span>
-                            <span><a href="${request.route_url('bmark_confirmdelete', bid=bmark.bid)}">delete</a></span>
+                            <span><a href="${request.route_url('bmark_confirm_delete', bid=bmark.bid)}">delete</a></span>
                         % endif
                     </div>
 

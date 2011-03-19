@@ -47,11 +47,11 @@ def build_routes(config):
     config.add_route("bmark_recent_page", "/recent/{page}",
                      view="bookie.views.bmarks.recent",
                      view_renderer="/bmark/recent.mako",)
-    config.add_route("bmark_delete", "/bmark/delete/{bid}",
+    config.add_route("bmark_delete", "/bmark/delete",
                      view="bookie.views.bmarks.delete",)
-    config.add_route("bmark_confirmdelete", "/bmark/confirm/delete/{bid}",
-                     view="bookie.views.bmarks.confirmdelete",
-                     view_renderer="/bmark/confirmdelete.mako",)
+    config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}",
+                     view="bookie.views.bmarks.confirm_delete",
+                     view_renderer="/bmark/confirm_delete.mako",)
 
 
     # tag related routes

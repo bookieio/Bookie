@@ -49,18 +49,25 @@ def recent(request):
            }
 
 
-def confirmdelete(request):
+def confirm_delete(request):
     """Confirm deletion of bookmark"""
     rdict = request.matchdict
-    bid = int(rdict.get('bid'))
+    bid = int(rdict.get('bid', 0))
+    if bid:
+        found = Bmark.query.get(bid)
+
+    if not found:
+        return HTTPNotFound()
+
     return {
             'bid': bid,
+            'bmark_description': found.description
            }
 
 
 def delete(request):
     """Remove the bookmark in question"""
-    rdict = request.matchdict
+    rdict = request.POST
 
     if not _is_authed(request):
         raise HTTPForbidden("Auth to edit is not enabled")
@@ -73,9 +80,6 @@ def delete(request):
 
         if found:
             DBSession.delete(found)
-
             return HTTPFound(location=request.route_url('bmark_recent'))
-        else:
-            return HTTPNotFound()
-    else:
-        return HTTPNotFound()
+
+    return HTTPNotFound()
