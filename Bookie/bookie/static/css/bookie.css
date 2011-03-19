@@ -74,7 +74,6 @@
 }
 
 .calendar {
-    border: 2px solid #333;
     -moz-border-radius: 5px;
     border-radius: 5px;
     margin: 0px .4em;
@@ -82,14 +81,24 @@
 }
 
 .calendar h2 {
-    background-color: red;
+    background-color:#F00;
+    background-image:-webkit-gradient( radial, 50% 50%, 0, 50% 50%, 40, from(#f44), to(#f00));
+    background-image:-moz-radial-gradient(circle, #f44, #f00);
+    background-image:radial-gradient(circle, #f44, #f00);
     color: #FFF;
     font-size: .9em;
     font-weight: bold;
     text-align: left;
     padding: .1em .2em;
-    border-bottom: 1px solid #999999;
+    border: 1px solid #333;
+    border-bottom-color:#999;
     margin: 0px;
+    -webkit-border-top-right-radius: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
 }
 
 .calendar div {
@@ -98,6 +107,14 @@
     font-size: 1.3em;
     text-align: center;
     padding: .1em .2em;
+    border: 1px solid #333;
+    border-top:none;
+    -webkit-border-bottom-right-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomright: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 
 
@@ -109,7 +126,7 @@
 }
 
 a.tag {
-    padding: .2em;
+    padding: .2em .4em;
     border: 1px solid #666666;
     -moz-border-radius: 5px;
     border-radius: 5px;
