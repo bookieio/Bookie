@@ -51,5 +51,7 @@ class SqliteFulltext(Fulltext):
         res = SqliteModel.query.\
                     filter(SqliteModel.description.match(phrase)).\
                     join(SqliteModel.bmark).\
-                    options(contains_eager(SqliteModel.bmark))
+                    options(contains_eager(SqliteModel.bmark)).\
+                    order_by('bmarks.stored')
+
         return res.all()
