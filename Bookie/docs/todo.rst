@@ -10,8 +10,11 @@ Still todo
 - webui edit
 - mobile ui
 - our own json API, forget delicious compatible going forward
-- webui for upload->import delicious file
 - ui for db migrations, setup, some sort of /install /upgrade urls or something
+- fabfile, make a user one that defines the settings
+- add deployment examples to docs
+- figure out license issues, chat with Greg
+- 
 
 
 Long term todo
@@ -29,6 +32,7 @@ Subprojects
 Completed
 ----------
 - started webui
-- chrome extesion works, but want to figure out how to update icon ui
+- chrome extension works, but want to figure out how to update icon ui
 - delicious import
 - webui delete
+- webui for upload->import delicious file
