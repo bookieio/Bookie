@@ -39,7 +39,8 @@ class Importer(object):
         session.flush()
 
         # now index it into the fulltext db as well
-        SqliteFulltext.store(mark)
+        searcher = SqliteFulltext()
+        searcher.store(mark)
 
 
 class DelImporter(Importer):
