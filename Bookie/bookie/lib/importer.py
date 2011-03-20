@@ -28,19 +28,24 @@ class Importer(object):
         """This is meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
-    def process(self):
+    def process(self, fulltext=None):
         """Meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
-    def save_bookmark(self, mark):
-        """Save the bookmark to the db"""
+    def save_bookmark(self, mark, fulltext=None):
+        """Save the bookmark to the db
+
+        :param mark: Instance of Bmark that we're storing to db
+        :param fulltext: Fulltext handler instance used to store that info
+
+        """
         session = DBSession()
         session.add(mark)
         session.flush()
 
         # now index it into the fulltext db as well
-        searcher = SqliteFulltext()
-        searcher.store(mark)
+        if fulltext:
+            fulltext.store(mark)
 
 
 class DelImporter(Importer):
@@ -69,7 +74,7 @@ class DelImporter(Importer):
         file_io.seek(0)
         return can_handle
 
-    def process(self):
+    def process(self, fulltext=None):
         """Given a file, process it"""
         soup = BeautifulSoup(self.file_handle)
 
@@ -93,7 +98,7 @@ class DelImporter(Importer):
             mark.stored = add_date
 
             # now index it into the fulltext db as well
-            self.save_bookmark(mark)
+            self.save_bookmark(mark, fulltext=fulltext)
 
 
 class GBookmarkImporter(Importer):
@@ -121,7 +126,7 @@ class GBookmarkImporter(Importer):
         file_io.seek(0)
         return can_handle
 
-    def process(self):
+    def process(self, fulltext=None):
         """Process an html google bookmarks export and import them into bookie
         The export format is a tag as a heading, with urls that have that tag
         under that heading. If a url has N tags, it will appear N times, once
@@ -173,4 +178,4 @@ class GBookmarkImporter(Importer):
 
             mark.stored = metadata['date_added']
 
-            self.save_bookmark(mark)
+            self.save_bookmark(mark, fulltext=fulltext)

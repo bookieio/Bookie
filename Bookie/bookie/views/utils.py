@@ -30,7 +30,11 @@ def import_bmarks(request):
                 # process the file using the import script
                 importer = Importer(files.file)
 
-                importer.process()
+                # we want to store fulltext info so send that along to the
+                # import processor
+                conn_str = request.registry.settings.get('sqlalchemy.url', False)
+                searcher = get_fulltext_handler(conn_str)
+                importer.process(fulltext=searcher)
 
                 # @todo get a count of the imported bookmarks and setup a flash
                 # message. Forward to / and display the import message
