@@ -234,6 +234,8 @@ class Bmark(Base):
             backref="bmark",
             collection_class=attribute_mapped_collection('name'),
             secondary=bmarks_tags,
+            lazy='joined',
+            innerjoin=False,
     )
 
     def __init__(self, url, desc=None, ext=None, tags=None):

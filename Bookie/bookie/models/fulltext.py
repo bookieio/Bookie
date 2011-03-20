@@ -8,6 +8,7 @@ from sqlalchemy.orm import contains_eager
 
 from bookie.models import DBSession
 from bookie.models import SqliteModel
+from bookie.models import Bmark
 
 
 def get_fulltext_handler(engine):
@@ -43,7 +44,5 @@ class SqliteFulltext(object):
                     join(SqliteModel.bmark).\
                     options(contains_eager(SqliteModel.bmark)).\
                     order_by('bmarks.stored')
-                    # outerjoin('bmarks.tags').\
-                    # options(contains_eager('bmarks.tags')).\
 
         return res.all()
