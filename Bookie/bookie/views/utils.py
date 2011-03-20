@@ -5,8 +5,6 @@ from pyramid.httpexceptions import HTTPFound
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
 from bookie.models.fulltext import get_fulltext_handler
-from bookie.models.fulltext import SqliteFulltext
-from bookie.models import DBSession, Base
 
 LOG = logging.getLogger(__name__)
 
@@ -32,7 +30,8 @@ def import_bmarks(request):
 
                 # we want to store fulltext info so send that along to the
                 # import processor
-                conn_str = request.registry.settings.get('sqlalchemy.url', False)
+                conn_str = request.registry.settings.get('sqlalchemy.url',
+                                                         False)
                 searcher = get_fulltext_handler(conn_str)
                 importer.process(fulltext=searcher)
 

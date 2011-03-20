@@ -1,6 +1,5 @@
 """Controllers related to viewing Tag information"""
 import logging
-from pyramid.exceptions import NotFound
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models import BmarkMgr
@@ -12,11 +11,11 @@ RESULTS_MAX = 50
 
 def tag_list(request):
     """Display a list of your tags"""
-    tag_list = TagMgr.find()
+    tags_found = TagMgr.find()
 
     return {
-        'tag_list': tag_list,
-        'tag_count': len(tag_list),
+        'tag_list': tags_found,
+        'tag_count': len(tags_found),
     }
 
 
@@ -39,7 +38,7 @@ def bmark_list(request):
                            limit=RESULTS_MAX,
                            page=page)
 
-    return { 'tag': tag,
+    return {'tag': tag,
              'bmark_list': bmarks,
              'max_count': RESULTS_MAX,
              'count': len(bmarks),

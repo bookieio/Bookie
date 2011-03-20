@@ -3,7 +3,6 @@ from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from bookie.models import DBSession
 from bookie.models import Bmark
-from bookie.models.fulltext import SqliteFulltext
 
 
 class Importer(object):
@@ -52,6 +51,15 @@ class DelImporter(Importer):
     """Process a delicious html file"""
 
     @staticmethod
+    def _is_delicious_format(soup, can_handle, delicious_doctype):
+        if soup.contents \
+           and soup.contents[0] == delicious_doctype \
+           and not soup.find('h3'):
+            can_handle = True
+
+        return can_handle
+
+    @staticmethod
     def can_handle(file_io):
         """Check if this file is a google bookmarks format file
 
@@ -67,8 +75,9 @@ class DelImporter(Importer):
 
         soup = BeautifulSoup(file_io)
         can_handle = False
-        if soup.contents and soup.contents[0] == delicious_doctype and not soup.find('h3'):
-            can_handle = True
+        can_handle = DelImporter._is_delicious_format(soup,
+                                                   can_handle,
+                                                   delicious_doctype)
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
@@ -105,6 +114,15 @@ class GBookmarkImporter(Importer):
     """Process a Google Bookmark export html file"""
 
     @staticmethod
+    def _is_google_format(soup, gbookmark_doctype, can_handle):
+        if soup.contents \
+           and soup.contents[0] == gbookmark_doctype \
+           and soup.find('h3'):
+            can_handle = True
+
+        return can_handle
+
+    @staticmethod
     def can_handle(file_io):
         """Check if this file is a google bookmarks format file
 
@@ -119,8 +137,9 @@ class GBookmarkImporter(Importer):
         soup = BeautifulSoup(file_io)
         can_handle = False
         gbookmark_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
-        if soup.contents and soup.contents[0] == gbookmark_doctype and soup.find('h3'):
-            can_handle = True
+        can_handle = GBookmarkImporter._is_google_format(soup,
+                                                         gbookmark_doctype,
+                                                         can_handle)
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
