@@ -26,6 +26,7 @@ def upgrade(migrate_engine):
     bmark_us.stored = datetime.now()
     bmark_us.updated = datetime.now()
     DBSession.add(bmark_us)
+    DBSession.flush()
     transaction.commit()
 
 

@@ -9,6 +9,7 @@ from pyramid import testing
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
 from bookie.models import Tag, bmarks_tags
+from bookie.models import SqliteModel
 
 
 class DelPostTest(unittest.TestCase):
@@ -25,11 +26,15 @@ class DelPostTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
 
-        session = DBSession()
+        # DBSession.execute("TRUNCATE bmarks;")
+        # DBSession.execute("TRUNCATE fulltext;")
+        # DBSession.execute("TRUNCATE tags;")
+        # DBSession.execute("TRUNCATE bmarks_tags;")
+        SqliteModel.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
+        DBSession.execute(bmarks_tags.delete())
+        DBSession.flush()
         transaction.commit()
 
     def _get_good_request(self):
@@ -46,6 +51,7 @@ class DelPostTest(unittest.TestCase):
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
+        transaction.commit()
         return res
 
     def test_post_add_fail(self):

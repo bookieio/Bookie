@@ -1,8 +1,7 @@
 """Importers for bookmarks"""
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
-from bookie.models import DBSession
-from bookie.models import Bmark
+from bookie.models import BmarkMgr
 
 
 class Importer(object):
@@ -31,20 +30,14 @@ class Importer(object):
         """Meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
-    def save_bookmark(self, mark, fulltext=None):
+    def save_bookmark(self, url, desc, ext, tags, dt=None, fulltext=None):
         """Save the bookmark to the db
 
         :param mark: Instance of Bmark that we're storing to db
         :param fulltext: Fulltext handler instance used to store that info
 
         """
-        session = DBSession()
-        session.add(mark)
-        session.flush()
-
-        # now index it into the fulltext db as well
-        if fulltext:
-            fulltext.store(mark)
+        BmarkMgr.store(url, desc, ext, tags, dt=dt, fulltext=fulltext)
 
 
 class DelImporter(Importer):
@@ -95,19 +88,14 @@ class DelImporter(Importer):
                 extended = ""
 
             link = tag.a
-
             add_date = datetime.fromtimestamp(float(link['add_date']))
-            mark = Bmark(link['href'],
-                 desc=link.text,
-                 ext=extended,
-                 tags=" ".join(link['tags'].split(',')),
-            )
 
-            add_date = datetime.fromtimestamp(float(link['add_date']))
-            mark.stored = add_date
-
-            # now index it into the fulltext db as well
-            self.save_bookmark(mark, fulltext=fulltext)
+            self.save_bookmark(link['href'],
+                               link.text,
+                               extended,
+                               " ".join(link['tags'].split(',')),
+                               dt = add_date,
+                               fulltext=fulltext)
 
 
 class GBookmarkImporter(Importer):
@@ -189,12 +177,9 @@ class GBookmarkImporter(Importer):
 
         # save the bookmark
         for url, metadata in urls.items():
-            mark = Bmark(url,
-                 desc=metadata['description'],
-                 tags=" ".join(metadata['tags']),
-                 ext=metadata['extended']
-            )
-
-            mark.stored = metadata['date_added']
-
-            self.save_bookmark(mark, fulltext=fulltext)
+            self.save_bookmark(url,
+                               metadata['description'],
+                               metadata['extended'],
+                               " ".join(metadata['tags']),
+                               dt=metadata['date_added'],
+                               fulltext=fulltext)

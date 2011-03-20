@@ -25,15 +25,8 @@ class SqliteFulltext(object):
 
     Columns: bid, description, extended, tags
 
+    Storing is done automatically via the before_insert mapper hook on Bmark obj
     """
-
-    def store(self, bmark):
-        """Store the bmark instance into the fulltext db"""
-        DBSession.add(SqliteModel(bmark.bid,
-                                  bmark.description,
-                                  bmark.extended,
-                                  bmark.tag_string()))
-
     def search(self, phrase):
         """Perform the search on the index"""
         #we need to adjust the phrase to be a set of OR per word

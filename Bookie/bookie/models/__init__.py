@@ -1,4 +1,6 @@
 """Sqlalchemy Models for objects stored with Bookie"""
+import logging
+
 from datetime import datetime
 
 from sqlalchemy import Column
@@ -9,6 +11,7 @@ from sqlalchemy import UnicodeText
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
 
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -18,12 +21,16 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Query
 from sqlalchemy.orm.exc import NoResultFound
+
+from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
+
+LOG = logging.getLogger(__name__)
 
 
 def initialize_sql(engine):
@@ -137,6 +144,40 @@ class Tag(Base):
         self.name = tag_name
 
 
+class SqliteModel(Base):
+    """An SA model for the fulltext table used in sqlite"""
+    __tablename__ = "fulltext"
+
+    bid = Column(Integer,
+                    ForeignKey('bmarks.bid'),
+                    primary_key=True,)
+    description = Column(UnicodeText())
+    extended = Column(UnicodeText())
+    tag_string = Column(UnicodeText())
+
+    def __init__(self, bid, description, extended, tag_string):
+        """Expecting the properties to come from a Bmark instance
+
+        tag_string is expected to be a concat list of strings from
+        Bmark.tag_string()
+
+        """
+        self.bid = bid
+        self.description = description
+        self.extended = extended
+        self.tag_string = tag_string
+
+class SqliteFullTextExtension(MapperExtension):
+    def before_insert(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        LOG.error('called before insert')
+        LOG.error(instance.__repr__())
+        instance.fulltext = SqliteModel(instance.bid,
+                                  instance.description,
+                                  instance.extended,
+                                  instance.tag_string())
+
+
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
 
@@ -201,6 +242,32 @@ class BmarkMgr(object):
 
         return qry.all()
 
+    @staticmethod
+    def store(url, desc, ext, tags, dt=None, fulltext=None):
+        """Store a bookmark
+
+
+
+        :param fulltext: an instance of a fulltext handler
+
+        """
+        mark = Bmark(url,
+                     desc=desc,
+                     ext=ext,
+                     tags=tags,
+               )
+
+        DBSession.add(mark)
+
+        # if we have a dt then manually set the stored value
+        if dt is not None:
+            mark.stored = dt
+
+        # now index it into the fulltext db as well
+        if fulltext:
+            # need to flush to populate a bid
+            DBSession.flush()
+
 
 class BmarkTools(object):
     """Some stupid tools to help work with bookmarks"""
@@ -222,6 +289,9 @@ class BmarkTools(object):
 class Bmark(Base):
     """Basic bookmark table object"""
     __tablename__ = "bmarks"
+    __mapper_args__ = {
+        'extension': SqliteFullTextExtension()
+    }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
     url = Column(UnicodeText(), unique=True)
@@ -237,6 +307,13 @@ class Bmark(Base):
             lazy='joined',
             innerjoin=False,
     )
+
+    fulltext = relation(SqliteModel,
+                     backref='bmark',
+                     uselist=False,
+                     cascade="all, delete, delete-orphan",
+                     )
+
 
     def __init__(self, url, desc=None, ext=None, tags=None):
         """Create a new bmark instance
@@ -266,29 +343,3 @@ class Bmark(Base):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
 
-
-class SqliteModel(Base):
-    """An SA model for the fulltext table used in sqlite"""
-    __tablename__ = "fulltext"
-
-    bid = Column(Integer,
-                    ForeignKey('bmarks.bid'),
-                    primary_key=True,)
-    description = Column(UnicodeText())
-    extended = Column(UnicodeText())
-    tag_string = Column(UnicodeText())
-    bmark = relation(Bmark,
-                     backref='fulltext',
-                     uselist=False,)
-
-    def __init__(self, bid, description, extended, tag_string):
-        """Expecting the properties to come from a Bmark instance
-
-        tag_string is expected to be a concat list of strings from
-        Bmark.tag_string()
-
-        """
-        self.bid = bid
-        self.description = description
-        self.extended = extended
-        self.tag_string = tag_string

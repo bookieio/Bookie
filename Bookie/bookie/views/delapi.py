@@ -4,6 +4,7 @@ from bookie.models import DBSession, NoResultFound
 from bookie.models import Bmark, BmarkMgr
 from pyramid.httpexceptions import HTTPNotFound
 
+from bookie.models.fulltext import get_fulltext_handler
 
 def posts_add(request):
     params = request.GET
@@ -26,20 +27,29 @@ def posts_add(request):
 
             except NoResultFound:
                 # then let's store this thing
-                mark = Bmark(params['url'],
-                             desc=params.get('description', ''),
-                             ext=params.get('extended', ''),
-                             tags=params.get('tags', ''),
-                       )
-                session = DBSession()
-                session.add(mark)
 
                 # if we have a dt param then set the date to be that manual date
                 if 'dt' in request.params:
                     # date format by delapi specs:
                     # CCYY-MM-DDThh:mm:ssZ
                     fmt = "%Y-%m-%dT%H:%M:%SZ"
-                    mark.stored = datetime.strptime(request.params['dt'], fmt)
+                    stored_time = datetime.strptime(request.params['dt'], fmt)
+                else:
+                    stored_time = None
+
+                # we want to store fulltext info so send that along to the
+                # import processor
+                conn_str = request.registry.settings.get('sqlalchemy.url',
+                                                         False)
+                fulltext = get_fulltext_handler(conn_str)
+
+                BmarkMgr.store(params['url'],
+                             params.get('description', ''),
+                             params.get('extended', ''),
+                             params.get('tags', ''),
+                             dt=stored_time,
+                             fulltext=fulltext,
+                       )
 
             return '<result code="done" />'
         else:
