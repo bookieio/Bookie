@@ -18,7 +18,6 @@
             <div class="yui3-u-1-3 navigation">
                 <span class="item"><a href="/recent" class="button_minimal">Recent</a></span>
                 <span class="item"><a href="/tags" class="button_minimal">Tags</a></span>
-                <span class="item"><a href="/utils/import" class="button_minimal">Import</a></span>
                 <span class="item">
                     <span class="button_minimal">
                          <form action="${request.route_url('search')}" method="get"/>
@@ -39,7 +38,9 @@
                 <div class="right">
                     <a href="http://bmark.us">Bookie</a> |
                     <a href="http://https://github.com/mitechie/Bookie/issues">Support</a> |
-                    <a href="#changelog">Changes</a>
+                    <a href="#changelog">Changes</a> |
+                    <a href="${request.route_url('import')}">Import</a> |
+                    <a href="${request.route_url('export')}">Export</a>
                 </div>
             </div>
             </div>

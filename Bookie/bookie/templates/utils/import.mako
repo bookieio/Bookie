@@ -18,7 +18,7 @@
         <div class="block">
             <div class="head"></div>
             <div class="body">
-                <form class="" action="${request.route_url('utils_import')}" method="POST" enctype=multipart/form-data>
+                <form class="" action="${request.route_url('import')}" method="POST" enctype=multipart/form-data>
                     <fieldset>
                         <ul>
                             <li>
