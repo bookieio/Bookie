@@ -31,5 +31,18 @@
         <div id="body">
             ${next.body()}
         </div>
+
+        <div class="footer">
+            <div class="yui3-g">
+            <div class="yui3-u-1-4"></div>
+            <div class="yui3-u-3-4">
+                <div class="right">
+                    <a href="http://bmark.us">Bookie</a> |
+                    <a href="http://https://github.com/mitechie/Bookie/issues">Support</a> |
+                    <a href="#changelog">Changes</a>
+                </div>
+            </div>
+            </div>
+        </div>
     </body>
 </html>

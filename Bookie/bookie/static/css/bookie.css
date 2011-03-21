@@ -164,3 +164,19 @@ form li {
 form li label {
     font-weight: bold;
 }
+
+.right {
+    text-align: right;
+}
+
+.footer {
+    border-top: 1px #BBBBBB solid;
+    color: #666666;
+    margin-top: 5em;
+    font-size: .8em;
+}
+
+.footer a {
+    color: #666666;
+    text-decoration: none;
+}
