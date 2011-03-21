@@ -232,7 +232,7 @@ class ImportViews(unittest.TestCase):
             'api_key': 'testapi',
         }
 
-        res = self.testapp.post('/utils/import',
+        res = self.testapp.post('/import',
                                 params=post,
                                 upload_files=[('import_file',
                                                'delicious.html',
@@ -257,7 +257,7 @@ class ImportViews(unittest.TestCase):
             'api_key': 'testapi',
         }
 
-        res = self.testapp.post('/utils/import',
+        res = self.testapp.post('/import',
                                 params=post,
                                 upload_files=[('import_file',
                                                'googlebookmarks.html',

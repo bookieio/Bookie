@@ -97,7 +97,7 @@ class BookieViewsTest(unittest.TestCase):
             'api_key': 'wrong_key'
         }
 
-        res = self.testapp.post('/utils/import', params=post, status=403)
+        res = self.testapp.post('/import', params=post, status=403)
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
