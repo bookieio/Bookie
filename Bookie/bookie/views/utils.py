@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
+from bookie.models import Bmark
 from bookie.models.fulltext import get_fulltext_handler
 
 LOG = logging.getLogger(__name__)
@@ -71,4 +72,12 @@ def search(request):
         'search_results': res_list,
         'result_count': len(res),
         'phrase': phrase,
+    }
+
+
+def export(request):
+    """Handle exporting a user's bookmarks to file"""
+    bmark_list = Bmark.query.join(Bmark.tags).all()
+    return {
+        'bmark_list': bmark_list,
     }
