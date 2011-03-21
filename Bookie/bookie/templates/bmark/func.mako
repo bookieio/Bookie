@@ -36,7 +36,7 @@
             <div class="yui3-u-7-8">
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
-                        <a class="bmark" href="${bmark.url}">${bmark.description}</a>
+                        <a class="bmark" href="${bmark.url}" title="${bmark.extended}">${bmark.description}</a>
                     </div>
 
                     <div class="yui3-u-1-8">

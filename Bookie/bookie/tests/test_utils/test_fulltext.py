@@ -72,3 +72,19 @@ class TestFulltext(TestCase):
 
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
+
+        search_res = self.testapp.get('/search?search=python')
+
+        ok_(search_res.status == '200 OK',
+                "Status is 200: " + search_res.status)
+
+        ok_('my google desc' in search_res.body,
+            "Tag search should find our description on the page: " + search_res.body)
+
+        search_res = self.testapp.get('/search?search=extended%20notes')
+
+        ok_(search_res.status == '200 OK',
+                "Status is 200: " + search_res.status)
+
+        ok_('extended notes' in search_res.body,
+            "Extended search should find our description on the page: " + search_res.body)

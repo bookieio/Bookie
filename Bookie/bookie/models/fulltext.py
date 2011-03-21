@@ -6,9 +6,7 @@ and API as we did in the importer
 """
 from sqlalchemy.orm import contains_eager
 
-from bookie.models import DBSession
 from bookie.models import SqliteModel
-from bookie.models import Bmark
 
 
 def get_fulltext_handler(engine):
@@ -32,10 +30,15 @@ class SqliteFulltext(object):
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
 
-        res = SqliteModel.query.\
-                    filter(SqliteModel.description.match(phrase)).\
-                    join(SqliteModel.bmark).\
-                    options(contains_eager(SqliteModel.bmark)).\
-                    order_by('bmarks.stored')
+        desc = SqliteModel.query.\
+                    filter(SqliteModel.description.match(phrase))
 
-        return res.all()
+        tag_str = SqliteModel.query.\
+                    filter(SqliteModel.tag_string.match(phrase))
+
+        ext = SqliteModel.query.\
+                    filter(SqliteModel.extended.match(phrase))
+
+        return desc.union(tag_str, ext).join(SqliteModel.bmark).\
+                    options(contains_eager(SqliteModel.bmark)).\
+                    order_by('bmarks.stored').all()
