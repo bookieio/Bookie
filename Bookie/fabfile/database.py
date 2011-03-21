@@ -91,3 +91,28 @@ def db_upgrade():
     local('migrate upgrade --url={0} --repository={1} '.format(
         env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations',))
+
+
+def db_downgrade(db_version):
+    """Downgrade the database system to the specified migration
+
+    :param db_version: the specific migration integer to downgrade t
+
+    :Requires: prerun a environment setting function such as dev/prod
+
+    To upgrade migrations on the dev server
+    ::
+
+        $ fab dev db_downgrade:12
+
+    """
+    require('hosts', provided_by=[dev])
+    require('ini', provided_by=[dev])
+
+    # load up the ini for this environment
+    parse_ini(env["ini_file"])
+
+    local('migrate downgrade --url={0} --repository={1} {2} '.format(
+        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        'migrations',
+        db_version,))
