@@ -21,6 +21,8 @@ Contents:
    tests
    todo
    user
+   chrome
+   firefox
 
 .. Indices and tables
 .. ==================
