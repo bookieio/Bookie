@@ -1,0 +1,19 @@
+{
+  "name": "Delicious",
+  "version": "0.2.2",
+  "description": "Delicious Bookmarks",
+  "permissions": [
+    "tabs",
+    "bookmarks",
+    "https://api.del.icio.us/",
+    "http://127.0.0.1/",
+    "http://rick.bmark.us/"
+  ],
+  "background_page": "background.html",
+  "options_page": "options.html",
+  "browser_action": {
+    "default_icon": "delicious.png",
+    "default_title": "Post Delicious Bookmark",
+    "popup": "popup.html"
+  }
+}

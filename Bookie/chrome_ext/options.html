@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="delicious.js"></script>
+    <script type="text/javascript">
+      $(function() {
+          // $('#username').val(localStorage['username']);
+          // $('#password').val(localStorage['password']);
+          $('#api_key').val(localStorage['api_key']);
+          $("#form").submit(function() {
+              // localStorage['username'] = $('#username').val();
+              // localStorage['password'] = $('#password').val();
+              localStorage['api_key'] = $('#api_key').val();
+
+              $('#feedback').text('Stored API Key');
+
+              // delicious.authorize({
+              //   success: function() {
+              //     window.close();
+              //   },
+              //   error: function() {
+              //     $('#feedback').text('Invalid login credentials.');
+              //   }
+              // });
+              return false;
+          });
+      });
+    </script>
+    <style>
+      body {
+          font-family: arial, sans-serif;
+      }
+
+      #feedback {
+          color: #d00;
+          font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="form">
+      <div id='feedback'>Enter your bookie api key</div>
+      <!-- <input type="text" placeholder="username" id="username"/> -->
+      <input type="password" placeholder="api key" id="api_key"/>
+      <button type="submit">Save</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="delicious.js"></script>
+    <script type="text/javascript">
+      $(function() {
+          delicious.bind_events();
+
+          // and fire off the load event to get things cooking
+          $(delicious.EVENTID).trigger(delicious.events.LOAD);
+      });
+    </script>
+    <style>
+      body {
+        font-family: arial, sans-serif;
+      }
+      input {
+        width: 200px;
+      }
+      textarea {
+        width: 200px;
+        height: 30px;
+      }
+      #suggestions {
+        margin: 0;
+        padding: 0;
+        width: 200px;
+        margin-top: 5px;
+      }
+      #suggestions li {
+        display: inline;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        margin-right: 2px;
+        font-size: 11px;
+        line-height: 13px;
+      }
+      #suggestions a {
+        color: #444;
+        text-decoration: none;
+      }
+      #suggestions a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body id="bmarkbody">
+        <form id="form" name="form">
+            <input type="hidden" id="url" name="url" />
+            <input type="text" id="description" placeholder="title" name="description" />
+            <input type="text" placeholder="tags" name="tags" id="tags" />
+            <textarea placeholder="notes" name="extended" id="extended"> </textarea>
+            <button type="submit" id="submit">Save</button>
+
+            <button type="submit" id="delete" style="display: none;">Delete</button>
+
+            <input type="hidden" value="" name="api_key" id="api_key" />
+        </form>
+    </body>
+</html>
