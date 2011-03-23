@@ -11,7 +11,6 @@ from sqlalchemy import UnicodeText
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
 
-
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -168,6 +167,12 @@ class SqliteModel(Base):
         self.tag_string = tag_string
 
 class SqliteFullTextExtension(MapperExtension):
+    """This is a mapper to handle inserting into fulltext index
+
+    Since the sqlite fulltext is a separate table, we need to insert/update
+    into that fulltext index whenever we add/change a bookmark
+
+    """
     def before_insert(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
         LOG.error('called before insert')
@@ -246,8 +251,10 @@ class BmarkMgr(object):
     def store(url, desc, ext, tags, dt=None, fulltext=None):
         """Store a bookmark
 
-
-
+        :param url: bookmarked url
+        :param desc: the one line description
+        :param ext: the extended description/notes
+        :param dt: The original stored time of this bmark
         :param fulltext: an instance of a fulltext handler
 
         """

@@ -5,7 +5,6 @@ and API as we did in the importer
 
 """
 from sqlalchemy.orm import contains_eager
-
 from bookie.models import SqliteModel
 
 

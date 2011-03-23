@@ -33,6 +33,10 @@ class Importer(object):
     def save_bookmark(self, url, desc, ext, tags, dt=None, fulltext=None):
         """Save the bookmark to the db
 
+        :param url: bookmark url
+        :param desc: one line description
+        :param ext: extended description/notes
+        :param tags: The string of tags to store with this bmark
         :param mark: Instance of Bmark that we're storing to db
         :param fulltext: Fulltext handler instance used to store that info
 
@@ -45,6 +49,12 @@ class DelImporter(Importer):
 
     @staticmethod
     def _is_delicious_format(soup, can_handle, delicious_doctype):
+        """A check for if this import files is a delicious format compat file
+
+        Very fragile currently, it makes sure the first line is the doctype.
+        Any blank lines before it will cause it to fail
+
+        """
         if soup.contents \
            and soup.contents[0] == delicious_doctype \
            and not soup.find('h3'):
@@ -103,6 +113,12 @@ class GBookmarkImporter(Importer):
 
     @staticmethod
     def _is_google_format(soup, gbookmark_doctype, can_handle):
+        """Verify that this import file is in the google export format
+
+        Google only puts one tag at a time and needs to be looped through to
+        get them all. See the sample files in the test_importer directory
+
+        """
         if soup.contents \
            and soup.contents[0] == gbookmark_doctype \
            and soup.find('h3'):

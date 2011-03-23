@@ -1,12 +1,22 @@
+"""Pyramid controller for the delicious api compatible url calls
+
+"""
 from datetime import datetime
 from bookie.lib.access import Authorize
 from bookie.models import DBSession, NoResultFound
-from bookie.models import Bmark, BmarkMgr
+from bookie.models import BmarkMgr
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
 
+
 def posts_add(request):
+    """Add a new bmark into the system given request params
+
+    For example usage make sure to check out the unit tests in the
+    test_delicious directory
+
+    """
     params = request.GET
 
     with Authorize(request.registry.settings.get('api_key', ''),
