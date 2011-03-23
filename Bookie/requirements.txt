@@ -14,7 +14,6 @@ Tempita==0.5dev
 WebError==0.10.3
 WebOb==1.0.5
 WebTest==1.2.3
-bookie==0.1
 coverage==3.4
 decorator==3.3.0
 docutils==0.7
