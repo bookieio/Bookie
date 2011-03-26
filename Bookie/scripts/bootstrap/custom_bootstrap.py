@@ -149,4 +149,3 @@ def after_install(options, home_dir):
 
     # do the actual installation
     install_app(**env)
-

@@ -44,7 +44,7 @@ http://127.0.0.1:6543
 
 To Do
 ~~~~~~
-- Create a custom virtualenv install script to do the first half of these steps
+- Update the bootstrap.py to use a tarball source to avoid git requirement
 - Link to the hosting docs about setting up bookie to run for good
 
 
