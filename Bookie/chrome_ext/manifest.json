@@ -1,7 +1,7 @@
 {
-  "name": "Delicious",
-  "version": "0.2.2",
-  "description": "Delicious Bookmarks",
+  "name": "Bookie",
+  "version": "0.0.2",
+  "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
     "bookmarks",
@@ -13,7 +13,7 @@
   "options_page": "options.html",
   "browser_action": {
     "default_icon": "delicious.png",
-    "default_title": "Post Delicious Bookmark",
-    "popup": "popup.html"
+    "default_title": "Post Bookie Bookmark",
+    "default_popup": "popup.html"
   }
 }
