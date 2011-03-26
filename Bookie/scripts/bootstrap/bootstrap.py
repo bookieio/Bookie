@@ -1332,7 +1332,7 @@ def after_install(options, home_dir):
     # define a ton of env vars we'll use in our scripted commands
     env = {}
     env['git_url'] = 'git://github.com/mitechie/Bookie.git'
-    env['branch'] = 'feature/tools'
+    env['branch'] = 'develop'
 
     # normalize this to the abs path so win/linux play nice
     # we have to do this retarded replacing of space with an escaped space so
@@ -1390,7 +1390,6 @@ def after_install(options, home_dir):
 
     # do the actual installation
     install_app(**env)
-
 
 
 ##file site.py
