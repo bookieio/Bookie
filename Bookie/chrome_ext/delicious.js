@@ -15,7 +15,7 @@ if (!delicious) {
 
 // https://api.del.icio.us/v1/
 delicious.api_url = 'http://127.0.0.1:6543/delapi/';
-delicious.api_url = 'http://rick.bmark.us/delapi/';
+//delicious.api_url = 'http://rick.bmark.us/delapi/';
 
 
 /**
@@ -217,7 +217,12 @@ var onsave = function (ev) {
         },
 
         complete: function () {
-            window.close();
+             chrome.browserAction.setBadgeText({text:'+'});
+             var c = chrome;
+             setTimeout(function() {
+                 c.browserAction.setBadgeText({text:''});
+                 window.close();
+             }, 2000);
         }
     });
 
