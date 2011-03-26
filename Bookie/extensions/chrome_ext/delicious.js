@@ -59,6 +59,7 @@ delicious.savebookmark = function (params, options) {
             if (code == "done") {
                 console.log("Bookmark saved to delicious!");
             } else {
+                chrome.browserAction.setBadgeText({text: code});
                 console.error("Error saving bookmark: " + code);
             }
         }
@@ -88,7 +89,9 @@ delicious.removebookmark = function (url, api_key) {
 
             if (code == "done") {
                 window.close();
+
             } else {
+                chrome.browserAction.setBadgeText({text: code});
                 console.error("Error removing bookmark: " + code);
             }
         }
@@ -108,6 +111,8 @@ delicious.getbookmark = function (url, callback) {
         url: delicious.api_url + "posts/get",
         data: {url: url},
         success: function (xml) {
+
+
             $(xml).find("post").map(function () {
                 // add the tags to the tag ui
                 $('#tags').val($(this).attr('tag'));
@@ -216,8 +221,22 @@ var onsave = function (ev) {
             $('#submit').attr('disabled', 'disabled').text('Saving...');
         },
 
-        complete: function () {
-             chrome.browserAction.setBadgeText({text:'+'});
+        complete: function (xml) {
+            var result, code;
+
+            result = $(xml).find("result");
+            code = result.attr("code");
+
+            if (code == "done") {
+                chrome.browserAction.setBadgeText({text:'+'});
+                chrome.browserAction.setBadgeBackgroundColor({color:[15, 232, 12, 255]});
+
+                console.log("Bookmark saved to delicious!");
+            } else {
+                chrome.browserAction.setBadgeText({text: code});
+                console.error("Error saving bookmark: " + code);
+            }
+
              var c = chrome;
              setTimeout(function() {
                  c.browserAction.setBadgeText({text:''});
@@ -234,8 +253,12 @@ var onsave = function (ev) {
  *
  */
 var onerror = function (request, status, err) {
+    error_msg = '- ' + request.status.toString();
+    chrome.browserAction.setBadgeText({text: error_msg});
+
+    // the default badge color is red so leaving it out
     console.error("Error during request" + status);
-    console.info(request);
+    console.info(request.status);
     console.info(err);
 };
 

@@ -1,5 +1,9 @@
 """Handle auth and authz activities in bookie"""
+import logging
 from pyramid.httpexceptions import HTTPForbidden
+
+
+LOG = logging.getLogger(__name__)
 
 
 class Authorize(object):
@@ -21,6 +25,8 @@ class Authorize(object):
     def __enter__(self):
         """Verify api key set in constructor"""
         if self.api_key != self.check_key:
+            LOG.error('Invalid API Key! {0} v {1}'.format(self.api_key,
+                                                          self.check_key))
             raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
