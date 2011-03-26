@@ -1,18 +1,18 @@
 <html>
   <head>
     <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="delicious.js"></script>
     <script type="text/javascript">
       $(function() {
-          // $('#username').val(localStorage['username']);
-          // $('#password').val(localStorage['password']);
+          // populate default field values
           $('#api_key').val(localStorage['api_key']);
-          $("#form").submit(function() {
-              // localStorage['username'] = $('#username').val();
-              // localStorage['password'] = $('#password').val();
-              localStorage['api_key'] = $('#api_key').val();
+          $('#api_url').val(localStorage['api_url']);
 
-              $('#feedback').text('Stored API Key');
+          // save new values on submit
+          $("#form").submit(function() {
+              localStorage['api_key'] = $('#api_key').val();
+              localStorage['api_url'] = $('#api_url').val();
+
+              $('#feedback').text('Saved!');
 
               // delicious.authorize({
               //   success: function() {
@@ -22,13 +22,14 @@
               //     $('#feedback').text('Invalid login credentials.');
               //   }
               // });
+
               return false;
           });
       });
     </script>
     <style>
       body {
-          font-family: arial, sans-serif;
+          font-family: sans-serif;
       }
 
       #feedback {
@@ -39,9 +40,11 @@
   </head>
   <body>
     <form id="form">
-      <div id='feedback'>Enter your bookie api key</div>
-      <!-- <input type="text" placeholder="username" id="username"/> -->
-      <input type="password" placeholder="api key" id="api_key"/>
+      <div id='feedback'></div>
+      <ul>
+          <li><label for="api_url">Bookie URL</label><input type="text" id="api_url"/></li>
+          <li><label for="api_key">API Key</label><input type="password" placeholder="api key" id="api_key"/></li>
+      </ul>
       <button type="submit">Save</button>
     </form>
   </body>
