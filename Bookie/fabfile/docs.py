@@ -22,6 +22,4 @@ def build_docs(clean="no", browse="no"):
 def push_docs():
     """Build and push the docs up to the host"""
     build_docs(clean='yes')
-    rsync_project(docs_location, 'docs/_build/html/', delete=True)
-
-
+    rsync_project(docs_location, 'docs/_build/html/')
