@@ -1377,9 +1377,8 @@ def after_install(options, home_dir):
             Out.error("No requirements.txt file located")
 
         # run setup.py on the project
-        setup_path = os.path.join(env['home_dir'], 'bookie', 'Bookie',
-                                  'setup.py')
-        cmd = '{python_path} {0} develop'
+        setup_path = os.path.join(env['home_dir'].strip("'"), 'bookie', 'Bookie')
+        cmd = 'cd {0} && {python_path} setup.py develop'
         subprocess.call(cmd.format(setup_path, **env), shell=True)
 
         Out.line_break()
