@@ -1,4 +1,6 @@
 """Fabric commands useful for working on developing Bookie are loaded here"""
+import os
+
 from fabric.api import hosts
 from fabric.api import local
 from fabric.contrib.project import rsync_project
@@ -17,3 +19,12 @@ def gen_bootstrap():
 def push_bootstrap():
     """Sync the bootstrap.py up to the server for download"""
     rsync_project(bootstrap_server, bootstrap_local)
+
+def jstest():
+    """Launch the JS tests we have in the system
+
+    Currently only the ones there are for extensions
+
+    """
+    cwd = os.path.dirname(os.path.dirname(__file__))
+    local('google-chrome {0}/extensions/tests/index.html'.format(cwd))
