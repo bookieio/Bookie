@@ -53,3 +53,13 @@ bookie.badge = {
         'green': [15, 232, 12, 255]
     }
 };
+
+
+bookie.ui = {
+    'enable_delete': function (ev) {
+        $('#delete').show();
+
+        // and make sure we bind the delete event
+        // $(delicious.EVENTID).bind(delicious.events.DELETE, ondelete);
+    },
+}

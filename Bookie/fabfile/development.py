@@ -27,4 +27,4 @@ def jstest():
 
     """
     cwd = os.path.dirname(os.path.dirname(__file__))
-    local('google-chrome {0}/extensions/tests/index.html'.format(cwd))
+    local('cd {0}/extensions/tests/ && google-chrome index.html'.format(cwd))

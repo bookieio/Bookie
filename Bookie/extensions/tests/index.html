@@ -4,6 +4,8 @@
         <title>QUnit Test</title>
         <link rel="stylesheet" href="qunit.css">
         <script src="qunit.js"></script>
+        <script src="../chrome_ext/jquery.min.js"></script>
+        <script src="../chrome_ext/bookie.js"></script>
         <script src="tests.js"></script>
         <script src="chrome_tests.js"></script>
     </head>
@@ -14,6 +16,17 @@
         <div id="qunit-testrunner-toolbar"></div>
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
-        <div id="qunit-fixture">test markup</div>
+        <div id="qunit-fixture">
+            <form id="form" name="form">
+                <input type="hidden" id="url" name="url" />
+                <input type="text" id="description" placeholder="title" name="description" />
+                <input type="text" placeholder="tags" name="tags" id="tags" />
+                <textarea placeholder="notes" name="extended" id="extended"> </textarea>
+                <button type="submit" id="submit">Save</button>
+
+                <button type="submit" id="delete" style="display: none;">Delete</button>
+                <input type="hidden" value="" name="api_key" id="api_key" />
+            </form>
+        </div>
     </body>
 </html>
