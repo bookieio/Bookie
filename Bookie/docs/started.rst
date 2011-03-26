@@ -22,28 +22,31 @@ If you're running Ubuntu, here's some actual commands to get you started.
 
 ::
 
-  $ sudo apt-get install python-virtualenv
-  $ virtualenv --no-site-packages bookie_ve
-  $ cd bookie_ve
-  $ source bin/activate
-  $ git clone git://github.com/mitechie/Bookie.git
-  $ cd Bookie/Bookie/
-  $ git checkout develop
-  $ pip install -r requirements.txt
+  $ wget http://bmark.us/bootstrap.py
+  $ python bootstrap.py bookie
+  $ source bookie/bin/activate
+  $ cd bookie/bookie/Bookie/
 
-  # and now we wait while pypi does it's thing and installs dependencies
+  # $myname is a name you're giving your installation. Just one word will do
+  $ fab new_install:$myname
 
-  $ python setup.py develop
+  # this will create a config file for you called $myname.ini
+  # feel free to edit this config for your needs and then
+  $ fab $myname db_new_install
 
-  $ fab dev db_init
-  $ fab dev db_upgrade
-  # for some reason we have to resource the virtualenv
-  $ source ../../bin/activate
-  $ paster serve --reload development.ini
+  # startup the development web server
+  $ paster serve --reload $myname.ini
 
 You should now be able to pull up:
 
 http://127.0.0.1:6543
+
+
+To Do
+~~~~~~
+- Create a custom virtualenv install script to do the first half of these steps
+- Link to the hosting docs about setting up bookie to run for good
+
 
 Where to go from here
 ---------------------

@@ -1,5 +1,6 @@
-import ConfigParser
 import os
+from os.path import dirname
+from shutil import copyfile
 
 from fabric.api import run, sudo, hosts, local, cd, env, require, prompt
 from fabric.contrib.project import rsync_project
@@ -13,6 +14,8 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
 # IMPORT the rest of the commands we have available to us
 from docs import *
 from database import *
+from development import *
+from environments import *
 from tests import *
 
 # starter helpers
@@ -20,7 +23,7 @@ def new_install(install_name):
     """For a new install, create a new config file and write it out for them"""
 
     # first check if we already have this defined
-    environment_file = os.path.join(os.path.dirname(__file__), 'environments.py')
+    environment_file = os.path.join(dirname(__file__), 'environments.py')
 
     current_env = open(environment_file).read()
 
@@ -40,7 +43,9 @@ def {0}():
         en_file.write(new_env.format(install_name))
 
     # we also need to create a .ini file for this install
-    ini_filname = "{0}.ini".format(install_name)
+    ini_filename = os.path.join(dirname(dirname(__file__)),
+                                "{0}.ini".format(install_name))
+    sample_filename = os.path.join(dirname(__file__), "sample.ini")
 
     # need to cp the sample file over as the new ini_filename
-
+    copyfile(sample_filename, ini_filename)

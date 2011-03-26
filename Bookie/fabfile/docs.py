@@ -1,7 +1,7 @@
 from fabric.api import local, hosts
 from fabric.contrib.project import rsync_project
 
-docs_host = 'bmark.us'
+docs_host = 'ubuntu@bmark'
 docs_location = '/var/www/'
 
 def build_docs(clean="no", browse="no"):

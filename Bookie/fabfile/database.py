@@ -116,3 +116,15 @@ def db_downgrade(db_version):
         env.ini.get('app:bookie', 'sqlalchemy.url'),
         'migrations',
         db_version,))
+
+def db_new_install():
+    """Initial setup of a db, runs init/upgrade
+
+    :Requires: prerun a environment setting function such as dev/prod
+
+    """
+    require('hosts', provided_by=[dev])
+    require('ini', provided_by=[dev])
+
+    db_init()
+    db_upgrade()
