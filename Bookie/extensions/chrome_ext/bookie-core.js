@@ -24,12 +24,13 @@ var bookie = (function (module, $) {
     module.events = {
         'LOAD': 'load',
         'onload': function (ev) {
-            console.log("Test");
+            console.log("onload");
             $('#form').bind('submit', function (ev) {
                 var data = form.serialize();
                 bookie.saveBookmark(data);
             });
-            populateForm();
+
+            module.populateForm();
         },
 
         'SAVE': 'save',
@@ -57,7 +58,7 @@ var bookie = (function (module, $) {
      * that we can provide a decent notification to the user
      *
      */
-    bookie.response_codes = {
+    module.response_codes = {
         '200': 'Ok',
         '403': 'NoAuth',
 
@@ -65,15 +66,13 @@ var bookie = (function (module, $) {
         'done': 'Ok'
     };
 
-    //PRIVATE
-
     /**
      * The actual work to map the tab object data ot the form ui
      * This is shared across platforms as we want to keep the ui/code
      * consistent between them
      *
      */
-    populateFormBase = function (tab_obj) {
+    module.populateFormBase = function (tab_obj) {
         var url;
 
         $('#url').val(tab.url);
@@ -97,6 +96,8 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function (jquery_node) {
+        console.log('in init');
+        $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
     };
 

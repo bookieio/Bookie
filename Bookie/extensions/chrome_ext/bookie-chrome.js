@@ -3,7 +3,9 @@
 
 /* chrome-extension-specific bookie functionality */
 
-var bookie = (function (module, $) {
+// now this will extend the original bookie module with added chrome specific
+// functionality
+(function (module, $) {
 
     // PRIVATE
 
@@ -12,8 +14,9 @@ var bookie = (function (module, $) {
      * The specifics here is getting the tab info from Chrome vs FF
      *
      */
-    populateForm = function () {
-        chrome.tabs.getSelected(null, populateFormBase);
+    module.populateForm = function () {
+        console.log('Populating from Chrome');
+        chrome.tabs.getSelected(null, module.populateFormBase);
     };
 
     // provide helpers for dealing with notifications from events fired through
