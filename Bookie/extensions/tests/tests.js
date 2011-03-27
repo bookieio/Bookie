@@ -69,7 +69,13 @@ test('populate_form', function () {
     // and the delete button should not be visible since we found a record
     equal($('#delete:visible').length, 1,
             "Delete button is visible");
+});
 
+/**
+ * Verify that we get the correct data and ui calls when we store a bookmark
+ */
+test('saveBookmark', function () {
 
+    ok(false);
 
 });

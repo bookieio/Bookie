@@ -26,7 +26,7 @@ var bookie = (function (module, $) {
         'onload': function (ev) {
             $('#form').bind('submit', function (ev) {
                 var data = form.serialize();
-                bookie.saveBookmark(data);
+                bookie.call.saveBookmark(data);
             });
 
             module.populateForm();
@@ -47,7 +47,6 @@ var bookie = (function (module, $) {
             module.call.removebookmark(url, api_key);
         },
 
-        'ENABLEDELETE': 'enabledelete',
         'UPDATE': 'update'
     };
 
@@ -63,7 +62,8 @@ var bookie = (function (module, $) {
         '403': 'NoAuth',
 
         // some codes from the xml response in the delicious api
-        'done': 'Ok'
+        'done': 'Ok',
+        'Not Found': '404',
     };
 
     /**
@@ -75,12 +75,24 @@ var bookie = (function (module, $) {
     module.populateFormBase = function (tab_obj) {
         var url;
 
+        console.log('in populate');
         $('#url').val(tab_obj.url);
         $('#description').val(tab_obj.title);
         $('#api_key').val(localStorage['api_key']);
 
         url = $('#url').attr('value');
+
         module.call.getBookmark(url, function (xml) {
+            // this could come back as not found
+            result = $(xml).find("result");
+
+            if (result) {
+                code = result.attr("code");
+                console.log('Page is not currently bookmarked')
+                // we don't update the badge, since this happens on every page
+                // we load our ui from, it's not an error to not be found
+            }
+
             $(xml).find("post").map(function () {
                 // add the tags to the tag ui
                 $('#tags').val($(this).attr('tag'));
@@ -90,7 +102,12 @@ var bookie = (function (module, $) {
 
                 // add the description to the ui
                 $('#extended').text($(this).attr('extended'));
+
+                // now enable the delete button in case we want to delete it
+                module.ui.enable_delete();
+
             });
+
         });
     };
 
@@ -102,11 +119,13 @@ var bookie = (function (module, $) {
 
     // cross platform ui calls
     module.ui.enable_delete = function (ev) {
+        console.log('called');
         $('#delete').show();
 
         // and make sure we bind the delete event
         $(module.EVENTID).bind(module.events.DELETE, module.ondelete);
     };
+
 
     /**
      * Generate the get reuqest to the API call
@@ -134,28 +153,40 @@ var bookie = (function (module, $) {
         var opts = {
             url: module.api_url + "posts/get",
             data: {url: url},
-            success: function (xml) {
-
-                $(xml).find("post").map(function () {
-                    // add the tags to the tag ui
-                    $('#tags').val($(this).attr('tag'));
-
-                    // add the description to the ui
-                    $('#description').val($(this).attr('description'));
-
-                    // add the description to the ui
-                    $('#extended').text($(this).attr('extended'));
-
-                    // now enable the delete button in case we want to delete it
-                    $(module.EVENTID).trigger(module.events.ENABLEDELETE);
-
-                });
-            }
+            success: callback,
         };
 
         request(opts);
     };
 
+    /**
+     * After pressing the save button, go store the new bookmark
+     *
+     */
+    module.call.saveBookmark  = function (params, options) {
+        var defaults, opts;
+
+        defaults = {
+            url: module.api_url + "posts/add",
+            data: params,
+            success: function (xml) {
+                var result, code;
+
+                result = $(xml).find("result");
+                code = result.attr("code");
+
+                if (code == "done") {
+                    console.log("Bookmark saved to delicious!");
+                } else {
+                    chrome.browserAction.setBadgeText({text: code});
+                    console.error("Error saving bookmark: " + code);
+                }
+            }
+        };
+
+        opts = $.extend({}, defaults, options);
+        request(opts);
+    };
 
     return module;
 })(bookie || {}, jQuery);
