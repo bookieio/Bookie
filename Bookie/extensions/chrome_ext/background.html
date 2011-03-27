@@ -1,11 +1,11 @@
 <html>
   <head>
     <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="delicious.js"></script>
     <script type="text/javascript">
       //hack to register bookmark listener
       chrome.bookmarks.get('0', function() {});
 
+      /*
       function collectFoldersAsTags(bookmark, tags, callback) {
         if (bookmark.parentId) {
           chrome.bookmarks.get(bookmark.parentId, function(results) {
@@ -18,9 +18,7 @@
         }
       }
 
-      /*
-      see http://code.google.com/chrome/extensions/bookmarks.html#event-onCreated
-      */
+      //see http://code.google.com/chrome/extensions/bookmarks.html#event-onCreated
       chrome.bookmarks.onCreated.addListener(function(id, bookmark) {
         if (bookmark.url) {
           collectFoldersAsTags(bookmark, [], function(tags) {
@@ -29,9 +27,7 @@
         }
       });
 
-      /*
-      see http://code.google.com/chrome/extensions/bookmarks.html#event-onRemoved
-      */
+      //see http://code.google.com/chrome/extensions/bookmarks.html#event-onRemoved
       chrome.bookmarks.onRemoved.addListener(function(id, removal) {
         chrome.bookmarks.get(id, function(results) {
           var bookmark = results[0];
@@ -40,6 +36,7 @@
           }
         });
       });
+      */
       
       // chrome.bookmarks.onChanged.addListener(function(id, change) {
       //   chrome.bookmarks.get(change.id, function(results) {
