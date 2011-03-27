@@ -25,8 +25,9 @@ var bookie = (function (module, $) {
         'LOAD': 'load',
         'onload': function (ev) {
             $('#form').bind('submit', function (ev) {
-                var data = form.serialize();
-                bookie.saveBookmark(data);
+                var data = $(this).serialize();
+                module.call.saveBookmark(data);
+                ev.preventDefault();
             });
 
             module.populateForm();
@@ -44,7 +45,7 @@ var bookie = (function (module, $) {
         'ondelete': function (ev) {
             var url = $('#url').attr('value');
             var api_key = $('#api_key').attr('value');
-            module.call.removebookmark(url, api_key);
+            module.call.removeBookmark(url, api_key);
         },
 
         'ENABLEDELETE': 'enabledelete',
@@ -112,12 +113,12 @@ var bookie = (function (module, $) {
      * Generate the get reuqest to the API call
      *
      */
-    request = function (options) {
+    function request(options) {
         var defaults, opts;
 
         defaults = {
             type: "GET",
-            dataType: "xml",
+            dataType: "html",
             error: onerror
         };
 
@@ -135,27 +136,55 @@ var bookie = (function (module, $) {
             url: module.api_url + "posts/get",
             data: {url: url},
             success: function (xml) {
-
-                $(xml).find("post").map(function () {
-                    // add the tags to the tag ui
-                    $('#tags').val($(this).attr('tag'));
-
-                    // add the description to the ui
-                    $('#description').val($(this).attr('description'));
-
-                    // add the description to the ui
-                    $('#extended').text($(this).attr('extended'));
-
-                    // now enable the delete button in case we want to delete it
-                    $(module.EVENTID).trigger(module.events.ENABLEDELETE);
-
-                });
+                if(callback) {
+                    callback(xml);
+                }
             }
         };
 
         request(opts);
     };
 
+    module.call.saveBookmark = function (params) {
+        var opts;
 
+        opts = {
+            url: module.api_url + "posts/add",
+            data: params,
+            success: function(data, textStatus, jqxhr) {
+                module.ui.notify("saved");
+            },
+            error: function(jqxhr, textStatus, errorThrown) {
+                module.ui.notify("error");
+            }
+        };
+
+        request(opts);
+    }
+
+    /*
+     * remove an existing bookmark from delicious
+     * see http://delicious.com/help/api#posts_delete
+     *
+    */
+    module.call.removeBookmark = function (url, api_key) {
+        var opts = {
+            url: module.api_url + "posts/delete",
+            data: {
+                url: url,
+                api_key: api_key
+            },
+            success: function (xml) {
+                var result, code;
+
+                result = $(xml).find("result");
+                code = result.attr("code");
+
+                module.ui.notify("deleted");
+            }
+        };
+
+        request(opts);
+    };
     return module;
 })(bookie || {}, jQuery);
