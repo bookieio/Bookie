@@ -1,56 +1,60 @@
 <html>
-  <head>
-    <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="delicious.js"></script>
-    <script type="text/javascript">
-      $(function() {
-          delicious.bind_events();
-
-          // and fire off the load event to get things cooking
-          $(delicious.EVENTID).trigger(delicious.events.LOAD);
-      });
-    </script>
-    <style>
-      body {
-        font-family: arial, sans-serif;
-      }
-      input {
-        width: 200px;
-      }
-      textarea {
-        width: 200px;
-        height: 30px;
-      }
-      #suggestions {
-        margin: 0;
-        padding: 0;
-        width: 200px;
-        margin-top: 5px;
-      }
-      #suggestions li {
-        display: inline;
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        margin-right: 2px;
-        font-size: 11px;
-        line-height: 13px;
-      }
-      #suggestions a {
-        color: #444;
-        text-decoration: none;
-      }
-      #suggestions a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body id="bmarkbody">
+    <head>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="bookie-core.js"></script>
+        <script type="text/javascript" src="bookie-chrome.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                bookie.init($("#form"));
+            });
+        </script>
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            input, textarea {
+                width: 250px;
+                margin: 3px;
+                padding: 1px;
+                border: 1px solid #777;
+            }
+            textarea {
+                height: 60px;
+            }
+            h1 {
+                font-size:12pt;
+            }
+            #suggestions {
+                margin: 0;
+                padding: 0;
+                width: 200px;
+                margin-top: 5px;
+            }
+            #suggestions li {
+                display: inline;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                margin-right: 2px;
+                font-size: 11px;
+                line-height: 13px;
+            }
+            #suggestions a {
+                color: #444;
+                text-decoration: none;
+            }
+            #suggestions a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body id="bmarkbody">
+        <h1>Post to Bookie</h1>
         <form id="form" name="form">
             <input type="hidden" id="url" name="url" />
             <input type="text" id="description" placeholder="title" name="description" />
             <input type="text" placeholder="tags" name="tags" id="tags" />
-            <textarea placeholder="notes" name="extended" id="extended"> </textarea>
+            <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
 
             <button type="submit" id="delete" style="display: none;">Delete</button>

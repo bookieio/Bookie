@@ -25,8 +25,9 @@ var bookie = (function (module, $) {
         'LOAD': 'load',
         'onload': function (ev) {
             $('#form').bind('submit', function (ev) {
-                var data = form.serialize();
-                bookie.call.saveBookmark(data);
+                var data = $(this).serialize();
+                module.call.saveBookmark(data);
+                ev.preventDefault();
             });
 
             module.populateForm();
@@ -44,7 +45,7 @@ var bookie = (function (module, $) {
         'ondelete': function (ev) {
             var url = $('#url').attr('value');
             var api_key = $('#api_key').attr('value');
-            module.call.removebookmark(url, api_key);
+            module.call.removeBookmark(url, api_key);
         },
 
         'UPDATE': 'update'
@@ -131,12 +132,12 @@ var bookie = (function (module, $) {
      * Generate the get reuqest to the API call
      *
      */
-    request = function (options) {
+    function request(options) {
         var defaults, opts;
 
         defaults = {
             type: "GET",
-            dataType: "xml",
+            dataType: "html",
             error: onerror
         };
 
@@ -153,22 +154,46 @@ var bookie = (function (module, $) {
         var opts = {
             url: module.api_url + "posts/get",
             data: {url: url},
-            success: callback,
+            success: function (xml) {
+                if(callback) {
+                    callback(xml);
+                }
+            }
         };
 
         request(opts);
     };
 
-    /**
-     * After pressing the save button, go store the new bookmark
-     *
-     */
-    module.call.saveBookmark  = function (params, options) {
-        var defaults, opts;
+    module.call.saveBookmark = function (params) {
+        var opts;
 
-        defaults = {
+        opts = {
             url: module.api_url + "posts/add",
             data: params,
+            success: function(data, textStatus, jqxhr) {
+                module.ui.notify("saved");
+            },
+            error: function(jqxhr, textStatus, errorThrown) {
+                module.ui.notify("error");
+            }
+        };
+
+        request(opts);
+    }
+
+    /*
+     * remove an existing bookmark from delicious
+     * see http://delicious.com/help/api#posts_delete
+     *
+    */
+    module.call.removeBookmark = function (url, api_key) {
+        var opts = {
+            url: module.api_url + "posts/delete",
+            data: {
+                url: url,
+                api_key: api_key
+            },
+
             success: function (xml) {
                 var result, code;
 
@@ -176,9 +201,11 @@ var bookie = (function (module, $) {
                 code = result.attr("code");
 
                 if (code == "done") {
+                    module.ui.notify("deleted");
                     console.log("Bookmark saved to delicious!");
                 } else {
-                    chrome.browserAction.setBadgeText({text: code});
+                    // need to notify that it failed
+                    module.ui.notify("failed");
                     console.error("Error saving bookmark: " + code);
                 }
             }

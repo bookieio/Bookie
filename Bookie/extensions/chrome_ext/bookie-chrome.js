@@ -15,7 +15,7 @@
      *
      */
     module.populateForm = function () {
-        if (chrome && chrome.tab) {
+        if (chrome && chrome.tabs) {
             chrome.tabs.getSelected(null, module.populateFormBase);
         } else {
             // when running unit tests the chrome stuff isn't available
@@ -25,6 +25,10 @@
             });
         }
     };
+
+    module.ui.notify = function(notification) {
+        console.log("Notification: " + notification);
+    }
 
     // provide helpers for dealing with notifications from events fired through
     // the plugin. I think at some point we really want to do something to map
