@@ -75,8 +75,8 @@ var bookie = (function (module, $) {
     module.populateFormBase = function (tab_obj) {
         var url;
 
-        $('#url').val(tab.url);
-        $('#description').val(tab.title);
+        $('#url').val(tab_obj.url);
+        $('#description').val(tab_obj.title);
         $('#api_key').val(localStorage['api_key']);
 
         url = $('#url').attr('value');

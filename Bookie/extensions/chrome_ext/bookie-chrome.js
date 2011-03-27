@@ -16,7 +16,16 @@
      */
     module.populateForm = function () {
         console.log('Populating from Chrome');
-        chrome.tabs.getSelected(null, module.populateFormBase);
+
+        if (chrome && chrome.tab) {
+            chrome.tabs.getSelected(null, module.populateFormBase);
+        } else {
+            // when running unit tests the chrome stuff isn't available
+            // so we have to fake it
+            module.populateFormBase({'url':window.location.href,
+                'title': "Testing stuff"
+            });
+        }
     };
 
     // provide helpers for dealing with notifications from events fired through
