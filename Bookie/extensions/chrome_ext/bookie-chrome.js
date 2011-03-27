@@ -1,41 +1,44 @@
 /*jslint eqeqeq: false, browser: true, debug: true, onevar: true, plusplus: false, newcap: false, */
-/*global $: false, window: false, self: false, escape: false, mor: false, sprintf: false, chrome: false, localStorage: false, */
+/*global $: false, window: false, self: false, escape: false, mor: false, sprintf: false, chrome: false, localStorage: false, jQuery: false */
 
 /* chrome-extension-specific bookie functionality */
 
-var bookie = (function(module, $) {
+var bookie = (function (module, $) {
 
-    module.init = function(form) {
-        console.log("Test");
-        form.bind('submit', function(ev) {
-            var data = form.serialize();
-            bookie.saveBookmark(data);
-        });
-        populateForm();
-    }
+    // PRIVATE
 
-    function populateForm() {
-        chrome.tabs.getSelected(null, function (tab) {
-            var url; 
+    /**
+     * This will call a shared function that maps data to the ui form
+     * The specifics here is getting the tab info from Chrome vs FF
+     *
+     */
+    populateForm = function () {
+        chrome.tabs.getSelected(null, populateFormBase);
+    };
 
-            $('#url').val(tab.url);
-            $('#description').val(tab.title);
-            $('#api_key').val(localStorage['api_key']);
+    // provide helpers for dealing with notifications from events fired through
+    // the plugin. I think at some point we really want to do something to map
+    // these to generic notifications and provide these more as a chrome
+    // specific mapper
+    module.ui.badge = {
+        'clear': function () {
+            chrome.browserAction.setBadgeText({text: ''});
+        },
 
-            url = $('#url').attr('value');
-            bookie.getBookmark(url, function(xml) {
-                $(xml).find("post").map(function() {
-                    // add the tags to the tag ui
-                    $('#tags').val($(this).attr('tag'));
+        'set': function (text, bgcolor) {
+            if (bgcolor !== undefined) {
+                chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
+            }
 
-                    // add the description to the ui
-                    $('#description').val($(this).attr('description'));
+            chrome.browserAction.setBadgeText({text: text});
+        },
 
-                    // add the description to the ui
-                    $('#extended').text($(this).attr('extended'));
-                });
-            });
-        });
-    }
+        // colors must be defined in the RGB syntax for the chrome api to work
+        'colors': {
+            'green': [15, 232, 12, 255]
+        }
+    };
+
     return module;
+
 })(bookie || {}, jQuery);
