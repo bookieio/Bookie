@@ -24,7 +24,6 @@ var bookie = (function (module, $) {
     module.events = {
         'LOAD': 'load',
         'onload': function (ev) {
-            console.log("onload");
             $('#form').bind('submit', function (ev) {
                 var data = form.serialize();
                 bookie.saveBookmark(data);
@@ -59,6 +58,7 @@ var bookie = (function (module, $) {
      *
      */
     module.response_codes = {
+        // http status codes returned
         '200': 'Ok',
         '403': 'NoAuth',
 
@@ -96,7 +96,6 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function (jquery_node) {
-        console.log('in init');
         $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
     };

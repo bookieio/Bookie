@@ -15,8 +15,6 @@
      *
      */
     module.populateForm = function () {
-        console.log('Populating from Chrome');
-
         if (chrome && chrome.tab) {
             chrome.tabs.getSelected(null, module.populateFormBase);
         } else {
