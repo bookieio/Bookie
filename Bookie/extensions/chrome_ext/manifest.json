@@ -1,15 +1,13 @@
 {
   "name": "Bookie",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
     "bookmarks",
-    "https://api.del.icio.us/",
-    "http://127.0.0.1/",
-    "http://rick.bmark.us/"
+    "https://*/*",
+    "http://*/*"
   ],
-  "background_page": "background.html",
   "options_page": "options.html",
   "browser_action": {
     "default_icon": "delicious.png",

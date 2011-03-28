@@ -74,8 +74,60 @@ test('populate_form', function () {
 /**
  * Verify that we get the correct data and ui calls when we store a bookmark
  */
-test('saveBookmark', function () {
+test('saveBookmarkSuccess', function () {
+    var logger, mocked_return, options;
 
-    ok(false);
+    logger = [];
+    mocked_return = '<result code="done"></result>';
+    parser=new DOMParser();
+    mocked_xml=parser.parseFromString(mocked_return,"text/xml");
+
+    // let's try mocking out the ajax method
+    $.ajax = function (params) {
+        options = params;
+    }
+
+    // we also need to mock out the notifications so we can catch them
+    bookie.ui.notify = function (code, message) {
+        logger.push({'code': code, 'message': message});
+    }
+
+    bookie.call.saveBookmark({});
+    options.success(mocked_xml);
+
+    // now check the logger for the result
+    equal(logger[0]['code'], 'Ok',
+        "The notify code of the saveBookmark was 'done'");
+
+});
+
+
+/**
+ * Verify that we get the failed message on a bad call
+ */
+test('saveBookmarkFail', function () {
+    var logger, mocked_return, options;
+
+    logger = [];
+    mocked_return = '<result code="Bad Request: missing url" />';
+    parser=new DOMParser();
+    mocked_xml=parser.parseFromString(mocked_return,"text/xml");
+
+    // let's try mocking out the ajax method
+    $.ajax = function (params) {
+        options = params;
+    }
+
+    // we also need to mock out the notifications so we can catch them
+    bookie.ui.notify = function (code, message) {
+        logger.push({'code': code, 'message': message});
+    }
+
+    bookie.call.saveBookmark({});
+    options.success(mocked_xml);
+
+    // now check the logger for the result
+    equal(logger[0]['code'], 'Err',
+        "The notify code of the saveBookmark was 'Base Request...'");
 
 });

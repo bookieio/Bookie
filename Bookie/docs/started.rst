@@ -51,21 +51,29 @@ To Do
 Where to go from here
 ---------------------
 Well, you might want to import a backup of your delicious bookmarks. You can do
-that with
+that by vising the *Import* link in the footer of your site installation
 
-::
+You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 
-  $ python bookie/scripts/import_delicious.py delicious_file.htm
+You can also start using the `Google Chome extension`_ to save and edit
+bookmarks you have in Bookie. It will only work based on the current page, a
+full UI for managing your bookmarks is in the works.
 
-You can view your recent bookmarks at:
+Once you install the extension, you'll need to set the options for it to work.
 
-http://127.0.0.1:6543/recent
+API Url
+    set this to the installed url for your bookie instance. In dev mode
+    it's `127.0.0.1:6543/delapi/`. Make sure to include the */delapi/* in the url
+    for the extension to work. If you do not set the api you should get an error
+    on the extension icon badge *!URL*
 
 
-You can also start using the `Google Chome extension`_ in development to save and
-edit bookmarks you have in Bookie. It will only work based on the current page,
-a full UI for managing your bookmarks is in the works.
+API Key
+    this is the same key you set in your installations *.ini* config
+    file. You should set this to be your own unique string and make sure that
+    your server install and extension match. If they don't, you'll be unable to
+    store bookmarks to your Bookie server.
 
 
 .. _`git flow`: https://github.com/nvie/gitflow
-.. _`Google Chome extension`: https://github.com/mitechie/delicious-chrome-extension
+.. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx

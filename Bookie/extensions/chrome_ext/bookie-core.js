@@ -13,9 +13,6 @@ var bookie = (function (module, $) {
     // dom hook for triggering/catching events fired
     module.EVENTID = '#bmarkbody';
 
-    // what url are we sending out requests off to?
-    module.api_url = 'http://127.0.0.1:6543/delapi/';
-
     /**
      * Define events supported
      * Currently we've got LOAD, SAVED, ERROR, DELETE, UPDATE
@@ -43,7 +40,6 @@ var bookie = (function (module, $) {
          */
         'DELETE': 'delete',
         'ondelete': function (ev) {
-            console.log('ondelete');
             var url = $('#url').attr('value');
             var api_key = $('#api_key').attr('value');
             module.call.removeBookmark(url, api_key);
@@ -67,6 +63,7 @@ var bookie = (function (module, $) {
         // some codes from the xml response in the delicious api
         'done': 'Ok',
         'Not Found': '404',
+        'Bad Request: missing url': 'Err',
     };
 
     /**
@@ -78,7 +75,6 @@ var bookie = (function (module, $) {
     module.populateFormBase = function (tab_obj) {
         var url;
 
-        console.log('in populate');
         $('#url').val(tab_obj.url);
         $('#description').val(tab_obj.title);
         $('#api_key').val(localStorage['api_key']);
@@ -88,7 +84,6 @@ var bookie = (function (module, $) {
         module.call.getBookmark(url, function (xml) {
             // this could come back as not found
             result = $(xml).find("result");
-            console.log(result);
             if (result.length > 0) {
                 code = result.attr("code");
                 console.log('Page is not currently bookmarked')
@@ -116,16 +111,21 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function () {
+        // what url are we sending out requests off to?
+        if (localStorage['api_url'] !== undefined) {
+            module.api_url = localStorage['api_url'];
+        } else {
+            module.ui.notify('!URL', 'no api url set');
+        }
+
         $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
     };
 
     // cross platform ui calls
     module.ui.enable_delete = function (ev) {
-        console.log('delete enabled');
         // show the button and bind the event to fire the delete off
         $('#delete').show().bind('click', function (ev) {
-            console.log('triggering delete');
             $(module.EVENTID).trigger(module.events.DELETE);
         });
 
@@ -179,7 +179,9 @@ var bookie = (function (module, $) {
             success: function(xml) {
                 var result, code;
                 result = $(xml).find("result");
+
                 code = result.attr("code");
+
                 if (code == "done") {
                     module.ui.notify(module.response_codes[code], "saved");
                 } else {
@@ -201,8 +203,6 @@ var bookie = (function (module, $) {
      *
     */
     module.call.removeBookmark = function (url, api_key) {
-        console.log('called removeBookmark');
-
         var opts = {
             url: module.api_url + "posts/delete",
             data: {
@@ -212,14 +212,9 @@ var bookie = (function (module, $) {
 
             success: function (xml) {
                 var result, code;
-                console.log(xml);
-
 
                 result = $(xml).find("result");
                 code = result.attr("code");
-                console.log(result);
-                console.log(code);
-
 
                 if (code == "done") {
                     module.ui.notify(module.response_codes[code], "deleted");
