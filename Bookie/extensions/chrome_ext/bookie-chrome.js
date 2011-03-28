@@ -26,8 +26,11 @@
         }
     };
 
-    module.ui.notify = function(notification) {
+    module.ui.notify = function(code, notification) {
         console.log("Notification: " + notification);
+
+        // add a notice to the badge as necessary
+        module.ui.badge.set(code);
     }
 
     // provide helpers for dealing with notifications from events fired through

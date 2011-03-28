@@ -43,9 +43,11 @@ var bookie = (function (module, $) {
          */
         'DELETE': 'delete',
         'ondelete': function (ev) {
+            console.log('ondelete');
             var url = $('#url').attr('value');
             var api_key = $('#api_key').attr('value');
             module.call.removeBookmark(url, api_key);
+            ev.preventDefault();
         },
 
         'UPDATE': 'update'
@@ -86,8 +88,8 @@ var bookie = (function (module, $) {
         module.call.getBookmark(url, function (xml) {
             // this could come back as not found
             result = $(xml).find("result");
-
-            if (result) {
+            console.log(result);
+            if (result.length > 0) {
                 code = result.attr("code");
                 console.log('Page is not currently bookmarked')
                 // we don't update the badge, since this happens on every page
@@ -113,18 +115,22 @@ var bookie = (function (module, $) {
     };
 
     // bookie methods
-    module.init = function (jquery_node) {
+    module.init = function () {
         $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
     };
 
     // cross platform ui calls
     module.ui.enable_delete = function (ev) {
-        console.log('called');
-        $('#delete').show();
+        console.log('delete enabled');
+        // show the button and bind the event to fire the delete off
+        $('#delete').show().bind('click', function (ev) {
+            console.log('triggering delete');
+            $(module.EVENTID).trigger(module.events.DELETE);
+        });
 
         // and make sure we bind the delete event
-        $(module.EVENTID).bind(module.events.DELETE, module.ondelete);
+        $(module.EVENTID).bind(module.events.DELETE, module.events.ondelete);
     };
 
 
@@ -137,7 +143,7 @@ var bookie = (function (module, $) {
 
         defaults = {
             type: "GET",
-            dataType: "html",
+            dataType: "xml",
             error: onerror
         };
 
@@ -170,11 +176,19 @@ var bookie = (function (module, $) {
         opts = {
             url: module.api_url + "posts/add",
             data: params,
-            success: function(data, textStatus, jqxhr) {
-                module.ui.notify("saved");
+            success: function(xml) {
+                var result, code;
+                result = $(xml).find("result");
+                code = result.attr("code");
+                if (code == "done") {
+                    module.ui.notify(module.response_codes[code], "saved");
+                } else {
+                    // need to notify that it failed
+                    module.ui.notify(module.response_codes[code], "failed");
+                }
             },
             error: function(jqxhr, textStatus, errorThrown) {
-                module.ui.notify("error");
+                module.ui.notify(module.response_codes.textStatus, "error");
             }
         };
 
@@ -187,6 +201,8 @@ var bookie = (function (module, $) {
      *
     */
     module.call.removeBookmark = function (url, api_key) {
+        console.log('called removeBookmark');
+
         var opts = {
             url: module.api_url + "posts/delete",
             data: {
@@ -196,22 +212,24 @@ var bookie = (function (module, $) {
 
             success: function (xml) {
                 var result, code;
+                console.log(xml);
+
 
                 result = $(xml).find("result");
                 code = result.attr("code");
+                console.log(result);
+                console.log(code);
+
 
                 if (code == "done") {
-                    module.ui.notify("deleted");
-                    console.log("Bookmark saved to delicious!");
+                    module.ui.notify(module.response_codes[code], "deleted");
                 } else {
                     // need to notify that it failed
-                    module.ui.notify("failed");
-                    console.error("Error saving bookmark: " + code);
+                    module.ui.notify(module.response_codes[code], "failed");
                 }
             }
         };
 
-        opts = $.extend({}, defaults, options);
         request(opts);
     };
 

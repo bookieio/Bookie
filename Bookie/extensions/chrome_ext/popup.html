@@ -5,7 +5,7 @@
         <script type="text/javascript" src="bookie-chrome.js"></script>
         <script type="text/javascript">
             $(function() {
-                bookie.init($("#form"));
+                bookie.init();
             });
         </script>
         <style>
@@ -57,7 +57,7 @@
             <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
 
-            <button type="submit" id="delete" style="display: none;">Delete</button>
+            <button type="button" id="delete" style="display: none;">Delete</button>
 
             <input type="hidden" value="" name="api_key" id="api_key" />
         </form>
