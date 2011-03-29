@@ -31,27 +31,24 @@ def {0}():
     env.hosts = ['localhost']
     env.ini_file = "{0}.ini"
     env.ini = None
-
 """
 
     environment_file = os.path.join(dirname(__file__), 'environments.py')
 
     if os.path.exists(environment_file):
-        mode = 'r+a'
-
         # first check if we already have this defined
-        current_env = open(environment_file, mode).read()
+        with open(environment_file) as env_file:
+            current_env = env_file.read()
 
         if 'def {0}'.format(install_name) in current_env:
             raise Exception("That install is already defined in environments.py")
 
-        with open(environment_file, mode) as en_file:
+        with open(environment_file, 'a') as en_file:
             en_file.write(new_env.format(install_name))
 
     else:
-        mode = 'w'
 
-        with open(environment_file, mode) as en_file:
+        with open(environment_file, 'w') as en_file:
             en_file.write(env_header)
             en_file.write(new_env.format(install_name))
 
