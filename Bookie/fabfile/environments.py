@@ -7,8 +7,9 @@ def dev():
     env.ini_file = "development.ini"
     env.ini = None
 
-def rick():
+def adam():
     """Environment settings for the dev environment"""
     env.hosts = ['localhost']
-    env.ini_file = "rick.ini"
+    env.ini_file = "adam.ini"
     env.ini = None
+
