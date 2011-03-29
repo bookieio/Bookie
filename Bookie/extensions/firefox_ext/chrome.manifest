@@ -1,0 +1,2 @@
+content     bookie    chrome/content/
+overlay chrome://browser/content/browser.xul chrome://bookie/content/bookie.xul
