@@ -21,16 +21,11 @@ from tests import *
 # starter helpers
 def new_install(install_name):
     """For a new install, create a new config file and write it out for them"""
-
-    # first check if we already have this defined
-    environment_file = os.path.join(dirname(__file__), 'environments.py')
-
-    current_env = open(environment_file).read()
-
-    if 'def {0}'.format(install_name) in current_env:
-        raise Exception("That install is already defined in environments.py")
+    env_header = """from fabric.api import env"""
 
     new_env = """
+
+
 def {0}():
     \"\"\"Environment settings for the dev environment\"\"\"
     env.hosts = ['localhost']
@@ -39,8 +34,26 @@ def {0}():
 
 """
 
-    with open(environment_file, 'a+') as en_file:
-        en_file.write(new_env.format(install_name))
+    environment_file = os.path.join(dirname(__file__), 'environments.py')
+
+    if os.path.exists(environment_file):
+        mode = 'r+a'
+
+        # first check if we already have this defined
+        current_env = open(environment_file, mode).read()
+
+        if 'def {0}'.format(install_name) in current_env:
+            raise Exception("That install is already defined in environments.py")
+
+        with open(environment_file, mode) as en_file:
+            en_file.write(new_env.format(install_name))
+
+    else:
+        mode = 'w'
+
+        with open(environment_file, mode) as en_file:
+            en_file.write(env_header)
+            en_file.write(new_env.format(install_name))
 
     # we also need to create a .ini file for this install
     ini_filename = os.path.join(dirname(dirname(__file__)),
