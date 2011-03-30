@@ -14,6 +14,32 @@ def drop_sqlite(engine):
     engine.execute(sql)
 
 
+def for_mysql(engine):
+    """Add the table structure for mysql db"""
+    meta = MetaData(engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+
+    tag_str = Column('tag_string', UnicodeText())
+    tag_str.create(bmarks)
+
+    # add the fulltext index
+
+    ft_index = """ALTER TABLE  `bmarks`
+                      ADD FULLTEXT `fulltext`
+                        (`description` , `extended`, `tag_string`);
+    """
+    engine.execute(ft_index)
+
+
+def drop_mysql(engine):
+    """The downgrade method for mysql"""
+    meta = MetaData(engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+    tag_str = Column('tag_string', UnicodeText())
+    drop_column(bmarks, tag_str)
+
+    engine.execute("ALTER TABLE bmarks DROP INDEX `fulltext`;")
+
 def upgrade(migrate_engine):
     """Right now this is sqlite specific
 
@@ -26,10 +52,21 @@ def upgrade(migrate_engine):
     e.g. engadget would come up with a search for gadget
 
     """
-    for_sqlite(migrate_engine)
+    if 'sqlite' in migrate_engine.dialect.driver.lower():
+        for_sqlite(migrate_engine)
+
+    elif 'mysql' in migrate_engine.dialect.driver.lower():
+        for_mysql(migrate_engine)
 
 
 def downgrade(migrate_engine):
     """And destroy the tables created"""
-    drop_sqlite(migrate_engine)
+    # drop_sqlite(migrate_engine)
+    print migrate_engine.dialect
+
+    # for_sqlite(migrate_engine)
+    pass
+
+
+    pass
 

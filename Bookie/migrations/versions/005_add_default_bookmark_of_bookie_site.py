@@ -9,25 +9,26 @@ def upgrade(migrate_engine):
     pubbing the links
 
     """
-    from datetime import datetime
-    import transaction
-    from bookie.models import initialize_sql
+    pass
+    # from datetime import datetime
+    # import transaction
+    # from bookie.models import initialize_sql
 
-    initialize_sql(migrate_engine)
+    # initialize_sql(migrate_engine)
 
-    from bookie.models import DBSession
-    from bookie.models import Bmark
+    # from bookie.models import DBSession
+    # from bookie.models import Bmark
 
-    bmark_us = Bmark('http://bmark/us',
-                     desc="Bookie Website",
-                     ext= "Bookie Documentation Home",
-                     tags = "bookmarks")
+    # bmark_us = Bmark('http://bmark/us',
+    #                  desc="Bookie Website",
+    #                  ext= "Bookie Documentation Home",
+    #                  tags = "bookmarks")
 
-    bmark_us.stored = datetime.now()
-    bmark_us.updated = datetime.now()
-    DBSession.add(bmark_us)
-    DBSession.flush()
-    transaction.commit()
+    # bmark_us.stored = datetime.now()
+    # bmark_us.updated = datetime.now()
+    # DBSession.add(bmark_us)
+    # DBSession.flush()
+    # transaction.commit()
 
 
 def downgrade(migrate_engine):
