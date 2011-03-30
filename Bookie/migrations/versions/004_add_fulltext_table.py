@@ -4,7 +4,7 @@ from migrate import *
 
 def for_sqlite(engine):
     """Add the table structure for sqlite db"""
-    sql = """CREATE VIRTUAL TABLE fulltext USING fts3(bid, description, extended, tag_str);"""
+    sql = """CREATE VIRTUAL TABLE fulltext USING fts3(bid, description, extended, tag_string);"""
     engine.execute(sql)
 
 
@@ -16,14 +16,7 @@ def drop_sqlite(engine):
 
 def for_mysql(engine):
     """Add the table structure for mysql db"""
-    meta = MetaData(engine)
-    bmarks = Table('bmarks', meta, autoload=True)
-
-    tag_str = Column('tag_str', UnicodeText())
-    tag_str.create(bmarks)
-
     # add the fulltext index
-
     ft_index = """ALTER TABLE  `bmarks`
                       ADD FULLTEXT `fulltext`
                         (`description` , `extended`, `tag_str`);
@@ -33,11 +26,6 @@ def for_mysql(engine):
 
 def drop_mysql(engine):
     """The downgrade method for mysql"""
-    meta = MetaData(engine)
-    bmarks = Table('bmarks', meta, autoload=True)
-    tag_str = Column('tag_str', UnicodeText())
-    drop_column(bmarks, tag_str)
-
     engine.execute("ALTER TABLE bmarks DROP INDEX `fulltext`;")
 
 
@@ -53,6 +41,15 @@ def upgrade(migrate_engine):
     e.g. engadget would come up with a search for gadget
 
     """
+
+    # add the tag_str column for everyone, who cares
+    meta = MetaData(migrate_engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+
+    tag_str = Column('tag_str', UnicodeText())
+    tag_str.create(bmarks)
+
+    # now do some db specific modifications for how they support fulltext 
     if 'sqlite' in migrate_engine.dialect.driver.lower():
         for_sqlite(migrate_engine)
 
@@ -62,6 +59,11 @@ def upgrade(migrate_engine):
 
 def downgrade(migrate_engine):
     """And destroy the tables created"""
+    meta = MetaData(migrate_engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+    tag_str = Column('tag_str', UnicodeText())
+    drop_column(bmarks, tag_str)
+
     if 'sqlite' in migrate_engine.dialect.driver.lower():
         drop_sqlite(migrate_engine)
 
