@@ -65,12 +65,11 @@ def search(request):
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
 
-    res = searcher.search(phrase)
-    res_list = (mark.bmark for mark in res)
+    res_list = searcher.search(phrase)
 
     return {
         'search_results': res_list,
-        'result_count': len(res),
+        'result_count': len(res_list),
         'phrase': phrase,
     }
 

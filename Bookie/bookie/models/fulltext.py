@@ -6,12 +6,16 @@ and API as we did in the importer
 """
 from sqlalchemy.orm import contains_eager
 from bookie.models import SqliteModel
+from bookie.models import Bmark
 
 
 def get_fulltext_handler(engine):
     """Based on the engine, figure out the type of fulltext interface"""
     if 'sqlite' in engine:
         return SqliteFulltext()
+
+    if 'mysql' in engine:
+        return MySqlFulltext()
 
 
 class SqliteFulltext(object):
@@ -38,6 +42,37 @@ class SqliteFulltext(object):
         ext = SqliteModel.query.\
                     filter(SqliteModel.extended.match(phrase))
 
-        return desc.union(tag_str, ext).join(SqliteModel.bmark).\
+        res = desc.union(tag_str, ext).join(SqliteModel.bmark).\
                     options(contains_eager(SqliteModel.bmark)).\
                     order_by('bmarks.stored').all()
+
+        # everyone else sends a list of bmarks, so need to get our bmarks out
+        # of the result set
+        return [mark.bmark for mark in res]
+
+
+class MySqlFulltext(object):
+    """Extend the fulltext api object to implement searches for mysql db
+
+    Columns: bid, description, extended, tags
+
+    """
+    def search(self, phrase):
+        """Perform the search on the index"""
+        #we need to adjust the phrase to be a set of OR per word
+        phrase = " OR ".join(phrase.split())
+
+        desc = Bmark.query.\
+                    filter(Bmark.description.match(phrase))
+
+        tag_str = Bmark.query.\
+                    filter(Bmark.tag_str.match(phrase))
+
+        ext = Bmark.query.\
+                    filter(Bmark.extended.match(phrase))
+
+        return desc.union(tag_str, ext).\
+                   order_by(Bmark.stored).all()
+
+
+
