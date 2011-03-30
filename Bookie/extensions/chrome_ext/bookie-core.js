@@ -21,6 +21,7 @@ var bookie = (function (module, $) {
     module.events = {
         'LOAD': 'load',
         'onload': function (ev) {
+            $('#tags').focus();
             $('#form').bind('submit', function (ev) {
                 var data = $(this).serialize();
                 module.call.saveBookmark(data);
