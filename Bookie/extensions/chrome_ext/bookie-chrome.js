@@ -8,6 +8,7 @@
 (function (module, $) {
 
     // PRIVATE
+    var background = chrome.extension.getBackgroundPage();
 
     /**
      * This will call a shared function that maps data to the ui form
@@ -30,7 +31,8 @@
         console.log("Notification: " + notification);
 
         // add a notice to the badge as necessary
-        module.ui.badge.set(code);
+        module.ui.badge.set(code, 5000);
+        window.close();
     }
 
     // provide helpers for dealing with notifications from events fired through
@@ -38,16 +40,20 @@
     // these to generic notifications and provide these more as a chrome
     // specific mapper
     module.ui.badge = {
-        'clear': function () {
-            chrome.browserAction.setBadgeText({text: ''});
+        'clear': function (millis) {
+            background.ui.badge.clear(millis);
         },
 
-        'set': function (text, bgcolor) {
-            if (bgcolor !== undefined) {
+        'set': function (text, milliseconds, bgcolor) {
+            if (bgcolor) {
                 chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
             }
 
             chrome.browserAction.setBadgeText({text: text});
+
+            if (milliseconds) {
+                module.ui.badge.clear(milliseconds);
+            }
         },
 
         // colors must be defined in the RGB syntax for the chrome api to work
