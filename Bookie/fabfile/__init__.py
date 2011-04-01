@@ -15,7 +15,12 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
 from docs import *
 from database import *
 from development import *
-from environments import *
+
+try:
+    from environments import *
+except:
+    print "No environment currently found, please do: fab new_install:$myinstall"
+
 from tests import *
 
 # starter helpers

@@ -159,7 +159,7 @@ var bookie = (function (module, $) {
      */
     module.call.getBookmark = function (url, callback) {
         var opts = {
-            url: module.api_url + "posts/get",
+            url: module.api_url + "/delapi/posts/get",
             data: {url: url},
             success: function (xml) {
                 if(callback) {
@@ -175,7 +175,7 @@ var bookie = (function (module, $) {
         var opts;
 
         opts = {
-            url: module.api_url + "posts/add",
+            url: module.api_url + "/delapi/posts/add",
             data: params,
             success: function(xml) {
                 var result, code;
@@ -205,7 +205,7 @@ var bookie = (function (module, $) {
     */
     module.call.removeBookmark = function (url, api_key) {
         var opts = {
-            url: module.api_url + "posts/delete",
+            url: module.api_url + "/delapi/posts/delete",
             data: {
                 url: url,
                 api_key: api_key

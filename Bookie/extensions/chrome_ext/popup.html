@@ -6,16 +6,39 @@
         <script type="text/javascript">
             $(function() {
                 bookie.init();
+                validateSettings();
+
+
+                function validateSettings() {
+                    var errors = [],
+                        errorOutput = $("#errors");
+
+                    if(!localStorage['api_url'])
+                        errors.push("Bookie URL has not been set");
+                    if(!localStorage['api_key'])
+                        errors.push("API key has not been set");
+
+                    // display errors if we have them
+                    if(errors.length) {
+                        var errors = errors.map(function(msg) { 
+                            return $("<li/>").text(msg).get(0);
+                        });
+                        errorOutput.append(errors).show();
+                    } 
+                }
+
             });
         </script>
         <style>
             body {
                 font-family: sans-serif;
+                font-size:10pt;
+                padding:3px;
             }
             input, textarea {
                 width: 250px;
-                margin: 3px;
-                padding: 1px;
+                margin: 3px 0;
+                padding: 2px;
                 border: 1px solid #777;
             }
             textarea {
@@ -46,6 +69,16 @@
             #suggestions a:hover {
                 text-decoration: underline;
             }
+            #errors {
+                display:none;
+                padding:5px 0;
+                text-align:center;
+                border:1px solid #aaa;
+                background-color:#eee;
+                color:#F00;
+                font-weight:bold;
+                list-style:none;
+            }
         </style>
     </head>
     <body id="bmarkbody">
@@ -61,5 +94,7 @@
 
             <input type="hidden" value="" name="api_key" id="api_key" />
         </form>
+        <ul id="errors">
+        </ul>
     </body>
 </html>
