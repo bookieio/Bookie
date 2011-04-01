@@ -88,12 +88,6 @@ class PgSqlFulltext(object):
     slow right now, to make faster need to setup a to_vector column for storing
     http://www.postgresql.org/docs/9.0/static/textsearch-tables.html
 
-    SELECT bid, url, description
-    FROM bmarks
-    WHERE to_tsvector(description || ' ' || extended) @@ to_tsquery('virtualbox') OR
-          to_tsvector(tag_str) @@ to_tsquery('virtualbox')
-    ORDER BY stored DESC;
-
     """
 
     def search(self, phrase):
@@ -102,9 +96,9 @@ class PgSqlFulltext(object):
 
         query = """SELECT bid
         FROM bmarks
-        WHERE description @@ to_tsquery(:phrase) OR
-              extended @@ to_tsquery(:phrase) OR
-              tag_str @@ to_tsquery(:phrase)
+        WHERE to_tsvector('english', description) @@ to_tsquery(:phrase) OR
+              to_tsvector('english', extended) @@ to_tsquery(:phrase) OR
+              to_tsvector('english', tag_str) @@ to_tsquery(:phrase)
 
         ORDER BY stored DESC;
         """

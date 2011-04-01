@@ -32,7 +32,8 @@ def drop_mysql(engine):
 def for_pgsql(engine):
     """Postgres we're going to start with the slowest, but easiest option"""
     idx_sql = [
-        "CREATE INDEX desc_ftidx ON bmarks USING gin(to_tsvector('english', description || ' ' || extended));",
+        "CREATE INDEX desc_ftidx ON bmarks USING gin(to_tsvector('english', description));",
+        "CREATE INDEX ext_ftidx ON bmarks USING gin(to_tsvector('english', extended));",
         "CREATE INDEX tag_ftidx ON bmarks USING gin(to_tsvector('english', tag_str));",
     ]
 
