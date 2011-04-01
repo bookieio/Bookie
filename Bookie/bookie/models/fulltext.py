@@ -4,9 +4,12 @@ This is going to be dependant on the db model found so we'll setup a factory
 and API as we did in the importer
 
 """
+from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
+
 from bookie.models import SqliteModel
 from bookie.models import Bmark
+from bookie.models import DBSession
 
 
 def get_fulltext_handler(engine):
@@ -16,6 +19,9 @@ def get_fulltext_handler(engine):
 
     if 'mysql' in engine:
         return MySqlFulltext()
+
+    if 'pg' in engine or 'postgres' in engine:
+        return PgSqlFulltext()
 
 
 class SqliteFulltext(object):
@@ -75,4 +81,37 @@ class MySqlFulltext(object):
                    order_by(Bmark.stored).all()
 
 
+
+class PgSqlFulltext(object):
+    """Implements a basic fulltext search of pgsql
+
+    slow right now, to make faster need to setup a to_vector column for storing
+    http://www.postgresql.org/docs/9.0/static/textsearch-tables.html
+
+    SELECT bid, url, description
+    FROM bmarks
+    WHERE to_tsvector(description || ' ' || extended) @@ to_tsquery('virtualbox') OR
+          to_tsvector(tag_str) @@ to_tsquery('virtualbox')
+    ORDER BY stored DESC;
+
+    """
+
+    def search(self, phrase):
+        """Need to perform searches against the three columns"""
+        phrase = " | ".join(phrase.split())
+
+        query = """SELECT bid
+        FROM bmarks
+        WHERE to_tsvector(description || ' ' || extended) @@ to_tsquery(:phrase) OR
+              to_tsvector(tag_str) @@ to_tsquery(:phrase)
+        ORDER BY stored DESC;
+        """
+
+        res = DBSession.execute(text(query), {'phrase': phrase} )
+
+        ids = set([r.bid for r in res])
+
+        return Bmark.query.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags)).\
+                  filter(Bmark.bid.in_(ids)).all()
 
