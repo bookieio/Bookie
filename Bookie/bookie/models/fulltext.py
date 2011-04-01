@@ -102,8 +102,10 @@ class PgSqlFulltext(object):
 
         query = """SELECT bid
         FROM bmarks
-        WHERE to_tsvector(description || ' ' || extended) @@ to_tsquery(:phrase) OR
-              to_tsvector(tag_str) @@ to_tsquery(:phrase)
+        WHERE description @@ to_tsquery(:phrase) OR
+              extended @@ to_tsquery(:phrase) OR
+              tag_str @@ to_tsquery(:phrase)
+
         ORDER BY stored DESC;
         """
 
