@@ -92,8 +92,10 @@ var bookie = (function (module, $) {
         url = $('#url').attr('value');
 
         module.call.getBookmark(url, function (xml) {
+            var result, code, found;
             // this could come back as not found
             result = $(xml).find("result");
+
             if (result.length > 0) {
                 code = result.attr("code");
                 console.log('Page is not currently bookmarked')
@@ -101,7 +103,9 @@ var bookie = (function (module, $) {
                 // we load our ui from, it's not an error to not be found
             }
 
-            $(xml).find("post").map(function () {
+            found = $(xml).find("post");
+
+            found.map(function () {
                 // add the tags to the tag ui
                 $('#tags').val($(this).attr('tag'));
 
@@ -158,8 +162,8 @@ var bookie = (function (module, $) {
             error: function(jqxhr, textStatus, errorThrown) {
                 module.ui.notify(new Notification(
                     "error",
-                    module.response_codes[jqxhr.status], 
-                    textStatus, 
+                    module.response_codes[jqxhr.status],
+                    textStatus,
                     "Could not find Bookie instance at " + module.api_url));
             }
         };
@@ -178,6 +182,8 @@ var bookie = (function (module, $) {
             url: module.api_url + "/delapi/posts/get",
             data: {url: url},
             success: function (xml) {
+                console.log('done, looking for callback');
+
                 if(callback) {
                     callback(xml);
                 }
@@ -210,7 +216,7 @@ var bookie = (function (module, $) {
                     module.ui.notify(new Notification(
                         "error",
                         400, //TODO: correctly determine http status code
-                        module.response_codes[code], 
+                        module.response_codes[code],
                         "Could not save bookmark"));
                 }
             },
@@ -249,7 +255,7 @@ var bookie = (function (module, $) {
                     module.ui.notify(new Notification(
                         "error",
                         400, //TODO: correctly determine http status code
-                        module.response_codes[code], 
+                        module.response_codes[code],
                         "Could not delete bookmark"));
                 }
             }

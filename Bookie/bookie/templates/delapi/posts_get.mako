@@ -4,9 +4,9 @@
     % for post in posts:
         <post href="${post.url}"
             hash="---"
-            description="${post.description}"
-            extended="${post.extended}"
-            tag="${post.tag_string()}" time="${post.stored}"
+            description="${escape(post.description)}"
+            extended="${escape(post.extended)}"
+            tag="${escape(post.tag_string())}" time="${post.stored}"
             others="--"></post>
     % endfor
 </posts>

@@ -34,8 +34,8 @@
 
         if(notification.type === "error") {
             webkitNotifications.createNotification(
-                'delicious.png',  
-                notification.shortText,  
+                'delicious.png',
+                notification.shortText,
                 notification.longText
                 ).show();
         } else {
