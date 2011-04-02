@@ -238,10 +238,18 @@ var bookie = (function (module, $) {
                 code = result.attr("code");
 
                 if (code == "done") {
-                    module.ui.notify(module.response_codes[code], "deleted");
+                    module.ui.notify(new Notification(
+                        "info",
+                        200,
+                        module.response_codes[code],
+                        "Deleted"));
                 } else {
                     // need to notify that it failed
-                    module.ui.notify(module.response_codes[code], "failed");
+                    module.ui.notify(new Notification(
+                        "error",
+                        400, //TODO: correctly determine http status code
+                        module.response_codes[code], 
+                        "Could not delete bookmark"));
                 }
             }
         };
