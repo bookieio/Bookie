@@ -1,51 +1,42 @@
 <html>
-  <head>
-    <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript">
-      $(function() {
-          // populate default field values
-          $('#api_key').val(localStorage['api_key']);
-          $('#api_url').val(localStorage['api_url']);
+    <head>
+        <script type="text/javascript" src="res/js/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                // populate default field values
+                $('#api_key').val(localStorage['api_key']);
+                $('#api_url').val(localStorage['api_url']);
 
-          // save new values on submit
-          $("#form").submit(function() {
-              localStorage['api_key'] = $('#api_key').val();
-              localStorage['api_url'] = $('#api_url').val();
+                // save new values on submit
+                $("#form").submit(function() {
+                    localStorage['api_key'] = $('#api_key').val();
+                    localStorage['api_url'] = $('#api_url').val();
 
-              $('#feedback').text('Saved!');
+                    $('#feedback').text('Saved!');
 
-              // delicious.authorize({
-              //   success: function() {
-              //     window.close();
-              //   },
-              //   error: function() {
-              //     $('#feedback').text('Invalid login credentials.');
-              //   }
-              // });
+                    return false;
+                });
+            });
+        </script>
+        <style>
+            body {
+                font-family: sans-serif;
+            }
 
-              return false;
-          });
-      });
-    </script>
-    <style>
-      body {
-          font-family: sans-serif;
-      }
-
-      #feedback {
-          color: #d00;
-          font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <form id="form">
-      <div id='feedback'></div>
-      <ul>
-          <li><label for="api_url">Bookie URL</label><input type="text" id="api_url"/></li>
-          <li><label for="api_key">API Key</label><input type="password" placeholder="api key" id="api_key"/></li>
-      </ul>
-      <button type="submit">Save</button>
-    </form>
-  </body>
+            #feedback {
+                color: #d00;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="form">
+            <div id='feedback'></div>
+            <ul>
+                <li><label for="api_url">Bookie URL</label><input type="text" id="api_url"/></li>
+                <li><label for="api_key">API Key</label><input type="password" placeholder="api key" id="api_key"/></li>
+            </ul>
+            <button type="submit">Save</button>
+        </form>
+    </body>
 </html>
