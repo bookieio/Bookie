@@ -59,12 +59,21 @@ var bookie = (function (module, $) {
         // http status codes returned
         '200': 'Ok',
         '403': 'NoAuth',
+        '404': '404',
 
         // some codes from the xml response in the delicious api
         'done': 'Ok',
         'Not Found': '404',
         'Bad Request: missing url': 'Err',
     };
+
+    function Notification(type, code, shortText, longText)
+    {
+        this.type = type;
+        this.code = code;
+        this.shortText = shortText;
+        this.longText = longText;
+    }
 
     /**
      * The actual work to map the tab object data ot the form ui
@@ -111,12 +120,13 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function () {
-        // what url are we sending out requests off to?
-        if (localStorage['api_url'] !== undefined) {
-            module.api_url = localStorage['api_url'];
-        } else {
-            module.ui.notify('!URL', 'no api url set');
+        if (!localStorage['api_url']) {
+            module.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
+            return;
         }
+
+        // what url are we sending out requests off to?
+        module.api_url = localStorage['api_url'];
 
         $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
@@ -144,7 +154,13 @@ var bookie = (function (module, $) {
         defaults = {
             type: "GET",
             dataType: "xml",
-            error: onerror
+            error: function(jqxhr, textStatus, errorThrown) {
+                module.ui.notify(new Notification(
+                    "error",
+                    module.response_codes[jqxhr.status], 
+                    textStatus, 
+                    "Could not find Bookie instance at " + module.api_url));
+            }
         };
 
         opts = $.extend({}, defaults, options);
@@ -183,15 +199,20 @@ var bookie = (function (module, $) {
                 code = result.attr("code");
 
                 if (code == "done") {
-                    module.ui.notify(module.response_codes[code], "saved");
+                    module.ui.notify(new Notification(
+                        "info",
+                        200,
+                        module.response_codes[code],
+                        "saved"));
                 } else {
                     // need to notify that it failed
-                    module.ui.notify(module.response_codes[code], "failed");
+                    module.ui.notify(new Notification(
+                        "error",
+                        400, //TODO: correctly determine http status code
+                        module.response_codes[code], 
+                        "Could not save bookmark"));
                 }
             },
-            error: function(jqxhr, textStatus, errorThrown) {
-                module.ui.notify(module.response_codes.textStatus, "error");
-            }
         };
 
         request(opts);
