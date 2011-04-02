@@ -110,4 +110,3 @@ class PgSqlFulltext(object):
         return Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags)).\
                   filter(Bmark.bid.in_(ids)).all()
-
