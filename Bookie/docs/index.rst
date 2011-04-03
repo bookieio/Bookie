@@ -17,6 +17,7 @@ Contents:
 
    started
    database
+   hosting
    fabric
    tests
    todo
