@@ -126,6 +126,7 @@ var bookie = (function (module, $) {
     // bookie methods
     module.init = function () {
         if (!localStorage['api_url']) {
+            console.log('No API URL');
             module.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
             return;
         }
