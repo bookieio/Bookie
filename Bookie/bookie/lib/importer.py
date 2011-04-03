@@ -104,7 +104,7 @@ class DelImporter(Importer):
                                link.text,
                                extended,
                                " ".join(link['tags'].split(',')),
-                               dt = add_date,
+                               dt=add_date,
                                fulltext=fulltext)
 
 

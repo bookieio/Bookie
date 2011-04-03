@@ -2,6 +2,7 @@
 
 """
 import logging
+from cgi import escape
 from datetime import datetime
 from bookie.lib.access import Authorize
 from bookie.models import DBSession, NoResultFound
@@ -41,7 +42,8 @@ def posts_add(request):
             except NoResultFound:
                 # then let's store this thing
 
-                # if we have a dt param then set the date to be that manual date
+                # if we have a dt param then set the date to be that manual
+                # date
                 if 'dt' in request.params:
                     # date format by delapi specs:
                     # CCYY-MM-DDThh:mm:ssZ
@@ -113,11 +115,9 @@ def posts_get(request):
                 return HTTPNotFound()
 
             # we need to escape any html entities in things
-            from cgi import escape
-
-            return { 'datefound': bmark.stored.strftime('%Y-%m-%d'),
+            return {'datefound': bmark.stored.strftime('%Y-%m-%d'),
                     'posts': [bmark],
-                    'escape': escape,}
+                    'escape': escape, }
         else:
             request.override_renderer = 'string'
             return '<result code="Not Found" />'
