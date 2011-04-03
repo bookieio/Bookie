@@ -37,6 +37,16 @@ def initialize_sql(engine):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 
+    # only if we are on sqlite do we have this relation
+    if 'sqlite' in str(DBSession.bind):
+
+        if not hasattr(SqliteModel, 'bmark'):
+            Bmark.fulltext = relation(SqliteModel,
+                         backref='bmark',
+                         uselist=False,
+                         cascade="all, delete, delete-orphan",
+                         )
+
 
 def todict(self):
     """Method to turn an SA instance into a dict so we can output to json"""
@@ -354,11 +364,4 @@ class Bmark(Base):
         self.tags = TagMgr.from_string(tag_string)
 
 
-# only if we are on sqlite do we have this relation
-if 'sqlite' in str(DBSession.bind):
 
-    Bmark.fulltext = relation(SqliteModel,
-                     backref='bmark',
-                     uselist=False,
-                     cascade="all, delete, delete-orphan",
-                     )
