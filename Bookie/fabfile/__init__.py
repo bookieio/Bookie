@@ -15,32 +15,47 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
 from docs import *
 from database import *
 from development import *
-from environments import *
+
+try:
+    from environments import *
+except:
+    print "No environment currently found, please do: fab new_install:$myinstall"
+
 from tests import *
 
 # starter helpers
 def new_install(install_name):
     """For a new install, create a new config file and write it out for them"""
-
-    # first check if we already have this defined
-    environment_file = os.path.join(dirname(__file__), 'environments.py')
-
-    current_env = open(environment_file).read()
-
-    if 'def {0}'.format(install_name) in current_env:
-        raise Exception("That install is already defined in environments.py")
+    env_header = """from fabric.api import env"""
 
     new_env = """
+
+
 def {0}():
     \"\"\"Environment settings for the dev environment\"\"\"
     env.hosts = ['localhost']
     env.ini_file = "{0}.ini"
     env.ini = None
-
 """
 
-    with open(environment_file, 'a+') as en_file:
-        en_file.write(new_env.format(install_name))
+    environment_file = os.path.join(dirname(__file__), 'environments.py')
+
+    if os.path.exists(environment_file):
+        # first check if we already have this defined
+        with open(environment_file) as env_file:
+            current_env = env_file.read()
+
+        if 'def {0}'.format(install_name) in current_env:
+            raise Exception("That install is already defined in environments.py")
+
+        with open(environment_file, 'a') as en_file:
+            en_file.write(new_env.format(install_name))
+
+    else:
+
+        with open(environment_file, 'w') as en_file:
+            en_file.write(env_header)
+            en_file.write(new_env.format(install_name))
 
     # we also need to create a .ini file for this install
     ini_filename = os.path.join(dirname(dirname(__file__)),

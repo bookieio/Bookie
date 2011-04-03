@@ -1,6 +1,7 @@
 """Pyramid controller for the delicious api compatible url calls
 
 """
+import logging
 from datetime import datetime
 from bookie.lib.access import Authorize
 from bookie.models import DBSession, NoResultFound
@@ -8,6 +9,8 @@ from bookie.models import BmarkMgr
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
+
+LOG = logging.getLogger(__name__)
 
 
 def posts_add(request):
@@ -109,8 +112,12 @@ def posts_get(request):
             if not bmark:
                 return HTTPNotFound()
 
+            # we need to escape any html entities in things
+            from cgi import escape
+
             return { 'datefound': bmark.stored.strftime('%Y-%m-%d'),
-                    'posts': [bmark], }
+                    'posts': [bmark],
+                    'escape': escape,}
         else:
             request.override_renderer = 'string'
             return '<result code="Not Found" />'

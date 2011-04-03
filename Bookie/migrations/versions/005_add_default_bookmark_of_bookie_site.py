@@ -18,7 +18,7 @@ def upgrade(migrate_engine):
     from bookie.models import DBSession
     from bookie.models import Bmark
 
-    bmark_us = Bmark('http://bmark/us',
+    bmark_us = Bmark('http://bmark.us',
                      desc="Bookie Website",
                      ext= "Bookie Documentation Home",
                      tags = "bookmarks")

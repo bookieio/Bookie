@@ -8,6 +8,7 @@
 (function (module, $) {
 
     // PRIVATE
+    var background = chrome.extension.getBackgroundPage();
 
     /**
      * This will call a shared function that maps data to the ui form
@@ -26,11 +27,40 @@
         }
     };
 
-    module.ui.notify = function(code, notification) {
-        console.log("Notification: " + notification);
+    module.ui.notify = function(notification) {
+        console.log(notification.longText);
 
+        showBadge(notification);
+
+        if(notification.type === "error") {
+            webkitNotifications.createNotification(
+                'delicious.png',
+                notification.shortText,
+                notification.longText
+                ).show();
+        } else {
+            window.close();
+        }
+    }
+
+    function showBadge(notification) {
+        var color,
+            badge;
+
+        switch(notification.type) {
+            case "error":
+                color = "red";
+                badge = "Err";
+                break;
+            case "info":
+                color = "green";
+                badge = "Ok";
+                break;
+            default:
+                console.log("Unknown notification type: " + notification.type);
+        }
         // add a notice to the badge as necessary
-        module.ui.badge.set(code);
+        module.ui.badge.set(badge, 5000, module.ui.badge.colors[color]);
     }
 
     // provide helpers for dealing with notifications from events fired through
@@ -38,21 +68,26 @@
     // these to generic notifications and provide these more as a chrome
     // specific mapper
     module.ui.badge = {
-        'clear': function () {
-            chrome.browserAction.setBadgeText({text: ''});
+        'clear': function (millis) {
+            background.ui.badge.clear(millis);
         },
 
-        'set': function (text, bgcolor) {
-            if (bgcolor !== undefined) {
+        'set': function (text, milliseconds, bgcolor) {
+            if (bgcolor) {
                 chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
             }
 
             chrome.browserAction.setBadgeText({text: text});
+
+            if (milliseconds) {
+                module.ui.badge.clear(milliseconds);
+            }
         },
 
-        // colors must be defined in the RGB syntax for the chrome api to work
+        // colors must be defined in the RGBA syntax for the chrome api to work
         'colors': {
-            'green': [15, 232, 12, 255]
+            'green': [15, 232, 12, 255],
+            'red': [200, 50, 50, 255]
         }
     };
 

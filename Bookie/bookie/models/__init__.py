@@ -101,16 +101,15 @@ class TagMgr(object):
         if tag_str == '':
             return {}
 
-        tag_list = set(tag_str.split(" "))
+        tag_list = set([tag.lower().strip() for tag in tag_str.split(" ")])
         tag_objects = {}
 
         for tag in TagMgr.find(tags=tag_list):
-            # remove the tag from the tag_list as we find it
-            tag_objects[tag.name] = tag
-            tag_list.remove(tag.name)
+            tag_objects[tag.name.lower()] = tag
+            tag_list.remove(tag.name.lower())
 
         # any tags left in the list are new
-        for new_tag in tag_list:
+        for new_tag in (tag for tag in tag_list if tag != ""):
             tag_objects[new_tag] = Tag(new_tag)
 
         return tag_objects
@@ -166,21 +165,28 @@ class SqliteModel(Base):
         self.extended = extended
         self.tag_string = tag_string
 
-class SqliteFullTextExtension(MapperExtension):
+
+class FullTextExtension(MapperExtension):
     """This is a mapper to handle inserting into fulltext index
 
     Since the sqlite fulltext is a separate table, we need to insert/update
     into that fulltext index whenever we add/change a bookmark
 
+    Other dbs need to have the concat tag_str populated to search against
+
     """
     def before_insert(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
-        LOG.error('called before insert')
-        LOG.error(instance.__repr__())
-        instance.fulltext = SqliteModel(instance.bid,
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before insert')
+            LOG.error(instance.__repr__())
+            instance.fulltext = SqliteModel(instance.bid,
                                   instance.description,
                                   instance.extended,
                                   instance.tag_string())
+        else:
+            instance.tag_str = instance.tag_string()
 
 
 class BmarkMgr(object):
@@ -297,7 +303,7 @@ class Bmark(Base):
     """Basic bookmark table object"""
     __tablename__ = "bmarks"
     __mapper_args__ = {
-        'extension': SqliteFullTextExtension()
+        'extension': FullTextExtension()
     }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
@@ -306,6 +312,9 @@ class Bmark(Base):
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, onupdate=datetime.now)
+
+    # DON"T USE
+    tag_str = Column(UnicodeText())
 
     tags = relation(Tag,
             backref="bmark",

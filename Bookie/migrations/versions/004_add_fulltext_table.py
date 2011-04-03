@@ -14,6 +14,39 @@ def drop_sqlite(engine):
     engine.execute(sql)
 
 
+def for_mysql(engine):
+    """Add the table structure for mysql db"""
+    # add the fulltext index
+    ft_index = """ALTER TABLE  `bmarks`
+                      ADD FULLTEXT `fulltext`
+                        (`description` , `extended`, `tag_str`);
+    """
+    engine.execute(ft_index)
+
+
+def drop_mysql(engine):
+    """The downgrade method for mysql"""
+    engine.execute("ALTER TABLE bmarks DROP INDEX `fulltext`;")
+
+
+def for_pgsql(engine):
+    """Postgres we're going to start with the slowest, but easiest option"""
+    idx_sql = [
+        "CREATE INDEX desc_ftidx ON bmarks USING gin(to_tsvector('english', description));",
+        "CREATE INDEX ext_ftidx ON bmarks USING gin(to_tsvector('english', extended));",
+        "CREATE INDEX tag_ftidx ON bmarks USING gin(to_tsvector('english', tag_str));",
+    ]
+
+    for sql in idx_sql:
+        engine.execute(sql)
+
+
+def drop_pgsql(engine):
+    """Postgres, drop the indexes in question"""
+    engine.execute("ALTER TABLE bmarks DROP INDEX desc_ftidx;")
+    engine.execute("ALTER TABLE bmarks DROP INDEX tag_ftidx;")
+
+
 def upgrade(migrate_engine):
     """Right now this is sqlite specific
 
@@ -26,10 +59,39 @@ def upgrade(migrate_engine):
     e.g. engadget would come up with a search for gadget
 
     """
-    for_sqlite(migrate_engine)
+
+    # add the tag_str column for everyone, who cares
+    meta = MetaData(migrate_engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+
+    tag_str = Column('tag_str', UnicodeText())
+    tag_str.create(bmarks)
+
+    # now do some db specific modifications for how they support fulltext 
+    if 'sqlite' in migrate_engine.dialect.driver.lower():
+        for_sqlite(migrate_engine)
+
+    elif 'mysql' in migrate_engine.dialect.driver.lower():
+        for_mysql(migrate_engine)
+
+    elif 'pg' in migrate_engine.dialect.driver.lower():
+        # currently psycopg2
+        for_pgsql(migrate_engine)
 
 
 def downgrade(migrate_engine):
     """And destroy the tables created"""
-    drop_sqlite(migrate_engine)
+    meta = MetaData(migrate_engine)
+    bmarks = Table('bmarks', meta, autoload=True)
+    tag_str = Column('tag_str', UnicodeText())
 
+    bmarks.drop_column(tag_str)
+
+    if 'sqlite' in migrate_engine.dialect.driver.lower():
+        drop_sqlite(migrate_engine)
+
+    elif 'mysql' in migrate_engine.dialect.driver.lower():
+        drop_mysql(migrate_engine)
+
+    elif 'pg' in migrate_engine.dialect.driver.lower():
+        drop_pgsql(migrate_engine)

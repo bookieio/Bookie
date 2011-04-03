@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+    <script type="text/javascript">
+        var ui = (function() {
+            var module = {};
+
+
+            module.badge = {
+                'clear': function(millis) {
+                    var ttl = millis || 0;
+                    window.setTimeout(function() {
+                        chrome.browserAction.setBadgeText({text: ''});
+                    }, ttl);
+                },
+            };
+
+            return module;
+        })();
+    </script>
+</head>
+<body>
+	
+</body>
+</html>
