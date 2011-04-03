@@ -324,12 +324,6 @@ class Bmark(Base):
             innerjoin=False,
     )
 
-    fulltext = relation(SqliteModel,
-                     backref='bmark',
-                     uselist=False,
-                     cascade="all, delete, delete-orphan",
-                     )
-
 
     def __init__(self, url, desc=None, ext=None, tags=None):
         """Create a new bmark instance
@@ -359,3 +353,12 @@ class Bmark(Base):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
 
+
+# only if we are on sqlite do we have this relation
+if 'sqlite' in str(DBSession.bind):
+
+    Bmark.fulltext = relation(SqliteModel,
+                     backref='bmark',
+                     uselist=False,
+                     cascade="all, delete, delete-orphan",
+                     )
