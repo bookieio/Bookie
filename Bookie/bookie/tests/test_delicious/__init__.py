@@ -259,6 +259,36 @@ class DelPostTest(unittest.TestCase):
         ok_('updated' in res.tags, 'Found the updated tag in the bmark')
 
 
+    def test_tag_with_space(self):
+        """Test that we strip out spaces from tags and don't get empty tags
+
+        """
+        self._get_good_request()
+
+        # now build a new version of the request we can check
+        session = DBSession()
+        prms = {
+                'url': u'http://google.com',
+                'description': u'This is my updated google desc',
+                'extended': 'updated extended notes about it in full form',
+                'tags': u'python  search updated ',
+                'api_key': u'testapi',
+        }
+
+        req_params = urllib.urlencode(prms)
+        self.testapp.get('/delapi/posts/add?' + req_params)
+        session.flush()
+
+        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+
+        ok_(len(res.tags) == 3,
+                'Should only have 3 tags: ' + str([str(t) for t in res.tags]))
+
+        for tag in res.tags:
+            ok_(tag[0] != " ", "Tag should not start with a space")
+            ok_(tag[-1] != " ", "Tag should not end with a space")
+
+
 class DelImportTest(unittest.TestCase):
     """Test that we can successfully import data from delicious"""
 

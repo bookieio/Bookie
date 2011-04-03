@@ -101,7 +101,7 @@ class TagMgr(object):
         if tag_str == '':
             return {}
 
-        tag_list = set([tag.lower() for tag in tag_str.split(" ")])
+        tag_list = set([tag.lower().strip() for tag in tag_str.split(" ")])
         tag_objects = {}
 
         for tag in TagMgr.find(tags=tag_list):
@@ -109,7 +109,7 @@ class TagMgr(object):
             tag_list.remove(tag.name.lower())
 
         # any tags left in the list are new
-        for new_tag in tag_list:
+        for new_tag in (tag for tag in tag_list if tag != ""):
             tag_objects[new_tag] = Tag(new_tag)
 
         return tag_objects
@@ -164,8 +164,6 @@ class SqliteModel(Base):
         self.description = description
         self.extended = extended
         self.tag_string = tag_string
-
-
 
 
 class FullTextExtension(MapperExtension):
