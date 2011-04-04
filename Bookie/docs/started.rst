@@ -27,9 +27,6 @@ If you're running Ubuntu, here's some actual commands to get you started.
   $ source bookie/bin/activate
   $ cd bookie/bookie/Bookie/
 
-  # Run the setup commands
-  $ python setup.py install
-
   # $myname is a name you're giving your installation. Just one word will do
   $ fab new_install:$myname
 
