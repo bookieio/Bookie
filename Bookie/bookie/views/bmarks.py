@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 
-from bookie.lib.access import edit_enabled
+from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -30,24 +30,31 @@ def recent(request):
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
-             'allow_edit': edit_enabled(request.registry.settings),
+             'allow_edit': access.edit_enabled(request.registry.settings),
            }
 
 
-def confirmdelete(request):
+def confirm_delete(request):
     """Confirm deletion of bookmark"""
     rdict = request.matchdict
-    bid = int(rdict.get('bid'))
+    bid = int(rdict.get('bid', 0))
+    if bid:
+        found = Bmark.query.get(bid)
+
+    if not found:
+        return HTTPNotFound()
+
     return {
             'bid': bid,
+            'bmark_description': found.description
            }
 
 
 def delete(request):
     """Remove the bookmark in question"""
-    rdict = request.matchdict
+    rdict = request.POST
 
-    if not edit_enabled(request.registry.settings):
+    if not access.edit_enabled(request.registry.settings):
         raise HTTPForbidden("Auth to edit is not enabled")
 
     # make sure we have an id value
@@ -58,9 +65,6 @@ def delete(request):
 
         if found:
             DBSession.delete(found)
-
             return HTTPFound(location=request.route_url('bmark_recent'))
-        else:
-            return HTTPNotFound()
-    else:
-        return HTTPNotFound()
+
+    return HTTPNotFound()

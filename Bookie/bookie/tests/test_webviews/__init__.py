@@ -7,6 +7,7 @@ from mock import Mock, patch
 from nose.tools import ok_, eq_
 from pyramid import testing
 
+from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag
@@ -56,6 +57,7 @@ class BookieViewsTest(unittest.TestCase):
         body_str = "Recent Bookmarks"
         delete_str = "/bmark/confirm/delete"
 
+        access.edit_enabled = Mock(return_value=True)
         res = self.testapp.get('/recent')
 
         eq_(res.status, "200 OK",
@@ -78,13 +80,13 @@ class BookieViewsTest(unittest.TestCase):
         ok_(body_str in res.body,
             msg="Page 1 should contain body_str: " + res.body)
 
-    @patch('bookie.views.bmarks._is_authed')
-    def test_allow_edit_requests(self, mocked_auth):
+    def test_allow_edit_requests(self):
         """Verify that if allow_edit is false we don't get edit/delete links"""
-        mocked_auth.return_value = False
-
         self._add_bmark()
         delete_str = "/bmark/confirm/delete"
+
+        access.edit_enabled = Mock(return_value=False)
+
         res = self.testapp.get('/recent')
 
         # the delete link should not render if allow_edits is false
@@ -101,3 +103,36 @@ class BookieViewsTest(unittest.TestCase):
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
+
+    def test_bookmark_tag(self):
+        """Verify we can call the /tags/bookmarks url """
+        self._add_bmark()
+
+        body_str = "Bookmarks: bookmarks"
+        delete_str = "/bmark/confirm/delete"
+
+        access.edit_enabled = Mock(return_value=True)
+        res = self.testapp.get('/tags/bookmarks')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(body_str in res.body,
+            msg="Request should contain body_str: " + res.body)
+
+        # there should be a delete link for the default bookie bookmark in the
+        # body as well
+        ok_(delete_str in res.body,
+            msg="Tag view delete link should be visible in the body:" + res.body)
+
+    def test_bookmark_tag_no_edits(self):
+         """Verify the tags view"""
+         self._add_bmark()
+
+         access.edit_enabled = Mock(return_value=False)
+
+         delete_str = "/bmark/confirm/delete"
+         res = self.testapp.get('/tags/bookmarks')
+
+         # The delete link should not render if allow_edits is false
+         ok_(delete_str not in res.body,
+             msg="Tag view delete link should NOT be visible:" + res.body)
