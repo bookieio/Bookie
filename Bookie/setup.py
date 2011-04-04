@@ -14,13 +14,16 @@ requires = [
     'repoze.tm2>=1.0b1', # default_commit_veto
     'zope.sqlalchemy',
     'WebError',
+    'WebTest',
+    'Chameleon<1.9999',
+    'BeautifulSoup==3.2.0',
     ]
 
 if sys.version_info[:3] < (2,5,0):
     requires.append('pysqlite')
 
-setup(name='Bookie',
-      version='0.0',
+setup(name='bookie',
+      version='0.1',
       description='Bookie',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[

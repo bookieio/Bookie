@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                // populate default field values
+                $('#api_key').val(localStorage['api_key']);
+                $('#api_url').val(localStorage['api_url']);
+
+                // close window on cancel
+                $("#cancelBtn").click(function() { window.close(); });
+
+                // save new values on submit
+                $("#form").submit(function(e) {
+                    localStorage['api_key'] = $('#api_key').val();
+                    localStorage['api_url'] = $('#api_url').val();
+
+                    // notify of successful save
+                    $('#info').text("Saved").slideDown().delay(3000).slideUp();
+
+                    e.preventDefault();
+                });
+            });
+        </script>
+        <style>
+            body {
+                font-family: sans-serif;
+                color:#444;
+            }
+
+            h1 {
+                font-size:24px;
+                font-weight:400;
+                color:#445;
+                padding-bottom:6px;
+                border-bottom:1px solid #ddd;
+            }
+
+            #info {
+                position:absolute;
+                box-shadow: 0px 0px 10px #888;
+                top:0px;
+                left:40%;
+                width:20%;
+                padding:10px 0;
+                color:#fff;
+                font-weight:800;
+                background-color:#080;
+                text-align:center;
+                display:none;
+                border-bottom-right-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+
+            label, input {
+                float:left;
+                margin:5px 0;
+            }
+            
+            label {
+                clear:left;
+                width:100px;
+            }
+
+            label:after {
+                content:":";
+            }
+
+            input {
+                border:1px solid #999;
+                padding:2px;
+                border-radius:2px;
+                width:180px;
+            }
+
+            input:focus {
+                outline:1px solid #acf;
+            }
+
+            fieldset {
+                border:1px solid #ccc;
+                padding:10px;
+            }
+
+            legend {
+                font-size:12px;
+            }
+
+            #buttonrow {
+                text-align:center;
+            }
+
+            button {
+                margin:10px;
+                width:80px;
+                padding:2px 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Bookie Settings</h1>
+        <div id='info'></div>
+        <form id="form">
+            <fieldset>
+                <legend>Connection</legend>
+                <label for="api_url">Bookie URL</label>
+                <input type="url" id="api_url"/>
+                <label for="api_key">API Key</label>
+                <input type="password" placeholder="api key" id="api_key"/>
+            </fieldset>
+            <div id="buttonrow">
+                <button id="cancelBtn">Cancel</button>
+                <button id="saveBtn" type="submit">Save</button>
+            </div>
+        </form>
+    </body>
+</html>
