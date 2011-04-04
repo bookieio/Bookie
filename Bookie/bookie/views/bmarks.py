@@ -4,29 +4,14 @@ import logging
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.settings import asbool
 
+from bookie.lib.access import edit_enabled
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
-
-
-def _is_authed(request):
-    """Verify that the request is auth'd to alter
-
-    If the .ini setting for ui edits is not true, then no authed
-
-    """
-    allow_edit = asbool(request.registry.settings.get('allow_edit', False))
-
-    LOG.debug(allow_edit)
-    if allow_edit:
-        return True
-    else:
-        return False
 
 
 def recent(request):
@@ -45,7 +30,7 @@ def recent(request):
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
-             'allow_edit': _is_authed(request),
+             'allow_edit': edit_enabled(request.registry.settings),
            }
 
 
@@ -62,7 +47,7 @@ def delete(request):
     """Remove the bookmark in question"""
     rdict = request.matchdict
 
-    if not _is_authed(request):
+    if not edit_enabled(request.registry.settings):
         raise HTTPForbidden("Auth to edit is not enabled")
 
     # make sure we have an id value

@@ -2,6 +2,7 @@
 import logging
 from pyramid.httpexceptions import HTTPNotFound
 
+from bookie.lib.access import edit_enabled
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 
@@ -43,4 +44,5 @@ def bmark_list(request):
              'max_count': RESULTS_MAX,
              'count': len(bmarks),
              'page': page,
+             'allow_edit': edit_enabled(request.registry.settings),
            }
