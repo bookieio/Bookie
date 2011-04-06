@@ -15,6 +15,7 @@ from sqlalchemy import Table
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
@@ -204,6 +205,7 @@ class HashedMgr(object):
     """Manage non-instance methods of Hashed objects"""
     @staticmethod
     def get_by_url(url):
+        """Return a hashed object for the url specified"""
         res = Hashed.query.filter(Hashed.url==url).all()
         if res:
             return res[0]
@@ -258,7 +260,7 @@ class BmarkMgr(object):
 
     @staticmethod
     def by_tag(tag, limit=50, page=0):
-        """Get a recent set of bookmarks"""
+        """Get a set of bookmarks with the given tag"""
         qry = Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags)).\
                   filter(Tag.name == tag)
@@ -290,6 +292,29 @@ class BmarkMgr(object):
                       options(contains_eager(Bmark.tags))
 
         return qry.all()
+
+    @staticmethod
+    def popular(limit=50, page=0, with_tags=False):
+        """Get the bookmarks by most popular first"""
+        qry = Hashed.query
+
+        offset = limit * page
+        qry = qry.order_by(Hashed.clicks.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        bmark = aliased(Bmark)
+        qry = qry.join((bmark, Hashed.bmark)).\
+                  options(contains_eager(Hashed.bmark, alias=bmark))
+
+        tags = aliased(Tag)
+        if with_tags:
+            qry = qry.outerjoin((tags, bmark.tags)).\
+                      options(contains_eager(Hashed.bmark, bmark.tags, alias=tags))
+        res = qry.all()
+        return res
+
 
     @staticmethod
     def store(url, desc, ext, tags, dt=None, fulltext=None):
@@ -363,8 +388,7 @@ class Bmark(Base):
 
     hashed = relation(Hashed,
                       backref="bmark",
-                      uselist=False,
-                      innerjoin=True)
+                      uselist=False,)
 
 
     def __init__(self, url, desc=None, ext=None, tags=None):
@@ -392,7 +416,7 @@ class Bmark(Base):
         self.tags = TagMgr.from_string(tags)
 
     def __str__(self):
-        return "<Bmark: {0}:{1}>".format(self.bid, self.url)
+        return "<Bmark: {0}:{1}>".format(self.bid, self.hashed.url)
 
     def tag_string(self):
         """Generate a single spaced string of our tags"""

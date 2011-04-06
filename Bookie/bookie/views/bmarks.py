@@ -34,6 +34,27 @@ def recent(request):
            }
 
 
+def popular(request):
+    """Most popular list of bookmarks capped at MAX"""
+    rdict = request.matchdict
+
+    # check if we have a page count submitted
+    page = int(rdict.get('page', '0'))
+
+    popular_list = BmarkMgr.popular(limit=RESULTS_MAX,
+                           with_tags=True,
+                           page=page)
+
+
+    return {
+             'bmarks': popular_list,
+             'max_count': RESULTS_MAX,
+             'count': len(popular_list),
+             'page': page,
+             'allow_edit': access.edit_enabled(request.registry.settings),
+           }
+
+
 def confirm_delete(request):
     """Confirm deletion of bookmark"""
     rdict = request.matchdict

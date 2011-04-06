@@ -1,3 +1,22 @@
+<%def name="display_popular_bmarks(bmark_list)">
+    <%
+        from datetime import datetime
+        current_date = datetime(1900, 1, 1).strftime("%m/%d")
+        last_date = current_date
+    %>
+    <div class="yui3-g">
+        % for hashed in bmark_list:
+            ${bmark_block(hashed.bmark[0], last_date)}
+            <%
+                last_date = hashed.bmark[0].stored.strftime("%m/%d")
+            %>
+
+        % endfor
+    </div>
+
+
+</%def>
+
 <%def name="display_bmark_list(bmark_list)">
     <%
         from datetime import datetime
@@ -36,7 +55,7 @@
             <div class="yui3-u-7-8">
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
-                        <a class="bmark" href="${bmark.hashed.url}" title="${bmark.extended}">${bmark.description}</a>
+                        <a class="bmark" href="${request.route_url('redirect', hash_id=bmark.hash_id)}" title="${bmark.extended}">${bmark.description}</a>
                     </div>
 
                     <div class="yui3-u-1-8">

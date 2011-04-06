@@ -41,12 +41,20 @@ def build_routes(config):
                      view_renderer="/delapi/posts_get.mako",)
 
     # bmark routes
+    config.add_route("bmark_popular", "/popular",
+                     view="bookie.views.bmarks.popular",
+                     view_renderer="/bmark/popular.mako",)
+    config.add_route("bmark_popular_page", "/popular/{page}",
+                     view="bookie.views.bmarks.popular",
+                     view_renderer="/bmark/popular.mako",)
+
     config.add_route("bmark_recent", "/recent",
                      view="bookie.views.bmarks.recent",
                      view_renderer="/bmark/recent.mako",)
     config.add_route("bmark_recent_page", "/recent/{page}",
                      view="bookie.views.bmarks.recent",
                      view_renderer="/bmark/recent.mako",)
+
     config.add_route("bmark_delete", "/bmark/delete",
                      view="bookie.views.bmarks.delete",)
     config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}",
@@ -76,5 +84,8 @@ def build_routes(config):
     config.add_route("export", "/export",
                      view="bookie.views.utils.export",
                      view_renderer="/utils/export.mako",)
+
+    config.add_route("redirect", "/redirect/{hash_id}",
+                     view="bookie.views.utils.redirect")
 
     return config

@@ -137,3 +137,34 @@ def db_new_install():
 
     db_init()
     db_upgrade()
+
+    # we want to provide one default bookmark to start out with
+    db_init_bookmark()
+
+def db_init_bookmark():
+    """install the initial bookmark in a new install"""
+    require('hosts', provided_by=[sample])
+    require('ini', provided_by=[sample])
+
+    parse_ini(env["ini_file"])
+    from datetime import datetime
+    import transaction
+    from bookie.models import initialize_sql
+    from sqlalchemy import create_engine
+
+    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
+    initialize_sql(engine)
+
+    from bookie.models import DBSession
+    from bookie.models import Bmark
+
+    bmark_us = Bmark('http://bmark.us',
+                     desc="Bookie Website",
+                     ext= "Bookie Documentation Home",
+                     tags = "bookmarks")
+
+    bmark_us.stored = datetime.now()
+    bmark_us.updated = datetime.now()
+    DBSession.add(bmark_us)
+    DBSession.flush()
+    transaction.commit()
