@@ -388,7 +388,8 @@ class Bmark(Base):
 
     hashed = relation(Hashed,
                       backref="bmark",
-                      uselist=False,)
+                      uselist=False,
+                      cascade="all, delete, delete-orphan")
 
 
     def __init__(self, url, desc=None, ext=None, tags=None):

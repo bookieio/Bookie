@@ -29,14 +29,11 @@ class DelPostTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
 
-        # DBSession.execute("TRUNCATE bmarks;")
-        # DBSession.execute("TRUNCATE fulltext;")
-        # DBSession.execute("TRUNCATE tags;")
-        # DBSession.execute("TRUNCATE bmarks_tags;")
         SqliteModel.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
         Hashed.query.delete()
+
         DBSession.execute(bmarks_tags.delete())
         DBSession.flush()
         transaction.commit()
@@ -108,6 +105,13 @@ class DelPostTest(unittest.TestCase):
             ok_(res, 'We found a result in the db for this bookmark')
             ok_('extended' in res.extended,
                     'Extended value was set to bookmark')
+
+            # make sure our hash was stored correctly
+            ok_(res.hashed.url == 'http://google.com',
+                    "The hashed object got the url")
+
+            ok_(res.hashed.clicks == 0, "No clicks on the url yet")
+
             if res:
                 return True
             else:
@@ -207,6 +211,10 @@ class DelPostTest(unittest.TestCase):
         res = self.testapp.get('/delapi/posts/delete?' + req_params)
         eq_(res.status, "200 OK", 'Post Delete status is 200, ' + res.status)
         ok_('done' in res.body, "Request should return done msg: " + res.body)
+
+        # now make sure our hashed object is gone as well.
+        res = Hashed.query.get(GOOGLE_HASH)
+        ok_(not res, "We didn't get our hash object")
 
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url
