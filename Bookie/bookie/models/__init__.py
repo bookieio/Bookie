@@ -1,5 +1,6 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
+import shortuuid
 
 from datetime import datetime
 
@@ -199,6 +200,31 @@ class FullTextExtension(MapperExtension):
             instance.tag_str = instance.tag_string()
 
 
+class HashedMgr(object):
+    """Manage non-instance methods of Hashed objects"""
+    @staticmethod
+    def get_by_url(url):
+        res = Hashed.query.filter(Hashed.url==url).all()
+        if res:
+            return res[0]
+        else:
+            return False
+
+
+class Hashed(Base):
+    """The hashed url string and some metadata"""
+    __tablename__ = "url_hash"
+
+    hash_id = Column(Unicode(22), primary_key=True)
+    url = Column(UnicodeText, unique=True)
+    clicks= Column(Integer, default=0)
+
+    def __init__(self, url):
+        """We'll auto hash the id for them and set this up"""
+        self.hash_id = shortuuid.uuid(url=str(url))
+        self.url = url
+
+
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
 
@@ -207,7 +233,9 @@ class BmarkMgr(object):
         """Get a bmark from the system via the url"""
         # normalize the url
         clean_url = BmarkTools.normalize_url(url)
-        return Bmark.query.filter(Bmark.url == clean_url).one()
+        return Bmark.query.join(Bmark.hashed).\
+                           options(contains_eager(Bmark.hashed)).\
+                           filter(Hashed.url == clean_url).one()
 
     @staticmethod
     def find(order_by=None, limit=50, page=0, with_tags=False):
@@ -288,7 +316,6 @@ class BmarkMgr(object):
 
         # now index it into the fulltext db as well
         if fulltext:
-            # need to flush to populate a bid
             DBSession.flush()
 
 
@@ -317,7 +344,7 @@ class Bmark(Base):
     }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
-    url = Column(UnicodeText(), unique=True)
+    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)
@@ -334,6 +361,11 @@ class Bmark(Base):
             innerjoin=False,
     )
 
+    hashed = relation(Hashed,
+                      backref="bmark",
+                      uselist=False,
+                      innerjoin=True)
+
 
     def __init__(self, url, desc=None, ext=None, tags=None):
         """Create a new bmark instance
@@ -345,7 +377,14 @@ class Bmark(Base):
         :param tags: Space sep list of Bookmark tags, optional
 
         """
-        self.url = BmarkTools.normalize_url(url)
+        # if we already have this url hashed, get that hash
+        existing = HashedMgr.get_by_url(url)
+
+        if not existing:
+            self.hashed = Hashed(url)
+        else:
+            self.hashed = existing
+
         self.description = desc
         self.extended = ext
 

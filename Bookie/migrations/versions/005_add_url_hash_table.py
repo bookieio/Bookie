@@ -37,26 +37,26 @@ def get_url_hash(engine):
 def hash_urls(engine, hash_table, bmarks):
     """Get all of the bmarks in the system and hash the urls into url_hash"""
     conn = engine.connect()
-
     sel_set = select([bmarks.c.url])
     res = conn.execute(sel_set)
 
-    hash_ins = hash_table.insert()
-    values = []
-    for bmk in res:
-        print "Outputting: " + bmk['url']
-        new_dat = {'url': bmk['url'],
-                   'hash_id': shortuuid.uuid(url=str(bmk['url'])),
-                   'clicks': 0}
-        values.append(new_dat)
+    if res.rowcount > 0:
+        hash_ins = hash_table.insert()
+        values = []
+        for bmk in res:
+            print "Outputting: " + bmk['url']
+            new_dat = {'url': bmk['url'],
+                       'hash_id': shortuuid.uuid(url=str(bmk['url'])),
+                       'clicks': 0}
+            values.append(new_dat)
 
-        # now we also need to add that hashid to the bmarks table
-        conn.execute(bmarks.update().\
-                            values(hash_id=new_dat['hash_id']).\
-                            where(bmarks.c.url==new_dat['url']))
+            # now we also need to add that hashid to the bmarks table
+            conn.execute(bmarks.update().\
+                                values(hash_id=new_dat['hash_id']).\
+                                where(bmarks.c.url==new_dat['url']))
 
-    # mass insert into the hash table
-    conn.execute(hash_ins, values)
+        # mass insert into the hash table
+        conn.execute(hash_ins, values)
 
 
 def restore_urls(engine, hash_table, bmarks):

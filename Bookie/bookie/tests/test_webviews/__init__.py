@@ -10,6 +10,7 @@ from pyramid import testing
 from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
+from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import bmarks_tags
 
@@ -46,6 +47,7 @@ class BookieViewsTest(unittest.TestCase):
         session = DBSession()
         Bmark.query.delete()
         Tag.query.delete()
+        Hashed.query.delete()
         session.execute(bmarks_tags.delete())
         session.flush()
         transaction.commit()

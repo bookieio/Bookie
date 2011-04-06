@@ -8,8 +8,11 @@ from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
+from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
 from bookie.models import SqliteModel
+
+GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
 
 
 class DelPostTest(unittest.TestCase):
@@ -33,6 +36,7 @@ class DelPostTest(unittest.TestCase):
         SqliteModel.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
+        Hashed.query.delete()
         DBSession.execute(bmarks_tags.delete())
         DBSession.flush()
         transaction.commit()
@@ -100,7 +104,7 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
 
         try:
-            res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+            res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
             ok_(res, 'We found a result in the db for this bookmark')
             ok_('extended' in res.extended,
                     'Extended value was set to bookmark')
@@ -146,7 +150,7 @@ class DelPostTest(unittest.TestCase):
         eq_(res.body, success, msg="Request should return done msg")
 
         # now pull up the bmark and check the date is yesterday
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
         eq_(res.stored.strftime('%Y-%m-%d'), yesterday.strftime('%Y-%m-%d'),
             "The stored date {0} is the same as the requested {1}".format(
                 res.stored,
@@ -156,7 +160,7 @@ class DelPostTest(unittest.TestCase):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
@@ -174,22 +178,23 @@ class DelPostTest(unittest.TestCase):
         """Test that we get the new datetime fields as we work"""
         now = datetime.now()
         self._get_good_request()
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(res.stored >= now,
                 "Stored time is now or close to now {0}:{1}".format(res.stored, now))
 
-        res.url = u"Somethingnew.com"
-        session = DBSession()
-        session.flush()
+        res.hash_id = u"Somethingnew.com"
+        DBSession.flush()
 
+        print dict(res)
         # now hopefully have an updated value
         ok_(res.updated >= now,
                 "Stored time is now or close to now {0}:{1}".format(res.updated, now))
 
     def test_remove_bmark(self):
         """Remove a bmark from the system"""
-        self._get_good_request()
+        res1 = self._get_good_request()
+        ok_('done' in res1.body, res1.body)
 
         # now send in the delete squad
         prms = {
@@ -200,8 +205,8 @@ class DelPostTest(unittest.TestCase):
         req_params = urllib.urlencode(prms)
 
         res = self.testapp.get('/delapi/posts/delete?' + req_params)
-        eq_(res.status, "200 OK", msg='Post Delete status is 200, ' + res.status)
-        ok_('done' in res.body, msg="Request should return done msg: " + res.body)
+        eq_(res.status, "200 OK", 'Post Delete status is 200, ' + res.status)
+        ok_('done' in res.body, "Request should return done msg: " + res.body)
 
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url
@@ -248,7 +253,7 @@ class DelPostTest(unittest.TestCase):
         self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_('updated' in res.description,
                 'Updated description took: ' + res.description)
@@ -279,7 +284,7 @@ class DelPostTest(unittest.TestCase):
         self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(len(res.tags) == 3,
                 'Should only have 3 tags: ' + str([str(t) for t in res.tags]))

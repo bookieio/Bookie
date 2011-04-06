@@ -1,9 +1,11 @@
 """Test that we're meeting delicious API specifications"""
 import logging
 import os
+import shortuuid
 import StringIO
 import transaction
 import unittest
+
 from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import raises
@@ -30,9 +32,10 @@ def _delicious_data_test():
 
     # verify we can find a bookmark by url and check tags, etc
     check_url = 'http://www.ndftz.com/nickelanddime.png'
-    found = Bmark.query.filter(Bmark.url == check_url).one()
+    check_url_hashed = shortuuid.uuid(url=str(check_url))
+    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
-    ok_(found.url == check_url, "The url should match our search")
+    ok_(found.hashed.url == check_url, "The url should match our search")
     eq_(len(found.tags), 7,
         "We should have gotten 7 tags, got: " + str(len(found.tags)))
 
@@ -52,10 +55,11 @@ def _google_data_test():
         "We should have 10 results, we got: " + str(len(res)))
 
     # verify we can find a bookmark by url and check tags, etc
-    check_url = 'http://www.alistapart.com'
-    found = Bmark.query.filter(Bmark.url == check_url).one()
+    check_url = 'http://www.alistapart.com/'
+    check_url_hashed = shortuuid.uuid(url=str(check_url))
+    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
-    ok_(found.url == check_url, "The url should match our search")
+    ok_(found.hashed.url == check_url, "The url should match our search")
     eq_(len(found.tags), 4,
         "We should have gotten 4 tags, got: " + str(len(found.tags)))
 

@@ -7,6 +7,8 @@ from datetime import datetime
 from bookie.lib.access import Authorize
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
+from bookie.models import Bmark
+from bookie.models import Hashed
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
