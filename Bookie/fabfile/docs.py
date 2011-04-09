@@ -1,8 +1,8 @@
 from fabric.api import local, hosts
 from fabric.contrib.project import rsync_project
 
-docs_host = 'ubuntu@bmark'
-docs_location = '/var/www/'
+docs_host = 'rharding@bmark.us'
+docs_location = '/home/bmark.us/www'
 
 def build_docs(clean="no", browse="no"):
     """Run the sphinx build on the docs"""
