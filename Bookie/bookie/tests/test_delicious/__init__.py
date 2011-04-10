@@ -183,12 +183,17 @@ class DelPostTest(unittest.TestCase):
 
     def test_datestimes_set(self):
         """Test that we get the new datetime fields as we work"""
-        now = datetime.now()
+
+        # we've got some issue with mysql truncating the timestamp to not
+        # include seconds, so we allow for a one minute leeway in the
+        # timestamp. Enough to know it's set and close enough for government
+        # use
+        now = datetime.now() - timedelta(minutes=1)
         self._get_good_request()
         res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(res.stored >= now,
-                "Stored time is now or close to now {0}:{1}".format(res.stored, now))
+                "Stored time is now or close to now {0}--{1}".format(res.stored, now))
 
         res.hash_id = u"Somethingnew.com"
         DBSession.flush()
@@ -196,7 +201,7 @@ class DelPostTest(unittest.TestCase):
         print dict(res)
         # now hopefully have an updated value
         ok_(res.updated >= now,
-                "Stored time is now or close to now {0}:{1}".format(res.updated, now))
+                "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))
 
     def test_remove_bmark(self):
         """Remove a bmark from the system"""
