@@ -27,7 +27,7 @@ def get_url_hash(engine):
 
     hash_table = Table('url_hash', meta,
         Column('hash_id', Unicode(22), primary_key=True),
-        Column('url', UnicodeText(), unique=True),
+        Column('url', UnicodeText()),
         Column('clicks', Integer),
     )
 

@@ -218,7 +218,7 @@ class Hashed(Base):
     __tablename__ = "url_hash"
 
     hash_id = Column(Unicode(22), primary_key=True)
-    url = Column(UnicodeText, unique=True)
+    url = Column(UnicodeText)
     clicks= Column(Integer, default=0)
 
     def __init__(self, url):
