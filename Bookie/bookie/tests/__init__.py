@@ -7,7 +7,15 @@ from pyramid import testing
 global_config = {}
 
 ini = ConfigParser.ConfigParser()
-ini.read('test.ini')
+
+# we need to pull the right ini for the test we want to run
+# by default pullup test.ini, but we might want to test mysql, pgsql, etc
+test_ini = os.environ.get('BOOKIE_TEST_INI', None)
+if test_ini:
+    ini.read(test_ini)
+else:
+    ini.read('test.ini')
+
 settings = dict(ini.items('app:bookie'))
 
 
