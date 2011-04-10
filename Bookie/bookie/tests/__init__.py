@@ -40,11 +40,11 @@ def setup_db(settings):
     # after the last slash of the SA url sqlite:///somedb.db
     db_name = sa_url[sa_url.rindex('/') + 1:]
     try:
+        # if this is a sqlite db then try to take care of the db file
         os.remove(db_name)
+        open(db_name, 'w').close()
     except:
         pass
-
-    open(db_name, 'w').close()
 
     mig.version_control(sa_url, migrate_repository)
     mig.upgrade(sa_url, migrate_repository)
