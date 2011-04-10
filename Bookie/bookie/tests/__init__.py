@@ -11,13 +11,13 @@ ini = ConfigParser.ConfigParser()
 # we need to pull the right ini for the test we want to run
 # by default pullup test.ini, but we might want to test mysql, pgsql, etc
 test_ini = os.environ.get('BOOKIE_TEST_INI', None)
-if test_ini:
-    ini.read(test_ini)
-else:
-    ini.read('test.ini')
+if not test_ini:
+    test_ini = 'test.ini'
 
+ini.read(test_ini)
 settings = dict(ini.items('app:bookie'))
 
+BOOKIE_TEST_INI = test_ini
 
 def setup_db(settings):
     """ We need to create the test sqlite database to run our tests against
