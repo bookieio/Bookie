@@ -12,6 +12,8 @@ from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
 from bookie.models import SqliteModel
 
+from bookie.tests import BOOKIE_TEST_INI
+
 GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
 
 
@@ -20,7 +22,6 @@ class DelPostTest(unittest.TestCase):
 
     def setUp(self):
         from pyramid.paster import get_app
-        from bookie.tests import BOOKIE_TEST_INI
         app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
@@ -30,7 +31,8 @@ class DelPostTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
 
-        SqliteModel.query.delete()
+        if BOOKIE_TEST_INI == 'test.ini':
+            SqliteModel.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
         Hashed.query.delete()
