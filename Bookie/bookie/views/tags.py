@@ -1,7 +1,9 @@
 """Controllers related to viewing Tag information"""
 import logging
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.settings import asbool
 
+from bookie.lib import access
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 
@@ -43,4 +45,5 @@ def bmark_list(request):
              'max_count': RESULTS_MAX,
              'count': len(bmarks),
              'page': page,
+             'allow_edit': access.edit_enabled(request.registry.settings),
            }

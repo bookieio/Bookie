@@ -6,9 +6,14 @@
 // now this will extend the original bookie module with added chrome specific
 // functionality
 (function (module, $) {
-
     // PRIVATE
-    var background = chrome.extension.getBackgroundPage();
+    var background;
+
+    if (chrome && chrome.tabs) {
+        background = chrome.extension.getBackgroundPage();
+    } else {
+        background = undefined;
+    }
 
     /**
      * This will call a shared function that maps data to the ui form
@@ -28,18 +33,19 @@
     };
 
     module.ui.notify = function(notification) {
-        console.log(notification.longText);
-
         showBadge(notification);
 
-        if(notification.type === "error") {
-            webkitNotifications.createNotification(
-                'delicious.png',
-                notification.shortText,
-                notification.longText
-                ).show();
-        } else {
-            window.close();
+
+        if (chrome && chrome.tabs) {
+            if(notification.type === "error") {
+                webkitNotifications.createNotification(
+                    'delicious.png',
+                    notification.shortText,
+                    notification.longText
+                    ).show();
+            } else {
+                window.close();
+            }
         }
     }
 
@@ -69,15 +75,21 @@
     // specific mapper
     module.ui.badge = {
         'clear': function (millis) {
-            background.ui.badge.clear(millis);
+            if (chrome && chrome.tabs) {
+                background.ui.badge.clear(millis);
+            }
         },
 
         'set': function (text, milliseconds, bgcolor) {
             if (bgcolor) {
-                chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
+                if (chrome && chrome.tabs) {
+                    chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
+                }
             }
 
-            chrome.browserAction.setBadgeText({text: text});
+            if (chrome && chrome.tabs) {
+                chrome.browserAction.setBadgeText({text: text});
+            }
 
             if (milliseconds) {
                 module.ui.badge.clear(milliseconds);

@@ -1,5 +1,6 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
+import shortuuid
 
 from datetime import datetime
 
@@ -14,6 +15,7 @@ from sqlalchemy import Table
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
@@ -36,6 +38,16 @@ def initialize_sql(engine):
     """Called by the app on startup to setup bindings to the DB"""
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
+
+    # only if we are on sqlite do we have this relation
+    if 'sqlite' in str(DBSession.bind):
+
+        if not hasattr(SqliteModel, 'bmark'):
+            Bmark.fulltext = relation(SqliteModel,
+                         backref='bmark',
+                         uselist=False,
+                         cascade="all, delete, delete-orphan",
+                         )
 
 
 def todict(self):
@@ -189,6 +201,32 @@ class FullTextExtension(MapperExtension):
             instance.tag_str = instance.tag_string()
 
 
+class HashedMgr(object):
+    """Manage non-instance methods of Hashed objects"""
+    @staticmethod
+    def get_by_url(url):
+        """Return a hashed object for the url specified"""
+        res = Hashed.query.filter(Hashed.url==url).all()
+        if res:
+            return res[0]
+        else:
+            return False
+
+
+class Hashed(Base):
+    """The hashed url string and some metadata"""
+    __tablename__ = "url_hash"
+
+    hash_id = Column(Unicode(22), primary_key=True)
+    url = Column(UnicodeText)
+    clicks= Column(Integer, default=0)
+
+    def __init__(self, url):
+        """We'll auto hash the id for them and set this up"""
+        self.hash_id = shortuuid.uuid(url=str(url))
+        self.url = url
+
+
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
 
@@ -197,7 +235,9 @@ class BmarkMgr(object):
         """Get a bmark from the system via the url"""
         # normalize the url
         clean_url = BmarkTools.normalize_url(url)
-        return Bmark.query.filter(Bmark.url == clean_url).one()
+        return Bmark.query.join(Bmark.hashed).\
+                           options(contains_eager(Bmark.hashed)).\
+                           filter(Hashed.url == clean_url).one()
 
     @staticmethod
     def find(order_by=None, limit=50, page=0, with_tags=False):
@@ -220,7 +260,7 @@ class BmarkMgr(object):
 
     @staticmethod
     def by_tag(tag, limit=50, page=0):
-        """Get a recent set of bookmarks"""
+        """Get a set of bookmarks with the given tag"""
         qry = Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags)).\
                   filter(Tag.name == tag)
@@ -254,6 +294,29 @@ class BmarkMgr(object):
         return qry.all()
 
     @staticmethod
+    def popular(limit=50, page=0, with_tags=False):
+        """Get the bookmarks by most popular first"""
+        qry = Hashed.query
+
+        offset = limit * page
+        qry = qry.order_by(Hashed.clicks.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        bmark = aliased(Bmark)
+        qry = qry.join((bmark, Hashed.bmark)).\
+                  options(contains_eager(Hashed.bmark, alias=bmark))
+
+        tags = aliased(Tag)
+        if with_tags:
+            qry = qry.outerjoin((tags, bmark.tags)).\
+                      options(contains_eager(Hashed.bmark, bmark.tags, alias=tags))
+        res = qry.all()
+        return res
+
+
+    @staticmethod
     def store(url, desc, ext, tags, dt=None, fulltext=None):
         """Store a bookmark
 
@@ -278,7 +341,6 @@ class BmarkMgr(object):
 
         # now index it into the fulltext db as well
         if fulltext:
-            # need to flush to populate a bid
             DBSession.flush()
 
 
@@ -307,7 +369,7 @@ class Bmark(Base):
     }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
-    url = Column(UnicodeText(), unique=True)
+    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)
@@ -324,11 +386,12 @@ class Bmark(Base):
             innerjoin=False,
     )
 
-    fulltext = relation(SqliteModel,
-                     backref='bmark',
-                     uselist=False,
-                     cascade="all, delete, delete-orphan",
-                     )
+    hashed = relation(Hashed,
+                      backref="bmark",
+                      uselist=False,
+                      cascade="all, delete, delete-orphan",
+                      single_parent=True,
+                      )
 
 
     def __init__(self, url, desc=None, ext=None, tags=None):
@@ -341,7 +404,14 @@ class Bmark(Base):
         :param tags: Space sep list of Bookmark tags, optional
 
         """
-        self.url = BmarkTools.normalize_url(url)
+        # if we already have this url hashed, get that hash
+        existing = HashedMgr.get_by_url(url)
+
+        if not existing:
+            self.hashed = Hashed(url)
+        else:
+            self.hashed = existing
+
         self.description = desc
         self.extended = ext
 
@@ -349,7 +419,7 @@ class Bmark(Base):
         self.tags = TagMgr.from_string(tags)
 
     def __str__(self):
-        return "<Bmark: {0}:{1}>".format(self.bid, self.url)
+        return "<Bmark: {0}:{1}>".format(self.bid, self.hashed.url)
 
     def tag_string(self):
         """Generate a single spaced string of our tags"""
@@ -358,4 +428,6 @@ class Bmark(Base):
     def update_tags(self, tag_string):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
+
+
 

@@ -1,7 +1,12 @@
 test('bookie_init', function () {
     // first set an api key and we'll check it later
     localStorage['api_key'] = 'testingapikey';
+    // we need an API url to get past the init since it's checking for it now
+    localStorage['api_url'] = '127.0.0.1';
     bookie.init();
+    console.log(localStorage['api_key']);
+    console.log($('#api_key'));
+
     equal('testingapikey', $('#api_key').val(),
             "Verify we set the api key in init()");
 
@@ -89,14 +94,18 @@ test('saveBookmarkSuccess', function () {
 
     // we also need to mock out the notifications so we can catch them
     bookie.ui.notify = function (code, message) {
-        logger.push({'code': code, 'message': message});
+        logger.push({"type": "info",
+                      "code": 200,
+                      "shortText": "Ok",
+                      "longText": "saved"
+                    })
     }
 
     bookie.call.saveBookmark({});
     options.success(mocked_xml);
 
     // now check the logger for the result
-    equal(logger[0]['code'], 'Ok',
+    equal(logger[0]['shortText'], "Ok",
         "The notify code of the saveBookmark was 'done'");
 
 });
@@ -120,14 +129,19 @@ test('saveBookmarkFail', function () {
 
     // we also need to mock out the notifications so we can catch them
     bookie.ui.notify = function (code, message) {
-        logger.push({'code': code, 'message': message});
+        logger.push({
+                      "type": "error",
+                      "code": 400,
+                      "shortText": "Err",
+                      "longText": "Could not save bookmark"
+                    })
     }
 
     bookie.call.saveBookmark({});
     options.success(mocked_xml);
 
     // now check the logger for the result
-    equal(logger[0]['code'], 'Err',
+    equal(logger[0]['shortText'], 'Err',
         "The notify code of the saveBookmark was 'Base Request...'");
 
 });

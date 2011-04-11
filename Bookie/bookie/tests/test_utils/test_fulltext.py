@@ -8,6 +8,7 @@ from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models import Bmark
+from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import bmarks_tags
 from bookie.models.fulltext import get_fulltext_handler
@@ -19,7 +20,8 @@ class TestFulltext(TestCase):
     def setUp(self):
         """Setup Tests"""
         from pyramid.paster import get_app
-        app = get_app('test.ini', 'main')
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
@@ -30,6 +32,7 @@ class TestFulltext(TestCase):
         session = DBSession()
         Bmark.query.delete()
         Tag.query.delete()
+        Hashed.query.delete()
         session.execute(bmarks_tags.delete())
         session.flush()
         transaction.commit()

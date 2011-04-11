@@ -1,10 +1,12 @@
 """View callables for utilities like bookmark imports, etc"""
 import logging
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
 from bookie.models import Bmark
+from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
 
 LOG = logging.getLogger(__name__)
@@ -80,3 +82,23 @@ def export(request):
     return {
         'bmark_list': bmark_list,
     }
+
+def redirect(request):
+    """Handle redirecting to the selected url
+
+    We want to increment the clicks counter on the bookmark url here
+
+    """
+    rdict = request.matchdict
+    hash_id = rdict.get('hash_id', None)
+
+    hashed = Hashed.query.get(hash_id)
+    hashed.clicks = hashed.clicks + 1
+
+    if not hashed:
+        # for some reason bad link, 404
+        return HTTPNotFound()
+
+    return HTTPFound(location=hashed.url)
+
+

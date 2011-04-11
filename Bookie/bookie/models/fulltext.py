@@ -32,7 +32,8 @@ class SqliteFulltext(object):
 
     Columns: bid, description, extended, tags
 
-    Storing is done automatically via the before_insert mapper hook on Bmark obj
+    Storing is done automatically via the before_insert mapper hook on Bmark
+    obj
     """
     def search(self, phrase):
         """Perform the search on the index"""
@@ -81,7 +82,6 @@ class MySqlFulltext(object):
                    order_by(Bmark.stored).all()
 
 
-
 class PgSqlFulltext(object):
     """Implements a basic fulltext search of pgsql
 
@@ -103,7 +103,7 @@ class PgSqlFulltext(object):
         ORDER BY stored DESC;
         """
 
-        res = DBSession.execute(text(query), {'phrase': phrase} )
+        res = DBSession.execute(text(query), {'phrase': phrase})
 
         ids = set([r.bid for r in res])
 
