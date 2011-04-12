@@ -60,6 +60,9 @@ def build_routes(config):
     config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}",
                      view="bookie.views.bmarks.confirm_delete",
                      view_renderer="/bmark/confirm_delete.mako",)
+    config.add_route("bmark_readable", "/bmark/readable/{hash_id}",
+                     view="bookie.views.bmarks.readable",
+                     view_renderer="/bmark/readable.mako",)
 
 
     # tag related routes

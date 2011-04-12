@@ -201,6 +201,22 @@ class FullTextExtension(MapperExtension):
             instance.tag_str = instance.tag_string()
 
 
+class ReadableMgr(object):
+    """Handle non-instance model issues for readable"""
+    pass
+
+
+class Readable(Base):
+    """Handle the storing of the readable version of the page content"""
+    __tablename__ = 'readable'
+
+    hash_id = Column(Unicode(22),
+                     ForeignKey('url_hash.hash_id'),
+                     primary_key=True)
+    content = Column(UnicodeText)
+    imported = Column(DateTime, default=datetime.now)
+
+
 class HashedMgr(object):
     """Manage non-instance methods of Hashed objects"""
     @staticmethod
@@ -220,6 +236,12 @@ class Hashed(Base):
     hash_id = Column(Unicode(22), primary_key=True)
     url = Column(UnicodeText)
     clicks= Column(Integer, default=0)
+
+    # we only store the readable content once so it's part of the hashed
+    # relation
+    readable = relation(Readable,
+                        backref="hashed",
+                        uselist=False)
 
     def __init__(self, url):
         """We'll auto hash the id for them and set this up"""

@@ -56,6 +56,9 @@
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
                         <a class="bmark" href="${request.route_url('redirect', hash_id=bmark.hash_id)}" title="${bmark.extended}">${bmark.description}</a>
+                        <a class="bmark"
+                        href="${request.route_url('bmark_readable',
+                        hash_id=bmark.hash_id)}" title="Readable">-R-</a>
                     </div>
 
                     <div class="yui3-u-1-8">
