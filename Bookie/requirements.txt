@@ -21,6 +21,7 @@ decorator==3.3.0
 docutils==0.7
 logilab-astng==0.21.1
 logilab-common==0.55.0
+lxml==2.3
 mock==0.7.0
 MySQL-python==1.2.3
 nose==1.0.0
