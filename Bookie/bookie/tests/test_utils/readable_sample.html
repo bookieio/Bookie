@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; Bookie v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bookie v0.1 documentation" href="index.html" />
+    <link rel="next" title="Bookie Database Notes" href="database.html" />
+    <link rel="prev" title="Welcome to Bookie’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="database.html" title="Bookie Database Notes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Bookie’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bookie v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Bookie&#8217;s git repository is managed using a tool/process called <a class="reference external" href="https://github.com/nvie/gitflow">git flow</a>. It
+basically sets standards for how the git repository is set up. You&#8217;ll find the
+most up to date <em>working</em> code in the develop branch. Individual features that
+are being worked on are in branches prefixed by <cite>feature/</cite>. As these features
+get to a workable state they might get merged into the <cite>develop</cite> branch.</p>
+<p>The <cite>master</cite> branch is only for releases and we&#8217;re a long away from that. So
+when you check out Bookie, make sure to start out using the <cite>develop</cite> branch.</p>
+<p>Some basic docs on getting started with the project. Before you ask, yes this
+will get much easier as the project moves forward. It&#8217;s in development mode
+still.</p>
+<div class="section" id="ubuntu-linux">
+<h2>Ubuntu Linux<a class="headerlink" href="#ubuntu-linux" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re running Ubuntu, here&#8217;s some actual commands to get you started.</p>
+<div class="highlight-python"><pre>$ wget http://bmark.us/bootstrap.py
+$ python bootstrap.py bookie
+$ source bookie/bin/activate
+$ cd bookie/bookie/Bookie/
+
+# $myname is a name you're giving your installation. Just one word will do
+$ fab new_install:$myname
+
+# this will create a config file for you called $myname.ini
+# feel free to edit this config for your needs and then
+$ fab $myname db_new_install
+
+# startup the development web server
+$ paster serve --reload $myname.ini</pre>
+</div>
+<p>You should now be able to pull up:</p>
+<p><a class="reference external" href="http://127.0.0.1:6543">http://127.0.0.1:6543</a></p>
+<div class="section" id="to-do">
+<h3>To Do<a class="headerlink" href="#to-do" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Update the bootstrap.py to use a tarball source to avoid git requirement</li>
+<li>Link to the hosting docs about setting up bookie to run for good</li>
+</ul>
+</div>
+</div>
+<div class="section" id="where-to-go-from-here">
+<h2>Where to go from here<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h2>
+<p>Well, you might want to import a backup of your delicious bookmarks. You can do
+that by vising the <em>Import</em> link in the footer of your site installation</p>
+<p>You can view your recent bookmarks at: <a class="reference external" href="http://127.0.0.1:6543/recent">http://127.0.0.1:6543/recent</a></p>
+<p>You can also start using the <a class="reference external" href="http://bmark.us/bookie_chrome.crx">Google Chome extension</a> to save and edit
+bookmarks you have in Bookie. It will only work based on the current page, a
+full UI for managing your bookmarks is in the works.</p>
+<p>Once you install the extension, you&#8217;ll need to set the options for it to work.</p>
+<dl class="docutils">
+<dt>API Url</dt>
+<dd>set this to the installed url for your bookie instance. In dev mode
+it&#8217;s <cite>127.0.0.1:6543/delapi/</cite>. Make sure to include the <em>/delapi/</em> in the url
+for the extension to work. If you do not set the api you should get an error
+on the extension icon badge <em>!URL</em></dd>
+<dt>API Key</dt>
+<dd>this is the same key you set in your installations <em>.ini</em> config
+file. You should set this to be your own unique string and make sure that
+your server install and extension match. If they don&#8217;t, you&#8217;ll be unable to
+store bookmarks to your Bookie server.</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#ubuntu-linux">Ubuntu Linux</a><ul>
+<li><a class="reference internal" href="#to-do">To Do</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Bookie&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="database.html"
+                        title="next chapter">Bookie Database Notes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/started.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="database.html" title="Bookie Database Notes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Bookie’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Bookie v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Rick Harding.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

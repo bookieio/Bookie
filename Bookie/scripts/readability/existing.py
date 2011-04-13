@@ -12,8 +12,9 @@ from decruft import page_parser
 from os import path
 from sqlalchemy import create_engine
 
-from bookie.models import initialize_sql
+from bookie.lib.readable import ReadUrl
 
+from bookie.models import initialize_sql
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Hashed
@@ -47,35 +48,21 @@ if __name__ == "__main__":
     engine = create_engine(db_url, echo=False)
     initialize_sql(engine)
 
-    url_list = Hashed.query.limit(5).all()
+    url_list = Hashed.query.all()
 
-    for url in url_list:
-        print url.url
+    for hashed in url_list:
+        print hashed.url
 
-        try:
-            fh = urllib2.urlopen(url.url)
-        except urllib2.HTTPError, exc:
-            if url.readable:
-                pass
-            else:
-                url.readable = Readable()
+        read = ReadUrl.parse(hashed.url)
+        if not read.is_image():
+            if not hashed.readable:
+                hashed.readable = Readable()
 
-            url.readable.content = str(exc)
+            hashed.readable.content = read.content
+        else:
+            if not hashed.readable:
+                hashed.readable = Readable()
 
-        # let's check to make sure we should be parsing this
-        # for example: don't parse images
-        headers = fh.info()
-        ctype = headers.gettype()
-
-        if 'image' not in ctype:
-            if url.readable:
-                pass
-            else:
-                url.readable = Readable()
-
-            try:
-                url.readable.content = Document(fh.read()).summary()
-            except page_parser.Unparseable, exc:
-                url.readable.content = str(exc)
+            hashed.readable.content = None
 
     transaction.commit()
