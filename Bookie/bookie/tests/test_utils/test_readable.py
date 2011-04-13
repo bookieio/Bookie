@@ -49,6 +49,15 @@ class TestReadable(TestCase):
         ok_('Bookie' in read.content,
                 u"The word Bookie is in the content: " + unicode(read.content))
 
+    def test_non_net_url(self):
+        """I might be bookmarking something internal bookie can't access"""
+        test_url = "http://r2"
+        read = ReadUrl.parse(test_url)
+
+        ok_(read.status == 999, "The status is 999: " + str(read.status))
+        ok_(not read.is_image(), "The content is not an image")
+        ok_(read.content is None, "Content should be none: " + str(read.content))
+
     def test_image_url(self):
         """Verify we don't store, but just tag an image url"""
         img_url = 'http://www.ndftz.com/nickelanddime.png'

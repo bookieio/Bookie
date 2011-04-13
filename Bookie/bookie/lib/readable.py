@@ -24,6 +24,7 @@ STATUS_CODES = DictObj({
     '200': 200,
     '404': 404,
     '403': 403,
+    '999': 999,
 })
 
 IMAGE_TYPES = DictObj({
@@ -105,6 +106,7 @@ class ReadUrl(object):
             query = '?'
         else:
             query = ''
+
         clean_url = "{0}://{1}{2}{query}{3}".format(parsed[0],
                                           parsed[1],
                                           parsed[2],
@@ -122,6 +124,9 @@ class ReadUrl(object):
 
         except urllib2.HTTPError, exc:
             read.error(exc.code, HTTPH.responses[exc.code])
+
+        except urllib2.URLError, exc:
+            read.error(STATUS_CODES['999'], str(exc))
 
         LOG.debug('is error')
         LOG.debug(read.status)
