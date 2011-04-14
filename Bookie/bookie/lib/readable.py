@@ -1,6 +1,7 @@
 """Handle processing and setting web content into Readability/cleaned
 
 """
+import httplib
 import logging
 import socket
 import urllib2
@@ -29,6 +30,7 @@ STATUS_CODES = DictObj({
     '900': 900,   # used for unparseable
     '901': 901,   # url is not parseable/usable
     '902': 902,   # socket.error during download
+    '903': 903,   # httplib.IncompleteRead error
 })
 
 IMAGE_TYPES = DictObj({
@@ -49,7 +51,7 @@ class Readable(object):
     def error(self, code, msg):
         """This readable request was an error, assign it so"""
         self.status = code
-        self.status_message = msg
+        self.status_message = str(msg)
 
     def is_error(self):
         """Check if this is indeed an error or not"""
@@ -145,5 +147,7 @@ class ReadUrl(object):
                 read.error(STATUS_CODES['900'], str(exc))
             except socket.error, exc:
                 read.error(STATUS_CODES['902'], str(exc))
+            except httplib.IncompleteRead, exc:
+                read.error(STATUS_CODES['903'], str(exc))
 
         return read
