@@ -169,7 +169,7 @@ class PgSqlFulltext(object):
                       options(contains_eager(Bmark.tags)).\
                       filter(Bmark.bid.in_(ids)).all()
         else:
-            query = """SELECT hash_id
+            query = """SELECT readable.hash_id
             FROM readable, bmarks
             WHERE to_tsvector('english', content) @@ to_tsquery(:phrase)
                   AND readable.hash_id = bmarks.hash_id
