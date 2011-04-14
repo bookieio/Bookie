@@ -5,14 +5,14 @@ from fabric.api import hosts
 from fabric.api import local
 from fabric.contrib.project import rsync_project
 
-upload_host = 'ubuntu@bmark'
-bootstrap_server = '/var/www/bootstrap.py'
+upload_host = 'rharding@dc'
+bootstrap_server = '/home/bmark.us/www/'
 bootstrap_local = 'scripts/bootstrap/bootstrap.py'
 
 chrome_bin = '/usr/bin/google-chrome'
 chrome_path = 'extensions/chrome_ext'
 key = "/home/rharding/.ssh/chrome_ext.pem"
-chrome_ext_server = '/var/www/bookie_chrome.crx'
+chrome_ext_server = '/home/bmark.us/www/bookie_chrome.crx'
 chrome_ext_local = 'extensions/chrome_ext.crx'
 
 
