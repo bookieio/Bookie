@@ -23,6 +23,7 @@
                     <span class="button_minimal">
                          <form action="${request.route_url('search')}" method="get"/>
                              <input type="search" name="search" id="search" placeholder="search.." />
+                             <input type="checkbox" name="content" id="search_content"  /> Content
                          </form>
                     </span>
                 </span>
