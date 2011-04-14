@@ -2,6 +2,7 @@
 
 """
 import logging
+import socket
 import urllib2
 
 from BaseHTTPServer import BaseHTTPRequestHandler as HTTPH
@@ -20,11 +21,14 @@ class DictObj(dict):
 
 STATUS_CODES = DictObj({
     '1': 1,    # used for manual parsed
-    '99': 99,    # used for manual parsed
     '200': 200,
     '404': 404,
     '403': 403,
-    '999': 999,
+
+    # errors like 9's
+    '900': 900,   # used for unparseable
+    '901': 901,   # url is not parseable/usable
+    '902': 902,   # socket.error during download
 })
 
 IMAGE_TYPES = DictObj({
@@ -85,7 +89,7 @@ class ReadContent(object):
 
             read.status = STATUS_CODES['1']
         except page_parser.Unparseable, exc:
-            read.error(STATUS_CODES['99'], str(exc))
+            read.error(STATUS_CODES['900'], str(exc))
 
         return read
 
@@ -126,7 +130,7 @@ class ReadUrl(object):
             read.error(exc.code, HTTPH.responses[exc.code])
 
         except urllib2.URLError, exc:
-            read.error(STATUS_CODES['999'], str(exc))
+            read.error(STATUS_CODES['901'], str(exc))
 
         LOG.debug('is error')
         LOG.debug(read.status)
@@ -138,6 +142,8 @@ class ReadUrl(object):
                 read.set_content(Document(fh.read()).summary())
 
             except page_parser.Unparseable, exc:
-                read.error(STATUS_CODES['99'], str(exc))
+                read.error(STATUS_CODES['900'], str(exc))
+            except socket.error, exc:
+                read.error(STATUS_CODES['902'], str(exc))
 
         return read

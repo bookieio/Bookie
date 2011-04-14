@@ -3,6 +3,7 @@
 
 """
 import argparse
+import logging
 import transaction
 import urllib2
 
@@ -19,6 +20,9 @@ from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
+
+PER_TRANS = 10
+LOG = logging.getLogger(__name__)
 
 
 def parse_args():
@@ -37,6 +41,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -48,21 +53,37 @@ if __name__ == "__main__":
     engine = create_engine(db_url, echo=False)
     initialize_sql(engine)
 
-    url_list = Hashed.query.all()
+    ct = 0
 
-    for hashed in url_list:
-        print hashed.url
+    all = False
+    while(not all):
+        url_list = Hashed.query.limit(PER_TRANS).offset(ct).all()
 
-        read = ReadUrl.parse(hashed.url)
-        if not read.is_image():
-            if not hashed.readable:
-                hashed.readable = Readable()
+        if len(url_list) < PER_TRANS:
+            all = True
 
-            hashed.readable.content = read.content
-        else:
-            if not hashed.readable:
-                hashed.readable = Readable()
+        ct = ct + len(url_list)
 
-            hashed.readable.content = None
+        for hashed in url_list:
+            print hashed.url
 
-    transaction.commit()
+            read = ReadUrl.parse(hashed.url)
+            if not read.is_image():
+                if not hashed.readable:
+                    hashed.readable = Readable()
+
+                hashed.readable.content = read.content
+            else:
+                if not hashed.readable:
+                    hashed.readable = Readable()
+
+                hashed.readable.content = None
+
+            # set some of the extra metadata
+            hashed.readable.content_type = read.content_type
+            hashed.readable.status_code = read.status
+            hashed.readable.status_message = read.status_message
+
+        # let's do some count/transaction maint
+        transaction.commit()
+        transaction.begin()

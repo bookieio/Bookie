@@ -1,7 +1,9 @@
 """View callables for utilities like bookmark imports, etc"""
 import logging
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.settings import asbool
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
@@ -63,11 +65,15 @@ def search(request):
 
     # check if we have a page count submitted
     phrase = rdict.get('search', '')
+    with_content = asbool(rdict.get('content', False))
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
 
-    res_list = searcher.search(phrase)
+    LOG.debug('with content')
+    LOG.debug(with_content)
+
+    res_list = searcher.search(phrase, content=with_content)
 
     return {
         'search_results': res_list,
