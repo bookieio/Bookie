@@ -61,7 +61,7 @@
             <div class="yui3-g">
             <div class="yui3-u-1-4"></div>
             <div class="yui3-u-3-4">
-                <div class="right">
+                <div class="right body">
                     <a href="http://bmark.us">Bookie</a> |
                     <a href="http://https://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |

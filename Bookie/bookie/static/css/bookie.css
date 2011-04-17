@@ -219,6 +219,10 @@ form li label {
     text-decoration: none;
 }
 
+.footer .body {
+    padding-right: 1em;
+}
+
 .search {}
 .search .title {
     padding-left: 2em;
