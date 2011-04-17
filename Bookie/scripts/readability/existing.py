@@ -36,6 +36,7 @@ def parse_args():
     parser.add_argument('--ini', dest='ini',
                             action='store',
                             default=None,
+                            required=True,
                             help='What .ini are we pulling the db connection from?')
 
     args = parser.parse_args()
@@ -44,6 +45,9 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
+
+    # we need to make sure you submitted an ini file to use:
+    # args.ini
 
     ini = ConfigParser()
     ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)

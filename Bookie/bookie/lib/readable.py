@@ -3,6 +3,7 @@
 """
 import httplib
 import logging
+import lxml
 import socket
 import urllib2
 
@@ -31,6 +32,8 @@ STATUS_CODES = DictObj({
     '901': 901,   # url is not parseable/usable
     '902': 902,   # socket.error during download
     '903': 903,   # httplib.IncompleteRead error
+    '904': 904,   # lxml error about document is empty
+    '905': 905,   # httplib.BadStatusLine
 })
 
 IMAGE_TYPES = DictObj({
@@ -134,6 +137,9 @@ class ReadUrl(object):
         except urllib2.URLError, exc:
             read.error(STATUS_CODES['901'], str(exc))
 
+        except httplib.BadStatusLine, exc:
+            read.error(STATUS_CODES['905'], str(exc))
+
         LOG.debug('is error')
         LOG.debug(read.status)
 
@@ -149,5 +155,7 @@ class ReadUrl(object):
                 read.error(STATUS_CODES['902'], str(exc))
             except httplib.IncompleteRead, exc:
                 read.error(STATUS_CODES['903'], str(exc))
+            except lxml.etree.ParserError, exc:
+                read.error(STATUS_CODES['904'], str(exc))
 
         return read
