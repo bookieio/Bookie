@@ -1,3 +1,4 @@
+argparse
 BeautifulSoup==3.2.0
 Chameleon==1.3.0-rc1
 colorama

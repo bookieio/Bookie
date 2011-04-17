@@ -1,6 +1,20 @@
 /* BASIC PROPERTIES */
+BODY {
+}
+
 #body {
     margin: 1em;
+
+}
+
+.alt_logo {
+    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
+}
+
+
+.title {
+    padding: .5em 0em;
+    margin: 0em;
 }
 
 /* NAVIGATION */
@@ -66,7 +80,12 @@
 
 /* DATA LISTS */
 .data_list {
-    width: 80%;
+}
+
+.data_list .col_end {
+    font-weight: bold;
+    text-align: right;
+    align: right;
 }
 
 .data_list .bmark {
@@ -130,29 +149,26 @@
 }
 
 a.tag {
-    padding: .2em .4em;
-    border: 1px solid #666666;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    background: #CCCCCC;
-    color: #333333;
+    padding: .2em .4em .2em .4em;
+    background: #DDDDDD;
+    color: #666666;
     text-decoration: none;
 }
 
 a.bmark {
+    font: 14px/1.231 Cabin,arial,helvetica,clean,sans-serif
     font-size: 1.1em;
     text-decoration: none;
+    color: #FF0000;
 }
 
 .bmark .time {
     text-align: right;
     font-size: .7em;
-    font-color: #333;
+    color: #999999;
 }
 
 .body form {
-    padding: .5em 1em;
-
 }
 
 .note {
@@ -195,4 +211,28 @@ form li label {
 .footer a {
     color: #666666;
     text-decoration: none;
+}
+
+.search {}
+.search .title {
+    padding-left: 2em;
+}
+.search .body {
+    padding-left: 2em;
+}
+
+.tag_filter {
+    margin: .5em;
+}
+.tag_filter .title {
+    font-weight: bold;
+}
+.tag_filter input {
+    width: 10em;
+}
+
+.tag_filter .item {
+    color: #333333;
+    background-color: #DDDDDD;
+    padding: .2em .4em;
 }
