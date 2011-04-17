@@ -9,8 +9,8 @@
 <div class="yui3-g data_list">
     <div class="yui3-u-1-2">
         <div class="tag_filter">
-            <span class="title">Filter Tags |</span>
-            <span class="item">sports x</span>
+            <span class="title">Filter Tags&nbsp;</span>
+            <span class="item"><a href="" title="Remove tag">sports x</a></span>
             <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tag.."/>
         </div>
     </div>

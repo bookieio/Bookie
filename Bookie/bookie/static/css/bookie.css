@@ -7,10 +7,6 @@ BODY {
 
 }
 
-.alt_logo {
-    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
-}
-
 
 .title {
     padding: .5em 0em;
@@ -31,9 +27,18 @@ BODY {
 }
 
 .logo {
-    font-size: 2em;
+    padding-left: .5em;
+    font-size: 1.5em;
     text-decoration: none;
+    color: #0033FF;
 }
+
+.logo .alt_logo {
+    color: #333333;
+    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
+}
+
+
 
 /* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */
 .button_minimal {
@@ -86,6 +91,7 @@ BODY {
     font-weight: bold;
     text-align: right;
     align: right;
+    vertical-align: bottom;
 }
 
 .data_list .bmark {
@@ -232,7 +238,40 @@ form li label {
 }
 
 .tag_filter .item {
-    color: #333333;
-    background-color: #DDDDDD;
-    padding: .2em .4em;
+    background: #e3e3e3;
+    border: 1px solid #bbb;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    box-shadow: inset 0 0 1px 1px #f6f6f6;
+    color: #333;
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 4px 3px;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.tag_filter .item:hover {
+    background: #d9d9d9;
+    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+    box-shadow: inset 0 0 1px 1px #eaeaea;
+    color: #222;
+    cursor: pointer;
+}
+
+.tag_filter .item a {
+    color: #333;
+    text-decoration: none;
+}
+
+.actions .item {
+    color: #0033FF;
+}
+
+.actions .item a {
+    text-decoration: none;
 }

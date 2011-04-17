@@ -8,7 +8,6 @@
         <link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
 
-
         % if hasattr(self, 'header'):
             ${self.header()}
         % endif
@@ -17,7 +16,7 @@
     <body>
         <div id="navigation" class="yui3-g">
             <div class="yui3-u-2-3">
-                <div class="">
+                <div class="logo">
                     <a href="/recent" class="logo">Bookie</a>
                     <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
                 </div>
@@ -25,10 +24,10 @@
             <div class="yui3-u-1-3 navigation">
                 <span class="item"><a href="/recent" class="button_minimal">Recent</a></span>
                 <span class="item"><a href="/popular" class="button_minimal">Popular</a></span>
-                <span class="item"><a href="/tags" class="button_minimal">Tags</a></span>
-                <span class="item">
+                <!--<span class="item"><a href="/tags" class="button_minimal">Tags</a></span>-->
+                <!--<span class="item">-->
 
-                </span>
+                <!--</span>-->
             </div>
         </div>
         <div id="body">
