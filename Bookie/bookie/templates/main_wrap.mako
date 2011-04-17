@@ -39,7 +39,7 @@
             <div class="yui3-u-3-4">
                 <div class="right">
                     <a href="http://bmark.us">Bookie</a> |
-                    <a href="http://https://github.com/mitechie/Bookie/issues">Support</a> |
+                    <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |
                     <a href="${request.route_url('import')}">Import</a> |
                     <a href="${request.route_url('export')}">Export</a>
