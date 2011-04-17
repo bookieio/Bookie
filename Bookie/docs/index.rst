@@ -24,6 +24,7 @@ Contents:
    user
    chrome
    firefox
+   events
 
 .. Indices and tables
 .. ==================

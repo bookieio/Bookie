@@ -73,20 +73,24 @@ With the following:
 ::
 
     #!/usr/bin/python env
+    import os
+    from os.path import dirname
     
     # Add the virtual Python environment site-packages directory to the path
     import site
-
-    # this is the path to the virtualenv you're running bookie from
-    site.addsitedir('/home/$username/bookie/lib/python2.6/site-packages')
-
+    
+    ve_dir = dirname(dirname(dirname(dirname(__file__))))
+    install_dir = dirname(dirname(__file__))
+    
+    site.addsitedir(os.path.join(ve_dir, 'lib/python2.6/site-packages'))
+    
     # Avoid ``[Errno 13] Permission denied: '/var/www/.python-eggs'`` messages
-    import os
-    os.environ['PYTHON_EGG_CACHE'] = '/home/$username/bookie/bookie/Bookie/egg-cache'
-
+    os.environ['PYTHON_EGG_CACHE'] = os.path.join(install_dir, 'egg-cache')
+    
     # Load the application
     from paste.deploy import loadapp
-    application = loadapp('config:/home/$username/bookie/bookie/Bookie/$myinstall.ini')
+    application = loadapp('config:' + os.path.join(install_dir, 'production.ini'))
+
 
 uWSGI Config
 ~~~~~~~~~~~~
