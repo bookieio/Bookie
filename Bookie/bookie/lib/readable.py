@@ -107,20 +107,30 @@ class ReadUrl(object):
         """Fetch the given url and parse out a Readable Obj for the content"""
         read = Readable()
 
-        # we need to clean up the url first, we can't have any anchor tag on
-        # the url or urllib2 gets cranky
-        parsed = urlparse(url)
 
-        if parsed.query is not None and parsed.query != '':
-            query = '?'
+        # first check if we have a special url with the #! content in it
+        if '#!' in url:
+            # rewrite it with _escaped_fragment_=xxx
+            # we should be doing with this some regex, but cheating for now
+            idx = url.index('#')
+            fragment = url[idx:]
+            clean_url = "{0}?_escaped_fragment_={1}".format(url[0:idx],
+                                                            fragment)
         else:
-            query = ''
+            # we need to clean up the url first, we can't have any anchor tag on
+            # the url or urllib2 gets cranky
+            parsed = urlparse(url)
 
-        clean_url = "{0}://{1}{2}{query}{3}".format(parsed[0],
-                                          parsed[1],
-                                          parsed[2],
-                                          parsed[4],
-                                          query=query)
+            if parsed.query is not None and parsed.query != '':
+                query = '?'
+            else:
+                query = ''
+
+            clean_url = "{0}://{1}{2}{query}{3}".format(parsed[0],
+                                              parsed[1],
+                                              parsed[2],
+                                              parsed[4],
+                                              query=query)
 
         try:
             fh = urllib2.urlopen(clean_url)
