@@ -88,6 +88,7 @@ def build_routes(config):
                      view="bookie.views.utils.export",
                      view_renderer="/utils/export.mako",)
 
+
     config.add_route("redirect", "/redirect/{hash_id}",
                      view="bookie.views.utils.redirect")
 
