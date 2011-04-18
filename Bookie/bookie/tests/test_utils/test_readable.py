@@ -83,6 +83,7 @@ class TestReadable(TestCase):
         urls = { 'CouchSurfing': 'http://allthatiswrong.wordpress.com/2010/01/24/a-criticism-of-couchsurfing-and-review-of-alternatives/#problems',
                  'Bewelcome': 'http://bewelcome.info',
                  'Electronic': 'https://www.fbo.gov/index?s=opportunity&mode=form&tab=core&id=dd11f27254c796f80f2aadcbe4158407',
+                 'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
 
         for key, url in urls.iteritems():
