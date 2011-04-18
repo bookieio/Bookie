@@ -1,5 +1,5 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="func.mako" import="display_bmark_list, bmarknextprev"/>
+<%namespace file="func.mako" import="display_bmark_list, bmarknextprev, tag_filter"/>
 <%def name="title()">Recent Bookmarks</%def>
 
 <h1></h1>
@@ -8,11 +8,7 @@
 
 <div class="yui3-g data_list">
     <div class="yui3-u-1-2">
-        <div class="tag_filter">
-            <span class="title">Filter Tags&nbsp;</span>
-            <span class="item"><a href="" title="Remove tag">sports x</a></span>
-            <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tag.."/>
-        </div>
+        ${tag_filter()}
     </div>
     <div class="yui3-u-1-2 col_end">Showing ${max_count} bookmarks</div>
 
