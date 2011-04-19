@@ -10,21 +10,33 @@ which I hold dear myself.
 
 Beyond that, there's some features I think that are long overdue.
 
+.. image:: http://uploads.mitechie.com/bookie_ui_04_17_11.png
+    :width: 400
+
+
+Bookie Features
+----------------
+- Google Chrome extension
+- Delicious API compatibility
+- Fulltext index and search of your bookmark descriptions and tags
+- (dev) Cached copy of bookmark's content into a searchable index
+- Popularity tracking of your most commonly used (clicked) bookmarks
+- Support for Sqlite, MySQL, and Postgres
+
+
 Contents:
+---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    started
    database
    hosting
-   fabric
-   tests
-   todo
    user
-   chrome
-   firefox
+   extensions
    events
+   development
 
 .. Indices and tables
 .. ==================
