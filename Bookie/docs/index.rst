@@ -51,12 +51,4 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Using Bookie
-============
-So far, there's no real web interface. Personally, I use a Chrome extension for
-most of my bookmark use and I'm starting there first. I've forked an open
-source Chrome bookmark you can use to work with Bookie.
-
-https://github.com/mitechie/delicious-chrome-extension
-
 .. _events: events.html

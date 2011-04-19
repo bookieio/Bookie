@@ -1,19 +1,9 @@
 Getting Started
 ===============
 
-Bookie's git repository is managed using a tool/process called `git flow`_. It
-basically sets standards for how the git repository is set up. You'll find the
-most up to date *working* code in the develop branch. Individual features that
-are being worked on are in branches prefixed by `feature/`. As these features
-get to a workable state they might get merged into the `develop` branch.
-
-The `master` branch is only for releases and we're a long away from that. So
-when you check out Bookie, make sure to start out using the `develop` branch.
-
 Some basic docs on getting started with the project. Before you ask, yes this
 will get much easier as the project moves forward. It's in development mode
 still.
-
 
 Ubuntu Linux
 ------------
@@ -42,14 +32,11 @@ You should now be able to pull up:
 http://127.0.0.1:6543
 
 
-To Do
-~~~~~~
-- Update the bootstrap.py to use a tarball source to avoid git requirement
-- Link to the hosting docs about setting up bookie to run for good
-
-
 Where to go from here
 ---------------------
+
+Getting your bookmarks into Bookie
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Well, you might want to import a backup of your delicious bookmarks. You can do
 that by vising the *Import* link in the footer of your site installation
 
@@ -74,6 +61,16 @@ API Key
     your server install and extension match. If they don't, you'll be unable to
     store bookmarks to your Bookie server.
 
+Hosting Bookie
+~~~~~~~~~~~~~~
+You can setup Bookie to run in a variety of ways. Make sure to check out some
+samples in the `hosting docs`_
+
+
+To Do
+~~~~~~
+- Update the bootstrap.py to use a tarball source to avoid git requirement
 
 .. _`git flow`: https://github.com/nvie/gitflow
 .. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx
+.. _`hosting docs`: hosting.html
