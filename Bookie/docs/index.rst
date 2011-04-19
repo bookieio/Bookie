@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Bookie's documentation!
+Bookie - bookmark your web
 ==================================
 Bookie is my attempt to rid myself of Delicious, and be able host my bookmarks
 which I hold dear myself.
