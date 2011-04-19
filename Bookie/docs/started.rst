@@ -10,6 +10,20 @@ Ubuntu Linux
 If you're running Ubuntu, here's some actual commands to get you started.
 
 
+Note: right we we support all three databases and the database bindings need to
+be built into the virtualenv. To do this you need some packages:
+
+- libmysqlclient-dev
+- postgresql-server-dev-9.0 (or 8.4 if that's your current version)
+- build-essential
+
+We're hoping to `clean this up some`_ some going forward.
+
+We also need these packages for the content parsing library used, decruft:
+
+- ibxslt1-dev
+- libxml2-dev
+
 ::
 
   $ wget http://bmark.us/bootstrap.py
@@ -74,3 +88,4 @@ To Do
 .. _`git flow`: https://github.com/nvie/gitflow
 .. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx
 .. _`hosting docs`: hosting.html
+.. _`clean this up some`: https://github.com/mitechie/Bookie/issues/37
