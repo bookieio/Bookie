@@ -9,6 +9,7 @@ from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
+from bookie.models import Hashed
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
@@ -89,3 +90,12 @@ def delete(request):
             return HTTPFound(location=request.route_url('bmark_recent'))
 
     return HTTPNotFound()
+
+def readable(request):
+    """Display a readable version of this url if we can"""
+    rdict = request.matchdict
+    bid = rdict.get('hash_id', None)
+
+    if bid:
+        found = Hashed.query.get(bid)
+        return { 'bmark': found }

@@ -4,11 +4,15 @@
 import logging
 from cgi import escape
 from datetime import datetime
+from StringIO import StringIO
+
 from bookie.lib.access import Authorize
+from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
 from bookie.models import Bmark
 from bookie.models import Hashed
+from bookie.models import Readable
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
@@ -60,13 +64,28 @@ def posts_add(request):
                                                          False)
                 fulltext = get_fulltext_handler(conn_str)
 
-                BmarkMgr.store(params['url'],
+                mark = BmarkMgr.store(params['url'],
                              params.get('description', ''),
                              params.get('extended', ''),
                              params.get('tags', ''),
                              dt=stored_time,
                              fulltext=fulltext,
                        )
+
+            # if we have content, stick it on the object here
+            if 'content' in request.params:
+                content = StringIO(request.params['content'])
+
+                content.seek(0)
+                parsed = ReadContent.parse(content)
+
+                read = Readable()
+                read.content = parsed.content
+                read.content_type = parsed.content_type
+                read.status_code = parsed.status
+                read.status_message = parsed.status_message
+
+                mark.hashed.readable = read
 
             return '<result code="done" />'
         else:

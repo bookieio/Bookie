@@ -1,4 +1,0 @@
-Firefox Extension
------------------
-
-TBD

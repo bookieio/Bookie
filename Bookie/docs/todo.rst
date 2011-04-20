@@ -4,8 +4,6 @@ Things on the Todo list
 
 Still todo
 -----------
-- Implement basic search
-- Implement fulltext search
 - webui add
 - webui edit
 - mobile ui
@@ -13,8 +11,6 @@ Still todo
 - ui for db migrations, setup, some sort of /install /upgrade urls or something
 - fabfile, make a user one that defines the settings
 - add deployment examples to docs
-- figure out license issues, chat with Greg
-- 
 
 
 Long term todo
@@ -31,6 +27,9 @@ Subprojects
 
 Completed
 ----------
+- figure out license issues, chat with Greg
+- Implement fulltext search
+- Implement basic search
 - started webui
 - chrome extension works, but want to figure out how to update icon ui
 - delicious import

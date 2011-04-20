@@ -10,7 +10,7 @@ from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
 from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
-from bookie.models import SqliteModel
+from bookie.models import SqliteBmarkFT
 
 from bookie.tests import BOOKIE_TEST_INI
 
@@ -32,7 +32,7 @@ class DelPostTest(unittest.TestCase):
         testing.tearDown()
 
         if BOOKIE_TEST_INI == 'test.ini':
-            SqliteModel.query.delete()
+            SqliteBmarkFT.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
         Hashed.query.delete()
