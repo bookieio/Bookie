@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="bookie-core.js"></script>
+        <script type="text/javascript" src="bookie-chrome.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                bookie.init();
+                validateSettings();
+
+
+                function validateSettings() {
+                    var errors = [],
+                        errorOutput = $("#errors");
+
+                    if(!localStorage['api_url'])
+                        errors.push("Bookie URL has not been set");
+                    if(!localStorage['api_key'])
+                        errors.push("API key has not been set");
+
+                    // display errors if we have them
+                    if(errors.length) {
+                        var errors = errors.map(function(msg) { 
+                            return $("<li/>").text(msg).get(0);
+                        });
+                        errorOutput.append(errors).show();
+                    } 
+                }
+
+            });
+        </script>
+        <style>
+            body {
+                font-family: sans-serif;
+                font-size:10pt;
+                padding:3px;
+                width:250px;
+            }
+            input, textarea {
+                width: 100%;
+                margin: 3px 0;
+                padding: 5px;
+                border: 1px solid #777;
+            }
+            textarea {
+                height: 60px;
+                font-family: inherit;
+            }
+            h1 {
+                font-size:12pt;
+            }
+            #suggestions {
+                margin: 0;
+                padding: 0;
+                width: 200px;
+                margin-top: 5px;
+            }
+            #suggestions li {
+                display: inline;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                margin-right: 2px;
+                font-size: 11px;
+                line-height: 13px;
+            }
+            #suggestions a {
+                color: #444;
+                text-decoration: none;
+            }
+            #suggestions a:hover {
+                text-decoration: underline;
+            }
+            #errors {
+                display:none;
+                padding:5px 0;
+                text-align:center;
+                border:1px solid #aaa;
+                background-color:#eee;
+                color:#F00;
+                font-weight:bold;
+                list-style:none;
+            }
+        </style>
+    </head>
+    <body id="bmarkbody">
+        <h1>Post to Bookie</h1>
+        <form id="form" name="form">
+            <input type="hidden" id="url" name="url" />
+            <input type="text" id="description" placeholder="title" name="description" />
+            <input type="text" placeholder="tags" name="tags" id="tags" />
+            <textarea placeholder="notes" name="extended" id="extended"></textarea>
+            <button type="submit" id="submit">Save</button>
+
+            <button type="button" id="delete" style="display: none;">Delete</button>
+
+            <input type="hidden" value="" name="api_key" id="api_key" />
+        </form>
+        <ul id="errors">
+        </ul>
+    </body>
+</html>

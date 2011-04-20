@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<prefwindow id="bookie-prefs"
+     title="Bookie Settings"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefpane id="bookie-pane" label="Bookie Settings">
+  <preferences>
+    <preference id="pref_server" name="bookie.server" type="string"/>
+    <preference id="pref_apikey" name="bookie.apikey" type="string"/>
+  </preferences>
+
+  <hbox align="center">
+    <label control="server" value="URL of Bookie server: "/>
+    <textbox preference="pref_server" id="server" />
+  </hbox>
+  <hbox align="center">
+    <label control="apikey" value="API key: "/>
+    <textbox preference="pref_apikey" id="apikey" />
+  </hbox>
+</prefpane>
+
+</prefwindow>
