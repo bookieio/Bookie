@@ -135,7 +135,8 @@ class MySqlFulltext(object):
             for read in res:
                 readable_res.append(read.hashed.bmark[0])
 
-        return sorted(list(results.update(set(readable_res))), key=lambda res: res.stored, reverse=True)
+        results.update(set(readable_res))
+        return sorted(list(results), key=lambda res: res.stored, reverse=True)
 
 
 class PgSqlFulltext(object):
@@ -185,4 +186,5 @@ class PgSqlFulltext(object):
                                   options(contains_eager(Bmark.tags)).\
                                   filter(Bmark.hash_id.in_(ids)).all()]
 
-        return sorted(list(set(results.update(readable_res))), key=lambda res: res.stored, reverse=True)
+        results.update(set(readable_res))
+        return sorted(list(results), key=lambda res: res.stored, reverse=True)
