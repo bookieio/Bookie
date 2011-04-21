@@ -79,7 +79,6 @@ To Do
 ~~~~~~
 - Update the bootstrap.py to use a tarball source to avoid git requirement
 
-.. _`git flow`: https://github.com/nvie/gitflow
-.. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx
+.. _`browser extension`: extensions.html
 .. _`hosting docs`: hosting.html
 .. _`clean this up some`: https://github.com/mitechie/Bookie/issues/37

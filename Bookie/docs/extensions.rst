@@ -28,10 +28,8 @@ up the options page right-click on the extension in the toolbar and select the
 
 API Url
     set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543`. Make sure to include the */delapi/* in the url
-    for the extension to work. If you do not set the api you should get an error
-    on the extension icon badge *!URL*
-
+    it's `127.0.0.1:6543`. If you do not set the api url you should get an error
+    about not being able to find a bookie instance at that url.
 
 API Key
     this is the same key you set in your installations *.ini* config
