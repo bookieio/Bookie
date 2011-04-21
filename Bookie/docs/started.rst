@@ -5,40 +5,47 @@ Some basic docs on getting started with the project. Before you ask, yes this
 will get much easier as the project moves forward. It's in development mode
 still.
 
-Ubuntu Linux
-------------
-If you're running Ubuntu, here's some actual commands to get you started.
+Ubuntu Linux 10.10
+------------------
 
+There are some required packages that need to be installed so you can build bookie. These are:
 
-Note: right we we support all three databases and the database bindings need to
-be built into the virtualenv. To do this you need some packages:
-
-- libmysqlclient-dev
-- postgresql-server-dev-9.0 (or 8.4 if that's your current version)
 - build-essential
-
-We're hoping to `clean this up some`_ some going forward.
-
-We also need these packages for the content parsing library used, decruft:
-
-- ibxslt1-dev
+- python-dev
+- libmysqlclient-dev
+- postgresql-server-dev-8.4
+- libxslt1-dev
 - libxml2-dev
+
+Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. We're hoping to `clean this up some`_ some going forward.
+
+If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get you started.
 
 ::
 
+  # install the required packages to build bookie
+  # (just needs to be run once)
+  $ sudo apt-get install build-essential libmysqlclient-dev \
+    postgresql-server-dev-8.4 libxslt1-dev libxml2-dev python-dev
+
+  # go to where you want the bookie source to live and install dependencies
+  $ cd to/some/directory/
   $ wget http://bmark.us/bootstrap.py
   $ python bootstrap.py bookie
+
+  # activate the python virtualenvironment
   $ source bookie/bin/activate
+
   $ cd bookie/bookie/Bookie/
 
+  # Create a new fabric configuration file.
   # $myname is a name you're giving your installation. Just one word will do
-  $ fab new_install:$myname
-
-  # this will create a config file for you called $myname.ini
-  # feel free to edit this config for your needs and then
+  # This will create a config file for you called $myname.ini
+  # Feel free to edit this config for your needs (port, apikey, etc).
+  $ fab new_install:$myname 
   $ fab $myname db_new_install
 
-  # startup the development web server
+  # Startup the development web server with your configuration.
   $ paster serve --reload $myname.ini
 
 You should now be able to pull up:
@@ -56,24 +63,11 @@ that by vising the *Import* link in the footer of your site installation
 
 You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 
-You can also start using the `Google Chome extension`_ to save and edit
-bookmarks you have in Bookie. It will only work based on the current page, a
-full UI for managing your bookmarks is in the works.
+You probably also want to install a `browser extension`_ to be able to store
+new bookmarks going forward. Once you install the extension, you'll need to set
+the options for it to work. See the `browser extension`_ docs for those
+settings.
 
-Once you install the extension, you'll need to set the options for it to work.
-
-API Url
-    set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543/delapi/`. Make sure to include the */delapi/* in the url
-    for the extension to work. If you do not set the api you should get an error
-    on the extension icon badge *!URL*
-
-
-API Key
-    this is the same key you set in your installations *.ini* config
-    file. You should set this to be your own unique string and make sure that
-    your server install and extension match. If they don't, you'll be unable to
-    store bookmarks to your Bookie server.
 
 Hosting Bookie
 ~~~~~~~~~~~~~~
@@ -85,7 +79,6 @@ To Do
 ~~~~~~
 - Update the bootstrap.py to use a tarball source to avoid git requirement
 
-.. _`git flow`: https://github.com/nvie/gitflow
-.. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx
+.. _`browser extension`: extensions.html
 .. _`hosting docs`: hosting.html
 .. _`clean this up some`: https://github.com/mitechie/Bookie/issues/37
