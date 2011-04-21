@@ -1,13 +1,20 @@
 <html>
     <head>
-        <script type="text/javascript" src="jquery.min.js"></script>
+        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" />
+
+        <script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script>
         <script type="text/javascript" src="bookie-core.js"></script>
         <script type="text/javascript" src="bookie-chrome.js"></script>
         <script type="text/javascript">
+            var tags = [];
             $(function() {
                 bookie.init();
-                validateSettings();
+                var valid = validateSettings();
+                if(!valid)
+                    return;
 
+                $("#tags").superblyTagField();
 
                 function validateSettings() {
                     var errors = [],
@@ -24,7 +31,9 @@
                             return $("<li/>").text(msg).get(0);
                         });
                         errorOutput.append(errors).show();
+                        return false;
                     } 
+                    return true;
                 }
 
             });
