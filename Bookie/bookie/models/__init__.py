@@ -327,6 +327,7 @@ class Hashed(Base):
     # relation
     readable = relation(Readable,
                         backref="hashed",
+                        cascade="all, delete, delete-orphan",
                         uselist=False)
 
     def __init__(self, url):

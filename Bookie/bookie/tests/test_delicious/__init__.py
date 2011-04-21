@@ -210,8 +210,8 @@ class DelPostTest(unittest.TestCase):
 
         # now send in the delete squad
         prms = {
-                'url': u'http://google.com',
-                'api_key': u'testapi',
+            'url': u'http://google.com',
+            'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
