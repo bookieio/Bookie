@@ -7,6 +7,12 @@
                 $('#api_key').val(localStorage['api_key']);
                 $('#api_url').val(localStorage['api_url']);
 
+                if (localStorage['cache_content'] != 'false') {
+                    $('#cache_content').attr('checked', 'checked');
+                } else {
+                    $('#cache_content').removeAttr('checked');
+                }
+
                 // close window on cancel
                 $("#cancelBtn").click(function() { window.close(); });
 

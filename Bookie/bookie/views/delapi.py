@@ -27,7 +27,7 @@ def posts_add(request):
     test_delicious directory
 
     """
-    params = request.GET
+    params = request.params
 
     with Authorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
@@ -77,15 +77,18 @@ def posts_add(request):
                 content = StringIO(request.params['content'])
 
                 content.seek(0)
-                parsed = ReadContent.parse(content)
+                parsed = ReadContent.parse(content, content_type="text/html")
+                LOG.debug(parsed)
+                LOG.debug(parsed.status)
+                LOG.debug(parsed.content)
+                LOG.debug(parsed.status_message)
 
-                read = Readable()
-                read.content = parsed.content
-                read.content_type = parsed.content_type
-                read.status_code = parsed.status
-                read.status_message = parsed.status_message
+                mark.hashed.readable = Readable()
+                mark.hashed.readable.content = parsed.content
+                mark.hashed.readable.content_type = parsed.content_type
+                mark.hashed.readable.status_code = parsed.status
+                mark.hashed.readable.status_message = parsed.status_message
 
-                mark.hashed.readable = read
 
             return '<result code="done" />'
         else:
@@ -94,7 +97,7 @@ def posts_add(request):
 
 def posts_delete(request):
     """Remove a bmark from the system"""
-    params = request.GET
+    params = request.params
     request.response_content_type = 'text/xml'
 
     with Authorize(request.registry.settings.get('api_key', ''),
@@ -125,11 +128,11 @@ def posts_get(request):
     - hashes={MD5}+{MD5}+...+{MD5}
 
     """
-    params = request.GET
+    params = request.params
     request.response_content_type = 'text/xml'
     try:
         if 'url' in params and params['url']:
-            url = request.GET['url']
+            url = request.params['url']
             bmark = BmarkMgr.get_by_url(url=url)
 
             if not bmark:

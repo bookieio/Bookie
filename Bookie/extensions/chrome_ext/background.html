@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+    <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript">
         var ui = (function() {
             var module = {};
@@ -19,9 +20,34 @@
 
             return module;
         })();
+
+
+        // test out listening for a call from the content script
+        // readable.js for the content of the page to send along in a
+        // submission as the content
+        chrome.extension.onRequest.addListener(
+            function(request, sender, sendResponse) {
+                if (request.html) {
+                    $('#html_content').val(request.html);
+                    console.log('should have content stored');
+                } else {
+                    console.log('hit the else');
+                }
+            }
+        );
+
+        function get_html_content() {
+            return $('#html_content').val();
+        };
+
+        function inject_readable(callback) {
+            chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
+        };
+
     </script>
 </head>
 <body>
 	
+    <textarea id="html_content"></textarea>
 </body>
 </html>

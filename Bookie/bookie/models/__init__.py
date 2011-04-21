@@ -445,7 +445,7 @@ class BmarkTools(object):
           google analytics stuff utm_*
 
         """
-        url = url.strip().strip('/')
+        # url = url.strip().strip('/')
         return url
 
 
