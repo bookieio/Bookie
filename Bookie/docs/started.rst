@@ -5,47 +5,47 @@ Some basic docs on getting started with the project. Before you ask, yes this
 will get much easier as the project moves forward. It's in development mode
 still.
 
-Ubuntu Linux
-------------
-If you're running Ubuntu, here's some actual commands to get you started.
+Ubuntu Linux 10.10
+------------------
 
+There are some required packages that need to be installed so you can build bookie. These are:
 
-Note: right we we support all three databases and the database bindings need to
-be built into the virtualenv. To do this you need some packages:
-
-- libmysqlclient-dev
-- postgresql-server-dev-9.0 (or 8.4 if that's your current version)
 - build-essential
 - python-dev
-
-We're hoping to `clean this up some`_ some going forward.
-
-We also need these packages for the content parsing library used, decruft:
-
-- ibxslt1-dev
+- libmysqlclient-dev
+- postgresql-server-dev-8.4
+- libxslt1-dev
 - libxml2-dev
 
-For the copy/paste crowd:
+Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. We're hoping to `clean this up some`_ some going forward.
+
+If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get you started.
 
 ::
 
-    sudo apt-get install libmysqlclient-dev postgresql-server-dev-8.4 build-essential python-dev ibxslt1-dev libxml2-dev
+  # install the required packages to build bookie
+  # (just needs to be run once)
+  $ sudo apt-get install build-essential libmysqlclient-dev \
+    postgresql-server-dev-8.4 libxslt1-dev libxml2-dev 
 
-::
-
+  # go to where you want the bookie source to live and install dependencies
+  $ cd to/some/directory/
   $ wget http://bmark.us/bootstrap.py
   $ python bootstrap.py bookie
+
+  # activate the python virtualenvironment
   $ source bookie/bin/activate
+
   $ cd bookie/bookie/Bookie/
 
+  # Create a new fabric configuration file.
   # $myname is a name you're giving your installation. Just one word will do
-  $ fab new_install:$myname
-
-  # this will create a config file for you called $myname.ini
-  # feel free to edit this config for your needs and then
+  # This will create a config file for you called $myname.ini
+  # Feel free to edit this config for your needs (port, apikey, etc).
+  $ fab new_install:$myname 
   $ fab $myname db_new_install
 
-  # startup the development web server
+  # Startup the development web server with your configuration.
   $ paster serve --reload $myname.ini
 
 You should now be able to pull up:
