@@ -26,7 +26,7 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
   # install the required packages to build bookie
   # (just needs to be run once)
   $ sudo apt-get install build-essential libmysqlclient-dev \
-    postgresql-server-dev-8.4 libxslt1-dev libxml2-dev 
+    postgresql-server-dev-8.4 libxslt1-dev libxml2-dev python-dev
 
   # go to where you want the bookie source to live and install dependencies
   $ cd to/some/directory/
