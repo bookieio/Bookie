@@ -1,24 +1,35 @@
 Getting Started
 ===============
 
-Bookie's git repository is managed using a tool/process called `git flow`_. It
-basically sets standards for how the git repository is set up. You'll find the
-most up to date *working* code in the develop branch. Individual features that
-are being worked on are in branches prefixed by `feature/`. As these features
-get to a workable state they might get merged into the `develop` branch.
-
-The `master` branch is only for releases and we're a long away from that. So
-when you check out Bookie, make sure to start out using the `develop` branch.
-
 Some basic docs on getting started with the project. Before you ask, yes this
 will get much easier as the project moves forward. It's in development mode
 still.
-
 
 Ubuntu Linux
 ------------
 If you're running Ubuntu, here's some actual commands to get you started.
 
+
+Note: right we we support all three databases and the database bindings need to
+be built into the virtualenv. To do this you need some packages:
+
+- libmysqlclient-dev
+- postgresql-server-dev-9.0 (or 8.4 if that's your current version)
+- build-essential
+- python-dev
+
+We're hoping to `clean this up some`_ some going forward.
+
+We also need these packages for the content parsing library used, decruft:
+
+- ibxslt1-dev
+- libxml2-dev
+
+For the copy/paste crowd:
+
+::
+
+    sudo apt-get install libmysqlclient-dev postgresql-server-dev-8.4 build-essential python-dev ibxslt1-dev libxml2-dev
 
 ::
 
@@ -42,38 +53,32 @@ You should now be able to pull up:
 http://127.0.0.1:6543
 
 
-To Do
-~~~~~~
-- Update the bootstrap.py to use a tarball source to avoid git requirement
-- Link to the hosting docs about setting up bookie to run for good
-
-
 Where to go from here
 ---------------------
+
+Getting your bookmarks into Bookie
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Well, you might want to import a backup of your delicious bookmarks. You can do
 that by vising the *Import* link in the footer of your site installation
 
 You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 
-You can also start using the `Google Chome extension`_ to save and edit
-bookmarks you have in Bookie. It will only work based on the current page, a
-full UI for managing your bookmarks is in the works.
-
-Once you install the extension, you'll need to set the options for it to work.
-
-API Url
-    set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543/delapi/`. Make sure to include the */delapi/* in the url
-    for the extension to work. If you do not set the api you should get an error
-    on the extension icon badge *!URL*
+You probably also want to install a `browser extension`_ to be able to store
+new bookmarks going forward. Once you install the extension, you'll need to set
+the options for it to work. See the `browser extension`_ docs for those
+settings.
 
 
-API Key
-    this is the same key you set in your installations *.ini* config
-    file. You should set this to be your own unique string and make sure that
-    your server install and extension match. If they don't, you'll be unable to
-    store bookmarks to your Bookie server.
+Hosting Bookie
+~~~~~~~~~~~~~~
+You can setup Bookie to run in a variety of ways. Make sure to check out some
+samples in the `hosting docs`_
 
 
-.. _`git flow`: https://github.com/nvie/gitflow
-.. _`Google Chome extension`: http://bmark.us/bookie_chrome.crx
+To Do
+~~~~~~
+- Update the bootstrap.py to use a tarball source to avoid git requirement
+
+.. _`browser extension`: extensions.html
+.. _`hosting docs`: hosting.html
+.. _`clean this up some`: https://github.com/mitechie/Bookie/issues/37

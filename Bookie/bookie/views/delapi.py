@@ -10,8 +10,6 @@ from bookie.lib.access import Authorize
 from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
-from bookie.models import Bmark
-from bookie.models import Hashed
 from bookie.models import Readable
 from pyramid.httpexceptions import HTTPNotFound
 

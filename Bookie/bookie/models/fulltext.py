@@ -48,26 +48,28 @@ class SqliteFulltext(object):
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
 
-        if not content:
-            desc = SqliteBmarkFT.query.\
-                        filter(SqliteBmarkFT.description.match(phrase))
+        results = set()
 
-            tag_str = SqliteBmarkFT.query.\
-                        filter(SqliteBmarkFT.tag_string.match(phrase))
+        desc = SqliteBmarkFT.query.\
+                    filter(SqliteBmarkFT.description.match(phrase))
 
-            ext = SqliteBmarkFT.query.\
-                        filter(SqliteBmarkFT.extended.match(phrase))
+        tag_str = SqliteBmarkFT.query.\
+                    filter(SqliteBmarkFT.tag_string.match(phrase))
 
-            res = desc.union(tag_str, ext).join(SqliteBmarkFT.bmark).\
-                        options(contains_eager(SqliteBmarkFT.bmark)).\
-                        order_by('bmarks.stored').all()
+        ext = SqliteBmarkFT.query.\
+                    filter(SqliteBmarkFT.extended.match(phrase))
 
-            # everyone else sends a list of bmarks, so need to get our bmarks
-            # out of the result set
-            return [mark.bmark for mark in res]
+        res = desc.union(tag_str, ext).join(SqliteBmarkFT.bmark).\
+                    options(contains_eager(SqliteBmarkFT.bmark)).\
+                    order_by('bmarks.stored').all()
+
+        # everyone else sends a list of bmarks, so need to get our bmarks
+        # out of the result set
+        results.update(set([mark.bmark for mark in res]))
 
         # check if we should be searching across the content table as well
-        else:
+        readable_res = []
+        if content:
             content = SqliteContentFT.query.\
                         filter(SqliteContentFT.content.match(phrase))
 
@@ -83,13 +85,11 @@ class SqliteFulltext(object):
                                              alias=bmarks))
 
             res = qry.order_by(bmarks.stored).all()
-            results = []
             for read in res:
-                LOG.debug(read)
-                LOG.debug(read.hashed.bmark[0])
-                results.append(read.hashed.bmark[0])
+                readable_res.append(read.hashed.bmark[0])
 
-            return results
+        results.update(set(readable_res))
+        return sorted(list(results), key=lambda res: res.stored, reverse=True)
 
 
 class MySqlFulltext(object):
@@ -103,19 +103,21 @@ class MySqlFulltext(object):
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
 
-        if not content:
-            desc = Bmark.query.\
-                        filter(Bmark.description.match(phrase))
+        results = set()
 
-            tag_str = Bmark.query.\
-                        filter(Bmark.tag_str.match(phrase))
+        desc = Bmark.query.\
+                    filter(Bmark.description.match(phrase))
 
-            ext = Bmark.query.\
-                        filter(Bmark.extended.match(phrase))
+        tag_str = Bmark.query.\
+                    filter(Bmark.tag_str.match(phrase))
 
-            return desc.union(tag_str, ext).\
-                       order_by(Bmark.stored).all()
-        else:
+        ext = Bmark.query.\
+                    filter(Bmark.extended.match(phrase))
+
+        results.update(set([bmark for bmark in desc.union(tag_str, ext).order_by(Bmark.stored).all()]))
+
+        readable_res = []
+        if content:
             content = Readable.query.\
                         filter(Readable.content.match(phrase))
 
@@ -130,13 +132,11 @@ class MySqlFulltext(object):
                                              alias=bmarks))
 
             res = qry.order_by(bmarks.stored).all()
-            results = []
             for read in res:
-                LOG.debug(read)
-                LOG.debug(read.hashed.bmark[0])
-                results.append(read.hashed.bmark[0])
+                readable_res.append(read.hashed.bmark[0])
 
-            return results
+        results.update(set(readable_res))
+        return sorted(list(results), key=lambda res: res.stored, reverse=True)
 
 
 class PgSqlFulltext(object):
@@ -151,24 +151,26 @@ class PgSqlFulltext(object):
         """Need to perform searches against the three columns"""
         phrase = " | ".join(phrase.split())
 
-        if not content:
-            query = """SELECT bid
-            FROM bmarks
-            WHERE to_tsvector('english', description) @@ to_tsquery(:phrase) OR
-                  to_tsvector('english', extended) @@ to_tsquery(:phrase) OR
-                  to_tsvector('english', tag_str) @@ to_tsquery(:phrase)
+        results = set()
+        query = """SELECT bid
+        FROM bmarks
+        WHERE to_tsvector('english', description) @@ to_tsquery(:phrase) OR
+              to_tsvector('english', extended) @@ to_tsquery(:phrase) OR
+              to_tsvector('english', tag_str) @@ to_tsquery(:phrase)
 
-            ORDER BY stored DESC;
-            """
+        ORDER BY stored DESC;
+        """
 
-            res = DBSession.execute(text(query), {'phrase': phrase})
+        res = DBSession.execute(text(query), {'phrase': phrase})
 
-            ids = set([r.bid for r in res])
+        ids = set([r.bid for r in res])
 
-            return Bmark.query.join(Bmark.tags).\
-                      options(contains_eager(Bmark.tags)).\
-                      filter(Bmark.bid.in_(ids)).all()
-        else:
+        results.update(set([bmark for bmark in Bmark.query.join(Bmark.tags).\
+                                              options(contains_eager(Bmark.tags)).\
+                                              filter(Bmark.bid.in_(ids)).all()]))
+
+        readable_res = []
+        if content:
             query = """SELECT readable.hash_id
             FROM readable, bmarks
             WHERE to_tsvector('english', content) @@ to_tsquery(:phrase)
@@ -180,6 +182,9 @@ class PgSqlFulltext(object):
 
             ids = set([r.hash_id for r in res])
 
-            return Bmark.query.join(Bmark.tags).\
-                      options(contains_eager(Bmark.tags)).\
-                      filter(Bmark.hash_id.in_(ids)).all()
+            readable_res = [bmark for bmark in Bmark.query.join(Bmark.tags).\
+                                  options(contains_eager(Bmark.tags)).\
+                                  filter(Bmark.hash_id.in_(ids)).all()]
+
+        results.update(set(readable_res))
+        return sorted(list(results), key=lambda res: res.stored, reverse=True)

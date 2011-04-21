@@ -158,10 +158,10 @@ def db_init_bookmark():
     from bookie.models import DBSession
     from bookie.models import Bmark
 
-    bmark_us = Bmark('http://bmark.us',
-                     desc="Bookie Website",
-                     ext= "Bookie Documentation Home",
-                     tags = "bookmarks")
+    bmark_us = Bmark(u'http://bmark.us',
+                     desc=u"Bookie Website",
+                     ext= u"Bookie Documentation Home",
+                     tags = u"bookmarks")
 
     bmark_us.stored = datetime.now()
     bmark_us.updated = datetime.now()

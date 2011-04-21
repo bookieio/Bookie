@@ -3,5 +3,9 @@
 <h1>Displaying: ${bmark.url}</h1>
 
 <div>
-    ${bmark.readable.content}
+    % if bmark.readable:
+        ${bmark.readable.content}
+    % else:
+        <p>No parsed content for this bookmark</p>
+    % endif
 </div>

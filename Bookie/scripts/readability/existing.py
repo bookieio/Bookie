@@ -39,6 +39,16 @@ def parse_args():
                             required=True,
                             help='What .ini are we pulling the db connection from?')
 
+    parser.add_argument('--new', dest="new_only",
+                        action="store_true",
+                        default=False,
+                        help="Only parse new bookmarks that have not been attempted before")
+
+    parser.add_argument('--retry-errors', dest="retry_errors",
+                        action="store_true",
+                        default=False,
+                        help="Try to reload content that had an error last time")
+
     args = parser.parse_args()
     return args
 
@@ -61,7 +71,26 @@ if __name__ == "__main__":
 
     all = False
     while(not all):
-        url_list = Hashed.query.limit(PER_TRANS).offset(ct).all()
+
+        if args.new_only:
+            # we take off the offset because each time we run, we should have
+            # new ones to process. The query should return the 10 next
+            # non-imported urls
+            url_list = Hashed.query.outerjoin(Readable).\
+                        filter(Readable.imported == None).\
+                        limit(PER_TRANS).all()
+
+        elif args.retry_errors:
+            # we need a way to handle this query. If we offset and we clear
+            # errors along the way, we'll skip potential retries
+            # but if we don't we'll just keep getting errors and never end
+            raise Exception("Not implemented yet, this adds some complexity tothe query")
+            url_list = Hashed.query.outerjoin(Readable).\
+                        filter(Readable.status_code != 200).\
+                        limit(PER_TRANS).offset(ct).all()
+
+        else:
+            url_list = Hashed.query.limit(PER_TRANS).offset(ct).all()
 
         if len(url_list) < PER_TRANS:
             all = True
