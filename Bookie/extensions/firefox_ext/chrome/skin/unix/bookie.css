@@ -1,0 +1,20 @@
+#bookie-button
+  {list-style-image: url("chrome://bookie-os/skin/24px.png");}
+
+.bookie
+  {-moz-image-region: rect(0px, 24px, 24px, 0px);}
+
+.bookie[disabled="true"]
+  {-moz-image-region: rect(24px, 24px, 48px, 0px);}
+
+/*
+, #wrapper-bookie-button
+
+.bookie:hover
+  {-moz-image-region: rect(24px, 24px, 48px, 0px);}
+
+[iconsize="small"] .bookie
+  {-moz-image-region: rect(0px, 40px, 16px, 24px);}
+
+[iconsize="small"] .bookie
+  {-moz-image-region: rect(24px, 40px, 40px, 24px);} */
