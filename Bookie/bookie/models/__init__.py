@@ -163,13 +163,13 @@ class TagMgr(object):
         return qry.all()
 
     @staticmethod
-    def complete(prefix):
+    def complete(prefix, limit=10):
         """Find all of the tags that begin with prefix"""
         qry = Tag.query.filter(Tag.name.startswith(prefix))
-
-        qry = qry.order_by(Tag.name)
+        qry = qry.order_by(Tag.name).limit(limit)
 
         return qry.all()
+
 
 class Tag(Base):
     """Bookmarks can have many many tags"""

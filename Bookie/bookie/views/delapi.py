@@ -9,12 +9,9 @@ from StringIO import StringIO
 from bookie.lib.access import Authorize
 from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
-<<<<<<< HEAD
-from bookie.models import BmarkMgr, TagMgr
-=======
 from bookie.models import BmarkMgr
 from bookie.models import Readable
->>>>>>> develop
+from bookie.models import TagMgr
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler

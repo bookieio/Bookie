@@ -320,6 +320,25 @@ class DelPostTest(unittest.TestCase):
             ok_(tag[-1] != " ", "Tag should not end with a space")
 
 
+    def test_tag_completion(self):
+        """Make sure we can get good completion suggestions"""
+        # add the default bookmark which tags tags of python and search
+        self._get_good_request()
+
+        # now try to get completion suggestions
+        resp = self.testapp.get('/delapi/tags/complete?tag=py')
+
+        ok_(resp.status == 200, "Status of a completion request should be 200")
+        ok_('python' in resp.body, 
+                "The tag python should be in the response body: " + resp.body)
+
+        # now try to get completion suggestions
+        resp = self.testapp.get('/delapi/tags/complete?tag=test')
+
+        eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
+        ok_('python' not in resp.body, 
+                "The tag python should not be in the response body: " + resp.body)
+
 class DelImportTest(unittest.TestCase):
     """Test that we can successfully import data from delicious"""
 
