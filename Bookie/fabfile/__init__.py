@@ -65,7 +65,11 @@ def {0}():
     # we also need to create a .ini file for this install
     ini_filename = os.path.join(dirname(dirname(__file__)),
                                 "{0}.ini".format(install_name))
-    sample_filename = os.path.join(dirname(__file__), "sample.ini")
+    if os.path.exists(ini_filename):
+        # then we already have it, don't mess with it
+        print "Ini file already exists, skipping creation"
+    else:
+        sample_filename = os.path.join(dirname(__file__), "sample.ini")
 
-    # need to cp the sample file over as the new ini_filename
-    copyfile(sample_filename, ini_filename)
+        # need to cp the sample file over as the new ini_filename
+        copyfile(sample_filename, ini_filename)
