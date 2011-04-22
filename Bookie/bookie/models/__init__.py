@@ -240,6 +240,20 @@ class BmarkFTSExtension(MapperExtension):
         else:
             instance.tag_str = instance.tag_string()
 
+    def before_update(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before update')
+            LOG.error(instance.__repr__())
+
+            instance.fulltext.bid = instance.bid
+            instance.fulltext.description = instance.description
+            instance.fulltext.extended = instance.extended
+            instance.fulltext.tag_str = instance.tag_string()
+        else:
+            instance.tag_str = instance.tag_string()
+
 
 class ReadableFTSExtension(MapperExtension):
     """This is a mapper to handle inserting into fulltext index
@@ -256,6 +270,15 @@ class ReadableFTSExtension(MapperExtension):
             LOG.error(instance.__repr__())
             instance.fulltext = SqliteContentFT(instance.hash_id,
                                   instance.content,)
+
+    def before_update(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before readable update')
+            LOG.error(instance.__repr__())
+            instance.fulltext.hash_id = instance.hash_id
+            instance.fulltext.content = instance.content
 
 
 class ReadableMgr(object):
@@ -304,6 +327,7 @@ class Hashed(Base):
     # relation
     readable = relation(Readable,
                         backref="hashed",
+                        cascade="all, delete, delete-orphan",
                         uselist=False)
 
     def __init__(self, url):
@@ -445,7 +469,7 @@ class BmarkTools(object):
           google analytics stuff utm_*
 
         """
-        url = url.strip().strip('/')
+        # url = url.strip().strip('/')
         return url
 
 

@@ -37,7 +37,7 @@ class TestFulltext(TestCase):
         session.flush()
         transaction.commit()
 
-    def _get_good_request(self):
+    def _get_good_request(self, new_tags=None):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
@@ -47,6 +47,9 @@ class TestFulltext(TestCase):
                 'tags': u'python search',
                 'api_key': u'testapi',
         }
+
+        if new_tags:
+            prms['tags'] = new_tags
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
@@ -91,3 +94,22 @@ class TestFulltext(TestCase):
 
         ok_('extended notes' in search_res.body,
             "Extended search should find our description on the page: " + search_res.body)
+
+    def test_sqlite_update(self):
+        """Verify that if we update a bookmark, fulltext is updated
+
+        We need to make sure that updates to the record get cascaded into the
+        fulltext table indexes
+
+        """
+        self._get_good_request()
+
+        # now we need to do another request with updated tag string
+        self._get_good_request(new_tags="google books icons")
+
+        search_res = self.testapp.get('/search?search=icon')
+        ok_(search_res.status == '200 OK',
+                "Status is 200: " + search_res.status)
+
+        ok_('icon' in search_res.body,
+            "We should find the new tag icon on the page: " + search_res.body)

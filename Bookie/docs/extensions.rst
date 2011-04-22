@@ -37,6 +37,15 @@ API Key
     your server install and extension match. If they don't, you'll be unable to
     store bookmarks to your Bookie server.
 
+Cache Content
+    If you check this, then the html of the page is sent to the Bookie
+    installation when you click the button to save a bookmark. This means that
+    Bookie will have the parsed *readable* version of the content immediately.
+    This might pass large bits of data over and slow things down a little bit.
+    If you find it too slow, uncheck and run the server side script provided
+    via cron to get the *readable* version of your bookmark content.
+
+
 Firefox Extension
 ==================
 

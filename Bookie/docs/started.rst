@@ -8,25 +8,40 @@ still.
 Ubuntu Linux 10.10
 ------------------
 
+OS Packages
+~~~~~~~~~~~~
 There are some required packages that need to be installed so you can build bookie. These are:
 
 - build-essential
 - python-dev
-- libmysqlclient-dev
-- postgresql-server-dev-8.4
 - libxslt1-dev
 - libxml2-dev
 
 Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. We're hoping to `clean this up some`_ some going forward.
 
+MySQL & Postgresql Users
+~~~~~~~~~~~~~~~~~~~~~~~~
+If you're using Postgres or MySQL as your database for Bookie you'll also want
+to grab the dev package for your db so that the Python drivers for them can
+compile.
+
+- libmysqlclient-dev
+- postgresql-server-dev-8.4
+
+Ubuntu 10.10 (Maverick Commands)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get you started.
 
 ::
 
   # install the required packages to build bookie
   # (just needs to be run once)
-  $ sudo apt-get install build-essential libmysqlclient-dev \
-    postgresql-server-dev-8.4 libxslt1-dev libxml2-dev 
+  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev
+
+  # Mysql & Postgresql users
+  $ sudo apt-get install libmysqlclient-dev
+  # - OR -
+  $ sudo apt-get install postgresql-server-dev-8.4
 
   # go to where you want the bookie source to live and install dependencies
   $ cd to/some/directory/
@@ -42,7 +57,7 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
   # $myname is a name you're giving your installation. Just one word will do
   # This will create a config file for you called $myname.ini
   # Feel free to edit this config for your needs (port, apikey, etc).
-  $ fab new_install:$myname 
+  $ fab new_install:$myname
   $ fab $myname db_new_install
 
   # Startup the development web server with your configuration.
@@ -59,7 +74,9 @@ Where to go from here
 Getting your bookmarks into Bookie
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Well, you might want to import a backup of your delicious bookmarks. You can do
-that by vising the *Import* link in the footer of your site installation
+that by vising the *Import* link in the footer of your site installation. Make
+sure you know the API key that you've set in your bookie install's *.ini*
+configuration file.
 
 You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 

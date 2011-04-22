@@ -41,7 +41,7 @@ class DelPostTest(unittest.TestCase):
         DBSession.flush()
         transaction.commit()
 
-    def _get_good_request(self):
+    def _get_good_request(self, content=False):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
@@ -51,6 +51,11 @@ class DelPostTest(unittest.TestCase):
                 'tags': u'python search',
                 'api_key': u'testapi',
         }
+
+        # if we want to test the readable fulltext side we want to make sure we
+        # pass content into the new bookmark
+        if content:
+            prms['content'] = "<h1>There's some content in here dude</h1>"
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
@@ -204,14 +209,19 @@ class DelPostTest(unittest.TestCase):
                 "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))
 
     def test_remove_bmark(self):
-        """Remove a bmark from the system"""
-        res1 = self._get_good_request()
+        """Remove a bmark from the system
+
+        We want to make sure we store content in here to make sure all the
+        delete cascades are operating properly
+
+        """
+        res1 = self._get_good_request(content=True)
         ok_('done' in res1.body, res1.body)
 
         # now send in the delete squad
         prms = {
-                'url': u'http://google.com',
-                'api_key': u'testapi',
+            'url': u'http://google.com',
+            'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)

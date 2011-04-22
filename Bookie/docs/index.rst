@@ -17,13 +17,16 @@ Beyond that, there's some features I think that are long overdue.
 
 Bookie Features
 ----------------
-- Google Chrome extension
-- Delicious API compatibility
+- Open source!
+- Supports importing from Delicious.com and Google Bookmarks
+- Google Chrome extension (Firefox extension in development)
 - Fulltext index and search of your bookmark descriptions and tags
-- (dev) Cached copy of bookmark's content into a searchable index
+- Cached copy of bookmark's content into a searchable index (in develop branch)
 - Popularity tracking of your most commonly used (clicked) bookmarks
 - Support for Sqlite, MySQL, and Postgres
+- Delicious API compatibility
 
+See the features_ page for full length details.
 
 Contents:
 ---------
@@ -53,3 +56,4 @@ Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
 .. _events: events.html
+.. _features: features.html
