@@ -35,7 +35,8 @@
         tab:9,
         backspace:8
     }
-    function superblyTagField(tagField,settings) {
+
+    function superblyTagField(tagField, settings) {
 
         var tags = settings.tags.sort();
         var preset = settings.preset;
@@ -68,11 +69,11 @@
 
         // events
         suggestList.mouseover(function(e){
-            hoverSuggestItems = true; 
+            hoverSuggestItems = true;
         });
 
         suggestList.mouseleave(function(e){
-            hoverSuggestItems = false; 
+            hoverSuggestItems = false;
         });
 
         tagInput.keyup(function(e){
@@ -82,7 +83,7 @@
         tagInput.focusout(function(e){
             if(!hoverSuggestItems){
                 suggestList.css('display', 'none');
-            } 
+            }
             if(allowNewTags){
                 var value = tagInput.val();
                 if(value != null && value != ''){
@@ -96,7 +97,7 @@
         });
 
         tagInput.keydown(function(e){
-            if(e.keyCode == keyMap.downArrow) {		
+            if(e.keyCode == keyMap.downArrow) {
                 selectDown();
             }else if(e.keyCode == keyMap.upArrow) {
                 selectUp()
@@ -110,7 +111,7 @@
                     }
                 }
                 // prevent default action for enter
-                return e.keyCode != keyMap.enter; 
+                return e.keyCode != keyMap.enter;
             }else if(e.keyCode == keyMap.backspace){
                 // backspace
                 if(tagInput.val() == ''){
@@ -124,20 +125,20 @@
         });
 
         tagList.parent().click(function(e){
-            tagInput.focus();	
+            tagInput.focus();
         });
 
-        // functions 
+        // functions
         function setValue(){
             tagField.val(inserted.join(' '));
         }
 
         function updateTagInputWidth()
         {
-            /* 
+            /*
             * To make tag wrapping behave as expected, dynamically adjust
             * the tag input's width to its content's width
-            * The best way to get the content's width in pixels is to add it 
+            * The best way to get the content's width in pixels is to add it
             * to the DOM, grab the width, then remove it from the DOM.
             */
             var temp = $("<span />").text(tagInput.val()).appendTo(inputItem);
@@ -158,7 +159,7 @@
                 tagInput.val("");
                 currentValue = null;
                 currentItem = null;
-                // add remove click event 
+                // add remove click event
                 var new_index = tagList.children('.superblyTagItem').size()-1;
                 $(tagList.children('.superblyTagItem')[new_index]).children('a').click(function(e){
                     var value = $($(this).parent('.superblyTagItem').children('span')[0]).text();
@@ -213,33 +214,79 @@
             return suggestions;
         }
 
-
         function suggest(value){
-            suggestList.show();
-            if(value == currentValue){
-                return false;
-            }
-            currentValue = value;
-            suggestList.empty();
-            var suggestions = getSuggestionsArray(value);
-            for(key in suggestions){
-                suggestList.append("<li class='superblySuggestItem'>" + suggestions[key] + "</li>");
-            }
-
-            var suggestionItems = suggestList.children('.superblySuggestItem');
-
-            // add click event to suggest items
-            suggestionItems.click(function(e){
-                addItem($(this).html());
-            });
-
-            selectedIndex=null;
-            if(!allowNewTags){
-                selectedIndex=0;
-                $(suggestionItems[selectedIndex]).addClass("selected");	
-                currentItem = $(suggestionItems[selectedIndex]).html();
-            }
+            load_suggestions(value);
         }
+
+        /**
+         * Perform an ajax request to the delapi /tags/suggest feauture
+         *
+         */
+        function load_suggestions(value) {
+            function request(options) {
+                var defaults, opts;
+
+                defaults = {
+                    type: "GET",
+                    dataType: "xml",
+                    error: function(jqxhr, textStatus, errorThrown) {
+                        console.log('failed to load suggestions');
+                        console.log(textStatus);
+                        console.log(jqxhr);
+                        console.log(errorThrown);
+                    }
+                };
+
+                opts = $.extend({}, defaults, options);
+                $.ajax(opts);
+            };
+
+            var opts = {
+                url: "http://127.0.0.1:6543/delapi/tags/complete",
+                data: {tag: value},
+                success: function (xml) {
+                    tag_list = [];
+                    results = $(xml).find("tag");
+                    results.map(function () {
+                        console.log($(this));
+                        console.log($(this).text());
+                        tag_list.push($(this).text());
+                    });
+
+                    tags = tag_list;
+                    tagstmp = tags.slice();
+
+                    // now onto what the suggest method wanted to do originally
+                    suggestList.show();
+                    if(value == currentValue){
+                        return false;
+                    }
+                    currentValue = value;
+                    suggestList.empty();
+                    var suggestions = getSuggestionsArray(value);
+                    for(key in suggestions){
+                        suggestList.append("<li class='superblySuggestItem'>" + suggestions[key] + "</li>");
+                    }
+
+                    var suggestionItems = suggestList.children('.superblySuggestItem');
+
+                    // add click event to suggest items
+                    suggestionItems.click(function(e){
+                        addItem($(this).html());
+                    });
+
+                    selectedIndex=null;
+                    if(!allowNewTags){
+                        selectedIndex=0;
+                        $(suggestionItems[selectedIndex]).addClass("selected");
+                        currentItem = $(suggestionItems[selectedIndex]).html();
+                    }
+
+                }
+            };
+
+            request(opts);
+        };
 
 
         function selectDown(){
