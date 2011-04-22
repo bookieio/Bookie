@@ -28,6 +28,8 @@ compile.
 - libmysqlclient-dev
 - postgresql-server-dev-8.4
 
+Ubuntu 10.10 (Maverick Commands)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get you started.
 
 ::
