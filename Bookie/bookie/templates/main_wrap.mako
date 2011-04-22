@@ -22,8 +22,8 @@
                 </div>
             </div>
             <div class="yui3-u-1-3 navigation">
-                <span class="item"><a href="/recent" class="button_minimal">Recent</a></span>
-                <span class="item"><a href="/popular" class="button_minimal">Popular</a></span>
+                <span class="item"><a href="/recent" class="nav_button">Recent</a></span>
+                <span class="item"><a href="/popular" class="nav_button">Popular</a></span>
                 <!--<span class="item"><a href="/tags" class="button_minimal">Tags</a></span>-->
                 <!--<span class="item">-->
 
@@ -47,8 +47,7 @@
                                 <input type="checkbox" name="content"
                                 id="search_content"  /> In Cached Content
                                 <br />
-                                <input type="submit" name="submit"
-                                id="submit_search" value="Search"/>
+                                <input style="line-height: 1.5;" type="submit" name="submit" class="button" id="submit_search" value="Search"/>
                             </form>
                         </div>
                     </div>

@@ -111,11 +111,13 @@
 
     % if page != 0:
     <% prev = page - 1 %>
-        <a href="${request.route_url(next_url, page=prev, **url_params)}">Prev</a>
+        <a href="${request.route_url(next_url, page=prev, **url_params)}"
+           class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, page=next, **url_params)}">Next</a>
+        <a href="${request.route_url(next_url, page=next, **url_params)}"
+           class="button">Next</a>
     % endif
 
 </%def>

@@ -4,7 +4,6 @@ BODY {
 
 #body {
     margin: 1em;
-
 }
 
 
@@ -39,9 +38,47 @@ BODY {
 }
 
 
+.button {
+    background: #e3e3e3;
+    border: 1px solid #bbb;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    box-shadow: inset 0 0 1px 1px #f6f6f6;
+    color: #333;
+    font: 12px arial,helvetica,clean,sans-serif;
+    font-weight: bold;
+    line-height: 1;
+    padding: 2px 4px 3px;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.button:hover {
+    background: #d9d9d9;
+    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+    box-shadow: inset 0 0 1px 1px #eaeaea;
+    color: #222;
+    cursor: pointer;
+}
+
+a.button {
+    color: #333;
+    text-decoration: none;
+}
+
+form .button {
+    font-weight: bold;
+    color: #333;
+}
+
+
 
 /* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */
-.button_minimal {
+.nav_button {
   background: #e3e3e3;
   border: 1px solid #bbb;
   -moz-border-radius: 3px;
@@ -62,7 +99,7 @@ BODY {
   vertical-align: bottom;
 }
 
-.button_minimal:hover {
+.nav_button:hover {
   background: #d9d9d9;
   -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
   -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
@@ -71,12 +108,16 @@ BODY {
   cursor: pointer;
 }
 
-.button_minimal:active {
+.nav_button:active {
   background: #d0d0d0;
   -moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
   -webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
   box-shadow: inset 0 0 1px 1px #e3e3e3;
   color: #000;
+}
+
+a.button_minimal {
+    text-decoration: none;
 }
 
 
@@ -92,6 +133,10 @@ BODY {
     text-align: right;
     align: right;
     vertical-align: bottom;
+}
+
+.buttons {
+    line-height: 2;
 }
 
 .data_list .bmark {
@@ -165,7 +210,7 @@ a.bmark {
     font: 14px/1.231 Cabin,arial,helvetica,clean,sans-serif
     font-size: 1.1em;
     text-decoration: none;
-    color: #FF0000;
+    color: #003366;
 }
 
 .bmark .time {
@@ -273,9 +318,12 @@ form li label {
 }
 
 .actions .item {
-    color: #0033FF;
+    color: #003366;
 }
 
 .actions .item a {
     text-decoration: none;
+    color: #003366;
 }
+
+
