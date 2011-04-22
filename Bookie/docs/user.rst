@@ -14,7 +14,7 @@ The importer might take a bit on large sets of bookmarks. Let us know if you
 run into any issues so we can improve our import process.
 
 *.ini* Settings to think about
-------------------------
+-------------------------------
 api_key:
     This is the secret phrase used to communicate between your extension and
     the web application. Make sure you change this from the default.
