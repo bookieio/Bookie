@@ -13,7 +13,7 @@ formats.
 The importer might take a bit on large sets of bookmarks. Let us know if you
 run into any issues so we can improve our import process.
 
-Settings to think about
+*.ini* Settings to think about
 ------------------------
 api_key:
     This is the secret phrase used to communicate between your extension and

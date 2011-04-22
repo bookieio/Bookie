@@ -59,7 +59,9 @@ Where to go from here
 Getting your bookmarks into Bookie
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Well, you might want to import a backup of your delicious bookmarks. You can do
-that by vising the *Import* link in the footer of your site installation
+that by vising the *Import* link in the footer of your site installation. Make
+sure you know the API key that you've set in your bookie install's *.ini*
+configuration file.
 
 You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 
