@@ -1,12 +1,17 @@
 import os
 from os.path import dirname
 from shutil import copyfile
+import sys
 
 from fabric.api import run, sudo, hosts, local, cd, env, require, prompt
 from fabric.contrib.project import rsync_project
 from fabric.contrib.console import confirm
 
+env.python_path = sys.executable
+env.pip_path = os.path.join(os.path.dirname(env.python_path), 'pip')
+
 env.project_name = "bookie"
+
 env.new_version_files = ["{project_name}/__init__.py".format(**env),
                          "docs/conf.py",
                          "setup.py", ]
