@@ -328,7 +328,7 @@ class DelPostTest(unittest.TestCase):
         # now try to get completion suggestions
         resp = self.testapp.get('/delapi/tags/complete?tag=py')
 
-        ok_(resp.status == 200, "Status of a completion request should be 200")
+        eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
         ok_('python' in resp.body, 
                 "The tag python should be in the response body: " + resp.body)
 
