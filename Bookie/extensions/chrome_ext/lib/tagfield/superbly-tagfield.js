@@ -64,6 +64,8 @@
 
         // set presets
         for(i in preset){
+            console.log('preset');
+            
             addItem(preset[i]);
         }
 
@@ -87,6 +89,7 @@
             if(allowNewTags){
                 var value = tagInput.val();
                 if(value != null && value != ''){
+                    console.log('focusout');
                     addItem(value, false);
                 }
             }
@@ -103,10 +106,13 @@
                 selectUp()
             }else if(e.keyCode == keyMap.enter || e.keyCode == keyMap.tab || e.keyCode == keyMap.space) {
                 if(currentItem != null){
+                    console.log('in if');
                     addItem(currentItem);
                 } else if(allowNewTags){
                     var value = tagInput.val();
                     if(value != null && value != ''){
+                        console.log('in else');
+                        
                         addItem(value);
                     }
                 }
@@ -148,6 +154,7 @@
         }
 
         function addItem(value, focus){
+            console.log('added value' + value);
             var index = jQuery.inArray(value,tagstmp);
             if((jQuery.inArray(value,inserted) == -1) && ( index > -1 || allowNewTags)){
                 //delete from tags
@@ -258,11 +265,13 @@
 
                     // now onto what the suggest method wanted to do originally
                     suggestList.show();
-                    if(value == currentValue){
+                    if (value == currentValue) {
                         return false;
                     }
+
                     currentValue = value;
                     suggestList.empty();
+
                     var suggestions = getSuggestionsArray(value);
                     for(key in suggestions){
                         suggestList.append("<li class='superblySuggestItem'>" + suggestions[key] + "</li>");
@@ -270,10 +279,19 @@
 
                     var suggestionItems = suggestList.children('.superblySuggestItem');
 
+                    console.log('binding suggestion items');
+
                     // add click event to suggest items
-                    suggestionItems.click(function(e){
-                        addItem($(this).html());
+                    $('.superblySuggestItem').each(function () {
+                        $(this).bind('click', function(e) {
+                            console.log('clicked');
+                            console.log($(this));
+                            addItem($(this).html());
+                            e.preventDefault();
+                        });
                     });
+
+                    console.log(suggestionItems);
 
                     selectedIndex=null;
                     if(!allowNewTags){
