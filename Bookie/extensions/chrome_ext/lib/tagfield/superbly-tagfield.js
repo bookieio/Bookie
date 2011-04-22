@@ -65,7 +65,7 @@
         // set presets
         for(i in preset){
             console.log('preset');
-            
+
             addItem(preset[i]);
         }
 
@@ -83,6 +83,8 @@
         });
 
         tagInput.focusout(function(e){
+            console.log('hoverSuggestItems');
+            console.log(hoverSuggestItems);
             if(!hoverSuggestItems){
                 suggestList.css('display', 'none');
             }
@@ -112,7 +114,7 @@
                     var value = tagInput.val();
                     if(value != null && value != ''){
                         console.log('in else');
-                        
+
                         addItem(value);
                     }
                 }
@@ -282,13 +284,14 @@
                     console.log('binding suggestion items');
 
                     // add click event to suggest items
-                    $('.superblySuggestItem').each(function () {
-                        $(this).bind('click', function(e) {
-                            console.log('clicked');
-                            console.log($(this));
-                            addItem($(this).html());
-                            e.preventDefault();
-                        });
+                    // @todo figure out why this click event is never fired
+                    // the focusout event is fired and that causes it to use a
+                    // wrong value
+                    suggestionItems.bind('click', function(e) {
+                        console.log('clicked');
+                        console.log($(this));
+                        addItem($(this).html());
+                        e.preventDefault();
                     });
 
                     console.log(suggestionItems);
@@ -305,7 +308,6 @@
 
             request(opts);
         };
-
 
         function selectDown(){
             var suggestions = suggestList.children('.superblySuggestItem');
