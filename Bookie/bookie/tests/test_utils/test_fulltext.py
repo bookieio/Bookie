@@ -8,6 +8,7 @@ from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models import Bmark
+from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import bmarks_tags
 from bookie.models.fulltext import get_fulltext_handler
@@ -19,7 +20,8 @@ class TestFulltext(TestCase):
     def setUp(self):
         """Setup Tests"""
         from pyramid.paster import get_app
-        app = get_app('test.ini', 'main')
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
@@ -30,11 +32,12 @@ class TestFulltext(TestCase):
         session = DBSession()
         Bmark.query.delete()
         Tag.query.delete()
+        Hashed.query.delete()
         session.execute(bmarks_tags.delete())
         session.flush()
         transaction.commit()
 
-    def _get_good_request(self):
+    def _get_good_request(self, new_tags=None):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
@@ -44,6 +47,9 @@ class TestFulltext(TestCase):
                 'tags': u'python search',
                 'api_key': u'testapi',
         }
+
+        if new_tags:
+            prms['tags'] = new_tags
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
@@ -88,3 +94,22 @@ class TestFulltext(TestCase):
 
         ok_('extended notes' in search_res.body,
             "Extended search should find our description on the page: " + search_res.body)
+
+    def test_sqlite_update(self):
+        """Verify that if we update a bookmark, fulltext is updated
+
+        We need to make sure that updates to the record get cascaded into the
+        fulltext table indexes
+
+        """
+        self._get_good_request()
+
+        # now we need to do another request with updated tag string
+        self._get_good_request(new_tags="google books icons")
+
+        search_res = self.testapp.get('/search?search=icon')
+        ok_(search_res.status == '200 OK',
+                "Status is 200: " + search_res.status)
+
+        ok_('icon' in search_res.body,
+            "We should find the new tag icon on the page: " + search_res.body)

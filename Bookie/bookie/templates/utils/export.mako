@@ -9,7 +9,7 @@
 <DL><p>
     % for bmark in bmark_list:
         <DT>
-            <A HREF="${bmark.url}" LAST_VISIT="" ADD_DATE="${time.mktime(bmark.stored.timetuple())}"
+            <A HREF="${bmark.hashed.url}" LAST_VISIT="" ADD_DATE="${time.mktime(bmark.stored.timetuple())}"
                TAGS="${','.join([tag for tag in bmark.tags])}">${bmark.description}</A>
         % if bmark.extended != "" or bmark.extended is not None:
         <DD>${bmark.extended}

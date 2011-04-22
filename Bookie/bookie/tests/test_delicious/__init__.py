@@ -8,8 +8,13 @@ from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
+from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
-from bookie.models import SqliteModel
+from bookie.models import SqliteBmarkFT
+
+from bookie.tests import BOOKIE_TEST_INI
+
+GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
 
 
 class DelPostTest(unittest.TestCase):
@@ -17,7 +22,7 @@ class DelPostTest(unittest.TestCase):
 
     def setUp(self):
         from pyramid.paster import get_app
-        app = get_app('test.ini', 'main')
+        app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
@@ -26,18 +31,17 @@ class DelPostTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
 
-        # DBSession.execute("TRUNCATE bmarks;")
-        # DBSession.execute("TRUNCATE fulltext;")
-        # DBSession.execute("TRUNCATE tags;")
-        # DBSession.execute("TRUNCATE bmarks_tags;")
-        SqliteModel.query.delete()
+        if BOOKIE_TEST_INI == 'test.ini':
+            SqliteBmarkFT.query.delete()
         Bmark.query.delete()
         Tag.query.delete()
+        Hashed.query.delete()
+
         DBSession.execute(bmarks_tags.delete())
         DBSession.flush()
         transaction.commit()
 
-    def _get_good_request(self):
+    def _get_good_request(self, content=False):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
@@ -47,6 +51,11 @@ class DelPostTest(unittest.TestCase):
                 'tags': u'python search',
                 'api_key': u'testapi',
         }
+
+        # if we want to test the readable fulltext side we want to make sure we
+        # pass content into the new bookmark
+        if content:
+            prms['content'] = "<h1>There's some content in here dude</h1>"
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.get('/delapi/posts/add?' + req_params)
@@ -100,10 +109,17 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
 
         try:
-            res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+            res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
             ok_(res, 'We found a result in the db for this bookmark')
             ok_('extended' in res.extended,
                     'Extended value was set to bookmark')
+
+            # make sure our hash was stored correctly
+            ok_(res.hashed.url == 'http://google.com',
+                    "The hashed object got the url")
+
+            ok_(res.hashed.clicks == 0, "No clicks on the url yet")
+
             if res:
                 return True
             else:
@@ -146,7 +162,7 @@ class DelPostTest(unittest.TestCase):
         eq_(res.body, success, msg="Request should return done msg")
 
         # now pull up the bmark and check the date is yesterday
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
         eq_(res.stored.strftime('%Y-%m-%d'), yesterday.strftime('%Y-%m-%d'),
             "The stored date {0} is the same as the requested {1}".format(
                 res.stored,
@@ -156,7 +172,7 @@ class DelPostTest(unittest.TestCase):
         """Manually check db for new bmark tags set"""
         self._get_good_request()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_('python' in res.tags, 'Found the python tag in the bmark')
         ok_('search' in res.tags, 'Found the search tag in the bmark')
@@ -172,36 +188,51 @@ class DelPostTest(unittest.TestCase):
 
     def test_datestimes_set(self):
         """Test that we get the new datetime fields as we work"""
-        now = datetime.now()
+
+        # we've got some issue with mysql truncating the timestamp to not
+        # include seconds, so we allow for a one minute leeway in the
+        # timestamp. Enough to know it's set and close enough for government
+        # use
+        now = datetime.now() - timedelta(minutes=1)
         self._get_good_request()
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(res.stored >= now,
-                "Stored time is now or close to now {0}:{1}".format(res.stored, now))
+                "Stored time is now or close to now {0}--{1}".format(res.stored, now))
 
-        res.url = u"Somethingnew.com"
-        session = DBSession()
-        session.flush()
+        res.hash_id = u"Somethingnew.com"
+        DBSession.flush()
 
+        print dict(res)
         # now hopefully have an updated value
         ok_(res.updated >= now,
-                "Stored time is now or close to now {0}:{1}".format(res.updated, now))
+                "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))
 
     def test_remove_bmark(self):
-        """Remove a bmark from the system"""
-        self._get_good_request()
+        """Remove a bmark from the system
+
+        We want to make sure we store content in here to make sure all the
+        delete cascades are operating properly
+
+        """
+        res1 = self._get_good_request(content=True)
+        ok_('done' in res1.body, res1.body)
 
         # now send in the delete squad
         prms = {
-                'url': u'http://google.com',
-                'api_key': u'testapi',
+            'url': u'http://google.com',
+            'api_key': u'testapi',
         }
 
         req_params = urllib.urlencode(prms)
 
         res = self.testapp.get('/delapi/posts/delete?' + req_params)
-        eq_(res.status, "200 OK", msg='Post Delete status is 200, ' + res.status)
-        ok_('done' in res.body, msg="Request should return done msg: " + res.body)
+        eq_(res.status, "200 OK", 'Post Delete status is 200, ' + res.status)
+        ok_('done' in res.body, "Request should return done msg: " + res.body)
+
+        # now make sure our hashed object is gone as well.
+        res = Hashed.query.get(GOOGLE_HASH)
+        ok_(not res, "We didn't get our hash object")
 
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url
@@ -248,7 +279,7 @@ class DelPostTest(unittest.TestCase):
         self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_('updated' in res.description,
                 'Updated description took: ' + res.description)
@@ -279,7 +310,7 @@ class DelPostTest(unittest.TestCase):
         self.testapp.get('/delapi/posts/add?' + req_params)
         session.flush()
 
-        res = Bmark.query.filter(Bmark.url == u'http://google.com').one()
+        res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(len(res.tags) == 3,
                 'Should only have 3 tags: ' + str([str(t) for t in res.tags]))
@@ -294,7 +325,8 @@ class DelImportTest(unittest.TestCase):
 
     def setUp(self):
         from pyramid.paster import get_app
-        app = get_app('test.ini', 'main')
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
@@ -321,7 +353,8 @@ class GBookmarkImportTest(unittest.TestCase):
 
     def setUp(self):
         from pyramid.paster import get_app
-        app = get_app('test.ini', 'main')
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'main')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()

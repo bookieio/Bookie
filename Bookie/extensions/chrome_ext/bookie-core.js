@@ -158,7 +158,7 @@ var bookie = (function (module, $) {
         var defaults, opts;
 
         defaults = {
-            type: "GET",
+            type: "POST",
             dataType: "xml",
             error: function(jqxhr, textStatus, errorThrown) {
                 module.ui.notify(new Notification(

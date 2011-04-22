@@ -1,6 +1,16 @@
 /* BASIC PROPERTIES */
+BODY {
+}
+
 #body {
     margin: 1em;
+
+}
+
+
+.title {
+    padding: .5em 0em;
+    margin: 0em;
 }
 
 /* NAVIGATION */
@@ -17,9 +27,18 @@
 }
 
 .logo {
-    font-size: 2em;
+    padding-left: .5em;
+    font-size: 1.5em;
     text-decoration: none;
+    color: #0033FF;
 }
+
+.logo .alt_logo {
+    color: #333333;
+    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
+}
+
+
 
 /* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */
 .button_minimal {
@@ -66,7 +85,13 @@
 
 /* DATA LISTS */
 .data_list {
-    width: 80%;
+}
+
+.data_list .col_end {
+    font-weight: bold;
+    text-align: right;
+    align: right;
+    vertical-align: bottom;
 }
 
 .data_list .bmark {
@@ -78,7 +103,6 @@
 }
 
 .calendar {
-    border: 2px solid #333;
     -moz-border-radius: 5px;
     border-radius: 5px;
     margin: 0px .4em;
@@ -86,14 +110,24 @@
 }
 
 .calendar h2 {
-    background-color: red;
+    background-color:#F00;
+    background-image:-webkit-gradient( radial, 50% 50%, 0, 50% 50%, 40, from(#f44), to(#f00));
+    background-image:-moz-radial-gradient(circle, #f44, #f00);
+    background-image:radial-gradient(circle, #f44, #f00);
     color: #FFF;
     font-size: .9em;
     font-weight: bold;
     text-align: left;
     padding: .1em .2em;
-    border-bottom: 1px solid #999999;
+    border: 1px solid #333;
+    border-bottom-color:#999;
     margin: 0px;
+    -webkit-border-top-right-radius: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
 }
 
 .calendar div {
@@ -102,6 +136,14 @@
     font-size: 1.3em;
     text-align: center;
     padding: .1em .2em;
+    border: 1px solid #333;
+    border-top:none;
+    -webkit-border-bottom-right-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomright: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 
 
@@ -113,29 +155,26 @@
 }
 
 a.tag {
-    padding: .2em;
-    border: 1px solid #666666;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    background: #CCCCCC;
-    color: #333333;
+    padding: .2em .4em .2em .4em;
+    background: #DDDDDD;
+    color: #666666;
     text-decoration: none;
 }
 
 a.bmark {
+    font: 14px/1.231 Cabin,arial,helvetica,clean,sans-serif
     font-size: 1.1em;
     text-decoration: none;
+    color: #FF0000;
 }
 
 .bmark .time {
     text-align: right;
     font-size: .7em;
-    font-color: #333;
+    color: #999999;
 }
 
 .body form {
-    padding: .5em 1em;
-
 }
 
 .note {
@@ -177,5 +216,66 @@ form li label {
 
 .footer a {
     color: #666666;
+    text-decoration: none;
+}
+
+.footer .body {
+    padding-right: 1em;
+}
+
+.search {}
+.search .title {
+    padding-left: 2em;
+}
+.search .body {
+    padding-left: 2em;
+}
+
+.tag_filter {
+    margin: .5em;
+}
+.tag_filter .title {
+    font-weight: bold;
+}
+.tag_filter input {
+    width: 10em;
+}
+
+.tag_filter .item {
+    background: #e3e3e3;
+    border: 1px solid #bbb;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    box-shadow: inset 0 0 1px 1px #f6f6f6;
+    color: #333;
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 4px 3px;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.tag_filter .item:hover {
+    background: #d9d9d9;
+    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+    box-shadow: inset 0 0 1px 1px #eaeaea;
+    color: #222;
+    cursor: pointer;
+}
+
+.tag_filter .item a {
+    color: #333;
+    text-decoration: none;
+}
+
+.actions .item {
+    color: #0033FF;
+}
+
+.actions .item a {
     text-decoration: none;
 }

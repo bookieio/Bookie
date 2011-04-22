@@ -1,5 +1,6 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
+import shortuuid
 
 from datetime import datetime
 
@@ -14,6 +15,7 @@ from sqlalchemy import Table
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
@@ -40,10 +42,30 @@ def initialize_sql(engine):
     # only if we are on sqlite do we have this relation
     if 'sqlite' in str(DBSession.bind):
 
-        if not hasattr(SqliteModel, 'bmark'):
-            Bmark.fulltext = relation(SqliteModel,
+        if not hasattr(SqliteBmarkFT, 'bmark'):
+            Bmark.fulltext = relation(SqliteBmarkFT,
                          backref='bmark',
                          uselist=False,
+                         cascade="all, delete, delete-orphan",
+                         )
+
+        if not hasattr(SqliteContentFT, 'readable'):
+            Readable.fulltext = relation(SqliteContentFT,
+                         backref='readable',
+                         uselist=False,
+                         cascade="all, delete, delete-orphan",
+                         )
+
+        # this is purely to make queries easier. If I've searched the content,
+        # I want to get back to the hashed->bmark as quickly as possible. Since
+        # there's only one fulltext result for each hashed anyway, it's ok to
+        # join it directly without going through the Readable table object
+        if not hasattr(SqliteContentFT, 'hashed'):
+            Hashed.fulltext = relation(SqliteContentFT,
+                         backref='hashed',
+                         uselist=False,
+                         primaryjoin=Hashed.hash_id == SqliteContentFT.hash_id,
+                         foreign_keys=[SqliteContentFT.hash_id],
                          cascade="all, delete, delete-orphan",
                          )
 
@@ -160,7 +182,7 @@ class Tag(Base):
         self.name = tag_name
 
 
-class SqliteModel(Base):
+class SqliteBmarkFT(Base):
     """An SA model for the fulltext table used in sqlite"""
     __tablename__ = "fulltext"
 
@@ -184,7 +206,27 @@ class SqliteModel(Base):
         self.tag_string = tag_string
 
 
-class FullTextExtension(MapperExtension):
+class SqliteContentFT(Base):
+    """An SA model for the fulltext readable content table"""
+    __tablename__ = "readable_fts"
+
+    hash_id = Column(Unicode(22),
+                    ForeignKey('readable.hash_id'),
+                    primary_key=True,)
+    content = Column(UnicodeText())
+
+    def __init__(self, hash_id, content):
+        """Expecting the properties to come from a Bmark instance
+
+        tag_string is expected to be a concat list of strings from
+        Bmark.tag_string()
+
+        """
+        self.hash_id = hash_id
+        self.content = content
+
+
+class BmarkFTSExtension(MapperExtension):
     """This is a mapper to handle inserting into fulltext index
 
     Since the sqlite fulltext is a separate table, we need to insert/update
@@ -199,12 +241,107 @@ class FullTextExtension(MapperExtension):
         if 'sqlite' in str(DBSession.bind):
             LOG.error('called before insert')
             LOG.error(instance.__repr__())
-            instance.fulltext = SqliteModel(instance.bid,
+            instance.fulltext = SqliteBmarkFT(instance.bid,
                                   instance.description,
                                   instance.extended,
                                   instance.tag_string())
         else:
             instance.tag_str = instance.tag_string()
+
+    def before_update(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before update')
+            LOG.error(instance.__repr__())
+
+            instance.fulltext.bid = instance.bid
+            instance.fulltext.description = instance.description
+            instance.fulltext.extended = instance.extended
+            instance.fulltext.tag_str = instance.tag_string()
+        else:
+            instance.tag_str = instance.tag_string()
+
+
+class ReadableFTSExtension(MapperExtension):
+    """This is a mapper to handle inserting into fulltext index
+
+    Since the sqlite fulltext is a separate table, we need to insert/update
+    into that fulltext index whenever we add/change a bookmark
+
+    """
+    def before_insert(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before readable insert')
+            LOG.error(instance.__repr__())
+            instance.fulltext = SqliteContentFT(instance.hash_id,
+                                  instance.content,)
+
+    def before_update(self, mapper, connection, instance):
+        # we need to update the fulltext instance for this bmark instance
+        # we only do this for sqlite connections, else just pass
+        if 'sqlite' in str(DBSession.bind):
+            LOG.error('called before readable update')
+            LOG.error(instance.__repr__())
+            instance.fulltext.hash_id = instance.hash_id
+            instance.fulltext.content = instance.content
+
+
+class ReadableMgr(object):
+    """Handle non-instance model issues for readable"""
+    pass
+
+
+class Readable(Base):
+    """Handle the storing of the readable version of the page content"""
+    __tablename__ = 'readable'
+    __mapper_args__ = {
+        'extension': ReadableFTSExtension()
+    }
+
+    hash_id = Column(Unicode(22),
+                     ForeignKey('url_hash.hash_id'),
+                     primary_key=True)
+    content = Column(UnicodeText)
+    imported = Column(DateTime, default=datetime.now)
+    content_type = Column(Unicode(255))
+    status_code = Column(Integer)
+    status_message = Column(Unicode(255))
+
+
+class HashedMgr(object):
+    """Manage non-instance methods of Hashed objects"""
+    @staticmethod
+    def get_by_url(url):
+        """Return a hashed object for the url specified"""
+        res = Hashed.query.filter(Hashed.url == url).all()
+        if res:
+            return res[0]
+        else:
+            return False
+
+
+class Hashed(Base):
+    """The hashed url string and some metadata"""
+    __tablename__ = "url_hash"
+
+    hash_id = Column(Unicode(22), primary_key=True)
+    url = Column(UnicodeText)
+    clicks = Column(Integer, default=0)
+
+    # we only store the readable content once so it's part of the hashed
+    # relation
+    readable = relation(Readable,
+                        backref="hashed",
+                        cascade="all, delete, delete-orphan",
+                        uselist=False)
+
+    def __init__(self, url):
+        """We'll auto hash the id for them and set this up"""
+        self.hash_id = shortuuid.uuid(url=str(url))
+        self.url = url
 
 
 class BmarkMgr(object):
@@ -215,7 +352,9 @@ class BmarkMgr(object):
         """Get a bmark from the system via the url"""
         # normalize the url
         clean_url = BmarkTools.normalize_url(url)
-        return Bmark.query.filter(Bmark.url == clean_url).one()
+        return Bmark.query.join(Bmark.hashed).\
+                           options(contains_eager(Bmark.hashed)).\
+                           filter(Hashed.url == clean_url).one()
 
     @staticmethod
     def find(order_by=None, limit=50, page=0, with_tags=False):
@@ -238,7 +377,7 @@ class BmarkMgr(object):
 
     @staticmethod
     def by_tag(tag, limit=50, page=0):
-        """Get a recent set of bookmarks"""
+        """Get a set of bookmarks with the given tag"""
         qry = Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags)).\
                   filter(Tag.name == tag)
@@ -272,6 +411,30 @@ class BmarkMgr(object):
         return qry.all()
 
     @staticmethod
+    def popular(limit=50, page=0, with_tags=False):
+        """Get the bookmarks by most popular first"""
+        qry = Hashed.query
+
+        offset = limit * page
+        qry = qry.order_by(Hashed.clicks.desc()).\
+                  limit(limit).\
+                  offset(offset).\
+                  from_self()
+
+        bmark = aliased(Bmark)
+        qry = qry.join((bmark, Hashed.bmark)).\
+                  options(contains_eager(Hashed.bmark, alias=bmark))
+
+        tags = aliased(Tag)
+        if with_tags:
+            qry = qry.outerjoin((tags, bmark.tags)).\
+                      options(contains_eager(Hashed.bmark,
+                                             bmark.tags,
+                                             alias=tags))
+        res = qry.all()
+        return res
+
+    @staticmethod
     def store(url, desc, ext, tags, dt=None, fulltext=None):
         """Store a bookmark
 
@@ -296,8 +459,9 @@ class BmarkMgr(object):
 
         # now index it into the fulltext db as well
         if fulltext:
-            # need to flush to populate a bid
             DBSession.flush()
+
+        return mark
 
 
 class BmarkTools(object):
@@ -313,7 +477,7 @@ class BmarkTools(object):
           google analytics stuff utm_*
 
         """
-        url = url.strip().strip('/')
+        # url = url.strip().strip('/')
         return url
 
 
@@ -321,11 +485,11 @@ class Bmark(Base):
     """Basic bookmark table object"""
     __tablename__ = "bmarks"
     __mapper_args__ = {
-        'extension': FullTextExtension()
+        'extension': BmarkFTSExtension()
     }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
-    url = Column(UnicodeText(), unique=True)
+    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)
@@ -342,6 +506,12 @@ class Bmark(Base):
             innerjoin=False,
     )
 
+    hashed = relation(Hashed,
+                      backref="bmark",
+                      uselist=False,
+                      cascade="all, delete, delete-orphan",
+                      single_parent=True,
+                      )
 
     def __init__(self, url, desc=None, ext=None, tags=None):
         """Create a new bmark instance
@@ -353,7 +523,14 @@ class Bmark(Base):
         :param tags: Space sep list of Bookmark tags, optional
 
         """
-        self.url = BmarkTools.normalize_url(url)
+        # if we already have this url hashed, get that hash
+        existing = HashedMgr.get_by_url(url)
+
+        if not existing:
+            self.hashed = Hashed(url)
+        else:
+            self.hashed = existing
+
         self.description = desc
         self.extended = ext
 
@@ -361,7 +538,7 @@ class Bmark(Base):
         self.tags = TagMgr.from_string(tags)
 
     def __str__(self):
-        return "<Bmark: {0}:{1}>".format(self.bid, self.url)
+        return "<Bmark: {0}:{1}>".format(self.bid, self.hashed.url)
 
     def tag_string(self):
         """Generate a single spaced string of our tags"""
@@ -370,6 +547,3 @@ class Bmark(Base):
     def update_tags(self, tag_string):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
-
-
-
