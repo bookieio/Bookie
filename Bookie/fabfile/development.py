@@ -26,6 +26,7 @@ def push_bootstrap():
     """Sync the bootstrap.py up to the server for download"""
     rsync_project(bootstrap_server, bootstrap_local)
 
+
 def jstest():
     """Launch the JS tests we have in the system
 
@@ -35,11 +36,16 @@ def jstest():
     cwd = os.path.dirname(os.path.dirname(__file__))
     local('cd {0}/extensions/tests/ && google-chrome index.html'.format(cwd))
 
+
 def build_chrome_ext():
     """Package the chrome extension into a .crx file"""
     local('{0} --pack-extension={1} --pack-extension-key={2}'.format(chrome_bin,
                                                                     chrome_path,
                                                                     key))
+    local('rm chrome_ext.zip && cd extensions/chrome_ext && zip -r ../../chrome_ext.zip .')
+
+
+@hosts(upload_host)
 @hosts(upload_host)
 def push_chrome_ext():
     """Upload the chrome extension to the server"""
