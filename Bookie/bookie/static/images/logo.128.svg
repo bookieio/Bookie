@@ -122,16 +122,16 @@
      transform="translate(0,-924.36218)">
     <text
        xml:space="preserve"
-       style="font-size:41.68425368999999847px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#363d52;fill-opacity:1;stroke:none;font-family:Cabin;-inkscape-font-specification:Cabin;filter:url(#filter3757)"
+       style="font-size:41.68425369px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#363d52;fill-opacity:1;stroke:none;filter:url(#filter3757);font-family:Cabin;-inkscape-font-specification:Cabin"
        x="14.024276"
        y="1087.7411"
        id="text2985"
        sodipodi:linespacing="125%"
-       transform="scale(1.0421063,0.959595)"><tspan
+       transform="matrix(1.0421063,0,0,0.959595,-12,1)"><tspan
          sodipodi:role="line"
          id="tspan2987"
          x="14.024276"
          y="1087.7411"
-         style="font-size:166.73701477000000182px;font-style:italic;-inkscape-font-specification:Cabin Italic;fill:#363d52;fill-opacity:1">B</tspan></text>
+         style="font-size:190px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#363d52;fill-opacity:1;font-family:CabinSketch;-inkscape-font-specification:CabinSketch Bold">B</tspan></text>
   </g>
 </svg>
