@@ -42,7 +42,7 @@
                                 console.log('autocomplete source');
                                 $.ajax({
                                     type: "GET",
-                                    url: "http://127.0.0.1:6543/delapi/tags/complete",
+                                    url: localStorage['api_url'] + "/delapi/tags/complete",
                                     data: {'tag': extractLast(request.term)},
                                     success: function (xml) {
                                         console.log('success call to complete');
