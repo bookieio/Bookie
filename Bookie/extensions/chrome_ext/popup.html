@@ -25,9 +25,12 @@
                         return val.split(/ /);
                     }
 
+                    /**
+                      * Pull the search term characters from the end of the
+                      * text input
+                      *
+                     */
                     function extractLast(term) {
-                        console.log('extract');
-                        console.log(term);
                         return split(term).pop();
                     }
 
@@ -39,29 +42,11 @@
                             }
                         }).autocomplete({
                             source: function (request, response) {
-                                console.log('autocomplete source');
-                                $.ajax({
-                                    type: "GET",
-                                    url: localStorage['api_url'] + "/delapi/tags/complete",
-                                    data: {'tag': extractLast(request.term)},
-                                    success: function (xml) {
-                                        console.log('success call to complete');
-                                        tag_list = [];
-                                        results = $(xml).find("tag");
-                                        results.map(function () {
-                                            tag_list.push($(this).text());
-                                        });
-
-                                        response(tag_list);
-                                    }
-                                });
+                                bookie.call.tagComplete(request.term, response);
                             },
                             search: function() {
-                                console.log('search');
                                 // custom minLength
                                 var term = extractLast(this.value);
-                                console.log('term');
-                                console.log(term);
                                 if ( term.length < 1 ) {
                                     return false;
                                 }
@@ -71,8 +56,6 @@
                                 return false;
                             },
                             select: function(event, ui) {
-
-                                console.log('select');
                                 var terms = split(this.value);
                                 // remove the current input
                                 terms.pop();
