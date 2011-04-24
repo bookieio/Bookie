@@ -10,8 +10,7 @@ BODY {
 .title {
     padding: .5em 0em;
     margin: 0em;
-    font-weight: bold;
-    font-family: Cabin,arial,helvetica,clean,sans-serif;
+    font-family: "Cabin:500",arial,helvetica,clean,sans-serif;
     font-size: 1.3em;
     text-shadow: 1px 1px 1px #CCCCCC;
 }
@@ -165,6 +164,10 @@ a.button_minimal {
     width: 4em;
 }
 
+.calendar * {
+    font-family: "Cabin:500",arial,helvetica,clean,sans-serif;
+}
+
 .calendar h2 {
     background-color:#F00;
     background-image:-webkit-gradient( radial, 50% 50%, 0, 50% 50%, 40, from(#f44), to(#f00));
@@ -218,7 +221,7 @@ a.tag {
 }
 
 a.bmark {
-    font: 14px/1.231 Cabin,arial,helvetica,clean,sans-serif
+    font: "Cabin:500",arial,helvetica,clean,sans-serif;
     font-size: 1.1em;
     text-decoration: none;
     color: #003366;
@@ -284,9 +287,9 @@ form li label {
 .search .title {
     margin-left: 1.3em;
     font-size: 1.5em;
-    font-weight: bold;
     border-bottom: 1px solid #333;
     padding-bottom: .1em;
+    font-weight: normal;
 }
 
 .search .body {
@@ -297,7 +300,6 @@ form li label {
     margin: .5em;
 }
 .tag_filter .title {
-    font-weight: bold;
 }
 .tag_filter input {
     width: 10em;
