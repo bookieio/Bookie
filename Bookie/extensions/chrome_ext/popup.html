@@ -1,12 +1,90 @@
 <html>
     <head>
-        <script type="text/javascript" src="jquery.min.js"></script>
+        <link type="text/css" href="lib/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="Stylesheet" />
+        <!-- <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> -->
+
+        <script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/js/jquery-ui-1.8.11.custom.min.js"></script>
+        <!-- <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script> -->
+
         <script type="text/javascript" src="bookie-core.js"></script>
         <script type="text/javascript" src="bookie-chrome.js"></script>
         <script type="text/javascript">
+            var tags = [];
             $(function() {
                 bookie.init();
-                validateSettings();
+                var valid = validateSettings();
+                if(!valid)
+                    return;
+
+                // $("#tags").superblyTagField();
+                $(function() {
+
+                    function split(val) {
+                        // split on spaces
+                        return val.split(/ /);
+                    }
+
+                    function extractLast(term) {
+                        console.log('extract');
+                        console.log(term);
+                        return split(term).pop();
+                    }
+
+                    $("#tags").bind( "keydown", function( event ) {
+                            // don't navigate away from the field on tab when selecting an item
+                            if ( event.keyCode === $.ui.keyCode.TAB &&
+                                    $( this ).data( "autocomplete" ).menu.active ) {
+                                event.preventDefault();
+                            }
+                        }).autocomplete({
+                            source: function (request, response) {
+                                console.log('autocomplete source');
+                                $.ajax({
+                                    type: "GET",
+                                    url: localStorage['api_url'] + "/delapi/tags/complete",
+                                    data: {'tag': extractLast(request.term)},
+                                    success: function (xml) {
+                                        console.log('success call to complete');
+                                        tag_list = [];
+                                        results = $(xml).find("tag");
+                                        results.map(function () {
+                                            tag_list.push($(this).text());
+                                        });
+
+                                        response(tag_list);
+                                    }
+                                });
+                            },
+                            search: function() {
+                                console.log('search');
+                                // custom minLength
+                                var term = extractLast(this.value);
+                                console.log('term');
+                                console.log(term);
+                                if ( term.length < 1 ) {
+                                    return false;
+                                }
+                            },
+                            focus: function() {
+                                // prevent value inserted on focus
+                                return false;
+                            },
+                            select: function(event, ui) {
+
+                                console.log('select');
+                                var terms = split(this.value);
+                                // remove the current input
+                                terms.pop();
+                                // add the selected item
+                                terms.push(ui.item.value);
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(" ");
+                                return false;
+                            }
+                        });
+                });
 
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options
@@ -37,7 +115,9 @@
                             return $("<li/>").text(msg).get(0);
                         });
                         errorOutput.append(errors).show();
+                        return false;
                     }
+                    return true;
                 }
 
             });
@@ -48,6 +128,7 @@
                 font-size:10pt;
                 padding:3px;
                 width:250px;
+                height: 250px;
             }
             input, textarea {
                 width: 100%;
@@ -117,5 +198,6 @@
         </form>
         <ul id="errors">
         </ul>
+        <p>&nbsp;</p>
     </body>
 </html>

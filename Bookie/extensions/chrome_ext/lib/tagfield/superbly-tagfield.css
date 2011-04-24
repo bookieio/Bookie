@@ -1,0 +1,97 @@
+.superblyTagfieldDiv{
+	min-height: 27px;
+	border: solid 1px;
+    background-color: #FFFFFF;
+}
+
+.superblyTagfieldClearer{
+	clear: both;
+}
+	
+.superblyTagfieldDiv ul{
+	margin: 0;
+	padding: 0;
+}
+	
+.superblyTagfield{
+	/* if no javascript */
+	outline: none;
+	width: 100%;
+	height: 28px;
+	border: solid 1px;
+    background-color: #FFFFFF;
+}
+   
+.superblyTagInput{
+	border: none;
+	outline: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.superblyTagInputItem{
+	padding: 0px;
+	margin: 0px;
+}
+	
+.superblyTagItems > li{
+    font-size:11px;
+	font-family: Verdana, Arial, Georgia, Helvetica, sans-serif;
+	list-style: none;
+	float: left;
+	padding: 3px;
+	margin: 3px;
+	position: relative;
+}
+
+.superblyTagItems .superblyTagItem{
+	border: solid 1px #7aa9e3;
+    background-color: #bbcee4;
+    color: #2A2F66;
+}
+
+.superblyTagItems .superblyTagItem a{
+    color: #000000;
+    cursor: pointer;
+    font-style:normal;
+}
+
+.superblyTagItems .superblyTagItem a:hover {
+    color: #FFFFFF;
+}
+
+.superblyTagItems .superblyTagItem a.hover {
+    color: #FFFFFF;
+}
+
+
+.superblySuggestItems{
+    min-width:100px;
+ 	position: absolute;
+	left: 0;
+	top: 30px;
+	z-index: 100;
+}   
+   
+.superblySuggestItems .superblySuggestItem{
+    font-size:11px;
+	font-family: Verdana, Arial, Georgia, Helvetica, sans-serif;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+	background-color: #bbcee4;
+    border: solid 1px #bbcee4;
+	list-style: none;
+	float: none;
+    color: #000000;
+}
+   
+.superblySuggestItems .superblySuggestItem:hover {
+   	cursor: pointer;
+    border: solid 1px #181B38;
+}
+   
+.superblySuggestItems .selected{
+	background-color: #7aa9e3;
+    border: solid 1px #7aa9e3;
+}

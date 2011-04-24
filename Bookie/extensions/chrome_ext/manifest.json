@@ -1,6 +1,6 @@
 {
   "name": "Bookie",
-  "version": "0.0.6",
+  "version": "0.1.12",
   "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
@@ -11,7 +11,7 @@
   "options_page": "options.html",
   "background_page": "background.html",
   "browser_action": {
-    "default_icon": "delicious.png",
+    "default_icon": "logo.128.png",
     "default_title": "Post Bookie Bookmark",
     "default_popup": "popup.html"
   }

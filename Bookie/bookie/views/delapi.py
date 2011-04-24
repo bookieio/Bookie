@@ -11,6 +11,7 @@ from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
 from bookie.models import Readable
+from bookie.models import TagMgr
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
@@ -147,3 +148,13 @@ def posts_get(request):
     except NoResultFound:
         request.override_renderer = 'string'
         return '<result code="Not Found" />'
+
+def tags_complete(request):
+    params = request.GET
+    request.response_content_type = 'text/xml'
+    if 'tag' in params and params['tag']:
+        tag = params['tag']
+        tags = TagMgr.complete(tag)
+
+        # we need to escape any html entities in things
+        return { 'tags': tags }

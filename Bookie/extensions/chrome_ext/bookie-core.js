@@ -194,6 +194,22 @@ var bookie = (function (module, $) {
         request(opts);
     };
 
+    module.call.getTagCompletions = function (tag, callback) {
+        var opts = {
+            url: module.api_url + "/delapi/tags/complete",
+            data: {tag: tag},
+            success: function (xml) {
+                alert("got xml: " + xml);
+
+                if(callback) {
+                    callback(xml);
+                }
+            }
+        };
+
+        request(opts);
+    }
+
     module.call.saveBookmark = function (params) {
         var opts;
 

@@ -27,9 +27,11 @@ BODY {
 
 .logo {
     padding-left: .5em;
-    font-size: 1.5em;
+    font-size: 2em;
     text-decoration: none;
-    color: #0033FF;
+    color: #363d52;
+    font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
+    text-shadow: 2px 2px 2px #CCCCCC;
 }
 
 .logo .alt_logo {
