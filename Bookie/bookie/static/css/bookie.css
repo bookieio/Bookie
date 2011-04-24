@@ -77,6 +77,12 @@ a.button {
     text-decoration: none;
 }
 
+.actions .button {
+    padding: 0px 2px;
+    line-height: inherit;
+
+}
+
 form .button {
     font-weight: bold;
     color: #333;
@@ -152,6 +158,14 @@ a.button_minimal {
 .data_list .bmark {
     padding: .2em;
 }
+
+.bmark:hover {
+    /* Using RGB for opacity on the background only
+        hex color: (#9AFEB)
+    */
+    background-color: rgba(155, 175, 235, 0.2);
+}
+
 
 .center {
     text-align: center;
@@ -337,12 +351,10 @@ form li label {
 }
 
 .actions .item {
-    color: #003366;
 }
 
 .actions .item a {
     text-decoration: none;
-    color: #003366;
 }
 
 
