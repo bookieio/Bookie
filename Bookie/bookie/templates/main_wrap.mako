@@ -43,13 +43,15 @@
                         <h2 class="title">Search</h2>
                         <div class="body">
                             <form action="${request.route_url('search')}" method="get"/>
-                                <input type="search" name="search" id="search"
-                                    placeholder="keywords.." />
-                                <br />
-                                <input type="checkbox" name="content"
-                                id="search_content"  /> In Cached Content
-                                <br />
-                                <input style="line-height: 1.5;" type="submit" name="submit" class="button" id="submit_search" value="Search"/>
+                                <div>
+                                    <input type="search" name="search" id="search" placeholder="keywords.." />
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="content" id="search_content"  /> In Cached Content
+                                </div>
+                                <div>
+                                    <input style="line-height: 1.5;" type="submit" name="submit" class="button" id="submit_search" value="Search"/>
+                                </div>
                             </form>
                         </div>
                     </div>

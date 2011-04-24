@@ -10,6 +10,10 @@ BODY {
 .title {
     padding: .5em 0em;
     margin: 0em;
+    font-weight: bold;
+    font-family: Cabin,arial,helvetica,clean,sans-serif;
+    font-size: 1.3em;
+    text-shadow: 1px 1px 1px #CCCCCC;
 }
 
 /* NAVIGATION */
@@ -26,17 +30,19 @@ BODY {
 }
 
 .logo {
-    padding-left: .5em;
+    padding-left: .1em;
     font-size: 2em;
     text-decoration: none;
     color: #363d52;
     font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
-    text-shadow: 2px 2px 2px #CCCCCC;
+    text-shadow: 4px 4px 4px #CCCCCC;
 }
 
 .logo .alt_logo {
     color: #333333;
-    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
+    font-size: .6em;
+    font-family: Cabin,arial,helvetica,clean,sans-serif;
+    text-shadow: 2px 2px 2px #CCCCCC;
 }
 
 
@@ -75,6 +81,10 @@ a.button {
 form .button {
     font-weight: bold;
     color: #333;
+}
+
+form div {
+    margin: .5em 0em;
 }
 
 
@@ -134,11 +144,10 @@ a.button_minimal {
     font-weight: bold;
     text-align: right;
     align: right;
-    vertical-align: bottom;
 }
 
 .buttons {
-    line-height: 2;
+    padding: .6em 0em;
 }
 
 .data_list .bmark {
@@ -271,9 +280,15 @@ form li label {
 }
 
 .search {}
+
 .search .title {
-    padding-left: 2em;
+    margin-left: 1.3em;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    padding-bottom: .1em;
 }
+
 .search .body {
     padding-left: 2em;
 }
