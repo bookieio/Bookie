@@ -27,15 +27,6 @@ def push_bootstrap():
     rsync_project(bootstrap_server, bootstrap_local)
 
 
-def jstest():
-    """Launch the JS tests we have in the system
-
-    Currently only the ones there are for extensions
-
-    """
-    cwd = os.path.dirname(os.path.dirname(__file__))
-    local('cd {0}/extensions/tests/ && google-chrome index.html'.format(cwd))
-
 
 def build_chrome_ext():
     """Package the chrome extension into a .crx file"""
