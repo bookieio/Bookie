@@ -6,41 +6,52 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <script type="application/x-javascript" src="chrome://bookie/content/js/bookie-firefox.js" />
-<!-- bookie-core.js is commented out while trying a new approach.  The initial approach had
-     this included and bookie-firefox.js commented out. -->
-<!--<script type="application/x-javascript" src="chrome://bookie/content/js/bookie-core.js" />-->
 <script type="application/x-javascript">
     window.addEventListener("load", function(event){
-        BookiejQuery.loadjQuery(BookiejQuery);
+        bookie.init(bookie);
+    }, false);
+    window.addEventListener("unload", function(event){
+        bookie.shutdown();
     }, false);
 </script>
-<!--<script type="application/x-javascript">
-//window.addEventListener("load", function(event){
-    //(function(loader){
-        //loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
-    //})( 
-        //Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(
-            //Components.interfaces.mozIJSSubScriptLoader
-        //)
-    //);
-    //$(function() {
-        ////bookie.testing();
-    //});
-//}, false);
-    bookie.aConsoleService.logStringMessage('mmmmm');
-</script>-->
 
 <!-- Firefox -->
 <toolbarpalette id="BrowserToolbarPalette">
-  <toolbarbutton id="bookie-button"/>
-  </toolbarpalette>
+  <toolbarbutton id="bookie-button" />
+</toolbarpalette>
 
 <!-- button details -->
 <toolbarbutton id="bookie-button"
   label="Bookie"
   tooltiptext="Bookie"
-  class="toolbarbutton-1 chromeclass-toolbar-additional bookie"
-  />
-<!--  oncommand="CustomButton[1]()" -->
+  class="toolbarbutton-1 chromeclass-toolbar-additional"
+  type="menu"
+>
+  <panel id="bookie-panel" >
+      <vbox align="start">
+        <label id="popup_title" value="Post to Bookie"></label>
+        <form id="bookie-form"  >
+            <vbox>
+              <input id="url" type="hidden" />
+              <input id="api_key" type="hidden" />
+
+              <label id="bookie-description-label" value="Title:" />
+              <textbox id="description" />
+
+              <label id="bookie-tag-label" value="Tags:" />
+              <textbox id="tags" />
+
+              <label id="bookie-extended-label" value="Extended Desc." />
+              <textbox id="extended" multiline="true" />
+
+              <hbox>
+                  <button type="button" id="bookie-submit" label="Save" />
+                  <button type="button" id="bookie-delete" label="Delete" disabled="true" />
+              </hbox>
+            </vbox>
+        </form>
+    </vbox>
+  </panel>
+</toolbarbutton>
 
 </overlay>

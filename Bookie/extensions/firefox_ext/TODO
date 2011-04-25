@@ -1,0 +1,10 @@
+Extension UI stuff:
+- Remove annoying icon on Save and Delete buttons
+- Style popup if needed
+- Support extended notes
+- Keyboard shortcuts all around (to bring up popup, to submit/delete from within popup)
+- Change toolbar button so that annoying arrow isn't there
+
+Stuff in code:
+- Abstract notifications in bookie-core and get rid of duplications in bookie-firefox
+- Get rid of needed commentingg out of call to console.log in bookie-core

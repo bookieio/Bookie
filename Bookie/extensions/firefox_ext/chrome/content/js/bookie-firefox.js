@@ -1,87 +1,148 @@
-//This wrapper is used in bookie-core.js.  I can't tell if it's needed here too.
-//window.addEventListener("load", function(event){
-    //(function(loader){
-        //loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
-    //})(
-        //Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(
-            //Components.interfaces.mozIJSSubScriptLoader
-        //)
-    //);
+// This is an attempt to make http://meherranjan.com/blog/a-guide-to-using-jquery-inside-firefox-extension/
+// work (approach 2).  This is used with bookie-core.js NOT included in the .xul file.  It looks like this works ok
+// on its own, but I can't work out how to use the jQuery bit you get back to include useful stuff from
+// bookie-core.js.
+var bookie = (function(module) {
+    module.popup = function() {
+        var currentTab = gBrowser.contentDocument;
+        var url = currentTab.location.href;
+        module.$('#url').val(url);
+        module.$('#api_key').val(module.api_key);
+        module.$('#description').val(currentTab.title);
+        module.$('#tags').val('');
+        module.call.getBookmark(url, function(xml) {
+            var result, code, found;
+            result = module.$(xml).find("result");
+            found = module.$(xml).find("post");
+            found.map(function () {
+                // add the tags to the tag ui
+                module.$('#tags').val(module.$(this).attr('tag'));
 
-    // Trying this doesn't work - but I don't know if it should.  Seems like bookie isn't visible.
-    //bookie.aConsoleService.logStringMessage('foo');
-    //(function (module, $) {
-        // Trying this doesn't work either.
-        //module.aConsoleService.logStringMessage('bar');
+                // add the description to the ui
+                module.$('#description').val(module.$(this).attr('description'));
 
-    //})(bookie || {}, jQuery);
+                // add the notes to the ui
+                //$('#extended').text($(this).attr('extended'));
 
-    // This is an attempt to make http://meherranjan.com/blog/a-guide-to-using-jquery-inside-firefox-extension/
-    // work (approach 2).  This is used with bookie-core.js NOT included in the .xul file.  It looks like this works ok
-    // on its own, but I can't work out how to use the jQuery bit you get back to include useful stuff from
-    // bookie-core.js.
-    var BookiejQuery = {
-        loadjQuery: function(context) {
-            var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-            loader.loadSubScript("chrome://bookie/content/js/jquery.min.js", context);
+                // now enable the delete button in case we want to delete it
+                //module.ui.enable_delete();
 
-            var jQuery = window.jQuery.noConflict(true);
-            if(typeof(jQuery.fn._init) == 'undefined') {
-                jQuery.fn._init = jQuery.fn.init;
-            }
-            this.jQuery = jQuery;
-        },
+                module.$('#bookie-delete').attr('disabled', 'false');
+                module.$('#bookie-delete').click(function(ev) {
+                    module.$('#bookie-delete').attr('disabled', 'true');
+                    module.$('#bookie-panel').get(0).hidePopup();
+                    module.call.removeBookmark(url, module.api_key);
+                });
+
+            });
+        });
+        module.$('#tags').focus();
     };
 
-    var bookie = (function (module, $) {
-        // Just a placeholder for some testing.
-    })(bookie || {}, jQuery);
+    module.submit = function(ev) {
+        var formData = {
+            url: module.$('#url').val(),
+            tags: module.$('#tags').val(),
+            api_key: module.$('#api_key').val(),
+            description: module.$('#description').val(),
+        };
+        module.ffSaveBookmark(module.$.param(formData));
+        module.$('#bookie-panel').get(0).hidePopup();
+    };
 
-    // Here's some stuff that makes preferences behave in firefox.  Commented out while working on jQuery stuff.
-    /*var Bookie = {
-        prefs: null,
-        serverUrl: "",
-        apiKey: "",
+    module.ffSaveBookmark = function (params) {
+        var opts;
 
-        startup: function()
-        {
-             this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                 .getService(Components.interfaces.nsIPrefService)
-                 .getBranch("bookie.");
-             this.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
-             this.prefs.addObserver("", this, false);
+        opts = {
+            url: module.api_url + "/delapi/posts/add",
+            data: params,
+            success: function(xml) {
+                var result, code;
+                result = module.$(xml).find("result");
 
-             this.serverUrl = this.prefs.getCharPref("server");
-             this.apiKey = this.prefs.getCharPref("apikey");
+                code = result.attr("code");
 
-        },    
+                if (code == "done") {
+                    module.consoleService.logStringMessage('OK');
+                } else {
+                    // need to notify that it failed
+                    module.consoleService.logStringMessage('Failed' + params);
+                }
+            },
+        };
 
-        shutdown: function()
-        {
-            this.prefs.removeObserver("", this);
-        },
-
-        observe: function(subject, topic, data)
-        {
-            if (topic != "nsPref:changed")
-            {
-                return;
-            }
- 
-            switch(data)
-            {
-                case "server":
-                    this.serverUrl = this.prefs.getCharPref("server");
-                    break;
-                case "apikey":
-                    this.apiKey = this.prefs.getCharPref("apikey");
-                    break;
-             }
-        },
-
+        request(opts);
     }
 
-    window.addEventListener("load", function(e) { Bookie.startup(); }, false);
-    window.addEventListener("unload", function(e) { Bookie.shutdown(); }, false);*/
+    function request(options) {
+        var defaults, opts;
 
-//}, false);
+        defaults = {
+            type: "GET",
+            dataType: "xml",
+            error: function(jqxhr, textStatus, errorThrown) {
+                module.consoleService.logStringMessage('ERROR: ' + module.response_codes[jqxhr.status] + ' ' +
+                    textStatus);
+            }
+        };
+
+        opts = module.$.extend({}, defaults, options);
+        module.$.ajax(opts);
+    };
+
+    module.observe = function(subject, topic, data) {
+        if (topic != "nsPref:changed")
+        {
+            return;
+        }
+
+        switch(data)
+        {
+            case "server":
+                module.api_url = module.prefs.getCharPref("server");
+                break;
+            case "apikey":
+                module.api_key = module.prefs.getCharPref("apikey");
+                break;
+         }
+    };
+
+    module.shutdown = function() {
+        module.prefs.removeObserver("", module);
+    };
+
+    module.init = (function(context) {
+        var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
+        loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
+
+        module.$ = module.jQuery = jQuery.noConflict(true);
+
+        module.consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+        module.consoleService.logStringMessage('Adding to bookie in bookie-firefox');
+
+        module.prefs = Components.classes["@mozilla.org/preferences-service;1"]
+            .getService(Components.interfaces.nsIPrefService)
+            .getBranch("bookie.");
+        module.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+        module.prefs.addObserver("", module, false);
+
+        // CORE CONFLICT; definition of api_key
+        module.api_url = module.prefs.getCharPref("server");
+        module.api_key = module.prefs.getCharPref("apikey");
+
+        module.$('#bookie-button').click(module.popup);
+
+        module.$('#bookie-submit').click(function(ev) {module.$('#bookie-form').submit();});
+        module.$('#bookie-form').submit(module.submit);
+
+        // Here's some crap from that link above that I think we don't need right now.
+        //if(typeof(jQuery.fn._init) == 'undefined') {
+            //jQuery.fn._init = jQuery.fn.init;
+        //}
+        //this.jQuery = jQuery;
+    });
+
+    return module;
+})(bookie || {});
+
