@@ -35,6 +35,10 @@ def build_chrome_ext():
                                                                     key))
     local('rm chrome_ext.zip && cd extensions/chrome_ext && zip -r ../../chrome_ext.zip .')
 
+def build_ff_ext():
+    """Package the firefox extension into a .xpi file"""
+    local('rm bookie.xpi && cd extensions/firefox_ext && zip -r ../../bookie.xpi .')
+
 
 @hosts(upload_host)
 @hosts(upload_host)
