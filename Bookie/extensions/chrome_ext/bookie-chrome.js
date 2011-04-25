@@ -75,19 +75,19 @@
     // specific mapper
     module.ui.badge = {
         'clear': function (millis) {
-            if (chrome && chrome.tabs) {
+            if (window.chrome !== undefined && chrome.tabs) {
                 background.ui.badge.clear(millis);
             }
         },
 
         'set': function (text, milliseconds, bgcolor) {
             if (bgcolor) {
-                if (chrome && chrome.tabs) {
+                if (window.chrome !== undefined && chrome.tabs) {
                     chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
                 }
             }
 
-            if (chrome && chrome.tabs) {
+            if (window.chrome !== undefined && chrome.tabs) {
                 chrome.browserAction.setBadgeText({text: text});
             }
 
