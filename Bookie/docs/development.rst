@@ -28,3 +28,4 @@ Contents:
    events
 
 .. _Pyramid: http://docs.pylonsproject.org/docs/pyramid.html
+.. _`git flow`: https://github.com/nvie/gitflow

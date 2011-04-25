@@ -39,6 +39,9 @@ def build_routes(config):
     config.add_route("del_post_get", "/delapi/posts/get",
                      view="bookie.views.delapi.posts_get",
                      view_renderer="/delapi/posts_get.mako",)
+    config.add_route("del_tag_complete", "/delapi/tags/complete",
+                     view="bookie.views.delapi.tags_complete",
+                     view_renderer="/delapi/tags_complete.mako",)
 
     # bmark routes
     config.add_route("bmark_popular", "/popular",
@@ -87,6 +90,7 @@ def build_routes(config):
     config.add_route("export", "/export",
                      view="bookie.views.utils.export",
                      view_renderer="/utils/export.mako",)
+
 
     config.add_route("redirect", "/redirect/{hash_id}",
                      view="bookie.views.utils.redirect")

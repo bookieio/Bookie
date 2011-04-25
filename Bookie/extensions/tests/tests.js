@@ -145,3 +145,30 @@ test('saveBookmarkFail', function () {
         "The notify code of the saveBookmark was 'Base Request...'");
 
 });
+
+
+/**
+ * Verify that the completion provides results
+ */
+test('tagComplete', function () {
+    var logger, mocked_return, options;
+
+    logger = [];
+    mocked_return = '<?xml version="1.0" encoding="UTF-8"?><tags><tag>python</tag><tag>ruby</tag></tags>';
+    parser=new DOMParser();
+    mocked_xml=parser.parseFromString(mocked_return,"text/xml");
+
+    // let's try mocking out the ajax method
+    $.ajax = function (params) {
+        options = params;
+    }
+
+    bookie.call.tagComplete('py', function (resp) {
+        //resp should be a list of options
+        equal(resp.length, 2, "Should have two items returned: " + resp.length);
+        equal(resp[0], 'python', "Should have python returned: " + resp[0]);
+        equal(resp[1], 'ruby', "Should have ruby returned: " + resp[0]);
+    });
+
+    options.success(mocked_return)
+});

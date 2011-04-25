@@ -158,7 +158,7 @@ var bookie = (function (module, $) {
         var defaults, opts;
 
         defaults = {
-            type: "GET",
+            type: "POST",
             dataType: "xml",
             error: function(jqxhr, textStatus, errorThrown) {
                 module.ui.notify(new Notification(
@@ -193,6 +193,22 @@ var bookie = (function (module, $) {
 
         request(opts);
     };
+
+    module.call.getTagCompletions = function (tag, callback) {
+        var opts = {
+            url: module.api_url + "/delapi/tags/complete",
+            data: {tag: tag},
+            success: function (xml) {
+                alert("got xml: " + xml);
+
+                if(callback) {
+                    callback(xml);
+                }
+            }
+        };
+
+        request(opts);
+    }
 
     module.call.saveBookmark = function (params) {
         var opts;
@@ -264,6 +280,36 @@ var bookie = (function (module, $) {
 
         request(opts);
     };
+
+
+    /*
+     * fetch a set of completion options
+     * Used for completing tag names in the extension
+     *
+    */
+    module.call.tagComplete = function (substring, callback) {
+        var opts = {
+            url: module.api_url + "/delapi/tags/complete",
+            type: "GET",
+            data: {
+                tag: substring
+            },
+
+            success: function (xml) {
+                console.log('success call to complete');
+                tag_list = [];
+                results = $(xml).find("tag");
+                results.map(function () {
+                    tag_list.push($(this).text());
+                });
+
+                callback(tag_list);
+            }
+        };
+
+        request(opts);
+    };
+
 
     return module;
 })(bookie || {}, jQuery);

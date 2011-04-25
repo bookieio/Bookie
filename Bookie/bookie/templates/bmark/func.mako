@@ -56,15 +56,18 @@
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
                         <a class="bmark" href="${request.route_url('redirect', hash_id=bmark.hash_id)}" title="${bmark.extended}">${bmark.description}</a>
-                        <a class="bmark"
-                        href="${request.route_url('bmark_readable',
-                        hash_id=bmark.hash_id)}" title="Readable">-R-</a>
                     </div>
 
-                    <div class="yui3-u-1-8">
+                    <div class="yui3-u-1-8 actions col_end">
+                            <span class="item">
+                                <a href="${request.route_url('bmark_readable',
+                                hash_id=bmark.hash_id)}" title="Readable"> R </a>
+                            </span>
                         % if allow_edit:
-                            <span><a href="#">edit</a></span>
-                            <span><a href="${request.route_url('bmark_confirm_delete', bid=bmark.bid)}">delete</a></span>
+                            <span class="item"><a href="#" title="Edit"> E </a></span>
+                            <span class="item"><a
+                            href="${request.route_url('bmark_confirm_delete',
+                            bid=bmark.bid)}" title="Delete"> X </a></span>
                         % endif
                     </div>
 
@@ -115,4 +118,12 @@
         <a href="${request.route_url(next_url, page=next, **url_params)}">Next</a>
     % endif
 
+</%def>
+
+<%def name="tag_filter()">
+        <div class="tag_filter">
+            <span class="title">Filter Tags&nbsp;</span>
+            <span class="item"><a href="" title="Remove tag">sports x</a></span>
+            <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tag.."/>
+        </div>
 </%def>
