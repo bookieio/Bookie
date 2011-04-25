@@ -9,7 +9,7 @@
     // PRIVATE
     var background;
 
-    if (chrome && chrome.tabs) {
+    if (window.chrome !== undefined && chrome.tabs) {
         background = chrome.extension.getBackgroundPage();
     } else {
         background = undefined;
@@ -21,7 +21,7 @@
      *
      */
     module.populateForm = function () {
-        if (chrome && chrome.tabs) {
+        if (window.chrome !== undefined && chrome.tabs) {
             chrome.tabs.getSelected(null, module.populateFormBase);
         } else {
             // when running unit tests the chrome stuff isn't available
@@ -36,7 +36,7 @@
         showBadge(notification);
 
 
-        if (chrome && chrome.tabs) {
+        if (window.chrome !== undefined && chrome.tabs) {
             if(notification.type === "error") {
                 webkitNotifications.createNotification(
                     'delicious.png',
