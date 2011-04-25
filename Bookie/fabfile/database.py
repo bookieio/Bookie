@@ -126,6 +126,28 @@ def db_downgrade(db_version):
         'migrations',
         db_version,))
 
+
+def db_driver():
+    """Determine which driver we need and make sure it's installed"""
+    require('hosts', provided_by=[sample])
+    require('ini', provided_by=[sample])
+
+    drivers = {
+            # sqlite is already there in a python install
+            'sqlite': False,
+            'mysql': 'MySQL-python==1.2.3',
+            'postgresql': 'psycopg2==2.4 ',
+    }
+
+    parse_ini(env["ini_file"])
+    selected_db = env.ini.get('app:bookie', 'sqlalchemy.url')
+
+    for key, package in drivers.iteritems():
+        if key in selected_db and package is not False:
+            # perform the pip install of the package
+            local("{0} install {1}".format(env.pip_path, package))
+
+
 def db_new_install():
     """Initial setup of a db, runs init/upgrade
 
@@ -135,5 +157,38 @@ def db_new_install():
     require('hosts', provided_by=[sample])
     require('ini', provided_by=[sample])
 
+    # we need to verify we have the package we need to talk to this database
+    db_driver()
     db_init()
     db_upgrade()
+
+    # we want to provide one default bookmark to start out with
+    db_init_bookmark()
+
+def db_init_bookmark():
+    """install the initial bookmark in a new install"""
+    require('hosts', provided_by=[sample])
+    require('ini', provided_by=[sample])
+
+    parse_ini(env["ini_file"])
+    from datetime import datetime
+    import transaction
+    from bookie.models import initialize_sql
+    from sqlalchemy import create_engine
+
+    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
+    initialize_sql(engine)
+
+    from bookie.models import DBSession
+    from bookie.models import Bmark
+
+    bmark_us = Bmark(u'http://bmark.us',
+                     desc=u"Bookie Website",
+                     ext= u"Bookie Documentation Home",
+                     tags = u"bookmarks")
+
+    bmark_us.stored = datetime.now()
+    bmark_us.updated = datetime.now()
+    DBSession.add(bmark_us)
+    DBSession.flush()
+    transaction.commit()

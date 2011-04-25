@@ -11,6 +11,9 @@ def upgrade(migrate_engine):
         Column('url', UnicodeText()),
         Column('description', UnicodeText()),
         Column('extended', UnicodeText()),
+        # in case this is mysql
+        mysql_engine='MyISAM',
+        mysql_collate="utf8_general_ci",
     )
 
     b_table.create()

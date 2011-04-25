@@ -1,12 +1,17 @@
 import os
 from os.path import dirname
 from shutil import copyfile
+import sys
 
 from fabric.api import run, sudo, hosts, local, cd, env, require, prompt
 from fabric.contrib.project import rsync_project
 from fabric.contrib.console import confirm
 
+env.python_path = sys.executable
+env.pip_path = os.path.join(os.path.dirname(env.python_path), 'pip')
+
 env.project_name = "bookie"
+
 env.new_version_files = ["{project_name}/__init__.py".format(**env),
                          "docs/conf.py",
                          "setup.py", ]
@@ -15,7 +20,12 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
 from docs import *
 from database import *
 from development import *
-from environments import *
+
+try:
+    from environments import *
+except:
+    print "No environment currently found, please do: fab new_install:$myinstall"
+
 from tests import *
 
 # starter helpers
@@ -55,7 +65,11 @@ def {0}():
     # we also need to create a .ini file for this install
     ini_filename = os.path.join(dirname(dirname(__file__)),
                                 "{0}.ini".format(install_name))
-    sample_filename = os.path.join(dirname(__file__), "sample.ini")
+    if os.path.exists(ini_filename):
+        # then we already have it, don't mess with it
+        print "Ini file already exists, skipping creation"
+    else:
+        sample_filename = os.path.join(dirname(__file__), "sample.ini")
 
-    # need to cp the sample file over as the new ini_filename
-    copyfile(sample_filename, ini_filename)
+        # need to cp the sample file over as the new ini_filename
+        copyfile(sample_filename, ini_filename)

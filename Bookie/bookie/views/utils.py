@@ -1,10 +1,14 @@
 """View callables for utilities like bookmark imports, etc"""
 import logging
+
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPNotFound
+from pyramid.settings import asbool
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
 from bookie.models import Bmark
+from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
 
 LOG = logging.getLogger(__name__)
@@ -61,16 +65,19 @@ def search(request):
 
     # check if we have a page count submitted
     phrase = rdict.get('search', '')
+    with_content = asbool(rdict.get('content', False))
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
 
-    res = searcher.search(phrase)
-    res_list = (mark.bmark for mark in res)
+    LOG.debug('with content')
+    LOG.debug(with_content)
+
+    res_list = searcher.search(phrase, content=with_content)
 
     return {
         'search_results': res_list,
-        'result_count': len(res),
+        'result_count': len(res_list),
         'phrase': phrase,
     }
 
@@ -78,6 +85,30 @@ def search(request):
 def export(request):
     """Handle exporting a user's bookmarks to file"""
     bmark_list = Bmark.query.join(Bmark.tags).all()
+    request.response_content_type = 'text/html'
+    headers = [('Content-Disposition', 'attachment; filename="bookie_export.html"')]
+    setattr(request, 'response_headerlist', headers)
+
     return {
         'bmark_list': bmark_list,
     }
+
+def redirect(request):
+    """Handle redirecting to the selected url
+
+    We want to increment the clicks counter on the bookmark url here
+
+    """
+    rdict = request.matchdict
+    hash_id = rdict.get('hash_id', None)
+
+    hashed = Hashed.query.get(hash_id)
+    hashed.clicks = hashed.clicks + 1
+
+    if not hashed:
+        # for some reason bad link, 404
+        return HTTPNotFound()
+
+    return HTTPFound(location=hashed.url)
+
+

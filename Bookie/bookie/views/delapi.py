@@ -1,13 +1,22 @@
 """Pyramid controller for the delicious api compatible url calls
 
 """
+import logging
+from cgi import escape
 from datetime import datetime
+from StringIO import StringIO
+
 from bookie.lib.access import Authorize
+from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
+from bookie.models import Readable
+from bookie.models import TagMgr
 from pyramid.httpexceptions import HTTPNotFound
 
 from bookie.models.fulltext import get_fulltext_handler
+
+LOG = logging.getLogger(__name__)
 
 
 def posts_add(request):
@@ -17,7 +26,7 @@ def posts_add(request):
     test_delicious directory
 
     """
-    params = request.GET
+    params = request.params
 
     with Authorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
@@ -38,7 +47,8 @@ def posts_add(request):
             except NoResultFound:
                 # then let's store this thing
 
-                # if we have a dt param then set the date to be that manual date
+                # if we have a dt param then set the date to be that manual
+                # date
                 if 'dt' in request.params:
                     # date format by delapi specs:
                     # CCYY-MM-DDThh:mm:ssZ
@@ -53,13 +63,31 @@ def posts_add(request):
                                                          False)
                 fulltext = get_fulltext_handler(conn_str)
 
-                BmarkMgr.store(params['url'],
+                mark = BmarkMgr.store(params['url'],
                              params.get('description', ''),
                              params.get('extended', ''),
                              params.get('tags', ''),
                              dt=stored_time,
                              fulltext=fulltext,
                        )
+
+            # if we have content, stick it on the object here
+            if 'content' in request.params:
+                content = StringIO(request.params['content'])
+
+                content.seek(0)
+                parsed = ReadContent.parse(content, content_type="text/html")
+                LOG.debug(parsed)
+                LOG.debug(parsed.status)
+                LOG.debug(parsed.content)
+                LOG.debug(parsed.status_message)
+
+                mark.hashed.readable = Readable()
+                mark.hashed.readable.content = parsed.content
+                mark.hashed.readable.content_type = parsed.content_type
+                mark.hashed.readable.status_code = parsed.status
+                mark.hashed.readable.status_message = parsed.status_message
+
 
             return '<result code="done" />'
         else:
@@ -68,7 +96,7 @@ def posts_add(request):
 
 def posts_delete(request):
     """Remove a bmark from the system"""
-    params = request.GET
+    params = request.params
     request.response_content_type = 'text/xml'
 
     with Authorize(request.registry.settings.get('api_key', ''),
@@ -99,18 +127,20 @@ def posts_get(request):
     - hashes={MD5}+{MD5}+...+{MD5}
 
     """
-    params = request.GET
+    params = request.params
     request.response_content_type = 'text/xml'
     try:
         if 'url' in params and params['url']:
-            url = request.GET['url']
+            url = request.params['url']
             bmark = BmarkMgr.get_by_url(url=url)
 
             if not bmark:
                 return HTTPNotFound()
 
-            return { 'datefound': bmark.stored.strftime('%Y-%m-%d'),
-                    'posts': [bmark], }
+            # we need to escape any html entities in things
+            return {'datefound': bmark.stored.strftime('%Y-%m-%d'),
+                    'posts': [bmark],
+                    'escape': escape, }
         else:
             request.override_renderer = 'string'
             return '<result code="Not Found" />'
@@ -118,3 +148,13 @@ def posts_get(request):
     except NoResultFound:
         request.override_renderer = 'string'
         return '<result code="Not Found" />'
+
+def tags_complete(request):
+    params = request.GET
+    request.response_content_type = 'text/xml'
+    if 'tag' in params and params['tag']:
+        tag = params['tag']
+        tags = TagMgr.complete(tag)
+
+        # we need to escape any html entities in things
+        return { 'tags': tags }

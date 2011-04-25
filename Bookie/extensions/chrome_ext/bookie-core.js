@@ -60,12 +60,21 @@ var bookie = (function (module, $) {
         // http status codes returned
         '200': 'Ok',
         '403': 'NoAuth',
+        '404': '404',
 
         // some codes from the xml response in the delicious api
         'done': 'Ok',
         'Not Found': '404',
         'Bad Request: missing url': 'Err',
     };
+
+    function Notification(type, code, shortText, longText)
+    {
+        this.type = type;
+        this.code = code;
+        this.shortText = shortText;
+        this.longText = longText;
+    }
 
     /**
      * The actual work to map the tab object data ot the form ui
@@ -83,8 +92,10 @@ var bookie = (function (module, $) {
         url = $('#url').attr('value');
 
         module.call.getBookmark(url, function (xml) {
+            var result, code, found;
             // this could come back as not found
             result = $(xml).find("result");
+
             if (result.length > 0) {
                 code = result.attr("code");
                 console.log('Page is not currently bookmarked')
@@ -92,7 +103,9 @@ var bookie = (function (module, $) {
                 // we load our ui from, it's not an error to not be found
             }
 
-            $(xml).find("post").map(function () {
+            found = $(xml).find("post");
+
+            found.map(function () {
                 // add the tags to the tag ui
                 $('#tags').val($(this).attr('tag'));
 
@@ -112,12 +125,14 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function () {
-        // what url are we sending out requests off to?
-        if (localStorage['api_url'] !== undefined) {
-            module.api_url = localStorage['api_url'];
-        } else {
-            module.ui.notify('!URL', 'no api url set');
+        if (!localStorage['api_url']) {
+            console.log('No API URL');
+            module.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
+            return;
         }
+
+        // what url are we sending out requests off to?
+        module.api_url = localStorage['api_url'];
 
         $(module.EVENTID).bind(module.events.LOAD, module.events.onload);
         $(module.EVENTID).trigger(module.events.LOAD);
@@ -143,9 +158,15 @@ var bookie = (function (module, $) {
         var defaults, opts;
 
         defaults = {
-            type: "GET",
+            type: "POST",
             dataType: "xml",
-            error: onerror
+            error: function(jqxhr, textStatus, errorThrown) {
+                module.ui.notify(new Notification(
+                    "error",
+                    module.response_codes[jqxhr.status],
+                    textStatus,
+                    "Could not find Bookie instance at " + module.api_url));
+            }
         };
 
         opts = $.extend({}, defaults, options);
@@ -159,9 +180,11 @@ var bookie = (function (module, $) {
      */
     module.call.getBookmark = function (url, callback) {
         var opts = {
-            url: module.api_url + "posts/get",
+            url: module.api_url + "/delapi/posts/get",
             data: {url: url},
             success: function (xml) {
+                console.log('done, looking for callback');
+
                 if(callback) {
                     callback(xml);
                 }
@@ -171,11 +194,27 @@ var bookie = (function (module, $) {
         request(opts);
     };
 
+    module.call.getTagCompletions = function (tag, callback) {
+        var opts = {
+            url: module.api_url + "/delapi/tags/complete",
+            data: {tag: tag},
+            success: function (xml) {
+                alert("got xml: " + xml);
+
+                if(callback) {
+                    callback(xml);
+                }
+            }
+        };
+
+        request(opts);
+    }
+
     module.call.saveBookmark = function (params) {
         var opts;
 
         opts = {
-            url: module.api_url + "posts/add",
+            url: module.api_url + "/delapi/posts/add",
             data: params,
             success: function(xml) {
                 var result, code;
@@ -184,15 +223,20 @@ var bookie = (function (module, $) {
                 code = result.attr("code");
 
                 if (code == "done") {
-                    module.ui.notify(module.response_codes[code], "saved");
+                    module.ui.notify(new Notification(
+                        "info",
+                        200,
+                        module.response_codes[code],
+                        "saved"));
                 } else {
                     // need to notify that it failed
-                    module.ui.notify(module.response_codes[code], "failed");
+                    module.ui.notify(new Notification(
+                        "error",
+                        400, //TODO: correctly determine http status code
+                        module.response_codes[code],
+                        "Could not save bookmark"));
                 }
             },
-            error: function(jqxhr, textStatus, errorThrown) {
-                module.ui.notify(module.response_codes.textStatus, "error");
-            }
         };
 
         request(opts);
@@ -205,7 +249,7 @@ var bookie = (function (module, $) {
     */
     module.call.removeBookmark = function (url, api_key) {
         var opts = {
-            url: module.api_url + "posts/delete",
+            url: module.api_url + "/delapi/posts/delete",
             data: {
                 url: url,
                 api_key: api_key
@@ -218,16 +262,54 @@ var bookie = (function (module, $) {
                 code = result.attr("code");
 
                 if (code == "done") {
-                    module.ui.notify(module.response_codes[code], "deleted");
+                    module.ui.notify(new Notification(
+                        "info",
+                        200,
+                        module.response_codes[code],
+                        "Deleted"));
                 } else {
                     // need to notify that it failed
-                    module.ui.notify(module.response_codes[code], "failed");
+                    module.ui.notify(new Notification(
+                        "error",
+                        400, //TODO: correctly determine http status code
+                        module.response_codes[code],
+                        "Could not delete bookmark"));
                 }
             }
         };
 
         request(opts);
     };
+
+
+    /*
+     * fetch a set of completion options
+     * Used for completing tag names in the extension
+     *
+    */
+    module.call.tagComplete = function (substring, callback) {
+        var opts = {
+            url: module.api_url + "/delapi/tags/complete",
+            type: "GET",
+            data: {
+                tag: substring
+            },
+
+            success: function (xml) {
+                console.log('success call to complete');
+                tag_list = [];
+                results = $(xml).find("tag");
+                results.map(function () {
+                    tag_list.push($(this).text());
+                });
+
+                callback(tag_list);
+            }
+        };
+
+        request(opts);
+    };
+
 
     return module;
 })(bookie || {}, jQuery);

@@ -52,6 +52,9 @@
             <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>
             under the <em>Tools</em> heading on the sidebar.</p>
 
+            <h2>API Key</h2>
+            <p>"API Key" is the secret key specific to this Bookie installation. This setting is in the .ini file associated with this installation (usually found in the Bookie/ directory).
+            </p>
             <p>Note that the import process might take a bit of time on large sets of bookmarks.</p>
         </div>
     </div>

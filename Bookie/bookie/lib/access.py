@@ -1,7 +1,8 @@
 """Handle auth and authz activities in bookie"""
 import logging
-from pyramid.httpexceptions import HTTPForbidden
 
+from pyramid.httpexceptions import HTTPForbidden
+from pyramid.settings import asbool
 
 LOG = logging.getLogger(__name__)
 
@@ -32,3 +33,18 @@ class Authorize(object):
     def __exit__(self, exc_type, exc_value, traceback):
         """No cleanup work to do after usage"""
         pass
+
+def edit_enabled(settings):
+    """Is the config .ini setting for allowing edit enabled?
+
+    If the .ini setting for ui edits is not true, then no authed
+
+    """
+    allow_edit = asbool(settings.get('allow_edit', False))
+
+    if allow_edit:
+        return True
+    else:
+        return False
+
+
