@@ -1,11 +1,17 @@
 <html>
     <head>
-        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.min.js"></script>
         <script type="text/javascript">
             $(function() {
                 // populate default field values
                 $('#api_key').val(localStorage['api_key']);
                 $('#api_url').val(localStorage['api_url']);
+
+                if (localStorage['cache_content'] != 'false') {
+                    $('#cache_content').attr('checked', 'checked');
+                } else {
+                    $('#cache_content').removeAttr('checked');
+                }
 
                 // close window on cancel
                 $("#cancelBtn").click(function() { window.close(); });
@@ -14,6 +20,15 @@
                 $("#form").submit(function(e) {
                     localStorage['api_key'] = $('#api_key').val();
                     localStorage['api_url'] = $('#api_url').val();
+
+                    // do you want us to store the cached content of the
+                    // current page?
+                    var cache = $("#cache_content:checked").length;
+                    if (cache == 1) {
+                        localStorage['cache_content'] = true;
+                    } else {
+                        localStorage['cache_content'] = false;
+                    };
 
                     // notify of successful save
                     $('#info').text("Saved").slideDown().delay(3000).slideUp();
@@ -56,10 +71,10 @@
                 float:left;
                 margin:5px 0;
             }
-            
+
             label {
                 clear:left;
-                width:100px;
+                width:150px;
             }
 
             label:after {
@@ -107,6 +122,8 @@
                 <input type="url" id="api_url"/>
                 <label for="api_key">API Key</label>
                 <input type="password" placeholder="api key" id="api_key"/>
+                <label for="cache_content">Cache Content</label>
+                <input type="checkbox" id="cache_content" />
             </fieldset>
             <div id="buttonrow">
                 <button id="cancelBtn">Cancel</button>

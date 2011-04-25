@@ -85,6 +85,10 @@ def search(request):
 def export(request):
     """Handle exporting a user's bookmarks to file"""
     bmark_list = Bmark.query.join(Bmark.tags).all()
+    request.response_content_type = 'text/html'
+    headers = [('Content-Disposition', 'attachment; filename="bookie_export.html"')]
+    setattr(request, 'response_headerlist', headers)
+
     return {
         'bmark_list': bmark_list,
     }
