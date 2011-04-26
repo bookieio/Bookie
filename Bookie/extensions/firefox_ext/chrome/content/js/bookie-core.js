@@ -3,8 +3,7 @@
 
 /* chrome-extension-specific bookie functionality */
 
-var bookie = (function (module, $) {
-
+var bookie = (function (module, $, console) {
     // bootstrap some custom things that the extensions will jump in on
     module.ui = {};
     module.call = {};
@@ -125,6 +124,10 @@ var bookie = (function (module, $) {
 
     // bookie methods
     module.init = function () {
+
+        // @todo need to abstract this away to a pref/options object since FF
+        // needs to use the prefs object and chrome is using localStoage
+        console.log(localStorage);
         if (!localStorage['api_url']) {
             console.log('No API URL');
             module.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
@@ -266,4 +269,4 @@ var bookie = (function (module, $) {
     };
 
     return module;
-})(bookie || {}, jQuery);
+})(bookie || {}, jq_var, console);
