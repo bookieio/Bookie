@@ -10,6 +10,7 @@ var bookie = (function(module) {
         module.$('#api_key').val(module.api_key);
         module.$('#description').val(currentTab.title);
         module.$('#tags').val('');
+        module.$('#bookie-delete').attr('disabled', 'true');
         module.call.getBookmark(url, function(xml) {
             var result, code, found;
             result = module.$(xml).find("result");
@@ -29,7 +30,6 @@ var bookie = (function(module) {
 
                 module.$('#bookie-delete').attr('disabled', 'false');
                 module.$('#bookie-delete').click(function(ev) {
-                    module.$('#bookie-delete').attr('disabled', 'true');
                     module.$('#bookie-panel').get(0).hidePopup();
                     module.call.removeBookmark(url, module.api_key);
                 });
