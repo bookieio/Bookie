@@ -3,7 +3,7 @@
 // on its own, but I can't work out how to use the jQuery bit you get back to include useful stuff from
 // bookie-core.js.
 var bookie = (function(module) {
-    module.popup = function() {
+    module.prePopup = function() {
         var currentTab = gBrowser.contentDocument;
         var url = currentTab.location.href;
         module.$('#url').val(url);
@@ -29,17 +29,30 @@ var bookie = (function(module) {
                 //module.ui.enable_delete();
 
                 module.$('#bookie-delete').attr('disabled', 'false');
-                module.$('#bookie-delete').click(function(ev) {
-                    module.$('#bookie-panel').get(0).hidePopup();
-                    module.call.removeBookmark(url, module.api_key);
-                });
-
+                module.$('#bookie-delete').attr('command', 'bookie-delete-cmd');
             });
         });
+    };
+
+    module.postPopup = function() {
         module.$('#tags').focus();
     };
 
-    module.submit = function(ev) {
+    module.onKeyboardShortcut = function() {
+        bookie.$('#bookie-panel').get(0).openPopup(bookie.$('#bookie-button').get(0), 'before_start');
+        bookie.prePopup();
+        bookie.postPopup();
+    };
+
+    module.deleteBookmark = function() {
+        var currentTab = gBrowser.contentDocument;
+        var url = currentTab.location.href;
+        module.$('#bookie-panel').get(0).hidePopup();
+        module.call.removeBookmark(url, module.api_key);
+        module.$('#bookie-delete').removeAttr('command');
+    };
+
+    module.submit = function() {
         var formData = {
             url: module.$('#url').val(),
             tags: module.$('#tags').val(),
@@ -131,10 +144,11 @@ var bookie = (function(module) {
         module.api_url = module.prefs.getCharPref("server");
         module.api_key = module.prefs.getCharPref("apikey");
 
-        module.$('#bookie-button').click(module.popup);
+        module.$('#bookie-button').attr('oncommand', 'bookie.onKeyboardShortcut()');
+        module.$('#bookie-button').attr('onpopupshowing', 'bookie.prePopup()');
+        module.$('#bookie-button').attr('onpopupshown', 'bookie.postPopup()');
 
-        module.$('#bookie-submit').click(function(ev) {module.$('#bookie-form').submit();});
-        module.$('#bookie-form').submit(module.submit);
+        module.$('#bookie-submit').attr('command', 'bookie-submit-cmd');
 
         // Here's some crap from that link above that I think we don't need right now.
         //if(typeof(jQuery.fn._init) == 'undefined') {
