@@ -7,4 +7,3 @@ style chrome://global/content/customizeToolbar.xul chrome://bookie/skin/bookie.c
 skin bookie-os bookie-skin-os chrome/skin/unix/
 skin bookie-os bookie-skin-os chrome/skin/osx/ os=Darwin
 style chrome://global/content/customizeToolbar.xul chrome://bookie-os/skin/bookie.css
-

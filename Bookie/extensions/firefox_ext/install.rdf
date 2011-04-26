@@ -5,12 +5,12 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>bookie@adamlincoln.org</em:id>
-    <em:version>0.1</em:version>
+    <em:version>0.1.1</em:version>
     <em:type>2</em:type>
     <em:optionsURL>chrome://bookie/content/options.xul</em:optionsURL>
-   
-    <!-- Target Application this extension can install into, 
-         with minimum and maximum supported versions. --> 
+
+    <!-- Target Application this extension can install into,
+         with minimum and maximum supported versions. -->
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
@@ -18,11 +18,11 @@
         <em:maxVersion>4.0.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-   
+
     <!-- Front End MetaData -->
     <em:name>Bookie for Firefox</em:name>
     <em:description>An extension for interacting with an instance of Bookie.</em:description>
     <em:creator>Bookie Team</em:creator>
     <em:homepageURL>http://bmark.us</em:homepageURL>
-  </Description>      
+  </Description>
 </RDF>
