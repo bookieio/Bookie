@@ -1,156 +1,167 @@
-// This is an attempt to make http://meherranjan.com/blog/a-guide-to-using-jquery-inside-firefox-extension/
-// work (approach 2).  This is used with bookie-core.js NOT included in the .xul file.  It looks like this works ok
-// on its own, but I can't work out how to use the jQuery bit you get back to include useful stuff from
-// bookie-core.js.
+/*jslint eqeqeq: false, browser: true, debug: true, onevar: true, plusplus: false, newcap: false, */
+/*global $: false, window: false, self: false, escape: false, mor: false, sprintf: false, chrome: false, localStorage: false, jQuery: false */
 
-var loader, jq_var, bookie;
+/**
+ * THIS IS A LIE
+ *
+ * I've just copied over the chrome file so I can keep the API bits the same
+ * and replace them with the FF specific version of the code.
+ *
+ * Hopefully, if all goes well this can drop in replace and we can head towards
+ * bookie core
+ *
+ */
 
-loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
-loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
-jq_var = jQuery.noConflict(true);
+// now this will extend the original bookie module with added chrome specific
+// functionality
+(function (module, $) {
+    $b = module;
 
-bookie = (function(module, $, console) {
-    var setup_prefs;
+    // PRIVATE
 
-    setup_prefs = function () {
-        module.prefs = Components.classes["@mozilla.org/preferences-service;1"]
-            .getService(Components.interfaces.nsIPrefService)
-            .getBranch("bookie.");
-        module.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
-        module.prefs.addObserver("", module, false);
+    /**
+     * Implement the settings storage we need
+     *
+     */
+    $b.settings = {
+        'init':function () {
+            $b.prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("bookie.");
+            $b.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+            $b.prefs.addObserver("", $b, false);
+        },
+        'get': function (key) {
+            $b.log('GET ' + key);
+            return $b.prefs.getCharPref(key);
+        },
+        'set': function (key) {
+            $b.log('not implemented set');
+        }
+    };
 
-        // CORE CONFLICT; definition of api_key
-        module.api_url = module.prefs.getCharPref("server");
-        module.api_key = module.prefs.getCharPref("apikey");
+
+    /**
+     * This will call a shared function that maps data to the ui form
+     * The specifics here is getting the tab info from Chrome vs FF
+     *
+     */
+    $b.populateForm = function () {
+        $b.log('populating form');
+        $b.log(window.gBrowser);
+
+        if (window.gBrowser !== undefined) {
+            var current_tab, tab_obj;
+
+            currentTab = gBrowser.contentDocument;
+            $b.log('current tab');
+
+            tab_obj = {
+                'url': currentTab.location.href,
+                'title': currentTab.title
+            }
+
+            $b.log(tab_obj);
+            $b.populateFormBase(tab_obj);
+
+        } else {
+            // when running unit tests the firefox stuff isn't available
+            // so we have to fake it
+            // $b.populateFormBase({'url':window.location.href,
+            //     'title': "Testing stuff"
+            // });
+        }
+    };
+
+    $b.ui.notify = function(notification) {
+        $b.log('called notify');
+        // showBadge(notification);
+
+
+        // if (window.chrome !== undefined && chrome.tabs) {
+        //     if(notification.type === "error") {
+        //         webkitNotifications.createNotification(
+        //             'delicious.png',
+        //             notification.shortText,
+        //             notification.longText
+        //             ).show();
+        //     } else {
+        //         window.close();
+        //     }
+        // }
     }
 
-    module.popup = function() {
-        // shared populate form
-        console.log('in popup pre init');
 
-        module.init();
+    function showBadge(notification) {
+        $b.log('called show badge');
 
-        // @todo see if tihs is necessary, make a FF specific init function
-        module.$('#api_key').val(module.api_key);
-        module.$('#tags').val('');
+        // var color,
+        //     badge;
 
-        // focus to the tags field since we normally have the title already and
-        // that's next
-        module.$('#tags').focus();
+        // switch(notification.type) {
+        //     case "error":
+        //         color = "red";
+        //         badge = "Err";
+        //         break;
+        //     case "info":
+        //         color = "green";
+        //         badge = "Ok";
+        //         break;
+        //     default:
+        //         console.log("Unknown notification type: " + notification.type);
+        // }
+        // // add a notice to the badge as necessary
+        // $b.ui.badge.set(badge, 5000, $b.ui.badge.colors[color]);
+    }
 
-        module.call.getBookmark(url, function(xml) {
-            var result, code, found;
 
-            result = module.$(xml).find("result");
-            found = module.$(xml).find("post");
-
-            found.map(function () {
-                // add the tags to the tag ui
-                module.$('#tags').val(module.$(this).attr('tag'));
-
-                // add the description to the ui
-                module.$('#description').val(module.$(this).attr('description'));
-
-                // add the notes to the ui
-                $('#extended').val(module.$(this).attr('extended'));
-
-                // now enable the delete button in case we want to delete it
-                module.ui.enable_delete();
-
-                module.$('#bookie-delete').attr('disabled', 'false');
-
-                module.$('#bookie-delete').click(function(ev) {
-                    module.$('#bookie-delete').attr('disabled', 'true');
-                    module.$('#bookie-panel').get(0).hidePopup();
-                    module.call.removeBookmark(url, module.api_key);
-                });
-
-            });
-        });
-
-    };
-
-    module.submit = function(ev) {
-        var formData = {
-            url: module.$('#url').val(),
-            tags: module.$('#tags').val(),
-            api_key: module.$('#api_key').val(),
-            description: module.$('#description').val(),
-        };
-        module.ffSaveBookmark(module.$.param(formData));
-        module.$('#bookie-panel').get(0).hidePopup();
-    };
-
-    // module.ffSaveBookmark = function (params) {
-    //     var opts;
-
-    //     opts = {
-    //         url: module.api_url + "/delapi/posts/add",
-    //         data: params,
-    //         success: function(xml) {
-    //             var result, code;
-    //             result = module.$(xml).find("result");
-
-    //             code = result.attr("code");
-
-    //             if (code == "done") {
-    //                 module.consoleService.logStringMessage('OK');
-    //             } else {
-    //                 // need to notify that it failed
-    //                 module.consoleService.logStringMessage('Failed' + params);
-    //             }
-    //         },
-    //     };
-
-    //     request(opts);
-    // };
-
-    // function request(options) {
-    //     var defaults, opts;
-
-    //     defaults = {
-    //         type: "GET",
-    //         dataType: "xml",
-    //         error: function(jqxhr, textStatus, errorThrown) {
-    //             module.consoleService.logStringMessage('ERROR: ' + module.response_codes[jqxhr.status] + ' ' +
-    //                 textStatus);
+    // provide helpers for dealing with notifications from events fired through
+    // the plugin. I think at some point we really want to do something to map
+    // these to generic notifications and provide these more as a chrome
+    // specific mapper
+    // $b.ui.badge = {
+    //     'clear': function (millis) {
+    //         if (window.chrome !== undefined && chrome.tabs) {
+    //             background.ui.badge.clear(millis);
     //         }
-    //     };
+    //     },
 
-    //     opts = module.$.extend({}, defaults, options);
-    //     module.$.ajax(opts);
-    // };
+    //     'set': function (text, milliseconds, bgcolor) {
+    //         if (bgcolor) {
+    //             if (window.chrome !== undefined && chrome.tabs) {
+    //                 chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
+    //             }
+    //         }
 
-    // module.observe = function(subject, topic, data) {
-    //     if (topic != "nsPref:changed") {
-    //         return;
+    //         if (window.chrome !== undefined && chrome.tabs) {
+    //             chrome.browserAction.setBadgeText({text: text});
+    //         }
+
+    //         if (milliseconds) {
+    //             $b.ui.badge.clear(milliseconds);
+    //         }
+    //     },
+
+    //     // colors must be defined in the RGBA syntax for the chrome api to work
+    //     'colors': {
+    //         'green': [15, 232, 12, 255],
+    //         'red': [200, 50, 50, 255]
     //     }
-
-    //     switch(data) {
-    //         case "server":
-    //             module.api_url = module.prefs.getCharPref("server");
-    //             break;
-    //         case "apikey":
-    //             module.api_key = module.prefs.getCharPref("apikey");
-    //             break;
-    //      }
     // };
 
-    // module.shutdown = function() {
-    //     module.prefs.removeObserver("", module);
-    // };
-
-    module.ff_init = (function(context) {
-        console.log('Adding to bookie in bookie-firefox');
-
-        // we use prefs vs localStorage
-        setup_prefs();
+    $b.ff_init = function() {
+        $b.log('Adding to bookie in bookie-firefox');
+        $b.settings.init();
+        $b.log($b.settings.get('api_url'));
 
         // bind the FF specific button
-        $('#bookie-button').bind('click', module.popup);
-    });
+        $('#bookie-button').bind('click', function (ev) {
+            $b.log('clicked the bookie-button');
+            $b.events.onload();
+            ev.preventDefault();
+        });
+    };
 
-    return module;
+    return $b;
 
-})(bookie || {}, jq_var, console);
+})(bookie || {}, jq_var);

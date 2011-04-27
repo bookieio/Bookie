@@ -103,6 +103,12 @@
         }
     };
 
+
+    $b.chrome_init = function () {
+        $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
+        $($b.EVENTID).trigger($b.events.LOAD);
+    };
+
     return module;
 
 })(bookie || {}, jQuery);

@@ -84,10 +84,8 @@ if __name__ == "__main__":
             # we need a way to handle this query. If we offset and we clear
             # errors along the way, we'll skip potential retries
             # but if we don't we'll just keep getting errors and never end
-            raise Exception("Not implemented yet, this adds some complexity tothe query")
             url_list = Hashed.query.outerjoin(Readable).\
-                        filter(Readable.status_code != 200).\
-                        limit(PER_TRANS).offset(ct).all()
+                        filter(Readable.status_code != 200).all()
 
         else:
             url_list = Hashed.query.limit(PER_TRANS).offset(ct).all()

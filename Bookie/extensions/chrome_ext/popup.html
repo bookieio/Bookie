@@ -4,7 +4,7 @@
         <!-- <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> -->
 
         <script type="text/javascript" src="lib/jquery.min.js"></script>
-        <script type="text/javascript" src="lib/js/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui.custom.min.js"></script>
         <!-- <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script> -->
 
         <script type="text/javascript" src="bookie-core.js"></script>
@@ -12,7 +12,7 @@
         <script type="text/javascript">
             var tags = [];
             $(function() {
-                bookie.init();
+                bookie.init(bookie.chrome_init);
                 var valid = validateSettings();
                 if(!valid)
                     return;

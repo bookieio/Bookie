@@ -13,20 +13,21 @@
     loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
     jq_var = jQuery.noConflict(true);
 
+
     console = {};
     consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
     console.log = function(msg) {
         consoleService.logStringMessage(msg);
     };
     console.log('Setting up the console fakery for bookie module');
-
 </script>
+
 <script type="application/x-javascript" src="chrome://bookie/content/js/bookie-core.js" />
 <script type="application/x-javascript" src="chrome://bookie/content/js/bookie-firefox.js" />
 
 <script type="application/x-javascript">
     window.addEventListener("load", function(event){
-        bookie.ff_init(bookie);
+        bookie.init(bookie.ff_init);
     }, false);
 
     window.addEventListener("unload", function(event){
@@ -48,7 +49,7 @@
   type="menu"
 >
   <panel id="bookie-panel" >
-      <vbox align="start">
+      <vbox align="start" id="#bmarkbody">
         <label id="popup_title" value="Post to Bookie"></label>
         <form id="form"  >
             <vbox>
