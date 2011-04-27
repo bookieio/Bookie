@@ -8,3 +8,6 @@ Extension UI stuff:
 Stuff in code:
 - Abstract notifications in bookie-core and get rid of duplications in bookie-firefox
 - Get rid of needed commentingg out of call to console.log in bookie-core
+
+Error checking:
+- Report problems with wrong or unset URL/api key

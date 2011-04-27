@@ -114,7 +114,6 @@
         // $b.ui.badge.set(badge, 5000, $b.ui.badge.colors[color]);
     }
 
-
     // provide helpers for dealing with notifications from events fired through
     // the plugin. I think at some point we really want to do something to map
     // these to generic notifications and provide these more as a chrome
@@ -153,6 +152,11 @@
         $b.log('Adding to bookie in bookie-firefox');
         $b.settings.init();
         $b.log($b.settings.get('api_url'));
+
+        $('#bookie-button').attr('oncommand', 'bookie.onKeyboardShortcut()');
+        $('#bookie-button').attr('onpopupshowing', 'bookie.prePopup()');
+        $('#bookie-button').attr('onpopupshown', 'bookie.postPopup()');
+        $('#bookie-submit').attr('command', 'bookie-submit-cmd');
 
         // bind the FF specific button
         $('#bookie-button').bind('click', function (ev) {

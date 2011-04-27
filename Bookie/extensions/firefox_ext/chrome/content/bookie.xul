@@ -41,12 +41,18 @@
   <toolbarbutton id="bookie-button" />
 </toolbarpalette>
 
+<commandset>
+  <command id="bookie-submit-cmd" oncommand="bookie.submit();" />
+  <command id="bookie-delete-cmd" oncommand="bookie.deleteBookmark();" />
+</commandset>
+
 <!-- button details -->
 <toolbarbutton id="bookie-button"
   label="Bookie"
   tooltiptext="Bookie"
   class="toolbarbutton-1 chromeclass-toolbar-additional"
   type="menu"
+  accesskey='K'
 >
   <panel id="bookie-panel" >
       <vbox align="start" id="#bmarkbody">
