@@ -154,16 +154,9 @@
         $b.log($b.settings.get('api_url'));
 
         $('#bookie-button').attr('oncommand', 'bookie.onKeyboardShortcut()');
-        $('#bookie-button').attr('onpopupshowing', 'bookie.prePopup()');
+        $('#bookie-button').attr('onpopupshowing', '$b.events.onload()');
         $('#bookie-button').attr('onpopupshown', 'bookie.postPopup()');
         $('#bookie-submit').attr('command', 'bookie-submit-cmd');
-
-        // bind the FF specific button
-        $('#bookie-button').bind('click', function (ev) {
-            $b.log('clicked the bookie-button');
-            $b.events.onload();
-            ev.preventDefault();
-        });
     };
 
     $b.shutdown = function() {
