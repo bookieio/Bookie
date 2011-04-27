@@ -162,6 +162,10 @@
         });
     };
 
+    $b.shutdown = function() {
+        $b.prefs.removeObserver("", module);
+    };
+
     return $b;
 
 })(bookie || {}, jq_var);

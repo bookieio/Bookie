@@ -80,7 +80,7 @@ var bookie = (function (module, $, console) {
     }
 
 
-    // stash the logger onto $b for FF to use and 
+    // stash the logger onto $b for FF to use and
     $b.log = console.log;
 
     // API for accessing setting information
@@ -107,14 +107,13 @@ var bookie = (function (module, $, console) {
     $b.populateFormBase = function (tab_obj) {
         var url;
 
-        $('#url').val(tab_obj.url);
-        $('#description').val(tab_obj.title);
-        $('#api_key').val($b.settings.get('api_key'));
+        $('#url').attr('value', tab_obj.url);
+        $('#description').attr('value', tab_obj.title);
+        $('#api_key').attr('value', $b.settings.get('api_key'));
 
         url = $('#url').attr('value');
 
         $b.log('populate form base');
-
         $b.call.getBookmark(url, function (xml) {
             var result, code, found;
             // this could come back as not found
@@ -126,7 +125,6 @@ var bookie = (function (module, $, console) {
             if (result.length > 0) {
                 code = result.attr("code");
                 $b.log('Page is not currently bookmarked')
-                $b.log(result.xml)
             }
 
             found = $(xml).find("post");
@@ -212,10 +210,12 @@ var bookie = (function (module, $, console) {
 
         var opts = {
             url: $b.settings.get('api_url') + "/delapi/posts/get",
-            data: {url: url},
+            data: {
+                'url': url
+            },
             success: function (xml) {
-                alert(xml.xml);
                 $b.log('GET BOOKMARK');
+                $b.log(callback);
                 if(callback) {
                     callback(xml);
                 }
