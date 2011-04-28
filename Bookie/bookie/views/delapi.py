@@ -74,7 +74,6 @@ def posts_add(request):
             # if we have content, stick it on the object here
             if 'content' in request.params:
                 content = StringIO(request.params['content'])
-
                 content.seek(0)
                 parsed = ReadContent.parse(content, content_type="text/html")
                 LOG.debug(parsed)
