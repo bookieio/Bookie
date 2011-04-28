@@ -4,13 +4,15 @@ BODY {
 
 #body {
     margin: 1em;
-
 }
 
 
 .title {
     padding: .5em 0em;
     margin: 0em;
+    font-family: "Cabin:500",arial,helvetica,clean,sans-serif;
+    font-size: 1.3em;
+    text-shadow: 1px 1px 1px #CCCCCC;
 }
 
 /* NAVIGATION */
@@ -27,23 +29,73 @@ BODY {
 }
 
 .logo {
-    padding-left: .5em;
+    padding-left: .1em;
     font-size: 2em;
     text-decoration: none;
     color: #363d52;
     font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
-    text-shadow: 2px 2px 2px #CCCCCC;
+    text-shadow: 4px 4px 4px #CCCCCC;
 }
 
 .logo .alt_logo {
     color: #333333;
-    font: 13px/1.231 Cabin,arial,helvetica,clean,sans-serif
+    font-size: .6em;
+    font-family: Cabin,arial,helvetica,clean,sans-serif;
+    text-shadow: 2px 2px 2px #CCCCCC;
+}
+
+
+.button {
+    background: #e3e3e3;
+    border: 1px solid #bbb;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+    box-shadow: inset 0 0 1px 1px #f6f6f6;
+    color: #333;
+    font: 12px arial,helvetica,clean,sans-serif;
+    font-weight: bold;
+    line-height: 1;
+    padding: 2px 4px 3px;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.button:hover {
+    background: #d9d9d9;
+    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+    box-shadow: inset 0 0 1px 1px #eaeaea;
+    color: #222;
+    cursor: pointer;
+}
+
+a.button {
+    color: #333;
+    text-decoration: none;
+}
+
+.actions .button {
+    padding: 0px 2px;
+    line-height: inherit;
+
+}
+
+form .button {
+    font-weight: bold;
+    color: #333;
+}
+
+form div {
+    margin: .5em 0em;
 }
 
 
 
 /* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */
-.button_minimal {
+.nav_button {
   background: #e3e3e3;
   border: 1px solid #bbb;
   -moz-border-radius: 3px;
@@ -64,7 +116,7 @@ BODY {
   vertical-align: bottom;
 }
 
-.button_minimal:hover {
+.nav_button:hover {
   background: #d9d9d9;
   -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
   -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
@@ -73,12 +125,16 @@ BODY {
   cursor: pointer;
 }
 
-.button_minimal:active {
+.nav_button:active {
   background: #d0d0d0;
   -moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
   -webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
   box-shadow: inset 0 0 1px 1px #e3e3e3;
   color: #000;
+}
+
+a.button_minimal {
+    text-decoration: none;
 }
 
 
@@ -93,12 +149,23 @@ BODY {
     font-weight: bold;
     text-align: right;
     align: right;
-    vertical-align: bottom;
+}
+
+.buttons {
+    padding: .6em 0em;
 }
 
 .data_list .bmark {
     padding: .2em;
 }
+
+.bmark:hover {
+    /* Using RGB for opacity on the background only
+        hex color: (#9AFEB)
+    */
+    background-color: rgba(155, 175, 235, 0.2);
+}
+
 
 .center {
     text-align: center;
@@ -109,6 +176,10 @@ BODY {
     border-radius: 5px;
     margin: 0px .4em;
     width: 4em;
+}
+
+.calendar * {
+    font-family: "Cabin:500",arial,helvetica,clean,sans-serif;
 }
 
 .calendar h2 {
@@ -164,10 +235,10 @@ a.tag {
 }
 
 a.bmark {
-    font: 14px/1.231 Cabin,arial,helvetica,clean,sans-serif
+    font: "Cabin:500",arial,helvetica,clean,sans-serif;
     font-size: 1.1em;
     text-decoration: none;
-    color: #FF0000;
+    color: #003366;
 }
 
 .bmark .time {
@@ -214,6 +285,7 @@ form li label {
     color: #666666;
     margin-top: 5em;
     font-size: .8em;
+    margin-bottom: 1em;
 }
 
 .footer a {
@@ -226,9 +298,15 @@ form li label {
 }
 
 .search {}
+
 .search .title {
-    padding-left: 2em;
+    margin-left: 1.3em;
+    font-size: 1.5em;
+    border-bottom: 1px solid #333;
+    padding-bottom: .1em;
+    font-weight: normal;
 }
+
 .search .body {
     padding-left: 2em;
 }
@@ -237,7 +315,6 @@ form li label {
     margin: .5em;
 }
 .tag_filter .title {
-    font-weight: bold;
 }
 .tag_filter input {
     width: 10em;
@@ -275,9 +352,10 @@ form li label {
 }
 
 .actions .item {
-    color: #0033FF;
 }
 
 .actions .item a {
     text-decoration: none;
 }
+
+

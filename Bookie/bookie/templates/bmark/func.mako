@@ -42,6 +42,7 @@
          % if is_new:
              style="border-top: 1px solid #999999;"
          % endif
+         class="bmark_block"
     >
         <div class="yui3-g bmark">
             <div class="yui3-u-1-8">
@@ -61,13 +62,15 @@
                     <div class="yui3-u-1-8 actions col_end">
                             <span class="item">
                                 <a href="${request.route_url('bmark_readable',
-                                hash_id=bmark.hash_id)}" title="Readable"> R </a>
+                                hash_id=bmark.hash_id)}" title="Readable"
+                                class="button"> R </a>
                             </span>
                         % if allow_edit:
-                            <span class="item"><a href="#" title="Edit"> E </a></span>
+                            <span class="item"><a href="#" title="Edit"
+                            class="button"> E </a></span>
                             <span class="item"><a
                             href="${request.route_url('bmark_confirm_delete',
-                            bid=bmark.bid)}" title="Delete"> X </a></span>
+                            bid=bmark.bid)}" title="Delete" class="button"> X </a></span>
                         % endif
                     </div>
 
@@ -111,11 +114,13 @@
 
     % if page != 0:
     <% prev = page - 1 %>
-        <a href="${request.route_url(next_url, page=prev, **url_params)}">Prev</a>
+        <a href="${request.route_url(next_url, page=prev, **url_params)}"
+           class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, page=next, **url_params)}">Next</a>
+        <a href="${request.route_url(next_url, page=next, **url_params)}"
+           class="button">Next</a>
     % endif
 
 </%def>
