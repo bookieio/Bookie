@@ -25,12 +25,7 @@ var bookie = (function (module, $, console) {
         'onload': function (ev) {
             $b.log('in onload event');
             $('#tags').focus();
-            $('#form').bind('submit', function (ev) {
-                var data = $(this).serialize();
-                $b.call.saveBookmark(data);
-                ev.preventDefault();
-            });
-
+            $('#form').bind('submit', $b.store_changes);
             $b.populateForm();
         },
 
@@ -173,6 +168,21 @@ var bookie = (function (module, $, console) {
         $($b.EVENTID).bind($b.events.DELETE, $b.events.ondelete);
     };
 
+    $b.store_changes = function (ev) {
+        var data, ext_val;
+
+        $b.log('IN SUBMIT EVENT');
+        data = {
+            'url': $('#url').attr('value'),
+            'api_key': $('#api_key').attr('value'),
+            'description': $('#description').val(),
+            'tags': $('#tags').val(),
+            'extended': $('#extended').val()
+        }
+
+        $b.call.saveBookmark(data);
+        ev.preventDefault();
+    };
 
     /**
      * Generate the get reuqest to the API call
@@ -188,6 +198,7 @@ var bookie = (function (module, $, console) {
             timeout: 30000,
             error: function(jqxhr, textStatus, errorThrown) {
                 $b.log('REQUEST_ERROR');
+                $b.log('Response Code: ' + jqxhr.status);
                 $b.ui.notify(new Notification(
                     "error",
                     $b.response_codes[jqxhr.status],
@@ -199,6 +210,7 @@ var bookie = (function (module, $, console) {
         opts = $.extend({}, defaults, options);
         $.ajax(opts);
     };
+
 
     /*
      * Check if this is an existing bookmark
@@ -225,6 +237,7 @@ var bookie = (function (module, $, console) {
         request(opts);
     };
 
+
     $b.call.getTagCompletions = function (tag, callback) {
         var opts = {
             url: $b.settings.get('api_url') + "/delapi/tags/complete",
@@ -241,8 +254,12 @@ var bookie = (function (module, $, console) {
         request(opts);
     }
 
+
     $b.call.saveBookmark = function (params) {
         var opts;
+
+        // we need to add the api key to the params
+        params['api_key'] = $b.settings.get('api_key');
 
         opts = {
             url: $b.settings.get('api_url') + "/delapi/posts/add",
@@ -273,12 +290,13 @@ var bookie = (function (module, $, console) {
         request(opts);
     }
 
+
     /*
      * remove an existing bookmark from delicious
      * see http://delicious.com/help/api#posts_delete
      *
     */
-    $b.call.removeBookmark = function (url, api_key) {
+    $b.call.removeBookmark = function (url, api_key, callback) {
         var opts = {
             url: $b.settings.get('api_url') + "/delapi/posts/delete",
             data: {
@@ -343,4 +361,5 @@ var bookie = (function (module, $, console) {
 
 
     return $b;
+
 })(bookie || {}, jq_var, console);

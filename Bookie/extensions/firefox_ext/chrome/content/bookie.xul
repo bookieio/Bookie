@@ -42,8 +42,8 @@
 </toolbarpalette>
 
 <commandset>
-  <command id="bookie-submit-cmd" oncommand="bookie.submit();" />
-  <command id="bookie-delete-cmd" oncommand="bookie.deleteBookmark();" />
+    <command id="bookie-submit-cmd" oncommand="bookie.log('SUBMIT');bookie.store_changes();" />
+    <command id="bookie-delete-cmd" oncommand="bookie.$('#bookie-delete').trigger('click');" />
 </commandset>
 
 <!-- button details -->

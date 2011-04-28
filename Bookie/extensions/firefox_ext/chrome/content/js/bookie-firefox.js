@@ -67,11 +67,33 @@
         } else {
             // when running unit tests the firefox stuff isn't available
             // so we have to fake it
-            // $b.populateFormBase({'url':window.location.href,
-            //     'title': "Testing stuff"
-            // });
+            $b.populateFormBase({'url':window.location.href,
+                'title': "Testing stuff"
+            });
         }
     };
+
+
+    /**
+     * We can't do the focus until after the panel window has loaded
+     *
+     */
+    $b.post_load = function () {
+        $('#tags').focus();
+    };
+
+
+    /**
+     * Allow for the keyboard action to perform the same thing that clicking
+     * the icon will do, basically open the panel and run load()
+     *
+     */
+    $b.onKeyboardShortcut = function() {
+        $('#bookie-panel').get(0).openPopup(bookie.$('#bookie-button').get(0), 'before_start');
+        $b.events.load();
+        $b.postPopup();
+    };
+
 
     $b.ui.notify = function(notification) {
         $b.log('called notify');
@@ -89,7 +111,7 @@
         //         window.close();
         //     }
         // }
-    }
+    };
 
 
     function showBadge(notification) {
@@ -112,7 +134,7 @@
         // }
         // // add a notice to the badge as necessary
         // $b.ui.badge.set(badge, 5000, $b.ui.badge.colors[color]);
-    }
+    };
 
     // provide helpers for dealing with notifications from events fired through
     // the plugin. I think at some point we really want to do something to map
@@ -153,9 +175,9 @@
         $b.settings.init();
         $b.log($b.settings.get('api_url'));
 
-        $('#bookie-button').attr('oncommand', 'bookie.onKeyboardShortcut()');
+        $('#bookie-button').attr('oncommand', '$b.onKeyboardShortcut()');
         $('#bookie-button').attr('onpopupshowing', '$b.events.onload()');
-        $('#bookie-button').attr('onpopupshown', 'bookie.postPopup()');
+        $('#bookie-button').attr('onpopupshown', '$b.post_load()');
         $('#bookie-submit').attr('command', 'bookie-submit-cmd');
     };
 
