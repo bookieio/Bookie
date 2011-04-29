@@ -5,19 +5,14 @@
 import argparse
 import logging
 import transaction
-import urllib2
 
 from ConfigParser import ConfigParser
-from decruft import Document
-from decruft import page_parser
 from os import path
 from sqlalchemy import create_engine
 
 from bookie.lib.readable import ReadUrl
 
 from bookie.models import initialize_sql
-from bookie.models import DBSession
-from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
 
