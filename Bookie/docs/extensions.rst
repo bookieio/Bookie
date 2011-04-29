@@ -13,6 +13,10 @@ Features
 - integrated popup dialog to save current site to your Bookie install.
 - supports loading existing bookmark data if you're on a page already
   bookmarked
+- Capable of sending current page's html content to Bookie for parsing the
+  readable version of the page so it's immediately available. This slows down
+  the plugin, so uncheck the *Cache Content* if you experience adverse
+  performance
 
 Installation
 ------------
@@ -52,4 +56,17 @@ Firefox Extension
 Currently under active development. Check out the `feature branch`_ for keeping
 tabs on how it's progressing.
 
+Features
+----------
+
+- integrated popup dialog to save current site to your Bookie install.
+- supports loading existing bookmark data if you're on a page already
+  bookmarked
+
+Installation
+-------------
+There's an initial shot at the plugin awaiting review at `addons.mozilla.org`_.
+
+
 .. _feature branch: https://github.com/mitechie/Bookie/tree/feature/ff_ext
+.. _addons.mozilla.org: https://addons.mozilla.org/en-US/firefox/addon/bookie-for-firefox/

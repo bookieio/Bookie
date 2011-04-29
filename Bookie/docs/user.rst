@@ -26,4 +26,39 @@ allow_edit:
     such as the `Chrome Plugin`_ to make edits and remove bookmarks.
 
 
+Readable Parsing of your Bookmarks
+-----------------------------------
+In order to get the parsed readable version of your bookmark content you can
+use the script *scripts/readability/existing.py*
+
+Parameters
+~~~~~~~~~~
+
+--ini
+    (Required) what is the *.ini* file we're using to do things like figure out
+    the db connection string?
+
+--new
+    Only go through and fetch/parse html content for bookmarks that have not
+    been processed before. You might use this in a daily cron script to update
+    readable content for new bookmarks.
+
+--retry-errors
+    Go through and retry any bookmarks that were not a successful status code
+    of 200 during a previous run. You might want to run this once a month to
+    see if any previous 404'd bookmarks are available now, etc.
+
+Example cron jobs
+~~~~~~~~~~~~~~~~~
+
+::
+
+    # run readable parsing on new bookmarks each morning at 1am
+    0 1 * * * /path/to/bookie/env/bin/python /path/to/Bookie/scripts/readability/existing.py --ini=myconfig.ini --new
+
+    # retry error'd parsing at 1am on the 1st of each month
+    0 1 1 * * /path/to/bookie/env/bin/python /path/to/Bookie/scripts/readability/existing.py --ini=myconfig.ini --retry-errors
+
+
+
 .. _Chrome Plugin: extensions.html
