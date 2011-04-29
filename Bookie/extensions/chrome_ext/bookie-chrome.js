@@ -15,6 +15,25 @@
         background = undefined;
     }
 
+
+    /**
+     * Implement the settings storage we need
+     *
+     */
+    $b.settings = {
+        'init':function () {
+            // using localStorage, we're fine
+        },
+        'get': function (key) {
+            $b.log('GET ' + key);
+            return localStorage[key];
+        },
+        'set': function (key, value) {
+            localStorage[key] = value;
+        }
+    };
+
+
     /**
      * This will call a shared function that maps data to the ui form
      * The specifics here is getting the tab info from Chrome vs FF

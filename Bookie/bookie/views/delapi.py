@@ -27,7 +27,6 @@ def posts_add(request):
 
     """
     params = request.params
-    LOG.debug(dict(params))
 
     with Authorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
@@ -38,20 +37,15 @@ def posts_add(request):
             try:
                 mark = BmarkMgr.get_by_url(params['url'])
 
-                LOG.debug('PERFORM UPDATE')
                 mark.description = params.get('description', mark.description)
                 mark.extended = params.get('extended', mark.extended)
 
                 new_tags = params.get('tags', None)
-                LOG.debug('new_tags')
-                LOG.debug(new_tags)
                 if new_tags:
                     mark.update_tags(new_tags)
 
             except NoResultFound:
                 # then let's store this thing
-                LOG.debug('PERFORM NEW')
-
                 # if we have a dt param then set the date to be that manual
                 # date
                 if 'dt' in request.params:
@@ -82,10 +76,6 @@ def posts_add(request):
 
                 content.seek(0)
                 parsed = ReadContent.parse(content, content_type="text/html")
-                LOG.debug(parsed)
-                LOG.debug(parsed.status)
-                LOG.debug(parsed.content)
-                LOG.debug(parsed.status_message)
 
                 mark.hashed.readable = Readable()
                 mark.hashed.readable.content = parsed.content
