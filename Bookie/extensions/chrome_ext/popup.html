@@ -42,11 +42,13 @@
                             }
                         }).autocomplete({
                             source: function (request, response) {
-                                bookie.call.tagComplete(request.term, response);
+                                bookie.call.tagComplete(extractLast(request.term), response);
                             },
                             search: function() {
                                 // custom minLength
                                 var term = extractLast(this.value);
+                                console.log('term');
+                                console.log(term);
                                 if ( term.length < 1 ) {
                                     return false;
                                 }
@@ -56,6 +58,7 @@
                                 return false;
                             },
                             select: function(event, ui) {
+                                console.log(this.value);
                                 var terms = split(this.value);
                                 // remove the current input
                                 terms.pop();
@@ -64,6 +67,8 @@
                                 // add placeholder to get the comma-and-space at the end
                                 terms.push("");
                                 this.value = terms.join(" ");
+
+                                console.log(this.value);
                                 return false;
                             }
                         });
