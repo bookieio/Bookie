@@ -83,9 +83,16 @@ def build_routes(config):
                      view="bookie.views.utils.import_bmarks",
                      view_renderer="/utils/import.mako",)
 
+
     config.add_route("search", "/search",
                      view="bookie.views.utils.search",
                      view_renderer="/utils/results.mako",)
+
+    config.add_route("search_rest", "/search*terms",
+                     view="bookie.views.utils.search",
+                     view_renderer="/utils/results.mako",)
+
+
 
     config.add_route("export", "/export",
                      view="bookie.views.utils.export",

@@ -60,18 +60,28 @@ def import_bmarks(request):
 
 
 def search(request):
-    """Search for the content in the matchdict"""
+    """Search for the query terms in the matchdict/GET params
+
+    The ones in the matchdict win in the case that they both exist
+    but we'll fall back to query string search=XXX
+
+    with_content
+        is always GET and specifies if we're searching the fulltext of pages
+
+    """
+    mdict = request.matchdict
     rdict = request.GET
 
-    # check if we have a page count submitted
-    phrase = rdict.get('search', '')
+    if 'terms' in mdict:
+        phrase = " ".join(mdict['terms'])
+    else:
+        phrase = rdict.get('search', '')
+
+    # with content is always in the get string
     with_content = asbool(rdict.get('content', False))
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
-
-    LOG.debug('with content')
-    LOG.debug(with_content)
 
     res_list = searcher.search(phrase, content=with_content)
 
