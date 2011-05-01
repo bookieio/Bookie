@@ -128,7 +128,6 @@
 <%def name="tag_filter()">
         <div class="tag_filter">
             <span class="title">Filter Tags&nbsp;</span>
-            <span class="item"><a href="" title="Remove tag">sports x</a></span>
-            <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tag.."/>
+            <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
         </div>
 </%def>

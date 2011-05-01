@@ -2,6 +2,7 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <title>Bookie: ${self.title()}</title>
+        <link type="text/css" href="/static/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="Stylesheet" />
         <link rel="stylesheet" type="text/css"
         href="http://yui.yahooapis.com/combo?3.3.0/build/cssreset/reset-min.css&3.3.0/build/cssfonts/fonts-min.css&3.3.0/build/cssgrids/grids-min.css&3.3.0/build/cssbase/base-min.css">
 
@@ -74,5 +75,15 @@
             </div>
             </div>
         </div>
+
+        <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="/static/js/bookie.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                bookie.init();
+            });
+        </script>
     </body>
 </html>
