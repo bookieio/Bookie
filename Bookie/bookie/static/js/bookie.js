@@ -75,11 +75,6 @@ var bookie = (function ($b, $) {
      */
     $b.call.search = function (ev, terms) {
         var one_term, opts;
-        console.log('terms');
-        console.log(terms);
-
-        console.log('calling search');
-        console.log(terms);
 
         one_term = terms.join("/");
         opts = {
@@ -105,6 +100,12 @@ var bookie = (function ($b, $) {
     $b.ui.init_tag_filter = function (ev) {
         console.log('triggering tag filter');
         var tags = [];
+
+        $('form#filter_form').bind('submit', function (ev) {
+            $('tag_filter').trigger('autocompletechange');
+            ev.preventDefault();
+        });
+
         $(function() {
 
             function split(val) {
@@ -157,6 +158,10 @@ var bookie = (function ($b, $) {
 
                         $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                         return false;
+                    },
+                    change: function (event, ui) {
+                        terms = $('#tag_filter').val().split(" ");
+                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                     }
                 });
         });

@@ -127,7 +127,9 @@
 
 <%def name="tag_filter()">
         <div class="tag_filter">
-            <span class="title">Filter Tags&nbsp;</span>
-            <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
+            <form id="filter_form" name="filter_form">
+                <span class="title">Filter Tags&nbsp;</span>
+                <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
+            </form>
         </div>
 </%def>
