@@ -124,7 +124,7 @@ def build_routes(config):
                      view_renderer="morjson",)
     config.add_route("tag_bmarks", "/tags/*tags",
                      view="bookie.views.tags.bmark_list",
-                     view_renderer="/tag/bmarks.mako",)
+                     view_renderer="/tag/bmarks_wrap.mako",)
 
     config.add_route("import", "/import",
                      view="bookie.views.utils.import_bmarks",

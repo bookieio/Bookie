@@ -1,7 +1,7 @@
 """Controllers related to viewing Tag information"""
 import logging
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.settings import asbool
+from pyramid.renderers import render
 
 from bookie.lib import access
 from bookie.models import BmarkMgr
@@ -23,6 +23,7 @@ def tag_list(request):
 
 def bmark_list(request):
     """Display the list of bookmarks for this tag"""
+    route_name = request.matched_route.name
     rdict = request.matchdict
 
     # check if we have a page count submitted
@@ -40,10 +41,30 @@ def bmark_list(request):
                            limit=RESULTS_MAX,
                            page=page)
 
-    return {'tags': tags,
-             'bmark_list': bmarks,
-             'max_count': RESULTS_MAX,
-             'count': len(bmarks),
-             'page': page,
-             'allow_edit': access.edit_enabled(request.registry.settings),
-           }
+    if 'ajax' in route_name:
+        html = render('bookie:templates/tag/bmarks.mako',
+                      {
+                         'tags': tags,
+                         'bmark_list': bmarks,
+                         'max_count': RESULTS_MAX,
+                         'count': len(bmarks),
+                         'page': page,
+                         'allow_edit': access.edit_enabled(request.registry.settings),
+                       },
+                  request=request)
+        return {
+            'success': True,
+            'message': "",
+            'payload': {
+                'html': html,
+            }
+        }
+
+    else:
+        return {'tags': tags,
+                 'bmark_list': bmarks,
+                 'max_count': RESULTS_MAX,
+                 'count': len(bmarks),
+                 'page': page,
+                 'allow_edit': access.edit_enabled(request.registry.settings),
+               }

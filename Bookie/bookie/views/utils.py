@@ -77,8 +77,6 @@ def search(request):
     """
     route_name = request.matched_route.name
 
-    LOG.debug(request.headers)
-
     mdict = request.matchdict
     rdict = request.GET
 

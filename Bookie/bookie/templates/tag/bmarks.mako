@@ -1,7 +1,4 @@
-<%inherit file="/main_wrap.mako" />
 <%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev, tag_filter"/>
-<%def name="title()">Bookmarks for: ${", ".join(tags)}</%def>
-
 <%
     url_params = {'tags': tags}
 %>
