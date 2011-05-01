@@ -143,3 +143,32 @@ class TestFulltext(TestCase):
         ok_('extended notes' in search_res.body,
             "Extended search should find our description on the page: " + search_res.body)
 
+    def test_ajax_search(self):
+        """Verify that we can get a json MorJSON response when ajax search"""
+        # first let's add a bookmark we can search on
+        self._get_good_request()
+
+        search_res = self.testapp.get(
+                        '/search/google',
+                        headers = {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+        )
+
+        ok_(search_res.status == '200 OK',
+                "Status is 200: " + search_res.status)
+
+        ok_('my google desc' in search_res.body,
+            "We should find our description on the page: " + search_res.body)
+
+        # also check for our specific json bits
+        ok_('success' in search_res.body,
+                "We should see a success bit in the json: " + search_res.body)
+
+        ok_('payload' in search_res.body,
+                "We should see a payload bit in the json: " + search_res.body)
+
+        ok_('message' in search_res.body,
+                "We should see a message bit in the json: " + search_res.body)
+

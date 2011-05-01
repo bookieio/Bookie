@@ -17,7 +17,7 @@
         ${bmarknextprev(page, max_count, count, 'bmark_recent_page')}
     </div>
 
-    <div class="yui3-u-1">
+    <div class="yui3-u-1 data_body">
         ${display_bmark_list(bmarks)}
     </div>
 

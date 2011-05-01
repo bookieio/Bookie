@@ -3,6 +3,7 @@ import logging
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.renderers import render
 from pyramid.settings import asbool
 
 from bookie.lib.importer import Importer
@@ -68,7 +69,16 @@ def search(request):
     with_content
         is always GET and specifies if we're searching the fulltext of pages
 
+    Ajax Requests:
+        We also use this method to serve ajax requests
+        If we have _ajax in the name of the route it's an ajax match
+        Make sure we sent out the proper MorJSON response
+
     """
+    route_name = request.matched_route.name
+
+    LOG.debug(request.headers)
+
     mdict = request.matchdict
     rdict = request.GET
 
@@ -85,11 +95,29 @@ def search(request):
 
     res_list = searcher.search(phrase, content=with_content)
 
-    return {
-        'search_results': res_list,
-        'result_count': len(res_list),
-        'phrase': phrase,
-    }
+    # if the route name is search_ajax we want a json response
+    # else we just want to return the payload data to the mako template
+    if 'ajax' in route_name:
+        html = render('bookie:templates/utils/results.mako',
+                    { 'search_results': res_list,
+                      'result_count': len(res_list),
+                      'phrase': phrase.replace(" ", " OR "),
+                    },
+                  request=request)
+        return {
+            'success': True,
+            'message': "",
+            'payload': {
+                'html': html,
+            }
+        }
+
+    else:
+        return {
+            'search_results': res_list,
+            'result_count': len(res_list),
+            'phrase': phrase.replace(" ", " OR "),
+        }
 
 
 def export(request):

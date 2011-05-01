@@ -17,7 +17,8 @@ var bookie = (function ($b, $) {
      */
     $b.events = {
         'LOAD': 'load',
-        'TAG_FILTER': 'tag_filter'
+        'TAG_FILTER': 'tag_filter',
+        'SEARCH': 'search'
     };
 
     /**
@@ -55,6 +56,41 @@ var bookie = (function ($b, $) {
                 });
 
                 callback(tag_list);
+            }
+        };
+
+        $.ajax(opts);
+    };
+
+
+    /**
+     * perform an ajax search based on the terms passed in
+     *
+     * Performing an AJAX request with a standard response model
+     *   - success
+     *   - message
+     *   - payload
+     *       - html
+     *
+     */
+    $b.call.search = function (ev, terms) {
+        var one_term, opts;
+        console.log('terms');
+        console.log(terms);
+
+        console.log('calling search');
+        console.log(terms);
+
+        one_term = terms.join("/");
+        opts = {
+            url: "/search/" + one_term,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                // replace the body of the page with the content that came back
+                if (data.success) {
+                    $('.data_body').html(data.payload.html);
+                }
             }
         };
 
@@ -119,7 +155,7 @@ var bookie = (function ($b, $) {
                         terms.push("");
                         this.value = terms.join(" ");
 
-                        console.log(this.value);
+                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                         return false;
                     }
                 });
@@ -134,6 +170,7 @@ var bookie = (function ($b, $) {
 
         // bind some other events we might want read to go out of the gates
         $($b.EVENTID).bind($b.events.TAG_FILTER, $b.ui.init_tag_filter);
+        $($b.EVENTID).bind($b.events.SEARCH, $b.call.search);
 
 
         // now trigger the load since we're ready to go from here
