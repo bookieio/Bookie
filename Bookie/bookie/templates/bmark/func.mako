@@ -77,7 +77,8 @@
                     <div class="yui3-u-7-8">
                         <div class="tags">
                             % for tag in bmark.tags:
-                                <a class="tag" href="${request.route_url('tag_bmarks', tag=tag, page=prev)}">${tag}</a>
+                                <a class="tag"
+                                href="${request.route_url('tag_bmarks', tags=[tag], page=prev)}">${tag}</a>
                             %endfor
                         </div>
                     </div>
@@ -113,7 +114,7 @@
     %>
 
     % if page != 0:
-    <% prev = page - 1 %>
+        <% prev = page - 1 %>
         <a href="${request.route_url(next_url, page=prev, **url_params)}"
            class="button">Prev</a>
     % endif
@@ -127,7 +128,7 @@
 
 <%def name="tag_filter()">
         <div class="tag_filter">
-            <form id="filter_form" name="filter_form">
+            <form id="filter_form" name="filter_form" action="#" method="get">
                 <span class="title">Filter Tags&nbsp;</span>
                 <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
             </form>

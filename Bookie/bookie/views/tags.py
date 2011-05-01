@@ -26,21 +26,21 @@ def bmark_list(request):
     rdict = request.matchdict
 
     # check if we have a page count submitted
-    tag = rdict.get('tag')
+    tags = rdict.get('tags')
     page = int(rdict.get('page', 0))
 
     # verify the tag exists before we go on
     # 404 if the tag isn't found
-    exists = TagMgr.find(tags=[tag])
+    exists = TagMgr.find(tags=tags)
 
     if not exists:
         raise HTTPNotFound()
 
-    bmarks = BmarkMgr.by_tag(tag,
+    bmarks = BmarkMgr.by_tag(tags,
                            limit=RESULTS_MAX,
                            page=page)
 
-    return {'tag': tag,
+    return {'tags': tags,
              'bmark_list': bmarks,
              'max_count': RESULTS_MAX,
              'count': len(bmarks),

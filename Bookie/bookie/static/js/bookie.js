@@ -78,7 +78,7 @@ var bookie = (function ($b, $) {
 
         one_term = terms.join("/");
         opts = {
-            url: "/search/" + one_term,
+            url: "/tags/" + one_term,
             type: "GET",
             dataType: "json",
             success: function (data) {

@@ -11,6 +11,7 @@ from sqlalchemy import Unicode
 from sqlalchemy import UnicodeText
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
+from sqlalchemy import select
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,6 +26,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
+from sqlalchemy.sql import func
+from sqlalchemy.sql import and_
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -378,9 +381,18 @@ class BmarkMgr(object):
     @staticmethod
     def by_tag(tag, limit=50, page=0):
         """Get a set of bookmarks with the given tag"""
+
         qry = Bmark.query.join(Bmark.tags).\
-                  options(contains_eager(Bmark.tags)).\
-                  filter(Tag.name == tag)
+                  options(contains_eager(Bmark.tags))
+
+        if isinstance(tag, str):
+            qry = qry.filter(Tag.name == tag)
+        else:
+            bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id'), bmarks_tags.c.tag_id],
+                                   from_obj=[bmarks_tags.join('tags', and_(Tag.name.in_(tag), bmarks_tags.c.tag_id == Tag.tid))]).\
+                                  group_by(bmarks_tags.c.bmark_id).having(func.count(bmarks_tags.c.tag_id) == len(tag))
+
+            qry = qry.join((bids_we_want, Bmark.bid==bids_we_want.c.good_bmark_id))
 
         offset = limit * page
         qry = qry.order_by(Bmark.stored.desc()).\
@@ -388,6 +400,8 @@ class BmarkMgr(object):
                   offset(offset).\
                   from_self()
 
+        # now outer join with the tags again so that we have the
+        # full list of tags for each bmark we filterd down to
         qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 

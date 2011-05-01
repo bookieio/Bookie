@@ -117,10 +117,12 @@ def build_routes(config):
     config.add_route("tag_list", "/tags",
                      view="bookie.views.tags.tag_list",
                      view_renderer="/tag/list.mako",)
-    config.add_route("tag_bmarks", "/tags/{tag}",
+
+    config.add_route("tag_bmarks_ajax", "/tags/*tags",
                      view="bookie.views.tags.bmark_list",
-                     view_renderer="/tag/bmarks.mako",)
-    config.add_route("tag_bmarks_page", "/tags/{tag}/{page}",
+                     xhr=True,
+                     view_renderer="morjson",)
+    config.add_route("tag_bmarks", "/tags/*tags",
                      view="bookie.views.tags.bmark_list",
                      view_renderer="/tag/bmarks.mako",)
 
