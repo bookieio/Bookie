@@ -83,7 +83,7 @@
                     </div>
 
                     <div class="yui3-u-1-8">
-                        <div class="bmark time">${bmark.stored.strftime('%H:%M%P')}</div>
+                        <div class="time">${bmark.stored.strftime('%H:%M%P')}</div>
                     </div>
                 </div>
             </div>

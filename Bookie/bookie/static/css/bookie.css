@@ -159,7 +159,7 @@ a.button_minimal {
     padding: .2em;
 }
 
-.bmark:hover {
+div.bmark:hover {
     /* Using RGB for opacity on the background only
         hex color: (#9AFEB)
     */
