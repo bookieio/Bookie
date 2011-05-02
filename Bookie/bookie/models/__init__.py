@@ -388,7 +388,7 @@ class BmarkMgr(object):
         if isinstance(tag, str):
             qry = qry.filter(Tag.name == tag)
         else:
-            bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id'), bmarks_tags.c.tag_id],
+            bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
                                    from_obj=[bmarks_tags.join('tags', and_(Tag.name.in_(tag), bmarks_tags.c.tag_id == Tag.tid))]).\
                                   group_by(bmarks_tags.c.bmark_id).having(func.count(bmarks_tags.c.tag_id) == len(tag))
 
