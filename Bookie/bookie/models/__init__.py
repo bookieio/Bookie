@@ -12,6 +12,7 @@ from sqlalchemy import UnicodeText
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
 from sqlalchemy import select
+from unidecode import unidecode
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
@@ -343,7 +344,8 @@ class Hashed(Base):
 
     def __init__(self, url):
         """We'll auto hash the id for them and set this up"""
-        self.hash_id = shortuuid.uuid(url=str(url))
+        cleaned_url = str(unidecode(url))
+        self.hash_id = shortuuid.uuid(url=cleaned_url)
         self.url = url
 
 
