@@ -6,6 +6,8 @@ from cgi import escape
 from datetime import datetime
 from StringIO import StringIO
 
+from pyramid.view import view_config
+
 from bookie.lib.access import Authorize
 from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
@@ -19,6 +21,7 @@ from bookie.models.fulltext import get_fulltext_handler
 LOG = logging.getLogger(__name__)
 
 
+@view_config(route_name="del_post_add", renderer="string")
 def posts_add(request):
     """Add a new bmark into the system given request params
 
@@ -92,7 +95,7 @@ def posts_add(request):
         else:
             return '<result code="Bad Request: missing url" />'
 
-
+@view_config(route_name="del_post_delete", renderer="string")
 def posts_delete(request):
     """Remove a bmark from the system"""
     params = request.params
@@ -113,7 +116,7 @@ def posts_delete(request):
                 # if it's not found, then there's not a bookmark to delete
                 return '<result code="Bad Request: bookmark not found" />'
 
-
+@view_config(route_name="del_post_get", renderer="/delapi/posts_get.mako")
 def posts_get(request):
     """Return one or more bmarks based on search criteria
 
@@ -148,6 +151,8 @@ def posts_get(request):
         request.override_renderer = 'string'
         return '<result code="Not Found" />'
 
+
+@view_config(route_name="del_tag_complete", renderer="/delapi/tags_complete.mako")
 def tags_complete(request):
     params = request.GET
     request.response_content_type = 'text/xml'

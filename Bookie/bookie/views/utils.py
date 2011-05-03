@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.renderers import render
 from pyramid.settings import asbool
+from pyramid.view import view_config
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import Authorize
@@ -15,6 +16,7 @@ from bookie.models.fulltext import get_fulltext_handler
 LOG = logging.getLogger(__name__)
 
 
+@view_config(route_name="import", renderer="/utils/import.mako")
 def import_bmarks(request):
     """Allow users to upload a delicious bookmark export"""
     data = {}
@@ -60,6 +62,9 @@ def import_bmarks(request):
         return {}
 
 
+@view_config(route_name="search", renderer="/utils/results_wrap.mako")
+@view_config(route_name="search_ajax", renderer="morjson")
+@view_config(route_name="search_rest", renderer="/utils/results_wrap.mako")
 def search(request):
     """Search for the query terms in the matchdict/GET params
 
@@ -118,6 +123,7 @@ def search(request):
         }
 
 
+@view_config(route_name="export", renderer="/utils/export.mako")
 def export(request):
     """Handle exporting a user's bookmarks to file"""
     bmark_list = Bmark.query.join(Bmark.tags).all()
@@ -129,6 +135,8 @@ def export(request):
         'bmark_list': bmark_list,
     }
 
+
+@view_config(route_name="redirect", renderer="/utils/redirect.mako")
 def redirect(request):
     """Handle redirecting to the selected url
 

@@ -405,6 +405,7 @@ class BmarkMgr(object):
         qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
+        LOG.error(str(qry))
         return qry.all()
 
     @staticmethod

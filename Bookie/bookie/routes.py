@@ -71,87 +71,39 @@ def build_routes(config):
                     context=HTTPForbidden,
                     renderer="exceptions/403.mako")
 
-    config.add_route("home", "", view="bookie.views.my_view",
-                     view_renderer="/testmako.mako")
+    config.add_route("home", "/")
 
     # DELAPI Routes
-    config.add_route("del_post_add", "/delapi/posts/add",
-                     view="bookie.views.delapi.posts_add",
-                     view_renderer="string",)
-    config.add_route("del_post_delete", "/delapi/posts/delete",
-                     view="bookie.views.delapi.posts_delete",
-                     view_renderer="string",)
-    config.add_route("del_post_get", "/delapi/posts/get",
-                     view="bookie.views.delapi.posts_get",
-                     view_renderer="/delapi/posts_get.mako",)
-    config.add_route("del_tag_complete", "/delapi/tags/complete",
-                     view="bookie.views.delapi.tags_complete",
-                     view_renderer="/delapi/tags_complete.mako",)
+    config.add_route("del_post_add", "/delapi/posts/add")
+    config.add_route("del_post_delete", "/delapi/posts/delete")
+    config.add_route("del_post_get", "/delapi/posts/get")
+    config.add_route("del_tag_complete", "/delapi/tags/complete")
 
     # bmark routes
-    config.add_route("bmark_popular", "/popular",
-                     view="bookie.views.bmarks.popular",
-                     view_renderer="/bmark/popular.mako",)
-    config.add_route("bmark_popular_page", "/popular/{page}",
-                     view="bookie.views.bmarks.popular",
-                     view_renderer="/bmark/popular.mako",)
+    config.add_route("bmark_recent", "/recent")
+    config.add_route("bmark_recent_page", "/recent/{page}")
+    config.add_route("bmark_popular", "/popular")
+    config.add_route("bmark_popular_page", "/popular/{page}")
 
-    config.add_route("bmark_recent", "/recent",
-                     view="bookie.views.bmarks.recent",
-                     view_renderer="/bmark/recent.mako",)
-    config.add_route("bmark_recent_page", "/recent/{page}",
-                     view="bookie.views.bmarks.recent",
-                     view_renderer="/bmark/recent.mako",)
-
-    config.add_route("bmark_delete", "/bmark/delete",
-                     view="bookie.views.bmarks.delete",)
-    config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}",
-                     view="bookie.views.bmarks.confirm_delete",
-                     view_renderer="/bmark/confirm_delete.mako",)
-    config.add_route("bmark_readable", "/bmark/readable/{hash_id}",
-                     view="bookie.views.bmarks.readable",
-                     view_renderer="/bmark/readable.mako",)
+    config.add_route("bmark_delete", "/bmark/delete")
+    config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
+    config.add_route("bmark_readable", "/bmark/readable/{hash_id}")
 
 
     # tag related routes
-    config.add_route("tag_list", "/tags",
-                     view="bookie.views.tags.tag_list",
-                     view_renderer="/tag/list.mako",)
+    config.add_route("tag_list", "/tags")
+    config.add_route("tag_bmarks_ajax", "/tags/*tags")
+    config.add_route("tag_bmarks", "/tags/*tags")
 
-    config.add_route("tag_bmarks_ajax", "/tags/*tags",
-                     view="bookie.views.tags.bmark_list",
-                     xhr=True,
-                     view_renderer="morjson",)
-    config.add_route("tag_bmarks", "/tags/*tags",
-                     view="bookie.views.tags.bmark_list",
-                     view_renderer="/tag/bmarks_wrap.mako",)
-
-    config.add_route("import", "/import",
-                     view="bookie.views.utils.import_bmarks",
-                     view_renderer="/utils/import.mako",)
-
-
-    config.add_route("search", "/search",
-                     view="bookie.views.utils.search",
-                     view_renderer="/utils/results_wrap.mako",)
+    config.add_route("import", "/import")
+    config.add_route("search", "/search")
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
-    config.add_route("search_ajax", "/search*terms",
-                     view="bookie.views.utils.search",
-                     xhr=True,
-                     view_renderer="morjson",)
+    config.add_route("search_ajax", "/search*terms")
+    config.add_route("search_rest", "/search*terms")
 
-    config.add_route("search_rest", "/search*terms",
-                     view="bookie.views.utils.search",
-                     view_renderer="/utils/results_wrap.mako",)
-
-    config.add_route("export", "/export",
-                     view="bookie.views.utils.export",
-                     view_renderer="/utils/export.mako",)
-
-
-    config.add_route("redirect", "/redirect/{hash_id}",
-                     view="bookie.views.utils.redirect")
+    config.add_route("export", "/export")
+    config.add_route("redirect", "/redirect/{hash_id}")
 
     return config

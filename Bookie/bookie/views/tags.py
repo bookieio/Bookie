@@ -2,6 +2,7 @@
 import logging
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.renderers import render
+from pyramid.view import view_config
 
 from bookie.lib import access
 from bookie.models import BmarkMgr
@@ -11,6 +12,7 @@ LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
 
+@view_config(route_name="tag_list", renderer="/tag/list.mako")
 def tag_list(request):
     """Display a list of your tags"""
     tags_found = TagMgr.find()
@@ -21,6 +23,8 @@ def tag_list(request):
     }
 
 
+@view_config(route_name="tag_bmarks_ajax", renderer="morjson")
+@view_config(route_name="tag_bmarks", renderer="/tag/bmarks_wrap.mako")
 def bmark_list(request):
     """Display the list of bookmarks for this tag"""
     route_name = request.matched_route.name
