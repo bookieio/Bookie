@@ -38,7 +38,7 @@ ropevim==0.3-rc
 sqlalchemy-migrate==0.6.1
 transaction==1.1.1
 translationstring==0.3
-unidecode
+unidecode==0.04.7
 unittest2==0.5.1
 venusian==0.7
 virtualenv==1.5.2
