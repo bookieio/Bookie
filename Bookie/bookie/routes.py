@@ -92,7 +92,7 @@ def build_routes(config):
 
     # tag related routes
     config.add_route("tag_list", "/tags")
-    config.add_route("tag_bmarks_ajax", "/tags/*tags")
+    config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
     config.add_route("tag_bmarks", "/tags/*tags")
 
     config.add_route("import", "/import")
@@ -100,7 +100,7 @@ def build_routes(config):
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
-    config.add_route("search_ajax", "/search*terms")
+    config.add_route("search_ajax", "/search*terms", xhr=True)
     config.add_route("search_rest", "/search*terms")
 
     config.add_route("export", "/export")
