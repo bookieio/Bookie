@@ -51,7 +51,7 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
   # activate the python virtualenvironment
   $ source bookie/bin/activate
 
-  $ cd bookie/bookie/Bookie/
+  $ cd bookie/bookie/
 
   # Create a new fabric configuration file.
   # $myname is a name you're giving your installation. Just one word will do
