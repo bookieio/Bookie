@@ -362,53 +362,57 @@ class BmarkMgr(object):
                            filter(Hashed.url == clean_url).one()
 
     @staticmethod
-    def find(order_by=None, limit=50, page=0, with_tags=False):
+    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
+        offset = limit * page
 
         if order_by is not None:
-            qry = qry.order_by(order_by)
-        else:
-            qry = qry.order_by(Bmark.bid.desc())
+            order_by = Bmark.stored.desc()
 
-        offset = limit * page
-        qry = qry.limit(limit).offset(offset).from_self()
+        if not tags:
+            qry = qry.order_by(order_by).\
+                      limit(limit).\
+                      offset(offset).\
+                      from_self()
 
-        if with_tags:
+
+        if tags:
             qry = qry.join(Bmark.tags).\
-                      options(contains_eager(Bmark.tags))
-
-        return qry.all()
-
-    @staticmethod
-    def by_tag(tag, limit=50, page=0):
-        """Get a set of bookmarks with the given tag"""
-
-        qry = Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-        if isinstance(tag, str):
-            qry = qry.filter(Tag.name == tag)
-        else:
-            bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
-                                   from_obj=[bmarks_tags.join('tags', and_(Tag.name.in_(tag), bmarks_tags.c.tag_id == Tag.tid))]).\
-                                  group_by(bmarks_tags.c.bmark_id).having(func.count(bmarks_tags.c.tag_id) == len(tag))
+            if isinstance(tags, str):
+                qry = qry.filter(Tag.name == tags)
+                qry = qry.order_by(order_by).\
+                          limit(limit).\
+                          offset(offset).\
+                          from_self()
+            else:
+                bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
+                                       from_obj=[ bmarks_tags.join('tags',
+                                                                   and_(Tag.name.in_(tags),
+                                                                        bmarks_tags.c.tag_id == Tag.tid)
+                                                                  ).\
+                                                              join('bmarks',
+                                                                   Bmark.bid == bmarks_tags.c.bmark_id)
+                                      ]).\
+                               group_by(bmarks_tags.c.bmark_id).\
+                               having(func.count(bmarks_tags.c.tag_id) == len(tags)).order_by(Bmark.stored.desc()).limit(limit).offset(offset)
 
-            qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
+                qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
 
-        offset = limit * page
-        qry = qry.order_by(Bmark.stored.desc()).\
-                  limit(limit).\
-                  offset(offset).\
-                  from_self()
+
 
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
-        qry = qry.outerjoin(Bmark.tags).\
+        if with_tags:
+            qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
+
 
         LOG.error(str(qry))
         return qry.all()
+
 
     @staticmethod
     def recent(limit=50, page=0, with_tags=False):

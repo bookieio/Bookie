@@ -31,7 +31,7 @@ def bmark_list(request):
     rdict = request.matchdict
 
     # check if we have a page count submitted
-    tags = rdict.get('tags')
+    tags = rdict.get('tag')
     page = int(rdict.get('page', 0))
 
     # verify the tag exists before we go on

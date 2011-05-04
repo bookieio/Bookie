@@ -81,9 +81,10 @@ def build_routes(config):
 
     # bmark routes
     config.add_route("bmark_recent", "/recent")
-    config.add_route("bmark_recent_page", "/recent/{page}")
+    config.add_route("bmark_recent_tags", "/recent/*tags")
+
     config.add_route("bmark_popular", "/popular")
-    config.add_route("bmark_popular_page", "/popular/{page}")
+    config.add_route("bmark_popular_tags", "/popular/*tags")
 
     config.add_route("bmark_delete", "/bmark/delete")
     config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -91,9 +92,9 @@ def build_routes(config):
 
 
     # tag related routes
-    config.add_route("tag_list", "/tags")
-    config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
-    config.add_route("tag_bmarks", "/tags/*tags")
+    # config.add_route("tag_list", "/tags")
+    # config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
+    config.add_route("tag_bmarks", "/tags/tag")
 
     config.add_route("import", "/import")
     config.add_route("search", "/search")

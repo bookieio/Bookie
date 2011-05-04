@@ -78,7 +78,7 @@ var bookie = (function ($b, $) {
 
         one_term = terms.join("/");
         opts = {
-            url: "/tags/" + one_term,
+            url: "/recent/" + one_term,
             type: "GET",
             dataType: "json",
             success: function (data) {
@@ -101,10 +101,10 @@ var bookie = (function ($b, $) {
         console.log('triggering tag filter');
         var tags = [];
 
-        $('form#filter_form').bind('submit', function (ev) {
-            $('tag_filter').trigger('autocompletechange');
-            ev.preventDefault();
-        });
+        // $('form#filter_form').bind('submit', function (ev) {
+        //     $('tag_filter').trigger('autocompletechange');
+        //     ev.preventDefault();
+        // });
 
         $(function() {
 
@@ -161,7 +161,8 @@ var bookie = (function ($b, $) {
                     },
                     change: function (event, ui) {
                         terms = $('#tag_filter').val().split(" ");
-                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
+                        $('form').trigger('submit');
+                        // $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                     }
                 });
         });

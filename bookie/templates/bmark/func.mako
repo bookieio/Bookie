@@ -107,30 +107,39 @@
         else:
             show_next = False
 
-        next = page + 1
 
         if url_params is None:
             url_params = {}
+
+        prev = page - 1
+        next = page + 1
     %>
 
     % if page != 0:
-        <% prev = page - 1 %>
-        <a href="${request.route_url(next_url, page=prev, **url_params)}"
+        <a href="${request.route_url(next_url, **url_params)}?page=${prev}"
            class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, page=next, **url_params)}"
+        <a href="${request.route_url(next_url, **url_params)}?page=${next}"
            class="button">Next</a>
     % endif
 
 </%def>
 
-<%def name="tag_filter()">
+<%def name="tag_filter(tags=None)">
         <div class="tag_filter">
-            <form id="filter_form" name="filter_form" action="#" method="get">
+            <form id="filter_form" name="filter_form"
+                action="${request.route_url('bmark_recent')}" method="GET">
                 <span class="title">Filter Tags&nbsp;</span>
-                <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
+                <input type="input" name="tag_filter" id="tag_filter" 
+                       placeholder="enter tags.."
+                       
+                      % if tags:
+                          value="${" ".join(tags)}"
+                      % endif
+                />
+                <input type="submit" name="filter" value="Filter" />
             </form>
         </div>
 </%def>
