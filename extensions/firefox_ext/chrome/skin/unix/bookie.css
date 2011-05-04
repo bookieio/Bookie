@@ -1,0 +1,48 @@
+#bookie-button {
+    list-style-image: url("chrome://bookie-os/skin/24px.png");
+}
+
+#bookie-button .toolbarbutton-menu-dropmarker {
+    display: none !important;
+}
+
+#bookie-panel {
+    min-width: 250px;
+    height: 250px;
+    font-size: 10pt;
+}
+
+#bookie-panel textbox {
+    width: 245px;
+    padding: 5px;
+}
+
+#bookie-panel #extended {
+    height: 4.5em;
+}
+
+#popup_title {
+    font-weight: bold;
+    font-size: 13pt;
+    margin-bottom: .5em;
+}
+
+/* .bookie { */
+/*     -moz-image-region: rect(0px, 24px, 24px, 0px); */
+/* } */
+/*  */
+/* .bookie[disabled="true"] { */
+/*     -moz-image-region: rect(24px, 24px, 48px, 0px); */
+/* } */
+
+/*
+, #wrapper-bookie-button
+
+.bookie:hover
+  {-moz-image-region: rect(24px, 24px, 48px, 0px);}
+
+[iconsize="small"] .bookie
+  {-moz-image-region: rect(0px, 40px, 16px, 24px);}
+
+[iconsize="small"] .bookie
+  {-moz-image-region: rect(24px, 40px, 40px, 24px);} */

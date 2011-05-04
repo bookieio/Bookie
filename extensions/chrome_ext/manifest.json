@@ -1,6 +1,6 @@
 {
   "name": "Bookie",
-  "version": "0.1.14",
+  "version": "0.1.12",
   "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
