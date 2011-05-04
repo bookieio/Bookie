@@ -66,7 +66,7 @@ the normal bootstrap process it should be in:
 
 ::
 
-    bookie/bookie/Bookie/bookie/wsgi.py
+    bookie/bookie/bookie/wsgi.py
 
 With the following:
 
@@ -107,7 +107,7 @@ service to run the app through.
     exec /usr/bin/uwsgi26 --socket /tmp/rick.bookie.sock \
     -H /home/$username/bookie/ \
     --chmod-socket --module wsgi \
-    --pythonpath /home/$username/bookie/bookie/Bookie/bookie \
+    --pythonpath /home/$username/bookie/bookie/bookie \
     -p 4
 
 We should not be able to start up the server with uWSGI command there.
@@ -117,7 +117,7 @@ We should not be able to start up the server with uWSGI command there.
     sudo /usr/bin/uwsgi26 --socket /tmp/rick.bmark.sock \
     -H /home/$username/bookie/ \
     --chmod-socket --module wsgi \
-    --pythonpath /home/$username/bookie/bookie/Bookie/Bookie/bookie \
+    --pythonpath /home/$username/bookie/bookie/Bookie/bookie \
     -p 4
 
 This will help bring up any potential errors. If all starts up well you can
@@ -139,11 +139,11 @@ application.
       server_name bookie;
       charset utf-8;
     
-      root /home/$username/bookie/bookie/Bookie/bookie/static;
+      root /home/$username/bookie/bookie/bookie/static;
       index index.html index.htm;
     
       location ~*/(img|js|iepng|css)/ {
-        root /home/$username/bookie/bookie/Bookie/bookie;
+        root /home/$username/bookie/bookie/bookie;
         expires max;
         add_header Cache-Control "public";
         break;

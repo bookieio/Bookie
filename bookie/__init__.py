@@ -17,6 +17,6 @@ def main(global_config, **settings):
     config = Configurator(settings=settings, session_factory=unencrypt)
     config = build_routes(config)
     config.add_static_view('static', 'bookie:static')
-    config.scan()
+    config.scan('bookie.views')
 
     return config.make_wsgi_app()
