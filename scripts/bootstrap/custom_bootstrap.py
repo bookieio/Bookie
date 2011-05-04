@@ -125,8 +125,7 @@ def after_install(options, home_dir):
         # the double dir names of bookie/Bookie are just known since they're
         # project directories
         req_path = env['home_dir']
-        requirements_path = os.path.join(req_path.strip("'"), 'bookie',
-                                         'Bookie', 'requirements.txt')
+        requirements_path = os.path.join(req_path.strip("'"), 'bookie', 'requirements.txt')
 
         subprocess.call(git_cmd, shell=True)
 
@@ -136,7 +135,7 @@ def after_install(options, home_dir):
             Out.error("No requirements.txt file located")
 
         # run setup.py on the project
-        setup_path = os.path.join(env['home_dir'].strip("'"), 'bookie', 'Bookie')
+        setup_path = os.path.join(env['home_dir'].strip("'"), 'bookie')
         cmd = 'cd {0} && {python_path} setup.py develop'
         subprocess.call(cmd.format(setup_path, **env), shell=True)
 
