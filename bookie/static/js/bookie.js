@@ -64,36 +64,6 @@ var bookie = (function ($b, $) {
 
 
     /**
-     * perform an ajax search based on the terms passed in
-     *
-     * Performing an AJAX request with a standard response model
-     *   - success
-     *   - message
-     *   - payload
-     *       - html
-     *
-     */
-    $b.call.search = function (ev, terms) {
-        var one_term, opts;
-
-        one_term = terms.join("/");
-        opts = {
-            url: "/recent/" + one_term,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                // replace the body of the page with the content that came back
-                if (data.success) {
-                    $('.data_body').html(data.payload.html);
-                }
-            }
-        };
-
-        $.ajax(opts);
-    };
-
-
-    /**
      * Control the tag filter ui on the main pages
      *
      */
@@ -155,14 +125,14 @@ var bookie = (function ($b, $) {
                         // add placeholder to get the comma-and-space at the end
                         terms.push("");
                         this.value = terms.join(" ");
-
-                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
+                        $('tag_filter').trigger('autocompletechange');
+                        // $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                         return false;
                     },
                     change: function (event, ui) {
                         terms = $('#tag_filter').val().split(" ");
-                        $('form').trigger('submit');
-                        // $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
+                        url = "/recent/" + terms.join('/');
+                        window.location = url;
                     }
                 });
         });

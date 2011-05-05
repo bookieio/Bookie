@@ -132,9 +132,9 @@
             <form id="filter_form" name="filter_form"
                 action="${request.route_url('bmark_recent')}" method="GET">
                 <span class="title">Filter Tags&nbsp;</span>
-                <input type="input" name="tag_filter" id="tag_filter" 
+                <input type="input" name="tag_filter" id="tag_filter"
                        placeholder="enter tags.."
-                       
+
                       % if tags:
                           value="${" ".join(tags)}"
                       % endif

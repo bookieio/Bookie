@@ -314,10 +314,16 @@ form li label {
 .tag_filter {
     margin: .5em;
 }
+
 .tag_filter .title {
 }
+
 .tag_filter input {
     width: 25em;
+}
+
+.tag_filter input[type=submit] {
+    width: 5em;
 }
 
 .tag_filter .item {
