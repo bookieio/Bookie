@@ -148,7 +148,7 @@ class TestReadableFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/search?search=bmark&content=1')
+        search_res = self.testapp.get('/results?search=bmark&content=1')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -161,7 +161,7 @@ class TestReadableFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/search/bmark?content=1')
+        search_res = self.testapp.get('/results/bmark?content=1')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
