@@ -94,7 +94,7 @@ def build_routes(config):
     # tag related routes
     # config.add_route("tag_list", "/tags")
     # config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
-    config.add_route("tag_bmarks", "/tags/tag")
+    config.add_route("tag_bmarks", "/tags/*tags")
 
     config.add_route("import", "/import")
     config.add_route("search", "/search")

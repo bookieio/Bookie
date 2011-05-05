@@ -79,7 +79,7 @@
                             % for tag in bmark.tags:
                                 <a class="tag"
                                 href="${request.route_url('tag_bmarks', tags=[tag], page=prev)}">${tag}</a>
-                            %endfor
+                            % endfor
                         </div>
                     </div>
 

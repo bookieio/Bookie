@@ -29,10 +29,11 @@ def bmark_list(request):
     """Display the list of bookmarks for this tag"""
     route_name = request.matched_route.name
     rdict = request.matchdict
+    params = request.params
 
     # check if we have a page count submitted
-    tags = rdict.get('tag')
-    page = int(rdict.get('page', 0))
+    tags = rdict.get('tags')
+    page = int(params.get('page', 0))
 
     # verify the tag exists before we go on
     # 404 if the tag isn't found
@@ -41,9 +42,9 @@ def bmark_list(request):
     if not exists:
         raise HTTPNotFound()
 
-    bmarks = BmarkMgr.by_tag(tags,
+    bmarks = BmarkMgr.find(tags=tags,
                            limit=RESULTS_MAX,
-                           page=page)
+                           page=page,)
 
     if 'ajax' in route_name:
         html = render('bookie:templates/tag/bmarks.mako',
