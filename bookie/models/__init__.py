@@ -396,7 +396,7 @@ class BmarkMgr(object):
                                                               join('bmarks',
                                                                    Bmark.bid == bmarks_tags.c.bmark_id)
                                       ]).\
-                               group_by(bmarks_tags.c.bmark_id).\
+                               group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
                                having(func.count(bmarks_tags.c.tag_id) == len(tags)).order_by(Bmark.stored.desc()).limit(limit).offset(offset)
 
                 qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
