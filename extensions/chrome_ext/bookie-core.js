@@ -3,7 +3,7 @@
 
 /* chrome-extension-specific bookie functionality */
 
-var bookie = (function (module, $, console) {
+var bookie = (function (module, $, logger) {
     // shortcut bookie. (module) to just $b
     $b = module;
 
@@ -76,7 +76,7 @@ var bookie = (function (module, $, console) {
 
 
     // stash the logger onto $b for FF to use and
-    $b.log = console.log;
+    $b.log = logger.log;
 
     // API for accessing setting information
     // this needs to be implemented on the -chrome and -firefox files
@@ -145,12 +145,14 @@ var bookie = (function (module, $, console) {
     // bookie methods
     $b.init = function (callback) {
 
+        $b.log('in init');
         $b.settings.init();
 
         if (!$b.settings.get('api_url')) {
             $b.log('No API URL');
             $b.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
         } else {
+            $b.log('no api url');
             // allow for the browser specific plugins to do some custom init
             $b.log(callback);
             callback();
@@ -362,4 +364,4 @@ var bookie = (function (module, $, console) {
 
     return $b;
 
-})(bookie || {}, jq_var, console);
+})(bookie || {}, jq_var, logger);

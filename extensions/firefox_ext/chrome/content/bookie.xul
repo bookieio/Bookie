@@ -14,12 +14,12 @@
     jq_var = jQuery.noConflict(true);
 
 
-    console = {};
+    logger = {};
     consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-    console.log = function(msg) {
+    logger.log = function(msg) {
         consoleService.logStringMessage(msg);
     };
-    console.log('Setting up the console fakery for bookie module');
+    logger.log('Setting up the console fakery for bookie module');
 </script>
 
 <script type="application/x-javascript" src="chrome://bookie/content/js/bookie-core.js" />

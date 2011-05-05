@@ -15,6 +15,8 @@
         background = undefined;
     }
 
+    $b = module;
+
 
     /**
      * Implement the settings storage we need
@@ -39,19 +41,19 @@
      * The specifics here is getting the tab info from Chrome vs FF
      *
      */
-    module.populateForm = function () {
+    $b.populateForm = function () {
         if (window.chrome !== undefined && chrome.tabs) {
-            chrome.tabs.getSelected(null, module.populateFormBase);
+            chrome.tabs.getSelected(null, $b.populateFormBase);
         } else {
             // when running unit tests the chrome stuff isn't available
             // so we have to fake it
-            module.populateFormBase({'url':window.location.href,
+            $b.populateFormBase({'url':window.location.href,
                 'title': "Testing stuff"
             });
         }
     };
 
-    module.ui.notify = function(notification) {
+    $b.ui.notify = function(notification) {
         showBadge(notification);
 
 
@@ -85,14 +87,14 @@
                 console.log("Unknown notification type: " + notification.type);
         }
         // add a notice to the badge as necessary
-        module.ui.badge.set(badge, 5000, module.ui.badge.colors[color]);
+        $b.ui.badge.set(badge, 5000, $b.ui.badge.colors[color]);
     }
 
     // provide helpers for dealing with notifications from events fired through
     // the plugin. I think at some point we really want to do something to map
     // these to generic notifications and provide these more as a chrome
     // specific mapper
-    module.ui.badge = {
+    $b.ui.badge = {
         'clear': function (millis) {
             if (window.chrome !== undefined && chrome.tabs) {
                 background.ui.badge.clear(millis);
@@ -111,7 +113,7 @@
             }
 
             if (milliseconds) {
-                module.ui.badge.clear(milliseconds);
+                $b.ui.badge.clear(milliseconds);
             }
         },
 
@@ -124,10 +126,11 @@
 
 
     $b.chrome_init = function () {
+        $b.log($);
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
         $($b.EVENTID).trigger($b.events.LOAD);
     };
 
-    return module;
+    return $b;
 
-})(bookie || {}, jQuery);
+})(bookie || {}, jq_var);
