@@ -326,6 +326,10 @@ form li label {
     width: 5em;
 }
 
+.tag_filter input[type=checkbox] {
+    width: 1em;
+}
+
 .tag_filter .item {
     background: #e3e3e3;
     border: 1px solid #bbb;
@@ -357,6 +361,10 @@ form li label {
     text-decoration: none;
 }
 
+.fullpage {
+    text-align: center;
+}
+
 .actions .item {
 }
 
@@ -364,4 +372,11 @@ form li label {
     text-decoration: none;
 }
 
-
+.notes {
+    background: #d9d9d9;
+    border: 1px solid #999999;
+    width: 25em;
+    margin: auto;
+    margin-top: 3em;
+    color: #333333;
+}

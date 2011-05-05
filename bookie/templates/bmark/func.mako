@@ -84,7 +84,7 @@
                     </div>
 
                     <div class="yui3-u-1-8">
-                        <div class="time">${bmark.stored.strftime('%H:%M%P')}</div>
+                        <div>&nbsp;</div>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
 </%def>
 
 <%def name="date_divider(dateobj)">
-    <div class="calendar">
+    <div class="calendar" title=" ${dateobj.strftime("%m/%d/%Y")} ">
         <h2>${dateobj.strftime("%b")}</h2>
         <div>${dateobj.strftime("%d")}</div>
     </div>
@@ -139,7 +139,30 @@
                           value="${" ".join(tags)}"
                       % endif
                 />
-                <input type="submit" name="filter" value="Filter" />
+                <input type="submit" name="filter" value="Go" />
+            </form>
+        </div>
+</%def>
+
+<%def name="search_form(terms=None, with_content=False)">
+        <div class="tag_filter">
+            <form id="search_form" name="search_form"
+                action="${request.route_url('search_results')}" method="GET">
+                <span class="title">Search</span>
+                <input type="input" name="search" id="search"
+                       placeholder="enter keywords..."
+
+                      % if terms:
+                          value="${" ".join(terms)}"
+                      % endif
+                />
+
+                <input type="checkbox" name="content" id="search_content"
+                    % if with_content:
+                        checked="checked"
+                    % endif
+                /> Content
+                <input type="submit" name="submit" value="Go" />
             </form>
         </div>
 </%def>

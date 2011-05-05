@@ -26,8 +26,8 @@
             </div>
             <div class="yui3-u-1-3 navigation">
                 <span class="item"><a href="/recent" class="nav_button">Recent</a></span>
-                <span class="item"><a href="/popular" class="nav_button">Popular</a></span>
-                <!--<span class="item"><a href="/tags" class="button_minimal">Tags</a></span>-->
+                <!--<span class="item"><a href="/popular" class="nav_button">Popular</a></span>-->
+                <span class="item"><a href="/search" class="nav_button">Search</a></span>
                 <!--<span class="item">-->
 
                 <!--</span>-->
@@ -35,29 +35,9 @@
         </div>
         <div id="body">
             <div class="yui3-g">
-                <div class="yui3-u-4-5">
+                <div class="yui3-u-1">
                     ${next.body()}
                 </div>
-
-                <div class="yui3-u-1-5">
-                    <div class="search">
-                        <h2 class="title">Search</h2>
-                        <div class="body">
-                            <form action="${request.route_url('search')}" method="get"/>
-                                <div>
-                                    <input type="search" name="search" id="search" placeholder="keywords.." />
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="content" id="search_content"  /> In Cached Content
-                                </div>
-                                <div>
-                                    <input style="line-height: 1.5;" type="submit" name="submit" class="button" id="submit_search" value="Search"/>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
