@@ -102,8 +102,8 @@ def build_routes(config):
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
-    config.add_route("search_results_ajax", "/search*terms", xhr=True)
-    config.add_route("search_results_rest", "/search*terms")
+    config.add_route("search_results_ajax", "/results*terms", xhr=True)
+    config.add_route("search_results_rest", "/results*terms")
 
     config.add_route("export", "/export")
     config.add_route("redirect", "/redirect/{hash_id}")
