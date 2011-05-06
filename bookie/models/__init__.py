@@ -16,7 +16,6 @@ from unidecode import unidecode
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
@@ -29,6 +28,8 @@ from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
+from sqlalchemy.sql.expression import ClauseElement
+from sqlalchemy.sql.expression import alias
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -167,12 +168,52 @@ class TagMgr(object):
         return qry.all()
 
     @staticmethod
-    def complete(prefix, limit=5):
-        """Find all of the tags that begin with prefix"""
-        qry = Tag.query.filter(Tag.name.startswith(prefix))
-        qry = qry.order_by(Tag.name).limit(limit)
+    def complete(prefix, current=None, limit=5):
+        """Find all of the tags that begin with prefix
 
-        return qry.all()
+        :param current: a list of current tags to compare with
+
+        If we provide a current then we should only complete tags that have
+        bookmarks with the current tag AND starts with the new prefix. In this
+        way when filtering tags we only complete things that make sense to
+        complete
+
+        """
+        if current == None:
+            qry = Tag.query.filter(Tag.name.startswith(prefix))
+            qry = qry.order_by(Tag.name).limit(limit)
+            return qry.all()
+
+        else:
+            # things get a bit more complicated
+            """SELECT DISTINCT(tag_id), tags.name FROM bmark_tags INNER JOIN tags ON bmark_tags.tag_id = tags.tid
+                WHERE bmark_id IN (
+                SELECT bmark_id FROM bmark_tags WHERE tag_id IN (SELECT DISTINCT(t.tid) FROM tags t WHERE t.name in ('python')))
+                AND tags.name LIKE ('sql');"""
+
+            # current_tags = DBSession.query(tagid, Tag.name).\
+            #                                filter(Tag.name.in_(current))
+
+            tagid = alias(Tag.tid.distinct())
+            test = select([bmarks_tags.c.bmark_id],
+                    from_obj=[bmarks_tags.join(DBSession.query(tagid.label('tagid'))),
+                              bmarks_tags.c.tag_id == tagid])
+
+            LOG.debug(str(test))
+            return DBSession.execute(qry)
+
+
+            bmark_ids = select([bmarks_tags.c.bmark_id],
+                               from_obj=[bmarks_tags.join(DBSession.query(Tag.tid.distinct()).filter(Tag.name.in_(current)),
+                                                          bmarks_tags.c.tag_id == Tag.tid)])
+
+            qry = select([bmarks_tags.c.tag_id, Tag.name],
+                         Tag.name.startswith(prefix),
+                         from_obj=[bmarks_tags.join(bmark_ids.label('bookmarks'),
+                                                    bmarks_tags.c.bmark_id == bmark_ids.c.bmark_id)])
+
+            LOG.debug(str(qry))
+            return DBSession.execute(qry)
 
 
 class Tag(Base):
@@ -401,16 +442,12 @@ class BmarkMgr(object):
 
                 qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
 
-
-
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-
-        LOG.error(str(qry))
         return qry.all()
 
 
