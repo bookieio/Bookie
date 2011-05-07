@@ -81,7 +81,6 @@ class TestReadable(TestCase):
     def test_nonworking_url(self):
         """Testing some urls we know we had issues with initially"""
         urls = { 'CouchSurfing': 'http://allthatiswrong.wordpress.com/2010/01/24/a-criticism-of-couchsurfing-and-review-of-alternatives/#problems',
-                 'Bewelcome': 'http://bewelcome.info',
                  'Electronic': 'https://www.fbo.gov/index?s=opportunity&mode=form&tab=core&id=dd11f27254c796f80f2aadcbe4158407',
                  'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
@@ -89,6 +88,7 @@ class TestReadable(TestCase):
         for key, url in urls.iteritems():
             LOG.debug(url)
             read = ReadUrl.parse(url)
+            LOG.debug(read)
 
             ok_(read.status == 200, "The status is 200: " + str(read.status))
             ok_(read.content is not None, "Content should not be none: ")
