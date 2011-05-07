@@ -6,6 +6,15 @@
         <script type="text/javascript" src="lib/jquery.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui.custom.min.js"></script>
         <!-- <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script> -->
+        <script type="text/javascript">
+            var jq_var = jQuery.noConflict(true);
+            var $ = jq_var;
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
+            logger.log('setting up fake logger');
+        </script>
 
         <script type="text/javascript" src="bookie-core.js"></script>
         <script type="text/javascript" src="bookie-chrome.js"></script>
