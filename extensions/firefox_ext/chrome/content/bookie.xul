@@ -8,22 +8,19 @@
 <script type="application/x-javascript">
     var loader, jq_var, bookie, console, consoleService;
 
-    loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
-    loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
-    jq_var = jQuery.noConflict(true);
-
-
     logger = {};
     consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
     logger.log = function(msg) {
         consoleService.logStringMessage(msg);
     };
     logger.log('Setting up the console fakery for bookie module');
-</script>
 
-<script type="application/x-javascript" src="chrome://bookie/content/js/bookie-core.js" />
-<script type="application/x-javascript" src="chrome://bookie/content/js/bookie-firefox.js" />
+    loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+    loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
+    jq_var = jQuery.noConflict(true);
+    loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
+    loader.loadSubScript("chrome://bookie/content/js/bookie-firefox.js");
+</script>
 
 <script type="application/x-javascript">
     window.addEventListener("load", function(event){

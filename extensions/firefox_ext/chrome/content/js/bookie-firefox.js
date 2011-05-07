@@ -85,13 +85,13 @@
 
     /**
      * Allow for the keyboard action to perform the same thing that clicking
-     * the icon will do, basically open the panel and run load()
+     * the icon will do, basically open the panel and run onload()
      *
      */
     $b.onKeyboardShortcut = function() {
-        $('#bookie-panel').get(0).openPopup(bookie.$('#bookie-button').get(0), 'before_start');
-        $b.events.load();
-        $b.postPopup();
+        $('#bookie-panel').get(0).openPopup($('#bookie-button').get(0), 'before_start');
+        $b.events.onload();
+        $b.post_load();
     };
 
 
