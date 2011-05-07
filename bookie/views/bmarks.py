@@ -17,16 +17,64 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="bmark_recent_page", renderer="/bmark/recent.mako")
+@view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
 def recent(request):
     """Most recent list of bookmarks capped at MAX"""
     rdict = request.matchdict
+    params = request.params
 
     # check if we have a page count submitted
-    page = int(rdict.get('page', '0'))
+    page = int(params.get('page', '0'))
 
-    recent_list = BmarkMgr.recent(limit=RESULTS_MAX,
-                           with_tags=True,
+    # do we have any tags to filter upon
+    tags = rdict.get('tags', None)
+
+    # if we don't have tags, we might have them sent by a non-js browser as a
+    # string in a query string
+    if not tags and 'tag_filter' in params:
+        tags = params.get('tag_filter').split()
+
+    LOG.debug('tags')
+    LOG.debug(tags)
+
+
+    recent_list = BmarkMgr.find(limit=RESULTS_MAX,
+                           order_by=Bmark.stored.desc(),
+                           tags=tags,
+                           page=page)
+
+
+
+    ret = {
+             'bmarks': recent_list,
+             'max_count': RESULTS_MAX,
+             'count': len(recent_list),
+             'page': page,
+             'tags': tags,
+             'allow_edit': access.edit_enabled(request.registry.settings),
+           }
+
+    LOG.debug('RET')
+    LOG.debug(ret)
+    return ret
+
+
+@view_config(route_name="bmark_popular", renderer="/bmark/popular.mako")
+@view_config(route_name="bmark_popular_tags", renderer="/bmark/popular.mako")
+def popular(request):
+    """Most popular list of bookmarks capped at MAX"""
+    rdict = request.matchdict
+    params = request.params
+
+    # check if we have a page count submitted
+    tags = rdict.get('tags', None)
+
+    page = int(params.get('page', '0'))
+
+
+    recent_list = BmarkMgr.find(limit=RESULTS_MAX,
+                           order_by=Bmark.stored.desc(),
+                           tags=tags,
                            page=page)
 
     return {
@@ -36,12 +84,6 @@ def recent(request):
              'page': page,
              'allow_edit': access.edit_enabled(request.registry.settings),
            }
-
-
-@view_config(route_name="bmark_popular", renderer="/bmark/popular.mako")
-@view_config(route_name="bmark_popular_page", renderer="/bmark/popular.mako")
-def popular(request):
-    """Most popular list of bookmarks capped at MAX"""
     rdict = request.matchdict
 
     # check if we have a page count submitted

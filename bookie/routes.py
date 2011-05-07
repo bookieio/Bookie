@@ -81,9 +81,10 @@ def build_routes(config):
 
     # bmark routes
     config.add_route("bmark_recent", "/recent")
-    config.add_route("bmark_recent_page", "/recent/{page}")
+    config.add_route("bmark_recent_tags", "/recent/*tags")
+
     config.add_route("bmark_popular", "/popular")
-    config.add_route("bmark_popular_page", "/popular/{page}")
+    config.add_route("bmark_popular_tags", "/popular/*tags")
 
     config.add_route("bmark_delete", "/bmark/delete")
     config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -91,17 +92,18 @@ def build_routes(config):
 
 
     # tag related routes
-    config.add_route("tag_list", "/tags")
-    config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
+    # config.add_route("tag_list", "/tags")
+    # config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
     config.add_route("tag_bmarks", "/tags/*tags")
 
     config.add_route("import", "/import")
     config.add_route("search", "/search")
+    config.add_route("search_results", "/results")
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
-    config.add_route("search_ajax", "/search*terms", xhr=True)
-    config.add_route("search_rest", "/search*terms")
+    config.add_route("search_results_ajax", "/results*terms", xhr=True)
+    config.add_route("search_results_rest", "/results*terms")
 
     config.add_route("export", "/export")
     config.add_route("redirect", "/redirect/{hash_id}")

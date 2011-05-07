@@ -77,7 +77,7 @@ class BookieViewsTest(unittest.TestCase):
         """We should be able to page through the list"""
         body_str = "Prev"
 
-        res = self.testapp.get('/recent/1')
+        res = self.testapp.get('/recent?page=1')
         eq_(res.status, "200 OK",
             msg='recent page 1 status is 200, ' + res.status)
         ok_(body_str in res.body,

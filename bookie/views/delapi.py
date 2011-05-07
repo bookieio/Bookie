@@ -151,11 +151,25 @@ def posts_get(request):
 
 @view_config(route_name="del_tag_complete", renderer="/delapi/tags_complete.mako")
 def tags_complete(request):
+    """Complete a tag based on the given text
+
+    :@param tag: GET string, tag=sqlalchemy
+    :@param current: GET string of tags we already have python+database
+
+    """
     params = request.GET
     request.response_content_type = 'text/xml'
+
+    if 'current' in params and params['current'] != "":
+        current_tags = params['current'].split()
+    else:
+        current_tags = None
+
+    LOG.debug(current_tags)
+
     if 'tag' in params and params['tag']:
         tag = params['tag']
-        tags = TagMgr.complete(tag)
+        tags = TagMgr.complete(tag, current=current_tags)
 
         # we need to escape any html entities in things
         return { 'tags': tags }

@@ -71,7 +71,7 @@ class TestFulltext(TestCase):
         # first let's add a bookmark we can search on
         res = self._get_good_request()
 
-        search_res = self.testapp.get('/search?search=google')
+        search_res = self.testapp.get('/results?search=google')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -79,7 +79,7 @@ class TestFulltext(TestCase):
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/search?search=python')
+        search_res = self.testapp.get('/results?search=python')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -87,7 +87,7 @@ class TestFulltext(TestCase):
         ok_('my google desc' in search_res.body,
             "Tag search should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/search?search=extended%20notes')
+        search_res = self.testapp.get('/results?search=extended%20notes')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -107,7 +107,7 @@ class TestFulltext(TestCase):
         # now we need to do another request with updated tag string
         self._get_good_request(new_tags="google books icons")
 
-        search_res = self.testapp.get('/search?search=icon')
+        search_res = self.testapp.get('/results?search=icon')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
 
@@ -119,7 +119,7 @@ class TestFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/search/google')
+        search_res = self.testapp.get('/results/google')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -127,7 +127,7 @@ class TestFulltext(TestCase):
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/search/python')
+        search_res = self.testapp.get('/results/python')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -135,7 +135,7 @@ class TestFulltext(TestCase):
         ok_('my google desc' in search_res.body,
             "Tag search should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/search/extended/notes')
+        search_res = self.testapp.get('/results/extended/notes')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -149,7 +149,7 @@ class TestFulltext(TestCase):
         self._get_good_request()
 
         search_res = self.testapp.get(
-                        '/search/google',
+                        '/results/google',
                         headers = {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'application/json'

@@ -79,12 +79,12 @@
                             % for tag in bmark.tags:
                                 <a class="tag"
                                 href="${request.route_url('tag_bmarks', tags=[tag], page=prev)}">${tag}</a>
-                            %endfor
+                            % endfor
                         </div>
                     </div>
 
                     <div class="yui3-u-1-8">
-                        <div class="time">${bmark.stored.strftime('%H:%M%P')}</div>
+                        <div>&nbsp;</div>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
 </%def>
 
 <%def name="date_divider(dateobj)">
-    <div class="calendar">
+    <div class="calendar" title=" ${dateobj.strftime("%m/%d/%Y")} ">
         <h2>${dateobj.strftime("%b")}</h2>
         <div>${dateobj.strftime("%d")}</div>
     </div>
@@ -107,30 +107,62 @@
         else:
             show_next = False
 
-        next = page + 1
 
         if url_params is None:
             url_params = {}
+
+        prev = page - 1
+        next = page + 1
     %>
 
     % if page != 0:
-        <% prev = page - 1 %>
-        <a href="${request.route_url(next_url, page=prev, **url_params)}"
+        <a href="${request.route_url(next_url, **url_params)}?page=${prev}"
            class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, page=next, **url_params)}"
+        <a href="${request.route_url(next_url, **url_params)}?page=${next}"
            class="button">Next</a>
     % endif
 
 </%def>
 
-<%def name="tag_filter()">
+<%def name="tag_filter(tags=None)">
         <div class="tag_filter">
-            <form id="filter_form" name="filter_form" action="#" method="get">
+            <form id="filter_form" name="filter_form"
+                action="${request.route_url('bmark_recent')}" method="GET">
                 <span class="title">Filter Tags&nbsp;</span>
-                <input type="input" name="tag_filter" id="tag_filter" placeholder="enter tags.."/>
+                <input type="input" name="tag_filter" id="tag_filter"
+                       placeholder="enter tags.."
+
+                      % if tags:
+                          value="${" ".join(tags)}"
+                      % endif
+                />
+                <input type="submit" name="filter" value="Go" />
+            </form>
+        </div>
+</%def>
+
+<%def name="search_form(terms=None, with_content=False)">
+        <div class="tag_filter">
+            <form id="search_form" name="search_form"
+                action="${request.route_url('search_results')}" method="GET">
+                <span class="title">Search</span>
+                <input type="input" name="search" id="search"
+                       placeholder="enter keywords..."
+
+                      % if terms:
+                          value="${" ".join(terms)}"
+                      % endif
+                />
+
+                <input type="checkbox" name="content" id="search_content"
+                    % if with_content:
+                        checked="checked"
+                    % endif
+                /> Content
+                <input type="submit" name="submit" value="Go" />
             </form>
         </div>
 </%def>

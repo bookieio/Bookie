@@ -1,0 +1,7 @@
+For eaiser user install see:
+
+http://bmark.us/started.html
+
+For full developer install see:
+
+http://bmark.us/install.html

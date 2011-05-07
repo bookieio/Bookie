@@ -12,7 +12,7 @@
     <div class="yui3-u-1-2 col_end">Showing ${count} bookmarks</div>
 
     <div class="yui3-u-7-8">&nbsp;</div>
-    <div class="yui3-u-1-8">
+    <div class="yui3-u-1-8 col_end buttons">
         ${bmarknextprev(page, max_count, count, 'tag_bmarks',
                         url_params=url_params)}
     </div>
@@ -20,7 +20,7 @@
     ${display_bmark_list(bmark_list)}
 
     <div class="yui3-u-7-8">&nbsp;</div>
-    <div class="yui3-u-1-8">
+    <div class="yui3-u-1-8 col_end buttons">
         ${bmarknextprev(page, max_count, count, 'tag_bmarks',
                         url_params=url_params)}
     </div>

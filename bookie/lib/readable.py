@@ -133,6 +133,7 @@ class ReadUrl(object):
                                               query=query)
 
         try:
+            LOG.debug('Readable Parsed: ' + clean_url)
             fh = urllib2.urlopen(clean_url)
 
             # if it works, then we default to a 200 request
@@ -150,7 +151,7 @@ class ReadUrl(object):
         except httplib.BadStatusLine, exc:
             read.error(STATUS_CODES['905'], str(exc))
 
-        LOG.debug('is error')
+        LOG.debug('is error?')
         LOG.debug(read.status)
 
         # let's check to make sure we should be parsing this

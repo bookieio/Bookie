@@ -62,10 +62,18 @@ def import_bmarks(request):
         return {}
 
 
-@view_config(route_name="search", renderer="/utils/results_wrap.mako")
-@view_config(route_name="search_ajax", renderer="morjson")
-@view_config(route_name="search_rest", renderer="/utils/results_wrap.mako")
+@view_config(route_name="search", renderer="/utils/search.mako")
 def search(request):
+    """Display the search form to the user"""
+    return {
+
+    }
+
+
+@view_config(route_name="search_results", renderer="/utils/results_wrap.mako")
+@view_config(route_name="search_results_ajax", renderer="morjson")
+@view_config(route_name="search_results_rest", renderer="/utils/results_wrap.mako")
+def search_results(request):
     """Search for the query terms in the matchdict/GET params
 
     The ones in the matchdict win in the case that they both exist
@@ -92,6 +100,8 @@ def search(request):
 
     # with content is always in the get string
     with_content = asbool(rdict.get('content', False))
+    LOG.debug('with_content')
+    LOG.debug(with_content)
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
@@ -104,7 +114,8 @@ def search(request):
         html = render('bookie:templates/utils/results.mako',
                     { 'search_results': res_list,
                       'result_count': len(res_list),
-                      'phrase': phrase.replace(" ", " OR "),
+                      'phrase': phrase,
+                      'with_content': with_content,
                     },
                   request=request)
         return {
@@ -119,7 +130,8 @@ def search(request):
         return {
             'search_results': res_list,
             'result_count': len(res_list),
-            'phrase': phrase.replace(" ", " OR "),
+            'phrase': phrase,
+            'with_content': with_content,
         }
 
 
@@ -154,5 +166,3 @@ def redirect(request):
         return HTTPNotFound()
 
     return HTTPFound(location=hashed.url)
-
-

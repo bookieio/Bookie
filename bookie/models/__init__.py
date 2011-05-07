@@ -16,7 +16,6 @@ from unidecode import unidecode
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
@@ -29,6 +28,8 @@ from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
+from sqlalchemy.sql.expression import ClauseElement
+from sqlalchemy.sql.expression import alias
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -167,12 +168,46 @@ class TagMgr(object):
         return qry.all()
 
     @staticmethod
-    def complete(prefix, limit=5):
-        """Find all of the tags that begin with prefix"""
-        qry = Tag.query.filter(Tag.name.startswith(prefix))
-        qry = qry.order_by(Tag.name).limit(limit)
+    def complete(prefix, current=None, limit=5):
+        """Find all of the tags that begin with prefix
 
-        return qry.all()
+        :param current: a list of current tags to compare with
+
+        If we provide a current then we should only complete tags that have
+        bookmarks with the current tag AND starts with the new prefix. In this
+        way when filtering tags we only complete things that make sense to
+        complete
+
+        """
+        if current == None:
+            qry = Tag.query.filter(Tag.name.startswith(prefix))
+            qry = qry.order_by(Tag.name).limit(limit)
+            return qry.all()
+
+        else:
+            # things get a bit more complicated
+            """
+                SELECT DISTINCT(tag_id), tags.name
+                FROM bmark_tags
+                JOIN tags ON bmark_tags.tag_id = tags.tid
+                WHERE bmark_id IN (
+                                    SELECT bmark_id FROM bmark_tags WHERE tag_id IN (
+                                        SELECT DISTINCT(t.tid) FROM tags t WHERE t.name in ('vagrant', 'tips')
+                                    )
+                                )
+                AND tags.name LIKE ('ub%');
+            """
+            current_tags = DBSession.query(Tag.tid).\
+                                           filter(Tag.name.in_(current)).group_by(Tag.tid)
+
+            good_bmarks = select([bmarks_tags.c.bmark_id], bmarks_tags.c.tag_id.in_(current_tags))
+
+            query = DBSession.query(Tag.name.distinct().label('name')).\
+                              join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
+            query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
+            query = query.filter(Tag.name.startswith(prefix))
+
+            return DBSession.execute(query)
 
 
 class Tag(Base):
@@ -362,53 +397,53 @@ class BmarkMgr(object):
                            filter(Hashed.url == clean_url).one()
 
     @staticmethod
-    def find(order_by=None, limit=50, page=0, with_tags=False):
+    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
+        offset = limit * page
 
         if order_by is not None:
-            qry = qry.order_by(order_by)
-        else:
-            qry = qry.order_by(Bmark.bid.desc())
+            order_by = Bmark.stored.desc()
 
-        offset = limit * page
-        qry = qry.limit(limit).offset(offset).from_self()
+        if not tags:
+            qry = qry.order_by(order_by).\
+                      limit(limit).\
+                      offset(offset).\
+                      from_self()
 
-        if with_tags:
+
+        if tags:
             qry = qry.join(Bmark.tags).\
-                      options(contains_eager(Bmark.tags))
-
-        return qry.all()
-
-    @staticmethod
-    def by_tag(tag, limit=50, page=0):
-        """Get a set of bookmarks with the given tag"""
-
-        qry = Bmark.query.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-        if isinstance(tag, str):
-            qry = qry.filter(Tag.name == tag)
-        else:
-            bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
-                                   from_obj=[bmarks_tags.join('tags', and_(Tag.name.in_(tag), bmarks_tags.c.tag_id == Tag.tid))]).\
-                                  group_by(bmarks_tags.c.bmark_id).having(func.count(bmarks_tags.c.tag_id) == len(tag))
+            if isinstance(tags, str):
+                qry = qry.filter(Tag.name == tags)
+                qry = qry.order_by(order_by).\
+                          limit(limit).\
+                          offset(offset).\
+                          from_self()
+            else:
+                bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
+                                       from_obj=[ bmarks_tags.join('tags',
+                                                                   and_(Tag.name.in_(tags),
+                                                                        bmarks_tags.c.tag_id == Tag.tid)
+                                                                  ).\
+                                                              join('bmarks',
+                                                                   Bmark.bid == bmarks_tags.c.bmark_id)
+                                      ]).\
+                               group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
+                               having(func.count(bmarks_tags.c.tag_id) == len(tags)).order_by(Bmark.stored.desc()).limit(limit).offset(offset)
 
-            qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
-
-        offset = limit * page
-        qry = qry.order_by(Bmark.stored.desc()).\
-                  limit(limit).\
-                  offset(offset).\
-                  from_self()
+                qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
 
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
-        qry = qry.outerjoin(Bmark.tags).\
+        if with_tags:
+            qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-        LOG.error(str(qry))
         return qry.all()
+
 
     @staticmethod
     def recent(limit=50, page=0, with_tags=False):

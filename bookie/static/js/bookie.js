@@ -38,17 +38,22 @@ var bookie = (function ($b, $) {
      * Used for completing tag names in the extension
      *
     */
-    $b.call.tagComplete = function (substring, callback) {
+    $b.call.tagComplete = function (substring, current_terms, callback) {
+        console.log(substring);
+        console.log(current_terms);
+
         var opts = {
             url: "/delapi/tags/complete",
             type: "GET",
             dataType: "xml",
             data: {
-                tag: substring
+                tag: substring,
+                current: current_terms.join(" ")
             },
 
             success: function (xml) {
                 console.log('success call to complete');
+                console.log(xml);
                 tag_list = [];
                 results = $(xml).find("tag");
                 results.map(function () {
@@ -64,36 +69,6 @@ var bookie = (function ($b, $) {
 
 
     /**
-     * perform an ajax search based on the terms passed in
-     *
-     * Performing an AJAX request with a standard response model
-     *   - success
-     *   - message
-     *   - payload
-     *       - html
-     *
-     */
-    $b.call.search = function (ev, terms) {
-        var one_term, opts;
-
-        one_term = terms.join("/");
-        opts = {
-            url: "/tags/" + one_term,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                // replace the body of the page with the content that came back
-                if (data.success) {
-                    $('.data_body').html(data.payload.html);
-                }
-            }
-        };
-
-        $.ajax(opts);
-    };
-
-
-    /**
      * Control the tag filter ui on the main pages
      *
      */
@@ -101,10 +76,10 @@ var bookie = (function ($b, $) {
         console.log('triggering tag filter');
         var tags = [];
 
-        $('form#filter_form').bind('submit', function (ev) {
-            $('tag_filter').trigger('autocompletechange');
-            ev.preventDefault();
-        });
+        // $('form#filter_form').bind('submit', function (ev) {
+        //     $('tag_filter').trigger('autocompletechange');
+        //     ev.preventDefault();
+        // });
 
         $(function() {
 
@@ -122,6 +97,16 @@ var bookie = (function ($b, $) {
                 return split(term).pop();
             }
 
+            function extractCurrent(term) {
+                terms = split(term);
+                len = terms.length;
+                if (len == 0) {
+                    return "";
+                } else {
+                    return terms.slice(0, -1);
+                }
+            }
+
             $("#tag_filter").bind( "keydown", function( event ) {
                     // don't navigate away from the field on tab when selecting an item
                     if ( event.keyCode === $.ui.keyCode.TAB &&
@@ -130,7 +115,9 @@ var bookie = (function ($b, $) {
                     }
                 }).autocomplete({
                     source: function (request, response) {
-                        bookie.call.tagComplete(extractLast(request.term), response);
+                        bookie.call.tagComplete(extractLast(request.term),
+                                                extractCurrent(request.term),
+                                                response);
                     },
                     search: function() {
                         // custom minLength
@@ -155,13 +142,14 @@ var bookie = (function ($b, $) {
                         // add placeholder to get the comma-and-space at the end
                         terms.push("");
                         this.value = terms.join(" ");
-
-                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
+                        $('tag_filter').trigger('autocompletechange');
+                        // $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
                         return false;
                     },
                     change: function (event, ui) {
                         terms = $('#tag_filter').val().split(" ");
-                        $($b.EVENTID).trigger($b.events.SEARCH, [terms]);
+                        url = "/recent/" + terms.join('/');
+                        window.location = url;
                     }
                 });
         });
