@@ -34,8 +34,6 @@ work.
   $ pip install -r requirements.txt
   $ python setup.py develop
 
-  $ cd bookie/bookie/
-
   # Create a new fabric configuration file.
   # $myname is a name you're giving your installation. Just one word will do
   # This will create a config file for you called $myname.ini
