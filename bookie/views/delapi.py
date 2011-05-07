@@ -160,7 +160,7 @@ def tags_complete(request):
     params = request.GET
     request.response_content_type = 'text/xml'
 
-    if 'current' in params:
+    if 'current' in params and params['current'] != "":
         current_tags = params['current'].split()
     else:
         current_tags = None

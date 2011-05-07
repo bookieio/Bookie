@@ -186,34 +186,28 @@ class TagMgr(object):
 
         else:
             # things get a bit more complicated
-            """SELECT DISTINCT(tag_id), tags.name FROM bmark_tags INNER JOIN tags ON bmark_tags.tag_id = tags.tid
+            """
+                SELECT DISTINCT(tag_id), tags.name
+                FROM bmark_tags
+                JOIN tags ON bmark_tags.tag_id = tags.tid
                 WHERE bmark_id IN (
-                SELECT bmark_id FROM bmark_tags WHERE tag_id IN (SELECT DISTINCT(t.tid) FROM tags t WHERE t.name in ('python')))
-                AND tags.name LIKE ('sql');"""
+                                    SELECT bmark_id FROM bmark_tags WHERE tag_id IN (
+                                        SELECT DISTINCT(t.tid) FROM tags t WHERE t.name in ('vagrant', 'tips')
+                                    )
+                                )
+                AND tags.name LIKE ('ub%');
+            """
+            current_tags = DBSession.query(Tag.tid).\
+                                           filter(Tag.name.in_(current)).group_by(Tag.tid)
 
-            # current_tags = DBSession.query(tagid, Tag.name).\
-            #                                filter(Tag.name.in_(current))
+            good_bmarks = select([bmarks_tags.c.bmark_id], bmarks_tags.c.tag_id.in_(current_tags))
 
-            tagid = alias(Tag.tid.distinct())
-            test = select([bmarks_tags.c.bmark_id],
-                    from_obj=[bmarks_tags.join(DBSession.query(tagid.label('tagid'))),
-                              bmarks_tags.c.tag_id == tagid])
+            query = DBSession.query(Tag.name.distinct().label('name')).\
+                              join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
+            query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
+            query = query.filter(Tag.name.startswith(prefix))
 
-            LOG.debug(str(test))
-            return DBSession.execute(qry)
-
-
-            bmark_ids = select([bmarks_tags.c.bmark_id],
-                               from_obj=[bmarks_tags.join(DBSession.query(Tag.tid.distinct()).filter(Tag.name.in_(current)),
-                                                          bmarks_tags.c.tag_id == Tag.tid)])
-
-            qry = select([bmarks_tags.c.tag_id, Tag.name],
-                         Tag.name.startswith(prefix),
-                         from_obj=[bmarks_tags.join(bmark_ids.label('bookmarks'),
-                                                    bmarks_tags.c.bmark_id == bmark_ids.c.bmark_id)])
-
-            LOG.debug(str(qry))
-            return DBSession.execute(qry)
+            return DBSession.execute(query)
 
 
 class Tag(Base):
