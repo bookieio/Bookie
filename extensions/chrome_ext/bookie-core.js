@@ -127,6 +127,7 @@ var bookie = (function (module, $, logger) {
             found.map(function () {
                 // add the tags to the tag ui
                 $('#tags').val($(this).attr('tag'));
+                $('#tags').change();
 
                 // add the description to the ui
                 $('#description').val($(this).attr('description'));

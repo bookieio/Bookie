@@ -129,6 +129,7 @@
         $b.log($);
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
         $($b.EVENTID).trigger($b.events.LOAD);
+        $("#tags").superblyTagField();
     };
 
     return $b;

@@ -1,11 +1,11 @@
 <html>
     <head>
         <link type="text/css" href="lib/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
-        <!-- <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> -->
+        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> 
 
         <script type="text/javascript" src="lib/jquery.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
-        <!-- <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script> -->
+        <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script>
         <script type="text/javascript">
             var jq_var = jQuery.noConflict(true);
             var $ = jq_var;
@@ -25,58 +25,6 @@
                 var valid = validateSettings();
                 if(!valid)
                     return;
-
-                // $("#tags").superblyTagField();
-                $(function() {
-
-                    function split(val) {
-                        // split on spaces
-                        return val.split(/ /);
-                    }
-
-                    /**
-                      * Pull the search term characters from the end of the
-                      * text input
-                      *
-                     */
-                    function extractLast(term) {
-                        return split(term).pop();
-                    }
-
-                    $("#tags").bind( "keydown", function( event ) {
-                            // don't navigate away from the field on tab when selecting an item
-                            if ( event.keyCode === $.ui.keyCode.TAB &&
-                                    $( this ).data( "autocomplete" ).menu.active ) {
-                                event.preventDefault();
-                            }
-                        }).autocomplete({
-                            source: function (request, response) {
-                                bookie.call.tagComplete(extractLast(request.term), response);
-                            },
-                            search: function() {
-                                // custom minLength
-                                var term = extractLast(this.value);
-                                if ( term.length < 1 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function(event, ui) {
-                                var terms = split(this.value);
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push(ui.item.value);
-                                // add placeholder to get the comma-and-space at the end
-                                terms.push("");
-                                this.value = terms.join(" ");
-                                return false;
-                            }
-                        });
-                });
 
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options

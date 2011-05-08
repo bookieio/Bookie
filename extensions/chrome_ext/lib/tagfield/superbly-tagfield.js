@@ -65,9 +65,15 @@
         // set presets
         for(i in preset){
             console.log('preset');
-
             addItem(preset[i]);
         }
+
+        tagField.change(function() {
+            var existingTags = tagField.val().split(/ /);
+            for(var t in existingTags) {
+                addItem(existingTags[t]);
+            }
+        });
 
         // events
         suggestList.mouseover(function(e){
@@ -110,16 +116,15 @@
                 if(currentItem != null){
                     console.log('in if');
                     addItem(currentItem);
+                    return false;
                 } else if(allowNewTags){
                     var value = tagInput.val();
                     if(value != null && value != ''){
                         console.log('in else');
-
                         addItem(value);
                     }
                 }
-                // prevent default action for enter
-                return e.keyCode != keyMap.enter;
+                return e.keyCode != keyMap.space;
             }else if(e.keyCode == keyMap.backspace){
                 // backspace
                 if(tagInput.val() == ''){
@@ -129,7 +134,6 @@
             } else {
                 updateTagInputWidth();
             }
-
         });
 
         tagList.parent().click(function(e){
@@ -157,8 +161,9 @@
 
         function addItem(value, focus){
             console.log('added value' + value);
-            var index = jQuery.inArray(value,tagstmp);
-            if((jQuery.inArray(value,inserted) == -1) && ( index > -1 || allowNewTags)){
+            value = value.trim();
+            var index = $.inArray(value,tagstmp);
+            if(($.inArray(value,inserted) == -1) && ( index > -1 || allowNewTags)){
                 //delete from tags
                 if(index >-1){
                     tagstmp.splice(index,1);
@@ -184,12 +189,12 @@
 
 
         function removeItem(value){
-            var index = jQuery.inArray(value,tags);
-            var tmpIndex = jQuery.inArray(value,tagstmp);
+            var index = $.inArray(value,tags);
+            var tmpIndex = $.inArray(value,tagstmp);
             if(index > -1 && tmpIndex == -1){
                 tagstmp.push(value);
             }
-            index = jQuery.inArray(value,inserted);
+            index = $.inArray(value,inserted);
             if(index > -1){
                 inserted.splice(index,1);
                 tagList.children(".superblyTagItem").filter(function(){return $('span', this).html() == value;}).remove();
