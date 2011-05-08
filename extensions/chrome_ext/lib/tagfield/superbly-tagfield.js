@@ -85,6 +85,11 @@
             hoverSuggestItems = false;
         });
 
+        suggestList.mousedown(function(e) {
+            addItem(e.target.innerHTML);
+            tagInput.focus();
+        });
+
         tagInput.keyup(function(e){
             suggest($(this).val());
         });
@@ -257,21 +262,6 @@
                 }
 
                 var suggestionItems = suggestList.children('.superblySuggestItem');
-
-                console.log('binding suggestion items');
-
-                // add click event to suggest items
-                // @todo figure out why this click event is never fired
-                // the focusout event is fired and that causes it to use a
-                // wrong value
-                suggestionItems.bind('click', function(e) {
-                    console.log('clicked');
-                    console.log($(this));
-                    addItem($(this).html());
-                    e.preventDefault();
-                });
-
-                console.log(suggestionItems);
 
                 selectedIndex=null;
                 if(!allowNewTags){
