@@ -26,6 +26,8 @@
                 if(!valid)
                     return;
 
+                $("#tags").superblyTagField();
+
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options
                 if(!localStorage['cache_content'] || localStorage['cache_content'] != "true") {
