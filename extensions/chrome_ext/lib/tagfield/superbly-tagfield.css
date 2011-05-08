@@ -90,11 +90,11 @@
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
-	background-color: #003366;
-    border: solid 1px #003366;
+	background-color: #CCCCCC;
+    border: solid 1px #CCCCCC;
 	list-style: none;
 	float: none;
-    color: #FFFFFF;
+    color: #363d52;
 }
 
 .superblySuggestItems .superblySuggestItem:hover,
