@@ -44,12 +44,20 @@
     $b.populateForm = function () {
         if (window.chrome !== undefined && chrome.tabs) {
             chrome.tabs.getSelected(null, $b.populateFormBase);
+
+            var api_url = $b.settings.get('api_url');
+            console.log('api_url');
+            console.log(api_url);
+
+            $('#bookie_site').attr('href', api_url).attr('title', api_url);
         } else {
             // when running unit tests the chrome stuff isn't available
             // so we have to fake it
             $b.populateFormBase({'url':window.location.href,
                 'title': "Testing stuff"
             });
+
+
         }
     };
 
@@ -129,6 +137,7 @@
         $b.log($);
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
         $($b.EVENTID).trigger($b.events.LOAD);
+
     };
 
     return $b;
