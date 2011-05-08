@@ -51,7 +51,6 @@
         var selectedIndex = null;
         var currentValue = null;
         var currentItem = null;
-        var hoverSuggestItems = false;
 
         tagField.css('display', 'none');
 
@@ -77,14 +76,6 @@
         });
 
         // events
-        suggestList.mouseover(function(e){
-            hoverSuggestItems = true;
-        });
-
-        suggestList.mouseleave(function(e){
-            hoverSuggestItems = false;
-        });
-
         suggestList.mousedown(function(e) {
             addItem(e.target.innerHTML);
             tagInput.focus();
@@ -96,10 +87,7 @@
 
         tagInput.focusout(function(e){
             console.log('hoverSuggestItems');
-            console.log(hoverSuggestItems);
-            if(!hoverSuggestItems){
-                suggestList.css('display', 'none');
-            }
+            suggestList.css('display', 'none');
             if(allowNewTags){
                 var value = tagInput.val();
                 if(value != null && value != ''){

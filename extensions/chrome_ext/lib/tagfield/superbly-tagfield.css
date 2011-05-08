@@ -86,12 +86,9 @@
     color: #000000;
 }
    
-.superblySuggestItems .superblySuggestItem:hover {
-   	cursor: pointer;
-    border: solid 1px #181B38;
-}
-   
+.superblySuggestItems .superblySuggestItem:hover,
 .superblySuggestItems .selected{
+   	cursor: pointer;
 	background-color: #7aa9e3;
     border: solid 1px #7aa9e3;
 }
