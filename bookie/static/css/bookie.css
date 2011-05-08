@@ -311,6 +311,10 @@ form li label {
     padding-left: 2em;
 }
 
+.tag_filter div {
+    margin: 0px;
+}
+
 .tag_filter {
     margin: .5em;
 }
@@ -324,6 +328,7 @@ form li label {
 
 .tag_filter input[type=submit] {
     width: 5em;
+    min-height: 29px;
 }
 
 .tag_filter input[type=checkbox] {
@@ -359,6 +364,12 @@ form li label {
 .tag_filter .item a {
     color: #333;
     text-decoration: none;
+}
+
+.tag_filter .superblyTagfieldDiv {
+    display: inline-block;
+    vertical-align: bottom;
+    width: 35em;
 }
 
 .fullpage {

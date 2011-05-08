@@ -9,6 +9,7 @@
         <link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold' rel='stylesheet' type='text/css'>
 
+        <link rel="stylesheet" type="text/css" href="/static/tagfield/superbly-tagfield.css">
         <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
 
         % if hasattr(self, 'header'):
@@ -59,6 +60,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/bookie.js"></script>
+        <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
 
         <script type="text/javascript">
             $(document).ready(function() {
