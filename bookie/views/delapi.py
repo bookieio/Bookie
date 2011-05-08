@@ -165,6 +165,7 @@ def tags_complete(request):
     else:
         current_tags = None
 
+    LOG.debug('current_tags')
     LOG.debug(current_tags)
 
     if 'tag' in params and params['tag']:

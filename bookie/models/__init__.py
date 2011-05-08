@@ -200,7 +200,8 @@ class TagMgr(object):
             current_tags = DBSession.query(Tag.tid).\
                                            filter(Tag.name.in_(current)).group_by(Tag.tid)
 
-            good_bmarks = select([bmarks_tags.c.bmark_id], bmarks_tags.c.tag_id.in_(current_tags))
+            good_bmarks = select([bmarks_tags.c.bmark_id],
+                    bmarks_tags.c.tag_id.in_(current_tags)).group_by(bmarks_tags.c.bmark_id).having('COUNT(bmark_id) >= ' + str(len(current)))
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
                               join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
