@@ -57,7 +57,7 @@
         </div>
 
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
-        <script type="text/javascript" src="/static/js/lib/jquery-ui-1.8.12.custom.min.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/bookie.js"></script>
 
         <script type="text/javascript">

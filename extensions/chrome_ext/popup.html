@@ -1,10 +1,10 @@
 <html>
     <head>
-        <link type="text/css" href="lib/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="Stylesheet" />
+        <link type="text/css" href="lib/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
         <!-- <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> -->
 
         <script type="text/javascript" src="lib/jquery.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-ui.custom.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
         <!-- <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script> -->
         <script type="text/javascript">
             var jq_var = jQuery.noConflict(true);
@@ -51,7 +51,7 @@
                             }
                         }).autocomplete({
                             source: function (request, response) {
-                                bookie.call.tagComplete(request.term, response);
+                                bookie.call.tagComplete(extractLast(request.term), response);
                             },
                             search: function() {
                                 // custom minLength
