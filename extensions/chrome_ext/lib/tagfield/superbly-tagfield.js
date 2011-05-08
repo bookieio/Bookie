@@ -16,6 +16,7 @@
             showTagsNumber:10,
             preset:[],
             tags:[],
+            complete:function() { return []; }
         };
 
         if(userOptions) {
@@ -237,81 +238,51 @@
          *
          */
         function load_suggestions(value) {
-            function request(options) {
-                var defaults, opts;
+            function callback(tag_list) {
+                tags = tag_list;
+                tagstmp = tags.slice();
 
-                defaults = {
-                    type: "GET",
-                    dataType: "xml",
-                    error: function(jqxhr, textStatus, errorThrown) {
-                        console.log('failed to load suggestions');
-                        console.log(textStatus);
-                        console.log(jqxhr);
-                        console.log(errorThrown);
-                    }
-                };
-
-                opts = $.extend({}, defaults, options);
-                $.ajax(opts);
-            };
-
-            var opts = {
-                url: "http://127.0.0.1:6543/delapi/tags/complete",
-                data: {tag: value},
-                success: function (xml) {
-                    tag_list = [];
-                    results = $(xml).find("tag");
-                    results.map(function () {
-                        console.log($(this));
-                        console.log($(this).text());
-                        tag_list.push($(this).text());
-                    });
-
-                    tags = tag_list;
-                    tagstmp = tags.slice();
-
-                    // now onto what the suggest method wanted to do originally
-                    suggestList.show();
-                    if (value == currentValue) {
-                        return false;
-                    }
-
-                    currentValue = value;
-                    suggestList.empty();
-
-                    var suggestions = getSuggestionsArray(value);
-                    for(key in suggestions){
-                        suggestList.append("<li class='superblySuggestItem'>" + suggestions[key] + "</li>");
-                    }
-
-                    var suggestionItems = suggestList.children('.superblySuggestItem');
-
-                    console.log('binding suggestion items');
-
-                    // add click event to suggest items
-                    // @todo figure out why this click event is never fired
-                    // the focusout event is fired and that causes it to use a
-                    // wrong value
-                    suggestionItems.bind('click', function(e) {
-                        console.log('clicked');
-                        console.log($(this));
-                        addItem($(this).html());
-                        e.preventDefault();
-                    });
-
-                    console.log(suggestionItems);
-
-                    selectedIndex=null;
-                    if(!allowNewTags){
-                        selectedIndex=0;
-                        $(suggestionItems[selectedIndex]).addClass("selected");
-                        currentItem = $(suggestionItems[selectedIndex]).html();
-                    }
-
+                // now onto what the suggest method wanted to do originally
+                suggestList.show();
+                if (value == currentValue) {
+                    return false;
                 }
-            };
 
-            request(opts);
+                currentValue = value;
+                suggestList.empty();
+
+                var suggestions = getSuggestionsArray(value);
+                for(key in suggestions){
+                    suggestList.append("<li class='superblySuggestItem'>" + suggestions[key] + "</li>");
+                }
+
+                var suggestionItems = suggestList.children('.superblySuggestItem');
+
+                console.log('binding suggestion items');
+
+                // add click event to suggest items
+                // @todo figure out why this click event is never fired
+                // the focusout event is fired and that causes it to use a
+                // wrong value
+                suggestionItems.bind('click', function(e) {
+                    console.log('clicked');
+                    console.log($(this));
+                    addItem($(this).html());
+                    e.preventDefault();
+                });
+
+                console.log(suggestionItems);
+
+                selectedIndex=null;
+                if(!allowNewTags){
+                    selectedIndex=0;
+                    $(suggestionItems[selectedIndex]).addClass("selected");
+                    currentItem = $(suggestionItems[selectedIndex]).html();
+                }
+            }
+
+            if(value != "" && settings.complete)
+                settings.complete(value, callback);
         };
 
         function selectDown(){

@@ -26,7 +26,11 @@
                 if(!valid)
                     return;
 
-                $("#tags").superblyTagField();
+                $("#tags").superblyTagField({
+                    complete:function(value, callback) {
+                        bookie.call.tagComplete(value, callback);
+                    },
+                });
 
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options
