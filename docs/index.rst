@@ -10,7 +10,7 @@ which I hold dear myself.
 
 Beyond that, there's some features I think that are long overdue.
 
-.. image:: http://uploads.mitechie.com/bookie_ui_04_17_11.png
+.. image:: http://uploads.mitechie.com/bookie_ui_05_07_11.png.png
     :width: 500
     :scale: 100
 
