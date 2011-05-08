@@ -60,5 +60,21 @@ Example cron jobs
     0 1 1 * * /path/to/bookie/env/bin/python /path/to/Bookie/scripts/readability/existing.py --ini=myconfig.ini --retry-errors
 
 
+Backup your Bookie bookmarks
+-----------------------------
+There's a quick/dirty `sample script`_ you can use to backup your bookmarks. It
+just calls the `/export` url on your installation and creates a `.gz` backup
+file. 
+
+This obviously doesn't store things like the fulltext indexes and such. So if
+you are using the Readable versions you might want to keep a backup of your
+database itself instead of just dumping your export file.
+
+A sample of cron'ing this to run at 6am every day would be:
+
+::
+
+  0 6 * * * /usr/bin/python /path/to/Bookie/scripts/misc/backup.py
 
 .. _Chrome Plugin: extensions.html
+.. _sample script: https://github.com/mitechie/Bookie/blob/develop/scripts/misc/backup.py
