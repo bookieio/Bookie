@@ -184,7 +184,9 @@ var bookie = (function (module, $, logger) {
         }
 
         $b.call.saveBookmark(data);
-        ev.preventDefault();
+        if (ev !== undefined) {
+            ev.preventDefault();
+        }
     };
 
     /**
