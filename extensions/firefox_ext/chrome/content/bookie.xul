@@ -40,7 +40,7 @@
 
 <commandset>
     <command id="bookie-submit-cmd" oncommand="bookie.log('SUBMIT');bookie.store_changes();" />
-    <command id="bookie-delete-cmd" oncommand="bookie.$('#bookie-delete').trigger('click');" />
+    <command id="bookie-delete-cmd" oncommand="bookie.$('#delete').trigger('click');" />
 </commandset>
 
 <!-- button details -->
@@ -52,7 +52,7 @@
   accesskey='K'
 >
   <panel id="bookie-panel" >
-      <vbox align="start" id="#bmarkbody">
+      <vbox align="start" id="bmarkbody">
         <label id="popup_title" value="Post to Bookie"></label>
         <form id="form"  >
             <vbox>
@@ -70,7 +70,7 @@
 
               <hbox>
                   <button type="button" id="bookie-submit" label="Save" />
-                  <button type="button" id="bookie-delete" label="Delete" disabled="true" />
+                  <button type="button" id="delete" label="Delete" style="display:none;" />
               </hbox>
             </vbox>
         </form>

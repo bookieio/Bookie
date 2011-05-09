@@ -51,7 +51,7 @@
         $b.log(window.gBrowser);
 
         if (window.gBrowser !== undefined) {
-            var current_tab, tab_obj;
+            var currentTab, tab_obj;
 
             currentTab = gBrowser.contentDocument;
             $b.log('current tab');
@@ -61,7 +61,10 @@
                 'title': currentTab.title
             }
 
-            $b.log(tab_obj);
+            $b.log(tab_obj + ' ' + tab_obj.url + ' ' + tab_obj.title);
+            $('#delete').hide().unbind('click');
+            $('#tags').val('');
+            $('#description').val(tab_obj.title);
             $b.populateFormBase(tab_obj);
 
         } else {
@@ -176,8 +179,8 @@
         $b.log($b.settings.get('api_url'));
 
         $('#bookie-button').attr('oncommand', '$b.onKeyboardShortcut()');
-        $('#bookie-button').attr('onpopupshowing', '$b.events.onload()');
-        $('#bookie-button').attr('onpopupshown', '$b.post_load()');
+        $('#bookie-panel').attr('onpopupshowing', '$b.events.onload()');
+        $('#bookie-panel').attr('onpopupshown', '$b.post_load()');
         $('#bookie-submit').attr('command', 'bookie-submit-cmd');
     };
 
