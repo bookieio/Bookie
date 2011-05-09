@@ -39,8 +39,8 @@
 </toolbarpalette>
 
 <commandset>
-    <command id="bookie-submit-cmd" oncommand="bookie.log('SUBMIT');bookie.store_changes();" />
-    <command id="bookie-delete-cmd" oncommand="bookie.$('#delete').trigger('click');" />
+    <command id="bookie-submit-cmd" oncommand="bookie.onSave();" />
+    <command id="bookie-delete-cmd" oncommand="bookie.onKeyboardDelete();" />
 </commandset>
 
 <!-- button details -->
@@ -70,7 +70,7 @@
 
               <hbox>
                   <button type="button" id="bookie-submit" label="Save" />
-                  <button type="button" id="delete" label="Delete" style="display:none;" />
+                  <button type="button" id="delete" label="Delete" />
               </hbox>
             </vbox>
         </form>

@@ -98,6 +98,15 @@
     };
 
 
+    $b.onKeyboardDelete = function() {
+        $($b.EVENTID).trigger($b.events.DELETE);
+    };
+
+    $b.onSave = function() {
+        $b.store_changes();
+        $('#bookie-panel').get(0).hidePopup();
+    };
+
     $b.ui.notify = function(notification) {
         $b.log('called notify');
         // showBadge(notification);
@@ -182,6 +191,8 @@
         $('#bookie-panel').attr('onpopupshowing', '$b.events.onload()');
         $('#bookie-panel').attr('onpopupshown', '$b.post_load()');
         $('#bookie-submit').attr('command', 'bookie-submit-cmd');
+        $('#delete').attr('command', 'bookie-delete-cmd');
+        $($b.EVENTID).bind($b.events.DELETE, function(ev) {$('#bookie-panel').get(0).hidePopup()});
     };
 
     $b.shutdown = function() {
