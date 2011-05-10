@@ -8,5 +8,3 @@ Delicious.
 
 Check out the main site for documentation on features, how to get started
 installing, and where we're heading from here.
-
-
