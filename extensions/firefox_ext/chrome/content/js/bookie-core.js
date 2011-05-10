@@ -1,0 +1,1 @@
+../../../../chrome_ext/bookie-core.js

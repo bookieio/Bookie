@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>QUnit Test</title>
+        <link rel="stylesheet" href="qunit.css">
+        <script src="qunit.js"></script>
+        <script src="../chrome_ext/lib/jquery.min.js"></script>
+        <script>
+            var jq_var = jQuery.noConflict(true);
+            var $ = jq_var;
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
+            logger.log('setting up fake logger');
+
+        </script>
+        <script src="../chrome_ext/lib/tagfield/superbly-tagfield.js"></script>
+        <script src="../chrome_ext/bookie-core.js"></script>
+        <script src="../chrome_ext/bookie-chrome.js"></script>
+        <script src="tests.js"></script>
+        <script src="chrome_tests.js"></script>
+    </head>
+
+    <body>
+        <h1 id="qunit-header">QUnit Test</h1>
+        <h2 id="qunit-banner"></h2>
+        <div id="qunit-testrunner-toolbar"></div>
+        <h2 id="qunit-userAgent"></h2>
+        <ol id="qunit-tests"></ol>
+        <div id="qunit-fixture">
+            <div id="bmarkbody">
+                <form id="form" name="form">
+                    <input type="hidden" id="url" name="url" />
+                    <input type="text" id="description" placeholder="title" name="description" />
+                    <input type="text" placeholder="tags" name="tags" id="tags" />
+                    <textarea placeholder="notes" name="extended" id="extended"> </textarea>
+                    <button type="submit" id="submit">Save</button>
+
+                    <button type="submit" id="delete" style="display: none;">Delete</button>
+                    <input type="hidden" value="" name="api_key" id="api_key" />
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

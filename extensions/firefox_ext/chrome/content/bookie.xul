@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://bookie-os/skin/bookie.css"
+  type="text/css" ?>
+<!DOCTYPE overlay >
+<overlay id="bookie-overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript">
+    var loader, jq_var, bookie, console, consoleService;
+
+    logger = {};
+    consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+    logger.log = function(msg) {
+        consoleService.logStringMessage(msg);
+    };
+    logger.log('Setting up the console fakery for bookie module');
+
+    loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+    loader.loadSubScript("chrome://bookie/content/js/jquery.min.js");
+    jq_var = jQuery.noConflict(true);
+    loader.loadSubScript("chrome://bookie/content/js/bookie-core.js");
+    loader.loadSubScript("chrome://bookie/content/js/bookie-firefox.js");
+</script>
+
+<script type="application/x-javascript">
+    window.addEventListener("load", function(event){
+        bookie.init(bookie.ff_init);
+    }, false);
+
+    window.addEventListener("unload", function(event){
+        bookie.shutdown();
+    }, false);
+</script>
+
+
+<!-- Firefox -->
+<toolbarpalette id="BrowserToolbarPalette">
+  <toolbarbutton id="bookie-button" />
+</toolbarpalette>
+
+<commandset>
+    <command id="bookie-submit-cmd" oncommand="bookie.onSave();" />
+    <command id="bookie-delete-cmd" oncommand="bookie.onKeyboardDelete();" />
+</commandset>
+
+<!-- button details -->
+<toolbarbutton id="bookie-button"
+  label="Bookie"
+  tooltiptext="Bookie"
+  class="toolbarbutton-1 chromeclass-toolbar-additional"
+  type="menu"
+  accesskey='K'
+>
+  <panel id="bookie-panel" >
+      <vbox align="start" id="bmarkbody">
+        <hbox>
+            <label id="popup_title" value="Post to Bookie"></label>
+            <image id="main_site" align="end"/>
+        </hbox>
+        <form id="form"  >
+            <vbox>
+              <input id="url" type="hidden" />
+              <input id="api_key" type="hidden" />
+
+              <label id="bookie-description-label" value="Title:" />
+              <textbox id="description" />
+
+              <label id="bookie-tag-label" value="Tags:" />
+              <textbox id="tags" />
+
+              <label id="bookie-extended-label" value="Extended Desc." />
+              <textbox id="extended" multiline="true" />
+
+              <hbox>
+                  <button type="button" id="bookie-submit" label="Save" />
+                  <button type="button" id="delete" label="Delete" />
+              </hbox>
+            </vbox>
+        </form>
+    </vbox>
+  </panel>
+</toolbarbutton>
+
+</overlay>
