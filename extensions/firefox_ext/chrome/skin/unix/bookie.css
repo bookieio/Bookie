@@ -27,6 +27,12 @@
     margin-bottom: .5em;
 }
 
+#main_site {
+    background-repeat: no-repeat;
+    background-image: url("chrome://bookie-os/skin/logo.16.png");
+    background-position: right top;
+}
+
 /* .bookie { */
 /*     -moz-image-region: rect(0px, 24px, 24px, 0px); */
 /* } */

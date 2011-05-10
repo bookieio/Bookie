@@ -53,7 +53,10 @@
 >
   <panel id="bookie-panel" >
       <vbox align="start" id="bmarkbody">
-        <label id="popup_title" value="Post to Bookie"></label>
+        <hbox>
+            <label id="popup_title" value="Post to Bookie"></label>
+            <image id="main_site" align="end"/>
+        </hbox>
         <form id="form"  >
             <vbox>
               <input id="url" type="hidden" />
