@@ -159,10 +159,14 @@ def redirect(request):
     hash_id = rdict.get('hash_id', None)
 
     hashed = Hashed.query.get(hash_id)
-    hashed.clicks = hashed.clicks + 1
 
     if not hashed:
         # for some reason bad link, 404
         return HTTPNotFound()
+
+    hashed.clicks = hashed.clicks + 1
+
+    bookmark = Bmark.query.filter(Bmark.hash_id==hash_id).one()
+    bookmark.clicks = bookmark.clicks + 1
 
     return HTTPFound(location=hashed.url)

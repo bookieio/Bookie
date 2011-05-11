@@ -33,6 +33,11 @@
     background-position: right top;
 }
 
+#content {
+    /* margin-left: -1000px; */
+    /* float: left; */
+}
+
 /* .bookie { */
 /*     -moz-image-region: rect(0px, 24px, 24px, 0px); */
 /* } */

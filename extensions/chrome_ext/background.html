@@ -37,11 +37,14 @@
         );
 
         function get_html_content() {
+            console.log('get html content');
             return $('#html_content').val();
         };
 
         function inject_readable(callback) {
+            console.log('injecting');
             chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
+            console.log('injected');
         };
 
     </script>

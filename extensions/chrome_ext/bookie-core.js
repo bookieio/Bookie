@@ -183,7 +183,8 @@ var bookie = (function (module, $, logger) {
             'api_key': $('#api_key').attr('value'),
             'description': $('#description').val(),
             'tags': $('#tags').val(),
-            'extended': $('#extended').val()
+            'extended': $('#extended').val(),
+            'content': $('#content').val()
         }
 
         $b.call.saveBookmark(data);
