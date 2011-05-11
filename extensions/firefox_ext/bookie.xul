@@ -75,6 +75,8 @@
                   <button type="button" id="bookie-submit" label="Save" />
                   <button type="button" id="bookie-delete" label="Delete" disabled="true" />
               </hbox>
+
+              <textbox id="content" multiline="true" />
             </vbox>
         </form>
     </vbox>
