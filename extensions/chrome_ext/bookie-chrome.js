@@ -67,11 +67,18 @@
 
         if (window.chrome !== undefined && chrome.tabs) {
             if(notification.type === "error") {
-                webkitNotifications.createNotification(
+                //show a desktop notification
+                var n = webkitNotifications.createNotification(
                     'logo.128.png',
                     notification.shortText,
                     notification.longText
-                    ).show();
+                    );
+                n.show();
+
+                //hide the desktop notification after 5 seconds
+                window.setTimeout(function() {
+                    n.cancel();
+                }, 5000);
             } else {
                 window.close();
             }
