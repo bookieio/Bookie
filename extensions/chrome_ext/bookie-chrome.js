@@ -68,7 +68,7 @@
         if (window.chrome !== undefined && chrome.tabs) {
             if(notification.type === "error") {
                 webkitNotifications.createNotification(
-                    'delicious.png',
+                    'logo.128.png',
                     notification.shortText,
                     notification.longText
                     ).show();
