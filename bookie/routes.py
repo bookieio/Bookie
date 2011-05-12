@@ -108,4 +108,7 @@ def build_routes(config):
     config.add_route("export", "/export")
     config.add_route("redirect", "/redirect/{hash_id}")
 
+    # MOBILE routes
+    config.add_route("mobile", "/m")
+
     return config
