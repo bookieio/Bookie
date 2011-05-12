@@ -108,6 +108,9 @@ var bookie = (function (module, $, logger) {
 
         url = $('#url').attr('value');
 
+        // start out the extended as empty in case we had an old value
+        $('#extended').val("");
+
         $b.log('populate form base');
         $b.call.getBookmark(url, function (xml) {
             var result, code, found;
@@ -133,7 +136,7 @@ var bookie = (function (module, $, logger) {
                 $('#description').val($(this).attr('description'));
 
                 // add the description to the ui
-                $('#extended').text($(this).attr('extended'));
+                $('#extended').val($(this).attr('extended'));
 
                 // now enable the delete button in case we want to delete it
                 $b.ui.enable_delete();
@@ -180,11 +183,14 @@ var bookie = (function (module, $, logger) {
             'api_key': $('#api_key').attr('value'),
             'description': $('#description').val(),
             'tags': $('#tags').val(),
-            'extended': $('#extended').val()
+            'extended': $('#extended').val(),
+            'content': $('#content').val()
         }
 
         $b.call.saveBookmark(data);
-        ev.preventDefault();
+        if (ev !== undefined) {
+            ev.preventDefault();
+        }
     };
 
     /**

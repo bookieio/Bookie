@@ -42,7 +42,7 @@
 </toolbarpalette>
 
 <commandset>
-    <command id="bookie-submit-cmd" oncommand="bookie.log('SUBMIT');bookie.store_changes();" />
+    <command id="bookie-submit-cmd" oncommand="bookie.store_changes();" />
     <command id="bookie-delete-cmd" oncommand="bookie.$('#bookie-delete').trigger('click');" />
 </commandset>
 
@@ -75,6 +75,8 @@
                   <button type="button" id="bookie-submit" label="Save" />
                   <button type="button" id="bookie-delete" label="Delete" disabled="true" />
               </hbox>
+
+              <textbox id="content" multiline="true" />
             </vbox>
         </form>
     </vbox>

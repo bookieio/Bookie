@@ -100,7 +100,7 @@
     </div>
 </%def>
 
-<%def name="bmarknextprev(page, max_count, count, next_url, url_params=None)">
+<%def name="bmarknextprev(page, max_count, count, next_url, url_params=None, tags=None)">
     <%
         if max_count == count:
             show_next = True
@@ -116,21 +116,21 @@
     %>
 
     % if page != 0:
-        <a href="${request.route_url(next_url, **url_params)}?page=${prev}"
+        <a href="${request.route_url(next_url, tags=tags, **url_params)}?page=${prev}"
            class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, **url_params)}?page=${next}"
+        <a href="${request.route_url(next_url, tags=tags, **url_params)}?page=${next}"
            class="button">Next</a>
     % endif
 
 </%def>
 
-<%def name="tag_filter(tags=None)">
+<%def name="tag_filter(url, tags=None)">
         <div class="tag_filter">
             <form id="filter_form" name="filter_form"
-                action="${request.route_url('bmark_recent')}" method="GET">
+                action="${request.route_url(url, tags=tags)}" method="GET">
                 <span class="title">Tags&nbsp;</span>
                 <input type="input" name="tag_filter" id="tag_filter"
                        placeholder="enter tags.."

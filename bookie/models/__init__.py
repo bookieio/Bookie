@@ -403,7 +403,7 @@ class BmarkMgr(object):
         qry = Bmark.query
         offset = limit * page
 
-        if order_by is not None:
+        if order_by is None:
             order_by = Bmark.stored.desc()
 
         if not tags:
@@ -547,6 +547,7 @@ class Bmark(Base):
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, onupdate=datetime.now)
+    clicks = Column(Integer, default=0)
 
     # DON"T USE
     tag_str = Column(UnicodeText())

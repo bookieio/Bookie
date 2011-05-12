@@ -29,14 +29,13 @@ def recent(request):
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
 
+    if isinstance(tags, str):
+        tags = [tags]
+
     # if we don't have tags, we might have them sent by a non-js browser as a
     # string in a query string
     if not tags and 'tag_filter' in params:
         tags = params.get('tag_filter').split()
-
-    LOG.debug('tags')
-    LOG.debug(tags)
-
 
     recent_list = BmarkMgr.find(limit=RESULTS_MAX,
                            order_by=Bmark.stored.desc(),
@@ -54,8 +53,6 @@ def recent(request):
              'allow_edit': access.edit_enabled(request.registry.settings),
            }
 
-    LOG.debug('RET')
-    LOG.debug(ret)
     return ret
 
 
@@ -68,12 +65,18 @@ def popular(request):
 
     # check if we have a page count submitted
     tags = rdict.get('tags', None)
-
     page = int(params.get('page', '0'))
 
+    if isinstance(tags, str):
+        tags = [tags]
+
+    # if we don't have tags, we might have them sent by a non-js browser as a
+    # string in a query string
+    if not tags and 'tag_filter' in params:
+        tags = params.get('tag_filter').split()
 
     recent_list = BmarkMgr.find(limit=RESULTS_MAX,
-                           order_by=Bmark.stored.desc(),
+                           order_by=Bmark.clicks.desc(),
                            tags=tags,
                            page=page)
 
@@ -82,23 +85,7 @@ def popular(request):
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
-             'allow_edit': access.edit_enabled(request.registry.settings),
-           }
-    rdict = request.matchdict
-
-    # check if we have a page count submitted
-    page = int(rdict.get('page', '0'))
-
-    popular_list = BmarkMgr.popular(limit=RESULTS_MAX,
-                           with_tags=True,
-                           page=page)
-
-
-    return {
-             'bmarks': popular_list,
-             'max_count': RESULTS_MAX,
-             'count': len(popular_list),
-             'page': page,
+             'tags': tags,
              'allow_edit': access.edit_enabled(request.registry.settings),
            }
 
