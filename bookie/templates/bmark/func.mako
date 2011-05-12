@@ -127,10 +127,10 @@
 
 </%def>
 
-<%def name="tag_filter(tags=None)">
+<%def name="tag_filter(url, tags=None)">
         <div class="tag_filter">
             <form id="filter_form" name="filter_form"
-                action="${request.route_url('bmark_recent')}" method="GET">
+                action="${request.route_url(url, tags=tags)}" method="GET">
                 <span class="title">Tags&nbsp;</span>
                 <input type="input" name="tag_filter" id="tag_filter"
                        placeholder="enter tags.."

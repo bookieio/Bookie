@@ -85,6 +85,7 @@ def popular(request):
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
+             'tags': tags,
              'allow_edit': access.edit_enabled(request.registry.settings),
            }
 
