@@ -27,7 +27,7 @@
             </div>
             <div class="yui3-u-1-3 navigation">
                 <span class="item"><a href="/recent" class="nav_button">Recent</a></span>
-                <!--<span class="item"><a href="/popular" class="nav_button">Popular</a></span>-->
+                <span class="item"><a href="/popular" class="nav_button">Popular</a></span>
                 <span class="item"><a href="/search" class="nav_button">Search</a></span>
                 <!--<span class="item">-->
 
