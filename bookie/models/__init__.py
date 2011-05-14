@@ -514,6 +514,11 @@ class BmarkMgr(object):
 
         return mark
 
+    @staticmethod
+    def hash_list():
+        """Get a list of the hash_ids we have stored"""
+        return DBSession.query(Bmark.hash_id).all()
+
 
 class BmarkTools(object):
     """Some stupid tools to help work with bookmarks"""

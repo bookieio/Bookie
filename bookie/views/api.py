@@ -92,3 +92,26 @@ def bmark_popular(request):
     }
 
     return ret
+
+
+@view_config(route_name="api_bmark_sync", renderer="morjson")
+def bmark_sync(request):
+    """Return a list of the bookmarks we know of in the system
+
+    For right now, send down a list of hash_ids
+
+    """
+
+    hash_list = BmarkMgr.hash_list()
+
+    ret = {
+        'success': True,
+        'message': "",
+        'payload': {
+             'hash_list': [hash[0] for hash in hash_list]
+        }
+    }
+
+    return ret
+
+
