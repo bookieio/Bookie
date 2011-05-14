@@ -28,8 +28,6 @@ from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
-from sqlalchemy.sql.expression import ClauseElement
-from sqlalchemy.sql.expression import alias
 
 from zope.sqlalchemy import ZopeTransactionExtension
 

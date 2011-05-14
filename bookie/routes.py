@@ -111,4 +111,8 @@ def build_routes(config):
     # MOBILE routes
     config.add_route("mobile", "/m")
 
+    # API
+    config.add_route('api_bmark_recent', '/api/v1/bmarks/recent')
+    config.add_route('api_bmark_popular', '/api/v1/bmarks/popular')
+    config.add_route("api_bmark_search", "/api/v1/bmarks/search/*terms")
     return config

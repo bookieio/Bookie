@@ -72,6 +72,7 @@ def search(request):
 
 @view_config(route_name="search_results", renderer="/utils/results_wrap.mako")
 @view_config(route_name="search_results_ajax", renderer="morjson")
+@view_config(route_name="api_bmark_search", renderer="morjson")
 @view_config(route_name="search_results_rest", renderer="/utils/results_wrap.mako")
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
@@ -110,22 +111,17 @@ def search_results(request):
 
     # if the route name is search_ajax we want a json response
     # else we just want to return the payload data to the mako template
-    if 'ajax' in route_name:
-        html = render('bookie:templates/utils/results.mako',
-                    { 'search_results': res_list,
-                      'result_count': len(res_list),
-                      'phrase': phrase,
-                      'with_content': with_content,
-                    },
-                  request=request)
+    if 'ajax' in route_name or 'api' in route_name:
         return {
             'success': True,
             'message': "",
             'payload': {
-                'html': html,
+                'search_results': [dict(res) for res in res_list],
+                'result_count': len(res_list),
+                'phrase': phrase,
+                'with_content': with_content,
             }
         }
-
     else:
         return {
             'search_results': res_list,
