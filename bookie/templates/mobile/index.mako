@@ -16,12 +16,6 @@
             text-align: center;
         }
 
-        .footer {
-            border-top: 2px solid #333;
-            background: #CCCCCC;
-            color: #363d52;
-        }
-
         .footer a.ui-link {
             color: #363d52;
             text-decoration: none;

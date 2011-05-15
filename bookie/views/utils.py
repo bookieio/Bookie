@@ -109,14 +109,16 @@ def search_results(request):
 
     # check if we have a page count submitted
     params = request.params
-    page = int(params.get('page', None))
-    count = int(params.get('count', None))
+    page = params.get('page', None)
+    count = params.get('count', None)
 
     res_list = searcher.search(phrase, content=with_content)
 
     # we're going to fake this since we dont' have a good way to do this query
     # side
     if page is not None and count is not None:
+        page = int(page)
+        count = int(count)
         start = count * page
         end = start + count
         LOG.debug('counts')

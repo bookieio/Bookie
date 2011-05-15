@@ -29,13 +29,13 @@ var bookie = (function ($b, $) {
     $b.page = {
         'url': '',
         'page': 0,
-        'count': 5,
+        'count': 10,
         'func': "",             // used for what type of thing are we looking at, load_recent
         'terms': [],
         'clear': function () {
             $b.page.url = "";
             $b.page.page = 0;
-            $b.page.count = 5;
+            $b.page.count = 10;
             $b.page.terms = [];
         },
         'generate_url': function () {
