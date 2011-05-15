@@ -18,10 +18,15 @@ var bookie = (function ($b, $) {
             error: function(jqxhr, textStatus, errorThrown) {
                 console.log('REQUEST_ERROR');
                 console.log('Response Code: ' + jqxhr.status);
+                console.log('Response Status: ' + textStatus);
+                console.log(jqxhr);
             }
         };
 
+        options.url = APP_URL + options.url;
+
         opts = $.extend({}, defaults, options);
+        console.log(opts);
         $.ajax(opts);
     };
 
@@ -237,7 +242,7 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
         $('.go_recent').bind('click', function (ev) {
             ev.preventDefault();
-            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'})
+            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'});
             $('.go_recent').addClass('ui-btn-active ui-state-persist');
             $('.go_popular').removeClass('ui-btn-active ui-state-persist');
             $('.go_search').removeClass('ui-btn-active ui-state-persist');
@@ -246,7 +251,7 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
         $('.go_popular').bind('click', function (ev) {
             ev.preventDefault();
-            $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'})
+            $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'});
             $('.go_popular').addClass('ui-btn-active ui-state-persist');
             $('.go_recent').removeClass('ui-btn-active ui-state-persist');
             $('.go_search').removeClass('ui-btn-active ui-state-persist');
@@ -261,12 +266,12 @@ var bookie = (function ($b, $) {
 
         $('#results_previous').bind('click', function (ev) {
             $b.page.page = $b.page.page - 1;
-            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'})
+            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'});
         });
 
         $('#results_next').bind('click', function (ev) {
             $b.page.page = $b.page.page + 1;
-            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'})
+            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'});
         });
 
         $($b.EVENTID).bind($b.events.SEARCH, $b.search);
