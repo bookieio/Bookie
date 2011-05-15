@@ -43,6 +43,14 @@
             font-family: Cabin,arial,helvetica,clean,sans-serif;
         }
 
+        .ui-navbar {
+            max-height: 50px;
+        }
+
+        .footer.ui-navbar {
+            max-height: 37px;
+        }
+
     </style>
 
 
