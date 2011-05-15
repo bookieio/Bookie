@@ -396,6 +396,14 @@ class BmarkMgr(object):
                            filter(Hashed.url == clean_url).one()
 
     @staticmethod
+    def get_by_hash(hash_id):
+        """Get a bmark from the system via the hash_id"""
+        # normalize the url
+        return Bmark.query.join(Bmark.hashed).\
+                           options(contains_eager(Bmark.hashed)).\
+                           filter(Hashed.hash_id == hash_id).one()
+
+    @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query

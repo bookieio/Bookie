@@ -26,7 +26,6 @@ var bookie = (function ($b, $) {
         options.url = APP_URL + options.url;
 
         opts = $.extend({}, defaults, options);
-        console.log(opts);
         $.ajax(opts);
     };
 
@@ -65,7 +64,8 @@ var bookie = (function ($b, $) {
         'POPULAR': 'popular',
         'SEARCH': 'search',
         'NEXT_PAGE': 'next',
-        'PREV_PAGE': 'prev'
+        'PREV_PAGE': 'prev',
+        'VIEW': 'view'
     };
 
     /**
@@ -148,6 +148,51 @@ var bookie = (function ($b, $) {
         ev.preventDefault();
     };
 
+    /**
+     * Handle the event to load a bookmark
+     * extra_params:
+     *     - hash_id
+     *
+     */
+    $b.load_bookmark = function (ev, extra_params) {
+        var url, opts;
+        $b.page.url = "/api/v1/bmarks/" + extra_params.hash_id;
+        $b.page.func = $b.events.VIEW;
+
+        var opts = {
+            url: $b.page.url,
+            success: function (data) {
+                if (data.success == true) {
+                    var bmark = data.payload.bmark;
+                    $view = $('#view_content');
+
+                    $view.html("");
+
+                    // let's pretty up a date for diplay
+                    pretty_date = new Date(bmark.stored);
+                    bmark['pretty_date'] = pretty_date;
+
+                    $("#view_template").tmpl([bmark]).prependTo($view)
+
+                } else {
+                    console.error('ERROR getting bookmark');
+                }
+
+            },
+            'complete': function () {
+                $.mobile.changePage('#view', 'slide', back=false, changeHash=true);
+                $.mobile.pageLoading(true);
+            }
+
+        };
+
+        $.mobile.pageLoading();
+        $b.request(opts);
+
+        // don't do what the click says yet
+        ev.preventDefault();
+    };
+
 
     $b.search = function (ev, extra_params) {
         // search for a url given the search content
@@ -211,27 +256,25 @@ var bookie = (function ($b, $) {
 
             // this isn't always init'd so need to init it first
             $(data_home).listview('refresh');
-            $('.bookmark_link').live('swiperight', function (ev) {
-                // the url we need to call is /redirect/hash_id
-                var hash_id = $(this).attr('data-hash'),
-                    url = "/redirect/" + hash_id;
-
-                var newWindow = window.open(url, '_blank');
-                newWindow.focus();
-                return false;
-                ev.preventDefault();
-            });
 
             // now bind the swipe event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
-                    url = "/redirect/" + hash_id;
+                    url = APP_URL + "/redirect/" + hash_id;
 
-                var newWindow = window.open(url, '_blank');
-                newWindow.focus();
+                var newwindow = window.open(url, '_blank');
+                newwindow.focus();
                 return false;
+                ev.preventdefault();
+            });
+
+            // now bind the gear icon to view this bookmark in detail
+            $('.bookmark_view').bind('click', function (ev) {
+                var hash_id = $(this).attr('data-hash');
                 ev.preventDefault();
+
+                $($b.EVENTID).trigger($b.events.VIEW, {'hash_id': hash_id});
             });
         }
     };
@@ -242,6 +285,8 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
         $('.go_recent').bind('click', function (ev) {
             ev.preventDefault();
+
+            $b.page.clear();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'});
             $('.go_recent').addClass('ui-btn-active ui-state-persist');
             $('.go_popular').removeClass('ui-btn-active ui-state-persist');
@@ -251,6 +296,8 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
         $('.go_popular').bind('click', function (ev) {
             ev.preventDefault();
+
+            $b.page.clear();
             $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'});
             $('.go_popular').addClass('ui-btn-active ui-state-persist');
             $('.go_recent').removeClass('ui-btn-active ui-state-persist');
@@ -291,9 +338,12 @@ var bookie = (function ($b, $) {
         });
 
         $($b.EVENTID).bind($b.events.LOAD, function (ev) {
+            $b.page.count = 5;
             $('.listview').listview();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
         });
+
+        $($b.EVENTID).bind($b.events.VIEW, $b.load_bookmark);
     };
 
     return $b;

@@ -56,13 +56,12 @@
 
     <div data-role="content">
 
-        <h3>Search Bookmarks</h3>
         <form action="#" method="get" class="search_form" id="footer_search">
             <input type="search" name="home_search" id="home_search"
                    class="search" placeholder="search..."/>
         </form>
 
-        <h3>Recent Bookmarks</h3>
+        <h3>Recent Additions</h3>
         <ul data-role="listview" data-split-icon="gear" data-split-theme="c" data-theme="c" id="home_recent" class="listview">
         </ul>
     </div>
@@ -138,7 +137,7 @@
             </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               class="bookmark_link"></a>
+               class="bookmark_view"></a>
         </li>
     </script>
 
@@ -204,4 +203,30 @@
          </ul>
     </footer>
 
+</div>
+
+<div data-role="page" id="view">
+
+    <header data-role="header" class="head">
+        <h1 id="view_title">Details</h1>
+    </header>
+
+    <div data-role="content" id="view_content">
+
+    </div>
+
+    <script id="view_template" type="text/x-jquery-tmpl">
+        <h3 id="view_desc">
+            <a href="${request.route_url('home').rstrip('/')}/redirect/${'${hash_id}'|n}"
+                rel="external" target="_blank">
+                ${'${description}'|n}
+            </a>
+        </h3>
+        <p id="view_tags"><strong>${'${tag_str}'|n}</strong></p>
+        <p id="view_date">
+            ${'${pretty_date.toDateString()}'|n}
+        </p>
+        <p id="view_extended">${'${extended}'|n}</p>
+        <p id="view_content">${'{{html readable.content}}'|n}</p>
+    </script>
 </div>
