@@ -168,6 +168,11 @@ var bookie = (function ($b, $) {
                     $view = $('#view_content');
 
                     $view.html("");
+
+                    // let's pretty up a date for diplay
+                    pretty_date = new Date(bmark.stored);
+                    bmark['pretty_date'] = pretty_date;
+
                     $("#view_template").tmpl([bmark]).prependTo($view)
 
                 } else {

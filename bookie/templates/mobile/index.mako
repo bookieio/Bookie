@@ -223,8 +223,10 @@
                 ${'${description}'|n}
             </a>
         </h3>
-        <p id="view_date">${'${stored}'|n}</p>
-        <p id="view_tags">${'${tag_str}'|n}</p>
+        <p id="view_tags"><strong>${'${tag_str}'|n}</strong></p>
+        <p id="view_date">
+            ${'${pretty_date.toDateString()}'|n}
+        </p>
         <p id="view_extended">${'${extended}'|n}</p>
         <p id="view_content">${'{{html readable.content}}'|n}</p>
     </script>
