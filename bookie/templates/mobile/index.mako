@@ -132,10 +132,12 @@
         <li>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               rel="external" target="_blank" class="bookmark_link">${'${description}'|n}</a>
+               rel="external" target="_blank" class="bookmark_link">
+                    <h3>${'${description}'|n}</h3>
+                    <p class="ui-li-aside">${'${tag_string}'|n}</p>
+            </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               
                class="bookmark_link"></a>
         </li>
     </script>
