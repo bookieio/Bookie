@@ -70,11 +70,13 @@ var bookie = (function ($b, $) {
     $b.load = function (ev) {
     };
 
-    $b.load_recent = function (ev, data_home) {
+    $b.load_recent = function (ev, extra_params) {
         // we need to get the list of recent from the api
         var url, opts;
         $b.page.url = "/api/v1/bmarks/recent?" + $b.page.generate_url();
         $b.page.func = $b.events.RECENT;
+
+        data_home = extra_params.data_home;
 
         var opts = {
             url: $b.page.url,
@@ -106,11 +108,13 @@ var bookie = (function ($b, $) {
         ev.preventDefault();
     };
 
-    $b.load_popular = function (ev, data_home) {
+    $b.load_popular = function (ev, extra_params) {
         // we need to get the list of popular from the api
         var url, opts;
         $b.page.url = "/api/v1/bmarks/popular?" + $b.page.generate_url();
         $b.page.func = $b.events.POPULAR;
+
+        data_home = extra_params.data_home;
 
         var opts = {
             url: $b.page.url,
@@ -210,12 +214,12 @@ var bookie = (function ($b, $) {
 
         $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
         $('#go_recent').bind('click', function (ev) {
-            $($b.EVENTID).trigger($b.events.RECENT, '#results_list')
+            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'})
         });
 
         $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
         $('#go_popular').bind('click', function (ev) {
-            $($b.EVENTID).trigger($b.events.POPULAR, '#results_list')
+            $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'})
         });
 
         $('#results_previous').bind('click', function (ev) {
@@ -246,7 +250,7 @@ var bookie = (function ($b, $) {
 
         $($b.EVENTID).bind($b.events.LOAD, function (ev) {
             $('.listview').listview();
-            $($b.EVENTID).trigger($b.events.RECENT, '#home_recent')
+            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
         });
     };
 
