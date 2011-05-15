@@ -134,7 +134,7 @@
                data-hash="${'${hash_id}'|n}"
                rel="external" target="_blank" class="bookmark_link">
                     <h3>${'${description}'|n}</h3>
-                    <p class="ui-li-aside">${'${tag_string}'|n}</p>
+                    <p class="ui-li-aside">${'${tag_str}'|n}</p>
             </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
