@@ -51,7 +51,8 @@
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |
                     <a href="${request.route_url('import')}">Import</a> |
-                    <a href="${request.route_url('export')}">Export</a>
+                    <a href="${request.route_url('export')}">Export</a> |
+                    <a href="${request.route_url('mobile')}">Mobile</a>
                 </div>
             </div>
             </div>
