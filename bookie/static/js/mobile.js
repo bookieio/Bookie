@@ -29,13 +29,13 @@ var bookie = (function ($b, $) {
     $b.page = {
         'url': '',
         'page': 0,
-        'count': 5,
+        'count': 10,
         'func': "",             // used for what type of thing are we looking at, load_recent
         'terms': [],
         'clear': function () {
             $b.page.url = "";
             $b.page.page = 0;
-            $b.page.count = 5;
+            $b.page.count = 10;
             $b.page.terms = [];
         },
         'generate_url': function () {
@@ -219,17 +219,6 @@ var bookie = (function ($b, $) {
 
             // now bind the swipe event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
-                // the url we need to call is /redirect/hash_id
-                var hash_id = $(this).attr('data-hash'),
-                    url = "/redirect/" + hash_id;
-
-                var newWindow = window.open(url, '_blank');
-                newWindow.focus();
-                return false;
-                ev.preventDefault();
-            });
-            // now bind the swipe event to allow following of the links
-            $('.bookmark_link').bind('swipe', function (ev) {
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
                     url = "/redirect/" + hash_id;

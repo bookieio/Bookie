@@ -16,12 +16,6 @@
             text-align: center;
         }
 
-        .footer {
-            border-top: 2px solid #333;
-            background: #CCCCCC;
-            color: #363d52;
-        }
-
         .footer a.ui-link {
             color: #363d52;
             text-decoration: none;
@@ -132,10 +126,12 @@
         <li>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               rel="external" target="_blank" class="bookmark_link">${'${description}'|n}</a>
+               rel="external" target="_blank" class="bookmark_link">
+                    <h3>${'${description}'|n}</h3>
+                    <p>${'${tag_str}'|n}</p>
+            </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               
                class="bookmark_link"></a>
         </li>
     </script>
