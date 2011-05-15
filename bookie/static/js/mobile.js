@@ -226,7 +226,7 @@ var bookie = (function ($b, $) {
             $('.bookmark_link').bind('click', function (ev) {
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
-                    url = "/redirect/" + hash_id;
+                    url = APP_URL + "/redirect/" + hash_id;
 
                 var newWindow = window.open(url, '_blank');
                 newWindow.focus();
