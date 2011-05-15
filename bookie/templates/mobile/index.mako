@@ -119,7 +119,8 @@
 
     <script id="resultLink" type="text/x-jquery-tmpl">
         <li>
-            <a href="/redirect/${'${hash_id}'|n}"
+            <a href="#"
+               data-hash="${'${hash_id}'|n}"
                rel="external" target="_blank" class="bookmark_link">${'${description}'|n}</a>
         </li>
     </script>

@@ -206,6 +206,39 @@ var bookie = (function ($b, $) {
 
             // this isn't always init'd so need to init it first
             $(data_home).listview('refresh');
+            $('.bookmark_link').live('swiperight', function (ev) {
+                // the url we need to call is /redirect/hash_id
+                var hash_id = $(this).attr('data-hash'),
+                    url = "/redirect/" + hash_id;
+
+                var newWindow = window.open(url, '_blank');
+                newWindow.focus();
+                return false;
+                ev.preventDefault();
+            });
+
+            // now bind the swipe event to allow following of the links
+            $('.bookmark_link').bind('click', function (ev) {
+                // the url we need to call is /redirect/hash_id
+                var hash_id = $(this).attr('data-hash'),
+                    url = "/redirect/" + hash_id;
+
+                var newWindow = window.open(url, '_blank');
+                newWindow.focus();
+                return false;
+                ev.preventDefault();
+            });
+            // now bind the swipe event to allow following of the links
+            $('.bookmark_link').bind('swipe', function (ev) {
+                // the url we need to call is /redirect/hash_id
+                var hash_id = $(this).attr('data-hash'),
+                    url = "/redirect/" + hash_id;
+
+                var newWindow = window.open(url, '_blank');
+                newWindow.focus();
+                return false;
+                ev.preventDefault();
+            });
         }
     };
 
