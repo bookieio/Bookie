@@ -176,7 +176,7 @@ var bookie = (function ($b, $) {
 
             },
             'complete': function () {
-                $.mobile.changePage('#view', 'slide', back=false, changeHash=false);
+                $.mobile.changePage('#view', 'slide', back=false, changeHash=true);
                 $.mobile.pageLoading(true);
             }
 
