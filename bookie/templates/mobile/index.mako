@@ -39,6 +39,10 @@
             text-align: center;
         }
 
+        a.bookmark_link {
+            font-family: Cabin,arial,helvetica,clean,sans-serif;
+        }
+
     </style>
 
 
@@ -70,15 +74,20 @@
     </header>
 
     <div data-role="content">
+
+        <h3>Search Bookmarks</h3>
+        <form action="#" method="get" class="search_form" id="footer_search">
+            <input type="search" name="home_search" id="home_search"
+                   class="search" placeholder="search..."/>
+        </form>
+
+        <h3>Recent Bookmarks</h3>
         <ul data-role="listview" data-theme="c" id="home_recent" class="listview">
         </ul>
     </div>
 
     <footer data-role="navbar" data-type="horizontal" data-position="fixed" class="footer">
-        <form action="#" method="get" class="search_form" id="footer_search">
-            <input type="search" name="home_search" id="home_search"
-                   class="search" placeholder="search..."/>
-        </form>
+
     </footer>
 
 </div>
@@ -111,7 +120,7 @@
     <script id="resultLink" type="text/x-jquery-tmpl">
         <li>
             <a href="/redirect/${'${hash_id}'|n}"
-               rel="external" target="_blank">${'${description}'|n}</a>
+               rel="external" target="_blank" class="bookmark_link">${'${description}'|n}</a>
         </li>
     </script>
 

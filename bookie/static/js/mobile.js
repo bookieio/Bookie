@@ -29,14 +29,21 @@ var bookie = (function ($b, $) {
     $b.page = {
         'url': '',
         'page': 0,
-        'count': 10,
+        'count': 5,
         'func': "",             // used for what type of thing are we looking at, load_recent
+        'terms': [],
         'clear': function () {
             $b.page.url = "";
             $b.page.page = 0;
-            $b.page.count = 10;
+            $b.page.count = 5;
+            $b.page.terms = [];
+        },
+        'generate_url': function () {
+            url_str = ["count=" + this.count,
+                       "page=" + this.page,
+                      ].join('&');
+            return url_str;
         }
-
     };
 
     // some constants we'll use throughout
@@ -66,7 +73,7 @@ var bookie = (function ($b, $) {
     $b.load_recent = function (ev, data_home) {
         // we need to get the list of recent from the api
         var url, opts;
-        $b.page.url = "/api/v1/bmarks/recent?page=" + $b.page.page;
+        $b.page.url = "/api/v1/bmarks/recent?" + $b.page.generate_url();
         $b.page.func = $b.events.RECENT;
 
         var opts = {
@@ -102,7 +109,7 @@ var bookie = (function ($b, $) {
     $b.load_popular = function (ev, data_home) {
         // we need to get the list of popular from the api
         var url, opts;
-        $b.page.url = "/api/v1/bmarks/popular?page=" + $b.page.page;
+        $b.page.url = "/api/v1/bmarks/popular?" + $b.page.generate_url();
         $b.page.func = $b.events.POPULAR;
 
         var opts = {
@@ -138,19 +145,27 @@ var bookie = (function ($b, $) {
         var url, opts, terms, with_content, data_home;
 
         terms = extra_params.terms;
+
+        // if the terms are undefined, check if we have any from a previous
+        // page call
+        if (terms == undefined) {
+            terms = $b.page.terms;
+        }
+
         with_content = extra_params.with_content;
         data_home = extra_params.data_home;
 
         $b.page.url = "/api/v1/bmarks/search/" + terms.join('/');
-        $b.page.page = 0;
+        $b.page.url = $b.page.url + "?" + $b.page.generate_url();
         $b.page.func = $b.events.SEARCH;
+        $b.page.terms = terms;
 
         var opts = {
             url: $b.page.url,
             success: function (data) {
                 if (data.success == true) {
-
-                    $b.page.count = data.payload.result_count;
+                    var page = data.payload.page;
+                    $b.page.page = page
                     $b.ui.results.update(data.payload.search_results, 'Search: ' + data.payload.phrase, data_home)
                 } else {
                     console.error('ERROR getting search');
@@ -205,12 +220,12 @@ var bookie = (function ($b, $) {
 
         $('#results_previous').bind('click', function (ev) {
             $b.page.page = $b.page.page - 1;
-            $($b.EVENTID).trigger($b.page.func, '#results_list')
+            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'})
         });
 
         $('#results_next').bind('click', function (ev) {
             $b.page.page = $b.page.page + 1;
-            $($b.EVENTID).trigger($b.page.func, '#results_list')
+            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'})
         });
 
         $($b.EVENTID).bind($b.events.SEARCH, $b.search);
