@@ -12,6 +12,12 @@
             width: 100%;
         }
 
+        h1 span {
+            font-size: smaller;
+            color: #363d52;
+            opacity: 70%;
+        }
+
         .center {
             text-align: center;
         }
@@ -45,7 +51,7 @@
 <div data-role="page" id="home">
 
     <header data-role="header" class="head">
-        <h1>Bookie</h1>
+        <h1>Bookie  <span>- bookmark your web</span</h1>
     </header>
 
     <div data-role="content">
