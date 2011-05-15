@@ -14,7 +14,12 @@
         % if hasattr(self, 'header'):
             ${self.header()}
         % endif
-
+        <script type="text/javascript" charset="utf-8">
+            <%
+                app_url = request.route_url('home').rstrip('/')
+            %>
+            APP_URL = '${app_url}';
+        </script>
     </head>
 
     <body class="ui-mobile-viewport">
