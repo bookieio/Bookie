@@ -18,6 +18,7 @@ def bmark_recent(request):
 
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
+    count = int(params.get('count', RESULTS_MAX))
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -30,7 +31,7 @@ def bmark_recent(request):
     if not tags and 'tag_filter' in params:
         tags = params.get('tag_filter').split()
 
-    recent_list = BmarkMgr.find(limit=RESULTS_MAX,
+    recent_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.stored.desc(),
                            tags=tags,
                            page=page)
@@ -60,6 +61,7 @@ def bmark_popular(request):
 
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
+    count = int(params.get('count', RESULTS_MAX))
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -72,7 +74,7 @@ def bmark_popular(request):
     if not tags and 'tag_filter' in params:
         tags = params.get('tag_filter').split()
 
-    popular_list = BmarkMgr.find(limit=RESULTS_MAX,
+    popular_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.clicks.desc(),
                            tags=tags,
                            page=page)

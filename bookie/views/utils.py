@@ -107,7 +107,22 @@ def search_results(request):
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
 
+    # check if we have a page count submitted
+    params = request.params
+    page = int(params.get('page', None))
+    count = int(params.get('count', None))
+
     res_list = searcher.search(phrase, content=with_content)
+
+    # we're going to fake this since we dont' have a good way to do this query
+    # side
+    if page is not None and count is not None:
+        start = count * page
+        end = start + count
+        LOG.debug('counts')
+        LOG.debug(start)
+        LOG.debug(end)
+        res_list = res_list[start:end]
 
     # if the route name is search_ajax we want a json response
     # else we just want to return the payload data to the mako template
@@ -119,6 +134,7 @@ def search_results(request):
                 'search_results': [dict(res) for res in res_list],
                 'result_count': len(res_list),
                 'phrase': phrase,
+                'page': page,
                 'with_content': with_content,
             }
         }
@@ -127,6 +143,7 @@ def search_results(request):
             'search_results': res_list,
             'result_count': len(res_list),
             'phrase': phrase,
+            'page': page,
             'with_content': with_content,
         }
 
