@@ -246,13 +246,28 @@ var bookie = (function ($b, $) {
     $b.init = function () {
 
         $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
-        $('#go_recent').bind('click', function (ev) {
+        $('.go_recent').bind('click', function (ev) {
+            ev.preventDefault();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'})
+            $('.go_recent').addClass('ui-btn-active ui-state-persist');
+            $('.go_popular').removeClass('ui-btn-active ui-state-persist');
+            $('.go_search').removeClass('ui-btn-active ui-state-persist');
         });
 
         $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
-        $('#go_popular').bind('click', function (ev) {
+        $('.go_popular').bind('click', function (ev) {
+            ev.preventDefault();
             $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'})
+            $('.go_popular').addClass('ui-btn-active ui-state-persist');
+            $('.go_recent').removeClass('ui-btn-active ui-state-persist');
+            $('.go_search').removeClass('ui-btn-active ui-state-persist');
+        });
+
+        $('.go_search').bind('click', function (ev) {
+            $('.go_search').addClass('ui-btn-active ui-state-persist');
+            $('.go_popular').removeClass('ui-btn-active ui-state-persist');
+            $('.go_recent').removeClass('ui-btn-active ui-state-persist');
+
         });
 
         $('#results_previous').bind('click', function (ev) {

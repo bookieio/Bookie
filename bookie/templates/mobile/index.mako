@@ -52,25 +52,6 @@
 
     <header data-role="header" class="head">
         <h1>Bookie</h1>
-        <div data-role="navbar" data-type="horizontal">
-            <ul>
-                <li>
-                    <a href="#results" id="go_recent" data-role="button"
-                                data-inline="true" data-theme="a"
-                                data-iconpos="right">Recent</a>
-                </li>
-                <li>
-                    <a href="#results" id="go_popular" data-role="button"
-                                data-inline="true" data-theme="a"
-                                data-iconpos="right">Popular</a>
-                </li>
-                <li>
-                    <a href="#search" id="go_popular" data-role="button"
-                       data-inline="true" data-theme="a"
-                       data-iconpos="top">Search</a>
-                </li>
-             </ul>
-        </div>
     </header>
 
     <div data-role="content">
@@ -82,12 +63,28 @@
         </form>
 
         <h3>Recent Bookmarks</h3>
-        <ul data-role="listview" data-theme="c" id="home_recent" class="listview">
+        <ul data-role="listview" data-split-icon="gear" data-split-theme="c" data-theme="c" id="home_recent" class="listview">
         </ul>
     </div>
 
-    <footer data-role="navbar" data-type="horizontal" data-position="fixed" class="footer">
-
+    <footer data-id="nav" data-role="navbar" data-type="horizontal" data-position="fixed" class="footer">
+        <ul>
+            <li>
+                <a href="#results" class="go_recent" data-role="button"
+                            data-inline="true" data-theme="a"
+                            data-iconpos="right">Recent</a>
+            </li>
+            <li>
+                <a href="#results" class="go_popular" data-role="button"
+                            data-inline="true" data-theme="a"
+                            data-iconpos="right">Popular</a>
+            </li>
+            <li>
+                <a href="#search" class="go_search" data-role="button"
+                   data-inline="true" data-theme="a"
+                   data-iconpos="top">Search</a>
+            </li>
+         </ul>
     </footer>
 
 </div>
@@ -111,10 +108,24 @@
             </div>
         </form>
     </div>
-
-    <footer data-role="footer" class="footer" data-position="fixed">
-        &nbsp;
-        <!--<h4><a href="${request.route_url('mobile')}">Home</a></h4>-->
+    <footer data-id="nav" data-role="navbar" data-type="horizontal" data-position="fixed" class="footer">
+        <ul>
+            <li>
+                <a href="#results" class="go_recent" data-role="button"
+                            data-inline="true" data-theme="a"
+                            data-iconpos="right">Recent</a>
+            </li>
+            <li>
+                <a href="#results" class="go_popular" data-role="button"
+                            data-inline="true" data-theme="a"
+                            data-iconpos="right">Popular</a>
+            </li>
+            <li>
+                <a href="#search" class="go_search" data-role="button"
+                   data-inline="true" data-theme="a"
+                   data-iconpos="top">Search</a>
+            </li>
+         </ul>
     </footer>
 
     <script id="resultLink" type="text/x-jquery-tmpl">
@@ -122,6 +133,10 @@
             <a href="#"
                data-hash="${'${hash_id}'|n}"
                rel="external" target="_blank" class="bookmark_link">${'${description}'|n}</a>
+            <a href="#"
+               data-hash="${'${hash_id}'|n}"
+               
+               class="bookmark_link"></a>
         </li>
     </script>
 
@@ -142,27 +157,49 @@
 
     <header data-role="header" class="head">
         <h1 id="results_title">...</h1>
+        <div data-role="navbar" data-type="horizontal" data-position="fixed">
+            <ul>
+                <li>
+                    <a href="#" id="results_previous" data-role="button"
+                                data-inline="true" data-theme="a"
+                                data-page="0"
+                                data-icon="arrow-l"
+                                data-iconpos="left">Previous</a>
+                </li>
+                <li>
+                    <a href="#" id="results_next" data-role="button"
+                                data-inline="true" data-theme="a"
+                                data-page="0"
+                                data-icon="arrow-r"
+                                data-iconpos="right">Next</a>
+                </li>
+             </ul>
+        </div>
     </header>
 
     <div data-role="content">
-        <ul data-role="listview" data-theme="c" id="results_list" class="listview">
+        <ul data-role="listview" data-split-icon="gear" data-split-theme="c" data-theme="c" id="results_list" class="listview">
         </ul>
     </div>
 
-    <footer data-role="navbar" data-type="horizontal" data-position="fixed">
+    <footer data-id="nav" data-role="navbar" data-type="horizontal" data-position="fixed" class="footer">
         <ul>
             <li>
-                <a href="#" id="results_previous" data-role="button"
+                <a href="#results" class="go_recent" data-role="button"
                             data-inline="true" data-theme="a"
-                            data-page="0"
-                            data-iconpos="right">Previous</a>
+                            data-iconpos="right">Recent</a>
             </li>
             <li>
-                <a href="#" id="results_next" data-role="button"
+                <a href="#results" class="go_popular" data-role="button"
                             data-inline="true" data-theme="a"
-                            data-page="0"
-                            data-iconpos="right">Next</a>
+                            data-iconpos="right">Popular</a>
+            </li>
+            <li>
+                <a href="#search" class="go_search" data-role="button"
+                   data-inline="true" data-theme="a"
+                   data-iconpos="top">Search</a>
             </li>
          </ul>
     </footer>
+
 </div>
