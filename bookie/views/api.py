@@ -117,3 +117,37 @@ def bmark_sync(request):
     return ret
 
 
+@view_config(route_name="api_bmark_hash", renderer="morjson")
+def bmark_sync(request):
+    """Return a bookmark requested via hash_id
+
+    We need to return a nested object with parts
+        bmark
+            - readable
+    """
+    rdict = request.matchdict
+
+    hash_id = rdict.get('hash_id', None)
+
+    if not hash_id:
+        return {
+            'success': False,
+            'message': "Could not find bookmark for hash " + hash_id,
+            'payload': {}
+        }
+
+    bookmark = BmarkMgr.get_by_hash(hash_id)
+    return_obj = dict(bookmark)
+    return_obj['readable'] = dict(bookmark.hashed.readable)
+
+    ret = {
+        'success': True,
+        'message': "",
+        'payload': {
+             'bmark': return_obj
+        }
+    }
+
+    return ret
+
+

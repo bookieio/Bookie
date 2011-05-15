@@ -138,7 +138,7 @@
             </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
-               class="bookmark_link"></a>
+               class="bookmark_view"></a>
         </li>
     </script>
 
@@ -204,4 +204,28 @@
          </ul>
     </footer>
 
+</div>
+
+<div data-role="page" id="view">
+
+    <header data-role="header" class="head">
+        <h1 id="view_title">Details</h1>
+    </header>
+
+    <div data-role="content" id="view_content">
+
+    </div>
+
+    <script id="view_template" type="text/x-jquery-tmpl">
+        <h3 id="view_desc">
+            <a href="${request.route_url('home').rstrip('/')}/redirect/${'${hash_id}'|n}"
+                rel="external" target="_blank">
+                ${'${description}'|n}
+            </a>
+        </h3>
+        <p id="view_date">${'${stored}'|n}</p>
+        <p id="view_tags">${'${tag_str}'|n}</p>
+        <p id="view_extended">${'${extended}'|n}</p>
+        <p id="view_content">${'{{html readable.content}}'|n}</p>
+    </script>
 </div>
