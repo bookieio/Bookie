@@ -26,7 +26,6 @@ var bookie = (function ($b, $) {
         options.url = APP_URL + options.url;
 
         opts = $.extend({}, defaults, options);
-        console.log(opts);
         $.ajax(opts);
     };
 
@@ -286,6 +285,8 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
         $('.go_recent').bind('click', function (ev) {
             ev.preventDefault();
+
+            $b.page.clear();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'});
             $('.go_recent').addClass('ui-btn-active ui-state-persist');
             $('.go_popular').removeClass('ui-btn-active ui-state-persist');
@@ -295,6 +296,8 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
         $('.go_popular').bind('click', function (ev) {
             ev.preventDefault();
+
+            $b.page.clear();
             $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'});
             $('.go_popular').addClass('ui-btn-active ui-state-persist');
             $('.go_recent').removeClass('ui-btn-active ui-state-persist');
@@ -335,6 +338,7 @@ var bookie = (function ($b, $) {
         });
 
         $($b.EVENTID).bind($b.events.LOAD, function (ev) {
+            $b.page.count = 5;
             $('.listview').listview();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
         });

@@ -56,13 +56,12 @@
 
     <div data-role="content">
 
-        <h3>Search Bookmarks</h3>
         <form action="#" method="get" class="search_form" id="footer_search">
             <input type="search" name="home_search" id="home_search"
                    class="search" placeholder="search..."/>
         </form>
 
-        <h3>Recent Bookmarks</h3>
+        <h3>Recent Additions</h3>
         <ul data-role="listview" data-split-icon="gear" data-split-theme="c" data-theme="c" id="home_recent" class="listview">
         </ul>
     </div>
