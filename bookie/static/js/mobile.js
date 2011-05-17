@@ -36,11 +36,13 @@ var bookie = (function ($b, $) {
         'count': 10,
         'func': "",             // used for what type of thing are we looking at, load_recent
         'terms': [],
+        'query_params': "",
         'clear': function () {
             $b.page.url = "";
             $b.page.page = 0;
             $b.page.count = 10;
             $b.page.terms = [];
+            $b.page.query_params = "";
         },
         'generate_url': function () {
             url_str = ["count=" + this.count,
@@ -199,28 +201,47 @@ var bookie = (function ($b, $) {
         var url, opts, terms, with_content, data_home;
 
         terms = extra_params.terms;
+        with_content = extra_params.with_content;
 
         // if the terms are undefined, check if we have any from a previous
         // page call
         if (terms == undefined) {
             terms = $b.page.terms;
+        } else {
+            $b.page.terms = terms;
         }
 
-        with_content = extra_params.with_content;
+        if (with_content == undefined) {
+            with_content = $b.page.query_params;
+        } else if (with_content == "true") {
+            $b.page.query_params = "&content=" + extra_params.with_content;
+        }
+
+        // the id of the <ul> we're sticking results into
+        // (home page vs results page)
         data_home = extra_params.data_home;
 
         $b.page.url = "/api/v1/bmarks/search/" + terms.join('/');
-        $b.page.url = $b.page.url + "?" + $b.page.generate_url();
+        $b.page.url = $b.page.url + "?" + $b.page.generate_url() + $b.page.query_params;
         $b.page.func = $b.events.SEARCH;
-        $b.page.terms = terms;
 
         var opts = {
             url: $b.page.url,
             success: function (data) {
                 if (data.success == true) {
-                    var page = data.payload.page;
+                    var page = data.payload.page,
+                        page_title = "Search: " + data.payload.phrase;
+
+
+                    if ($b.page.query_params != "") {
+                        page_title = page_title + "<br /> (searching cached content)"
+                    }
+
                     $b.page.page = page
-                    $b.ui.results.update(data.payload.search_results, 'Search: ' + data.payload.phrase, data_home)
+
+                    $b.ui.results.update(data.payload.search_results,
+                                         page_title,
+                                         data_home)
                 } else {
                     console.error('ERROR getting search');
                 }
@@ -305,6 +326,7 @@ var bookie = (function ($b, $) {
         });
 
         $('.go_search').bind('click', function (ev) {
+            $b.page.clear();
             $('.go_search').addClass('ui-btn-active ui-state-persist');
             $('.go_popular').removeClass('ui-btn-active ui-state-persist');
             $('.go_recent').removeClass('ui-btn-active ui-state-persist');
@@ -322,18 +344,31 @@ var bookie = (function ($b, $) {
         });
 
         $($b.EVENTID).bind($b.events.SEARCH, $b.search);
-        $('#footer_search').bind('submit', function (ev) {
-            var my_form_id, input_id, terms;
+        $('.search_form').bind('submit', function (ev) {
+            var my_form_id, input_id, terms, with_content;
+            console.log('triggered search');
 
             ev.preventDefault();
+
+            // clear any previous search info
+            $b.page.clear();
 
             // the terms need to be pulled from the search box
             my_form_id = $(this).attr('id');
             input_id = "#" + my_form_id + " input";
 
+            // if this is the main search form, then check with_content
+            with_content = false;
+
+            if (my_form_id == 'search_page') {
+                with_content = $("#cache_content").val();
+                console.log('content');
+                console.log(with_content);
+            }
+
             terms = $(input_id).val().split(" ");
             $($b.EVENTID).trigger($b.events.SEARCH, {terms: terms,
-                                                     with_content: false,
+                                                     with_content: with_content,
                                                      data_home: '#results_list'});
         });
 

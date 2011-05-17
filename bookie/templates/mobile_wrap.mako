@@ -30,6 +30,9 @@
     <script type="text/javascript">
 
         $(document).bind("mobileinit", function() {
+            // do not do form submissions via ajax by default. We catch and
+            // override them to handle things manually
+            $.mobile.ajaxFormsEnabled = false;
             bookie.init();
         });
 
