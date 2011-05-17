@@ -105,12 +105,12 @@
     </header>
 
     <div data-role="content">
-        <form action="#search" method="GET" class="search_form" id="search_page">
+        <form action="#" method="GET" class="search_form" id="search_page">
             <div data-role="fieldcontain">
                 <label for="cache_content">Include Content?</label>
                 <select name="cache_content" id="cache_content" data-role="slider" data-inline="true">
-                    <option value="off">No</option>
-                    <option value="on">Yes</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
                 </select>
             </div>
             <div data-role="fieldcontain">
@@ -141,19 +141,7 @@
          </div>
     </footer>
 
-    <script id="resultLink" type="text/x-jquery-tmpl">
-        <li>
-            <a href="#"
-               data-hash="${'${hash_id}'|n}"
-               rel="external" target="_blank" class="bookmark_link">
-                    <h3>${'${description}'|n}</h3>
-                    <p>${'${tag_str}'|n}</p>
-            </a>
-            <a href="#"
-               data-hash="${'${hash_id}'|n}"
-               class="bookmark_view"></a>
-        </li>
-    </script>
+
 
 </div>
 
@@ -219,6 +207,20 @@
          </ul>
         </div>
     </footer>
+
+    <script id="resultLink" type="text/x-jquery-tmpl">
+        <li>
+            <a href="#"
+               data-hash="${'${hash_id}'|n}"
+               rel="external" target="_blank" class="bookmark_link">
+                    <h3>${'${description}'|n}</h3>
+                    <p>${'${tag_str}'|n}</p>
+            </a>
+            <a href="#"
+               data-hash="${'${hash_id}'|n}"
+               class="bookmark_view"></a>
+        </li>
+    </script>
 
 </div>
 
