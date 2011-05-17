@@ -81,16 +81,19 @@
                 <li>
                     <a href="#results" class="go_recent" data-role="button"
                                 data-inline="true" data-theme="a"
+                                data-icon="grid"
                                 data-iconpos="right">Recent</a>
                 </li>
                 <li>
                     <a href="#results" class="go_popular" data-role="button"
                                 data-inline="true" data-theme="a"
+                                data-icon="star"
                                 data-iconpos="right">Popular</a>
                 </li>
                 <li>
                     <a href="#search" class="go_search" data-role="button"
                        data-inline="true" data-theme="a"
+                       data-icon="search"
                        data-iconpos="top">Search</a>
                 </li>
              </ul>
@@ -125,16 +128,19 @@
                 <li>
                     <a href="#results" class="go_recent" data-role="button"
                                 data-inline="true" data-theme="a"
+                                data-icon="grid"
                                 data-iconpos="right">Recent</a>
                 </li>
                 <li>
                     <a href="#results" class="go_popular" data-role="button"
                                 data-inline="true" data-theme="a"
+                                data-icon="star"
                                 data-iconpos="right">Popular</a>
                 </li>
                 <li>
                     <a href="#search" class="go_search" data-role="button"
                        data-inline="true" data-theme="a"
+                       data-icon="search"
                        data-iconpos="top">Search</a>
                 </li>
              </ul>
@@ -188,23 +194,26 @@
     <footer data-id="nav" data-role="footer" data-type="horizontal"
             data-position="fixed" class="footer" role="contentinfo">
         <div data-role="navbar" role="navigation">
-        <ul>
-            <li>
-                <a href="#results" class="go_recent" data-role="button"
-                            data-inline="true" data-theme="a"
-                            data-iconpos="right">Recent</a>
-            </li>
-            <li>
-                <a href="#results" class="go_popular" data-role="button"
-                            data-inline="true" data-theme="a"
-                            data-iconpos="right">Popular</a>
-            </li>
-            <li>
-                <a href="#search" class="go_search" data-role="button"
-                   data-inline="true" data-theme="a"
-                   data-iconpos="top">Search</a>
-            </li>
-         </ul>
+            <ul>
+                <li>
+                    <a href="#results" class="go_recent" data-role="button"
+                                data-inline="true" data-theme="a"
+                                data-icon="grid"
+                                data-iconpos="right">Recent</a>
+                </li>
+                <li>
+                    <a href="#results" class="go_popular" data-role="button"
+                                data-inline="true" data-theme="a"
+                                data-icon="star"
+                                data-iconpos="right">Popular</a>
+                </li>
+                <li>
+                    <a href="#search" class="go_search" data-role="button"
+                       data-inline="true" data-theme="a"
+                       data-icon="search"
+                       data-iconpos="top">Search</a>
+                </li>
+             </ul>
         </div>
     </footer>
 
