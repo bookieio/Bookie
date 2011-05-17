@@ -19,7 +19,8 @@ Bookie Features
 ----------------
 - Open source!
 - Supports importing from Delicious.com and Google Bookmarks
-- Google Chrome extension (Firefox extension in development)
+- Google Chrome and Firefox extensions
+- Mobile view powered by JQuery Mobile
 - Fulltext index and search of your bookmark descriptions and tags
 - Cached copy of bookmark's content into a searchable index (in develop branch)
 - Popularity tracking of your most commonly used (clicked) bookmarks

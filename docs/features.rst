@@ -22,12 +22,21 @@ installation's *.ini* file. That's the security measure that prevents others
 from importing into your Bookie installation. That key should be changed from
 the default.
 
-Google Chrome extension
--------------------------
-Most of the details are available over in the extension_ docs. The extension is
-not yet in the Google gallery, but is available straight from this server. Make
-sure that after you install it, that you go into the options to configure it to
-talk to your specific Bookie installation.
+Google Chrome and Firefox extensions
+-------------------------------------
+Most of the details are available over in the extension_ docs. Make sure that
+after you install it, that you go into the options to configure it to talk to
+your specific Bookie installation.
+
+Mobile View
+------------
+Bookie supports a web based mobile view implementing using `JQuery Mobile`_.
+You can view your bookmarks, read the content from the page, if you've enabled
+the readable content features, and search your bookmarks from a number of
+devices. Just head to the `/m` url for your site. See http://rick.bmark.us/m
+for an example of how things look.
+
+.. _JQuery Mobile: http://jquerymobile.com/
 
 Fulltext indexing and seach
 ----------------------------
@@ -87,3 +96,5 @@ have a tool you're trying to do this with that doesn't work let us know.
 .. _Instapaper: http://instapaper.com
 .. _Readability: http://readability.com
 .. _bit.ly: http://bit.ly
+
+
