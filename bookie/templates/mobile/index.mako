@@ -227,7 +227,6 @@
                         {{each tags}}
                             ${'${$value.name}'}&nbsp;&nbsp;
                         {{/each}}
-                        ${'${tag_str}'|n}
                     </p>
             </a>
             <a href="#"
