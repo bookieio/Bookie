@@ -1,8 +1,17 @@
 import ConfigParser
 import os
+import transaction
 import unittest
+
 from pyramid.config import Configurator
 from pyramid import testing
+
+# tools we use to empty tables
+from bookie.models import DBSession
+from bookie.models import Bmark
+from bookie.models import Hashed
+from bookie.models import Tag, bmarks_tags
+from bookie.models import SqliteBmarkFT
 
 global_config = {}
 
@@ -79,3 +88,18 @@ def setup_db(settings):
 
 
 setup_db(settings)
+
+
+def empty_db():
+    """On teardown, remove all the db stuff"""
+
+    if BOOKIE_TEST_INI == 'test.ini':
+        SqliteBmarkFT.query.delete()
+    Bmark.query.delete()
+    Tag.query.delete()
+    Hashed.query.delete()
+
+    DBSession.execute(bmarks_tags.delete())
+    DBSession.flush()
+    transaction.commit()
+
