@@ -34,14 +34,21 @@ def bmark_recent(request):
     recent_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.stored.desc(),
                            tags=tags,
-                           page=page)
+                           page=page,
+                           with_tags=True)
 
+    result_set = []
+
+    for res in recent_list:
+        return_obj = dict(res)
+        return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
+        result_set.append(return_obj)
 
     ret = {
         'success': True,
         'message': "",
         'payload': {
-             'bmarks': [dict(res) for res in recent_list],
+             'bmarks': result_set,
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
@@ -78,13 +85,18 @@ def bmark_popular(request):
                            order_by=Bmark.clicks.desc(),
                            tags=tags,
                            page=page)
+    result_set = []
 
+    for res in popular_list:
+        return_obj = dict(res)
+        return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
+        result_set.append(return_obj)
 
     ret = {
         'success': True,
         'message': "",
         'payload': {
-             'bmarks': [dict(res) for res in popular_list],
+             'bmarks': result_set,
              'max_count': RESULTS_MAX,
              'count': len(popular_list),
              'page': page,
@@ -118,7 +130,7 @@ def bmark_sync(request):
 
 
 @view_config(route_name="api_bmark_hash", renderer="morjson")
-def bmark_sync(request):
+def bmark_get(request):
     """Return a bookmark requested via hash_id
 
     We need to return a nested object with parts
@@ -139,6 +151,7 @@ def bmark_sync(request):
     bookmark = BmarkMgr.get_by_hash(hash_id)
     return_obj = dict(bookmark)
     return_obj['readable'] = dict(bookmark.hashed.readable)
+    return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
     ret = {
         'success': True,
