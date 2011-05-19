@@ -165,7 +165,11 @@ class GBookmarkImporter(Importer):
         # we don't want to just import all the available urls, since each url
         # occurs once per tag. loop through and aggregate the tags for each url
         for tag in soup.findAll('h3'):
-            links = tag.findNextSibling('dl').findAll("a")
+            links = tag.findNextSibling('dl')
+
+            if links is not None:
+                links = links.findAll("a")
+
             for link in links:
                 url = link["href"]
                 tag_text = tag.text.replace(" ", "-")
