@@ -30,6 +30,28 @@ var bookie = (function ($b, $) {
 
         // init the tag filter ui completion code
         $($b.EVENTID).trigger($b.events.TAG_FILTER);
+
+        // if we're on the readable page, make sure we catch all links and
+        // check if we should follow or not
+        $('#readable_content a').bind('click', function (ev) {
+            // grab the href value and check if it starts with http or www
+            var url = $(this).attr('href');
+
+            if (!_.startsWith(url, 'http') && !_.startsWith(url, 'www')) {
+                // instead of this url, open the original web page instead of a
+                // broken look into htt://bookie/blah.html
+                ev.preventDefault();
+                var original_url = $('.bmark').attr('href'),
+                    newwindow = window.open(original_url, '_blank');
+
+                newwindow.focus();
+                return false;
+
+            } else {
+                // this will go well, just keep going and open the link
+                return true;
+            }
+        });
     };
 
 

@@ -60,6 +60,7 @@
 
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>
         <script type="text/javascript" src="/static/js/bookie.js"></script>
         <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
 
