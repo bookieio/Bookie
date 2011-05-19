@@ -185,8 +185,8 @@ class GBookmarkImporter(Importer):
                     # date the site was bookmarked
                     if 'add_date' not in link:
                         link['add_date'] = time.time()
-                    else:
-                        timestamp_added = float(link['add_date']) / 1e6
+
+                    timestamp_added = float(link['add_date']) / 1e6
 
                     urls[url] = {
                         'description': link.text,
