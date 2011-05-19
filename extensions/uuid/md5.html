@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript" src="md5.js"></script>
+        <script type="text/javascript" src="BigNumber.js"></script>
+        <script type="text/javascript">
+            var split = new BigNumber("4294967296");
+            window.addEventListener("load",function() {
+                // md5hash = md5(namespace.bytes + name).digest()
+                // md5hash = md5hash[:16]
+                var text = "agoogle";
+                var uu = hexToBin(hex_md5(text));
+
+                //uu &= ~(0xc000 << 48)
+                var mask = "11111111111111111111111111111111111111111111111111111111111111110011111111111111111111111111111111111111111111111111111111111111";
+                uu = bitand(uu, mask);
+                
+                //uu |= (0x8000 << 48)
+                mask = "1000000000000000000000000000000000000000000000000000000000000000";
+                uu = bitor(uu, mask);
+
+                //uu &= ~(0xf000 << 64)
+                mask = "11111111111111111111111111111111111111111111111100001111111111111111111111111111111111111111111111111111111111111111111111111111"
+                uu = bitand(uu, mask);
+
+                //uu |= 3 << 76L
+                mask = "110000000000000000000000000000000000000000000000000000000000000000000000000000"
+                uu = bitor(uu, mask);
+
+                document.body.innerHTML += binToString(uu);
+            });
+
+            function hexToBin(hex) {
+                var h2bmap = {"0":"0000","1":"0001","2":"0010", "3":"0011", "4":"0100", "5":"0101", "6":"0110", "7":"0111", "8":"1000", "9":"1001", "a":"1010", "b":"1011", "c":"1100", "d":"1101", "e":"1110", "f":"1111"};
+                return hex.split("").map(function(e) { return h2bmap[e]; }).join("");
+            }
+
+            function binToString(bin) {
+                var n = new BigNumber("0");
+                var size = bin.length;
+                for(var i = 0; i < size; i++) {
+                    if(bin[i] === "1") {
+                        var power = (new BigNumber(2)).pow(new BigNumber(size-i-1));
+                        n = n.add(power);
+                    }
+                }
+                return n.toString();
+            }
+
+            function bitand(a, b) {
+                var arrs = getBitArrays(a, b)
+                return arrs[0].map(function(el, i) { return arrs[1][i] & el }).join("");
+            }
+
+            function bitor(a, b) {
+                var arrs = getBitArrays(a, b)
+                return arrs[0].map(function(el, i) { return arrs[1][i] | el }).join("");
+            }
+
+            function getBitArrays(a, b) {
+                var aArr = a.split("");
+                var bArr = b.split("");
+
+                // if the arrays aren't the same length, prepend zeroes to the shorter one
+                var diff = aArr.length - bArr.length;
+                if(diff) {
+                    var arrToAugment = diff > 0 ? bArr : aArr;
+                    arrToAugment.unshift.apply(arrToAugment, new Array(Math.abs(diff)));
+                    arrToAugment.every(function (el, i, arr) { 
+                        if(!el) arr[i] = 0;
+                        return !el;
+                    });
+                }
+
+                return [aArr, bArr];
+            }
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>
