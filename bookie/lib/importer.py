@@ -170,34 +170,34 @@ class GBookmarkImporter(Importer):
             if links is not None:
                 links = links.findAll("a")
 
-            for link in links:
-                url = link["href"]
-                tag_text = tag.text.replace(" ", "-")
-                if url in urls:
-                    urls[url]['tags'].append(tag_text)
-                else:
-                    tags = [tag_text] if tag_text != 'Unlabeled' else []
-
-                    # get extended description
-                    has_extended = (link.parent.nextSibling and
-                            link.parent.nextSibling.name == 'dd')
-                    if has_extended:
-                        extended = link.parent.nextSibling.text
+                for link in links:
+                    url = link["href"]
+                    tag_text = tag.text.replace(" ", "-")
+                    if url in urls:
+                        urls[url]['tags'].append(tag_text)
                     else:
-                        extended = ""
+                        tags = [tag_text] if tag_text != 'Unlabeled' else []
 
-                    # date the site was bookmarked
-                    if 'add_date' not in link:
-                        link['add_date'] = time.time()
+                        # get extended description
+                        has_extended = (link.parent.nextSibling and
+                                link.parent.nextSibling.name == 'dd')
+                        if has_extended:
+                            extended = link.parent.nextSibling.text
+                        else:
+                            extended = ""
 
-                    timestamp_added = float(link['add_date']) / 1e6
+                        # date the site was bookmarked
+                        if 'add_date' not in link:
+                            link['add_date'] = time.time()
 
-                    urls[url] = {
-                        'description': link.text,
-                        'tags': tags,
-                        'extended': extended,
-                        'date_added': datetime.fromtimestamp(timestamp_added),
-                    }
+                        timestamp_added = float(link['add_date']) / 1e6
+
+                        urls[url] = {
+                            'description': link.text,
+                            'tags': tags,
+                            'extended': extended,
+                            'date_added': datetime.fromtimestamp(timestamp_added),
+                        }
 
         # save the bookmark
         for url, metadata in urls.items():
