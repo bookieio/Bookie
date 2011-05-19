@@ -146,3 +146,39 @@ class BookieAPITest(unittest.TestCase):
         eq_(0, bmark2['clicks'],
             "The clicks should be 0: " + str(bmark2['clicks']))
 
+    def test_paging_results(self):
+        """Test that we can page results"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        # test that we only get one resultback
+        res = self.testapp.get('/api/v1/bmarks/recent?page=0&count=1')
+
+        eq_(res.status, "200 OK",
+                msg='Get status is 200, ' + res.status)
+
+        # make sure we can decode the body
+        bmarks = json.loads(res.body)['payload']['bmarks']
+
+        eq_(len(bmarks), 1, "We should only have one result in this page")
+
+        res = self.testapp.get('/api/v1/bmarks/recent?page=1&count=1')
+
+        eq_(res.status, "200 OK",
+                msg='Get status is 200, ' + res.status)
+
+        # make sure we can decode the body
+        bmarks = json.loads(res.body)['payload']['bmarks']
+
+        eq_(len(bmarks), 1,
+            "We should only have one result in the second page")
+
+        res = self.testapp.get('/api/v1/bmarks/recent?page=2&count=1')
+
+        eq_(res.status, "200 OK",
+                msg='Get status is 200, ' + res.status)
+
+        # make sure we can decode the body
+        bmarks = json.loads(res.body)['payload']['bmarks']
+
+        eq_(len(bmarks), 0,
+            "We should not have any results for page 2")

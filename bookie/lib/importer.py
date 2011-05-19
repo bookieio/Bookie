@@ -1,4 +1,5 @@
 """Importers for bookmarks"""
+import time
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from bookie.models import BmarkMgr
@@ -182,7 +183,10 @@ class GBookmarkImporter(Importer):
                         extended = ""
 
                     # date the site was bookmarked
-                    timestamp_added = float(link['add_date']) / 1e6
+                    if 'add_date' not in link:
+                        link['add_date'] = time.time()
+                    else:
+                        timestamp_added = float(link['add_date']) / 1e6
 
                     urls[url] = {
                         'description': link.text,
