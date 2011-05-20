@@ -21,7 +21,9 @@ Features
 Installation
 ------------
 
-- Download the extension from the url http://bmark.us/bookie_chrome.crx
+- Chrome users can get it from the Gallery: http://goo.gl/NYinc 
+  *Hint* good reviews would be appreciated!
+- Chromium users should be able to get the extension from the url: http://bmark.us/bookie_chrome.crx
 - Updates currently need to be done manually
 
 Setting up

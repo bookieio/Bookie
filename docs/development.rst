@@ -25,6 +25,7 @@ Contents:
    install
    fabric
    tests
+   api
    todo
    events
 
