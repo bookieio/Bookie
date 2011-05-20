@@ -32,6 +32,10 @@
                     },
                 });
 
+                // we have to do focus manually since we're replacing our tags
+                // input with the tag plugin version
+                $('input.superblyTagInput').focus();
+
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options
                 if(!localStorage['cache_content'] || localStorage['cache_content'] != "true") {
@@ -40,7 +44,6 @@
                 } else {
                     bkg = chrome.extension.getBackgroundPage();
 
-                    console.log('injecting readable.js content script');
                     bkg.inject_readable(function () {
                         $('#content').val(bkg.get_html_content());
                     });
