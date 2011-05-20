@@ -7,6 +7,26 @@ var bookie = (function ($b, $) {
     $b.ui = {};
     $b.call = {};
 
+    // some constants we'll use throughout
+    // dom hook for triggering/catching events fired
+    $b.EVENTID = 'body';
+
+
+    /**
+     * Define events supported
+     *
+     */
+    $b.events = {
+        'LOAD': 'load',
+        'RECENT': 'recent',
+        'POPULAR': 'popular',
+        'SEARCH': 'search',
+        'NEXT_PAGE': 'next',
+        'PREV_PAGE': 'prev',
+        'VIEW': 'view'
+    };
+
+
     $b.request = function (options) {
         var defaults, opts;
 
@@ -52,23 +72,6 @@ var bookie = (function ($b, $) {
         }
     };
 
-    // some constants we'll use throughout
-    // dom hook for triggering/catching events fired
-    $b.EVENTID = 'body';
-
-    /**
-     * Define events supported
-     *
-     */
-    $b.events = {
-        'LOAD': 'load',
-        'RECENT': 'recent',
-        'POPULAR': 'popular',
-        'SEARCH': 'search',
-        'NEXT_PAGE': 'next',
-        'PREV_PAGE': 'prev',
-        'VIEW': 'view'
-    };
 
     /**
      * Once the page is loaded, perform some nice basics we need
@@ -76,6 +79,7 @@ var bookie = (function ($b, $) {
      */
     $b.load = function (ev) {
     };
+
 
     $b.load_recent = function (ev, extra_params) {
         // we need to get the list of recent from the api
@@ -115,6 +119,7 @@ var bookie = (function ($b, $) {
         ev.preventDefault();
     };
 
+
     $b.load_popular = function (ev, extra_params) {
         // we need to get the list of popular from the api
         var url, opts;
@@ -149,6 +154,7 @@ var bookie = (function ($b, $) {
         // don't do what the click says yet
         ev.preventDefault();
     };
+
 
     /**
      * Handle the event to load a bookmark
@@ -259,6 +265,7 @@ var bookie = (function ($b, $) {
         ev.preventDefault();
     };
 
+
     /**
      * We want to manage all aspects of the results page content
      *
@@ -299,6 +306,7 @@ var bookie = (function ($b, $) {
             });
         }
     };
+
 
     // only need to call init on the page read event
     $b.init = function () {

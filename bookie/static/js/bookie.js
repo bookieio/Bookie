@@ -21,6 +21,7 @@ var bookie = (function ($b, $) {
         'SEARCH': 'search'
     };
 
+
     /**
      * Once the page is loaded, perform some nice basics we need
      *
