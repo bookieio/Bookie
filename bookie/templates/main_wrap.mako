@@ -1,9 +1,6 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
-        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
-
-
         <title>Bookie: ${self.title()}</title>
         <link type="text/css" href="/static/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
         <link rel="stylesheet" type="text/css"
