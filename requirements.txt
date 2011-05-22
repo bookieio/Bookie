@@ -51,3 +51,4 @@ zope.i18nmessageid==3.5.3
 zope.interface==3.6.1
 zope.schema==3.7.1
 zope.sqlalchemy==0.6.1
+shortuuid
