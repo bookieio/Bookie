@@ -1,7 +1,6 @@
 """Test that we're meeting delicious API specifications"""
 import logging
 import os
-import shortuuid
 import StringIO
 import transaction
 import unittest
@@ -14,6 +13,7 @@ from pyramid import testing
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
+from bookie.lib.urlhash import generate_hash
 
 from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
@@ -32,7 +32,7 @@ def _delicious_data_test():
 
     # verify we can find a bookmark by url and check tags, etc
     check_url = 'http://www.ndftz.com/nickelanddime.png'
-    check_url_hashed = shortuuid.uuid(url=str(check_url))
+    check_url_hashed = generate_hash(check_url)
     found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
     ok_(found.hashed.url == check_url, "The url should match our search")
@@ -56,7 +56,7 @@ def _google_data_test():
 
     # verify we can find a bookmark by url and check tags, etc
     check_url = 'http://www.alistapart.com/'
-    check_url_hashed = shortuuid.uuid(url=str(check_url))
+    check_url_hashed = generate_hash(check_url)
     found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
     ok_(found.hashed.url == check_url, "The url should match our search")

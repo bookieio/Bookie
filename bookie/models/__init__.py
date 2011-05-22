@@ -1,6 +1,7 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
-import shortuuid
+
+from bookie.lib.urlhash import generate_hash
 
 from datetime import datetime
 
@@ -379,7 +380,7 @@ class Hashed(Base):
     def __init__(self, url):
         """We'll auto hash the id for them and set this up"""
         cleaned_url = str(unidecode(url))
-        self.hash_id = shortuuid.uuid(url=cleaned_url)
+        self.hash_id = generate_hash(cleaned_url)
         self.url = url
 
 
