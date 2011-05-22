@@ -36,6 +36,15 @@
             }
         );
 
+        function get_html_content() {
+            return $('#html_content').val();
+        };
+
+        function inject_readable(callback) {
+            chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
+        };
+
+
 
         chrome.tabs.onUpdated.addListener(
             function(tabId, changeInfo, tab) {
@@ -51,7 +60,6 @@
             }
         );
 
-
         chrome.tabs.onSelectionChanged.addListener(
             function(tabId, changeInfo) {
                 chrome.tabs.get(tabId, function (tab) {
@@ -64,37 +72,17 @@
             }
         );
 
-
         function check_url_bookmarked(url) {
             var hash_id = generate_url_hash(url);
-
-            console.log('checking for url ' + url);
-            console.log('hash is ' + hash_id);
 
             // check if we have this bookmarked
             // if so update the badge text with +
             if (localStorage.getItem(hash_id) === null) {
-                console.log('url is not found');
                 chrome.browserAction.setBadgeText({text: ''});
             } else {
-                console.log('url is found');
                 chrome.browserAction.setBadgeText({text: '+'});
             }
         };
-
-
-        function get_html_content() {
-            console.log('get html content');
-            return $('#html_content').val();
-        };
-
-
-        function inject_readable(callback) {
-            console.log('injecting');
-            chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
-            console.log('injected');
-        };
-
 
         function generate_url_hash(url) {
             var hash = Sha256.hash(url, true).substr(0, 14);
