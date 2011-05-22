@@ -1,69 +1,6 @@
 <html>
     <head>
         <script type="text/javascript" src="lib/jquery.min.js"></script>
-        <script type="text/javascript">
-            $(function() {
-                // populate default field values
-                $('#api_key').val(localStorage['api_key']);
-                $('#api_url').val(localStorage['api_url']);
-
-                if (localStorage['cache_content'] != 'false') {
-                    $('#cache_content').attr('checked', 'checked');
-                } else {
-                    $('#cache_content').removeAttr('checked');
-                }
-
-                // close window on cancel
-                $("#cancelBtn").click(function() { window.close(); });
-
-                // save new values on submit
-                $("#form").submit(function(e) {
-                    localStorage['api_key'] = $('#api_key').val();
-                    localStorage['api_url'] = $('#api_url').val();
-
-                    // do you want us to store the cached content of the
-                    // current page?
-                    var cache = $("#cache_content:checked").length;
-                    if (cache == 1) {
-                        localStorage['cache_content'] = true;
-                    } else {
-                        localStorage['cache_content'] = false;
-                    };
-
-                    // notify of successful save
-                    $('#info').text("Saved").slideDown().delay(3000).slideUp();
-
-                    e.preventDefault();
-                });
-
-
-                $("#syncBtn").click(function() {
-                    opts = {
-                        url: localStorage['api_url'] + '/api/v1/bmarks/sync',
-                        type: "GET",
-                        dataType: "json",
-                        timeout: 30000,
-                        error: function(jqxhr, textStatus, errorThrown) {
-                            console.log('REQUEST_ERROR');
-                            console.log('Response Code: ' + jqxhr.status);
-                        },
-                        success: function (data) {
-                            console.log('request done');
-                            var bkg, hash_id;
-                            bkg = chrome.extension.getBackgroundPage();
-                            for (idx in data.payload.hash_list) {
-                                hash_id = data.payload.hash_list[idx];
-                                localStorage.setItem(hash_id, true);
-                            }
-                        }
-                    };
-
-                    $.ajax(opts);
-                });
-
-
-            });
-        </script>
         <style>
             body {
                 font-family: sans-serif;
@@ -137,7 +74,112 @@
                 width:80px;
                 padding:2px 0px;
             }
+
+        #circle{
+            display: inline-block;
+        }
+
+        /** Stolen from: http://www.nikesh.me/demo/loading.html **/
+        .circle{
+            background-color:#CCC;
+            float:left;
+            height:15px;
+            margin-left:8px;
+            width:15px;
+            -webkit-animation-name: bounce_circle;
+            -webkit-border-radius:10px;
+            -webkit-animation-duration: 1.5s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: linear;
+            opacity:0.3;
+        }
+
+        #circle_1 {
+            -webkit-animation-delay: .3s;
+         }
+
+        #circle_2 {
+            -webkit-animation-delay: .7s;
+        }
+
+        #circle_3 {
+            -webkit-animation-delay: .9s;
+        }
+
+        @-webkit-keyframes bounce_circle {
+            0%{opacity:0.3;}
+            50%{opacity:1; background-color:#111}
+            100%{opacity:0.3;}
+        }
         </style>
+
+        <script type="text/javascript">
+            $(function() {
+                // populate default field values
+                $('#api_key').val(localStorage['api_key']);
+                $('#api_url').val(localStorage['api_url']);
+
+                if (localStorage['cache_content'] != 'false') {
+                    $('#cache_content').attr('checked', 'checked');
+                } else {
+                    $('#cache_content').removeAttr('checked');
+                }
+
+                // close window on cancel
+                $("#cancelBtn").click(function() { window.close(); });
+
+                // save new values on submit
+                $("#form").submit(function(e) {
+                    localStorage['api_key'] = $('#api_key').val();
+                    localStorage['api_url'] = $('#api_url').val();
+
+                    // do you want us to store the cached content of the
+                    // current page?
+                    var cache = $("#cache_content:checked").length;
+                    if (cache == 1) {
+                        localStorage['cache_content'] = true;
+                    } else {
+                        localStorage['cache_content'] = false;
+                    };
+
+                    // notify of successful save
+                    $('#info').text("Saved").slideDown().delay(3000).slideUp();
+
+                    e.preventDefault();
+                });
+
+
+                $("#syncBtn").click(function() {
+                    $('#circle').show();
+                    opts = {
+                        url: localStorage['api_url'] + '/api/v1/bmarks/sync',
+                        type: "GET",
+                        dataType: "json",
+                        timeout: 30000,
+                        error: function(jqxhr, textStatus, errorThrown) {
+                            console.log('REQUEST_ERROR');
+                            console.log('Response Code: ' + jqxhr.status);
+                        },
+                        success: function (data) {
+                            console.log('request done');
+                            var bkg, hash_id;
+                            bkg = chrome.extension.getBackgroundPage();
+                            for (idx in data.payload.hash_list) {
+                                hash_id = data.payload.hash_list[idx];
+                                localStorage.setItem(hash_id, true);
+                            }
+
+                            $('#circle').hide();
+                        }
+                    };
+
+                    $.ajax(opts);
+                });
+
+                $('#circle').hide();
+
+            });
+        </script>
     </head>
     <body>
         <h1>Bookie Settings</h1>
@@ -157,10 +199,15 @@
                 <button id="saveBtn" type="submit">Save</button>
             </div>
         </form>
-
         <div id="sync">
             <h3>Server Sync</h3>
             <button id="syncBtn">Sync</button>
+            <div id="circle" class="marginLeft">
+                <div id="circle_1" class="circle"></div>
+                <div id="circle_2" class="circle"></div>
+                <div id="circle_3" class="circle"></div>
+                <div class="clearfix"></div>
+            </div>
             <p><strong>Note:</strong> your Bookie url and api key settings must
             be set and saved before using Sync</p>
             <p>This will download information about your bookmarks from the
