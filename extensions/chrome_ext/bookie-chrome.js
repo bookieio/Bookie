@@ -54,8 +54,6 @@
             $b.populateFormBase({'url':window.location.href,
                 'title': "Testing stuff"
             });
-
-
         }
     };
 

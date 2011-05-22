@@ -35,6 +35,33 @@
 
                     e.preventDefault();
                 });
+
+
+                $("#syncBtn").click(function() {
+                    opts = {
+                        url: localStorage['api_url'] + '/api/v1/bmarks/sync',
+                        type: "GET",
+                        dataType: "json",
+                        timeout: 30000,
+                        error: function(jqxhr, textStatus, errorThrown) {
+                            console.log('REQUEST_ERROR');
+                            console.log('Response Code: ' + jqxhr.status);
+                        },
+                        success: function (data) {
+                            console.log('request done');
+                            var bkg, hash_id;
+                            bkg = chrome.extension.getBackgroundPage();
+                            for (idx in data.payload.hash_list) {
+                                hash_id = data.payload.hash_list[idx];
+                                localStorage.setItem(hash_id, true);
+                            }
+                        }
+                    };
+
+                    $.ajax(opts);
+                });
+
+
             });
         </script>
         <style>
@@ -130,5 +157,17 @@
                 <button id="saveBtn" type="submit">Save</button>
             </div>
         </form>
+
+        <div id="sync">
+            <h3>Server Sync</h3>
+            <button id="syncBtn">Sync</button>
+            <p><strong>Note:</strong> your Bookie url and api key settings must
+            be set and saved before using Sync</p>
+            <p>This will download information about your bookmarks from the
+            bookie server instance into your browser. This helps us notify you
+            when you're on a page you've already bookmarked. In the future,
+            this might be able to sync Chrome bookmarks with your Bookie
+            bookmarks.</p>
+        </div>
     </body>
 </html>

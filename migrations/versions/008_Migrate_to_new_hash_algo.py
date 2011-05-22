@@ -37,7 +37,7 @@ def upgrade(migrate_engine):
 
     for orig in hashes:
         orig_hash = orig['hash_id']
-        new_hash = generate_hash(orig_hash)
+        new_hash = generate_hash(orig['url'])
 
         up_bmarks = bmarks.update().where(bmarks.c.hash_id==orig_hash).values(hash_id=new_hash)
         up_url_hash = url_hash.update().where(url_hash.c.hash_id==orig_hash).values(hash_id=new_hash)
