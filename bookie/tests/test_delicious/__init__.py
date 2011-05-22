@@ -14,7 +14,7 @@ from bookie.models import SqliteBmarkFT
 
 from bookie.tests import BOOKIE_TEST_INI
 
-GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
+GOOGLE_HASH = 'aa2239c17609'
 
 
 class DelPostTest(unittest.TestCase):

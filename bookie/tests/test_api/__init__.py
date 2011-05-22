@@ -11,7 +11,7 @@ from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
-GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
+GOOGLE_HASH = 'aa2239c17609'
 LOG = logging.getLogger(__name__)
 
 class BookieAPITest(unittest.TestCase):

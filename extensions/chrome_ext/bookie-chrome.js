@@ -46,18 +46,14 @@
             chrome.tabs.getSelected(null, $b.populateFormBase);
 
             var api_url = $b.settings.get('api_url');
-            console.log('api_url');
-            console.log(api_url);
-
             $('#bookie_site').attr('href', api_url).attr('title', api_url);
+
         } else {
             // when running unit tests the chrome stuff isn't available
             // so we have to fake it
             $b.populateFormBase({'url':window.location.href,
                 'title': "Testing stuff"
             });
-
-
         }
     };
 
@@ -67,11 +63,18 @@
 
         if (window.chrome !== undefined && chrome.tabs) {
             if(notification.type === "error") {
-                webkitNotifications.createNotification(
-                    'delicious.png',
+                //show a desktop notification
+                var n = webkitNotifications.createNotification(
+                    'logo.128.png',
                     notification.shortText,
                     notification.longText
-                    ).show();
+                    );
+                n.show();
+
+                //hide the desktop notification after 5 seconds
+                window.setTimeout(function() {
+                    n.cancel();
+                }, 5000);
             } else {
                 window.close();
             }

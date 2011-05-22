@@ -4,10 +4,10 @@
 	<meta charset="UTF-8">
 	<title></title>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/hash.js"></script>
     <script type="text/javascript">
         var ui = (function() {
             var module = {};
-
 
             module.badge = {
                 'clear': function(millis) {
@@ -37,20 +37,62 @@
         );
 
         function get_html_content() {
-            console.log('get html content');
             return $('#html_content').val();
         };
 
         function inject_readable(callback) {
-            console.log('injecting');
             chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
-            console.log('injected');
+        };
+
+
+
+        chrome.tabs.onUpdated.addListener(
+            function(tabId, changeInfo, tab) {
+                // we only want to grab this if we change the current url in
+                // the current tab
+                if ('url' in changeInfo) {
+                    if (tab.url) {
+                        check_url_bookmarked(tab.url);
+                    } else {
+                        console.log('no hash for you');
+                    }
+                }
+            }
+        );
+
+        chrome.tabs.onSelectionChanged.addListener(
+            function(tabId, changeInfo) {
+                chrome.tabs.get(tabId, function (tab) {
+                    if (tab.url) {
+                        check_url_bookmarked(tab.url);
+                    } else {
+                        console.log('no hash for you');
+                    }
+                });
+            }
+        );
+
+        function check_url_bookmarked(url) {
+            var hash_id = generate_url_hash(url);
+
+            // check if we have this bookmarked
+            // if so update the badge text with +
+            if (localStorage.getItem(hash_id) === null) {
+                chrome.browserAction.setBadgeText({text: ''});
+            } else {
+                chrome.browserAction.setBadgeText({text: '+'});
+            }
+        };
+
+        function generate_url_hash(url) {
+            var hash = Sha256.hash(url, true).substr(0, 14);
+            return hash;
         };
 
     </script>
 </head>
 <body>
-	
     <textarea id="html_content"></textarea>
+    <input id="url_hash" />
 </body>
 </html>
