@@ -48,11 +48,17 @@
 
         chrome.tabs.onUpdated.addListener(
             function(tabId, changeInfo, tab) {
+                var tid = tabId;
+
                 // we only want to grab this if we change the current url in
                 // the current tab
                 if ('url' in changeInfo) {
                     if (tab.url) {
-                        check_url_bookmarked(tab.url);
+                        chrome.tabs.getSelected(undefined, function (tab) {
+                            if (tid === tab.id) {
+                                check_url_bookmarked(tab.url);
+                            }
+                        });
                     } else {
                         console.log('no hash for you');
                     }
