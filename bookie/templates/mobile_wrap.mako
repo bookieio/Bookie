@@ -2,6 +2,7 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <title>Bookie: ${self.title()}</title>
+        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
         <link href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" rel="stylesheet" type="text/css" />
