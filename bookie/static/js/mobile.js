@@ -94,7 +94,7 @@ var bookie = (function ($b, $) {
             success: function (data) {
                 if (data.success == true) {
                     var page = data.payload.page;
-                    $b.page.page = page
+                    $b.page.page = page;
                     $b.ui.results.update(data.payload.bmarks, 'Recent: Page ' + page, data_home);
                 } else {
                     console.error('ERROR getting recent');
@@ -128,13 +128,13 @@ var bookie = (function ($b, $) {
 
         data_home = extra_params.data_home;
 
-        var opts = {
+        opts = {
             url: $b.page.url,
             success: function (data) {
                 if (data.success == true) {
                     var page = data.payload.page;
-                    $b.page.page = page
-                    $b.ui.results.update(data.payload.bmarks, 'Popular: Page ' + page, data_home)
+                    $b.page.page = page;
+                    $b.ui.results.update(data.payload.bmarks, 'Popular: Page ' + page, data_home);
                 } else {
                     console.error('ERROR getting popular');
                 }
@@ -167,7 +167,7 @@ var bookie = (function ($b, $) {
         $b.page.url = "/api/v1/bmarks/" + extra_params.hash_id;
         $b.page.func = $b.events.VIEW;
 
-        var opts = {
+        opts = {
             url: $b.page.url,
             success: function (data) {
                 if (data.success == true) {

@@ -177,7 +177,6 @@ var bookie = (function (module, $, logger) {
     $b.store_changes = function (ev) {
         var data, ext_val;
 
-        $b.log('IN SUBMIT EVENT');
         data = {
             'url': $('#url').attr('value'),
             'api_key': $('#api_key').attr('value'),

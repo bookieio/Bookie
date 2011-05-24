@@ -75,10 +75,23 @@
                 window.setTimeout(function() {
                     n.cancel();
                 }, 5000);
+
+
             } else {
+                // some post notify checks
+                if (notification.longText === "saved") {
+                    chrome.tabs.getSelected(null, function (tab) {
+                        // we need to hash this into storage
+                        var hash_id = background.generate_url_hash(tab.url);
+                        console.log(hash_id);
+                        $b.settings.set(hash_id, true);
+                    });
+                }
                 window.close();
+
             }
         }
+
     }
 
     function showBadge(notification) {

@@ -45,7 +45,6 @@
         };
 
 
-
         chrome.tabs.onUpdated.addListener(
             function(tabId, changeInfo, tab) {
                 var tid = tabId;
@@ -86,6 +85,7 @@
             if (localStorage.getItem(hash_id) === null) {
                 chrome.browserAction.setBadgeText({text: ''});
             } else {
+                chrome.browserAction.setBadgeBackgroundColor({color: [0, 191, 255, 255]});
                 chrome.browserAction.setBadgeText({text: '+'});
             }
         };
@@ -94,6 +94,15 @@
             var hash = Sha256.hash(url, true).substr(0, 14);
             return hash;
         };
+
+        // add some right-click content menu love for a quick "read later"
+        chrome.contextMenus.create({"title": "Read Later",
+                                    "contexts":["page"],
+                                    "onclick": function (info, tab) {
+                                                console.log(info);
+                                                console.log(tab);
+                                               }
+                                  });
 
     </script>
 </head>

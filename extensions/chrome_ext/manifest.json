@@ -1,13 +1,18 @@
 {
   "name": "Bookie",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
     "notifications",
+    "contextMenus",
     "https://*/*",
     "http://*/*"
   ],
+  "icons": {
+    "16": "logo.16.png",
+    "128": "logo.128.png"
+  },
   "options_page": "options.html",
   "background_page": "background.html",
   "browser_action": {

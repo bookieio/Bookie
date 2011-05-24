@@ -36,7 +36,8 @@ var bookie = (function ($b, $) {
         // check if we should follow or not
         $('#readable_content a').bind('click', function (ev) {
             // grab the href value and check if it starts with http or www
-            var url = $(this).attr('href');
+            var url = $(this).attr('href'),
+                original_url = "";
 
             if (!_.startsWith(url, 'http') && !_.startsWith(url, 'www')) {
                 // instead of this url, open the original web page instead of a
@@ -100,7 +101,7 @@ var bookie = (function ($b, $) {
                 var current_vals, current;
 
                 current_vals = $('#tag_filter').val().split(" ");
-                if (current_vals.length == 0) {
+                if (current_vals.length === 0) {
                     current = [];
                 } else {
                     current = current_vals;
