@@ -9,7 +9,6 @@
         <link rel="apple-touch-icon" href="/static/images/logo.128.png" />
 
         <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
-        <script type="text/javascript" src="/static/js/mobile.js"></script>
 
 
         % if hasattr(self, 'header'):
@@ -27,7 +26,7 @@
         ${next.body()}
     </body>
 
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="/static/js/mobile.js"></script>
     <script type="text/javascript">
 
         $(document).bind("mobileinit", function() {
@@ -42,5 +41,8 @@
         });
 
     </script>
-    <script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
+    <!--<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>-->
+    <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 </html>
