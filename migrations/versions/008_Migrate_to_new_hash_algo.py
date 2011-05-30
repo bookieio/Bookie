@@ -29,7 +29,7 @@ def upgrade(migrate_engine):
     readable = Table('readable', meta, autoload=True)
 
     if 'sqlite' in migrate_engine.dialect.driver.lower():
-        readable_fts = Table('readable', meta, autoload=True)
+        readable_fts = Table('readable_fts', meta, autoload=True)
     else:
         readable_fts = None
 
