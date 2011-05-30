@@ -26,6 +26,7 @@
         ${next.body()}
     </body>
 
+    <script type="text/javascript" src="/static/js/bookie.api.js"></script>
     <script type="text/javascript" src="/static/js/mobile.js"></script>
     <script type="text/javascript">
 

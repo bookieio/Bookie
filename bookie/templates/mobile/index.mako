@@ -259,6 +259,8 @@
             ${'${pretty_date.toDateString()}'|n}
         </p>
         <p id="view_extended">${'${extended}'|n}</p>
-        <p id="view_content">${'{{html readable.content}}'|n}</p>
+        {{if readable}}
+            <p id="view_content">${'{{html readable.content}}'|n}</p>
+        {{/if}}
     </script>
 </div>

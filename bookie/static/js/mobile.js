@@ -11,6 +11,8 @@ var bookie = (function ($b, $) {
     // dom hook for triggering/catching events fired
     $b.EVENTID = 'body';
 
+    // init the api since we'll be using calls to it
+    $b.api.init(APP_URL);
 
     /**
      * Define events supported
@@ -27,30 +29,7 @@ var bookie = (function ($b, $) {
     };
 
 
-    $b.request = function (options) {
-        var defaults, opts;
-
-        defaults = {
-            type: "GET",
-            dataType: "json",
-            context: $b,
-            timeout: 30000,
-            error: function(jqxhr, textStatus, errorThrown) {
-                console.log('REQUEST_ERROR');
-                console.log('Response Code: ' + jqxhr.status);
-                console.log('Response Status: ' + textStatus);
-                console.log(jqxhr);
-            }
-        };
-
-        options.url = APP_URL + options.url;
-
-        opts = $.extend({}, defaults, options);
-        $.ajax(opts);
-    };
-
-
-    $b.page = {
+    $b.mobilestate = {
         'url': '',
         'page': 0,
         'count': 10,
@@ -58,17 +37,11 @@ var bookie = (function ($b, $) {
         'terms': [],
         'query_params': "",
         'clear': function () {
-            $b.page.url = "";
-            $b.page.page = 0;
-            $b.page.count = 10;
-            $b.page.terms = [];
-            $b.page.query_params = "";
-        },
-        'generate_url': function () {
-            url_str = ["count=" + this.count,
-                       "page=" + this.page,
-                      ].join('&');
-            return url_str;
+            $b.mobilestate.url = "";
+            $b.mobilestate.page = 0;
+            $b.mobilestate.count = 10;
+            $b.mobilestate.terms = [];
+            $b.mobilestate.query_params = "";
         }
     };
 
@@ -77,82 +50,86 @@ var bookie = (function ($b, $) {
      * Once the page is loaded, perform some nice basics we need
      *
      */
-    $b.load = function (ev) {
-    };
+    $b.load = function (ev) {};
 
 
     $b.load_recent = function (ev, extra_params) {
-        // we need to get the list of recent from the api
-        var url, opts;
-        $b.page.url = "/api/v1/bmarks/recent?" + $b.page.generate_url();
-        $b.page.func = $b.events.RECENT;
-
-        data_home = extra_params.data_home;
-
-        var opts = {
-            url: $b.page.url,
-            success: function (data) {
-                if (data.success == true) {
-                    var page = data.payload.page;
-                    $b.page.page = page;
-                    $b.ui.results.update(data.payload.bmarks, 'Recent: Page ' + page, data_home);
-                } else {
-                    console.error('ERROR getting recent');
-                }
-
-                $.mobile.pageLoading(true);
-            },
-            'complete': function () {
-                if (data_home != '#home_recent') {
-                    $.mobile.changePage('#results', 'slide', back=false, changeHash=false);
-                }
-
-                $.mobile.pageLoading(true);
-            }
-
-        };
-
-        $.mobile.pageLoading();
-        $b.request(opts);
-
         // don't do what the click says yet
         ev.preventDefault();
+        $.mobile.pageLoading();
+
+        $b.mobilestate.func = $b.events.RECENT;
+        data_home = extra_params.data_home;
+
+        $b.api.recent($b.api.pager($b.mobilestate.page, $b.mobilestate.count),
+                      {
+                          // on success update the page count and update the
+                          // results list
+                          'success': function (data) {
+                              if (data.success === true) {
+                                  var page = data.payload.page;
+                                  $b.mobilestate.page = page;
+                                  $b.ui.results.update(data.payload.bmarks,
+                                                       'Recent: Page ' + page,
+                                                       data_home);
+                              } else {
+                                  console.error('ERROR getting recent');
+                              }
+
+                              $.mobile.pageLoading(true);
+                          },
+                          // once success is done updating results page, switch over
+                          // there
+                          'complete': function () {
+                              if (data_home !== '#home_recent') {
+                                  $.mobile.changePage('#results',
+                                                      'slide',
+                                                      back=false,
+                                                      changeHash=false);
+                              }
+
+                              $.mobile.pageLoading(true);
+                          }
+                      }
+                );
     };
 
 
     $b.load_popular = function (ev, extra_params) {
-        // we need to get the list of popular from the api
-        var url, opts;
-        $b.page.url = "/api/v1/bmarks/popular?" + $b.page.generate_url();
-        $b.page.func = $b.events.POPULAR;
-
-        data_home = extra_params.data_home;
-
-        opts = {
-            url: $b.page.url,
-            success: function (data) {
-                if (data.success == true) {
-                    var page = data.payload.page;
-                    $b.page.page = page;
-                    $b.ui.results.update(data.payload.bmarks, 'Popular: Page ' + page, data_home);
-                } else {
-                    console.error('ERROR getting popular');
-                }
-
-                $.mobile.pageLoading(true);
-            },
-            'complete': function () {
-                $.mobile.changePage('#results', 'slide', back=false, changeHash=false);
-                $.mobile.pageLoading(true);
-            }
-
-        };
-
-        $.mobile.pageLoading();
-        $b.request(opts);
-
         // don't do what the click says yet
         ev.preventDefault();
+        $.mobile.pageLoading();
+
+        $b.mobilestate.func = $b.events.POPULAR;
+        data_home = extra_params.data_home;
+
+        var pager = $b.api.pager($b.mobilestate.page,
+                                 $b.mobilestate.count);
+
+        $b.api.popular(pager,
+            {
+                'success': function (data) {
+                    if (data.success === true) {
+                        var page = data.payload.page;
+                        $b.mobilestate.page = page;
+                        $b.ui.results.update(data.payload.bmarks,
+                                             'Popular: Page ' + page,
+                                             data_home);
+                    } else {
+                        console.error('ERROR getting popular');
+                    }
+
+                    $.mobile.pageLoading(true);
+                },
+                'complete': function () {
+                    $.mobile.changePage('#results',
+                                        'slide',
+                                        back=false,
+                                        changeHash=false);
+                    $.mobile.pageLoading(true);
+                }
+            }
+        );
     };
 
 
@@ -163,106 +140,102 @@ var bookie = (function ($b, $) {
      *
      */
     $b.load_bookmark = function (ev, extra_params) {
-        var url, opts;
-        $b.page.url = "/api/v1/bmarks/" + extra_params.hash_id;
-        $b.page.func = $b.events.VIEW;
-
-        opts = {
-            url: $b.page.url,
-            success: function (data) {
-                if (data.success == true) {
-                    var bmark = data.payload.bmark;
-                    $view = $('#view_content');
-
-                    $view.html("");
-
-                    // let's pretty up a date for diplay
-                    pretty_date = new Date(bmark.stored);
-                    bmark['pretty_date'] = pretty_date;
-
-                    $("#view_template").tmpl([bmark]).prependTo($view)
-
-                } else {
-                    console.error('ERROR getting bookmark');
-                }
-
-            },
-            'complete': function () {
-                $.mobile.changePage('#view', 'slide', back=false, changeHash=true);
-                $.mobile.pageLoading(true);
-            }
-
-        };
-
-        $.mobile.pageLoading();
-        $b.request(opts);
-
         // don't do what the click says yet
         ev.preventDefault();
+        $.mobile.pageLoading();
+
+        $b.mobilestate.func = $b.events.VIEW;
+
+        $b.api.bookmark(extra_params.hash_id,
+                {
+                    'success': function (data) {
+                        if (data.success === true) {
+                            var bmark = data.payload.bmark;
+                            $view = $('#view_content');
+
+                            $view.html("");
+
+                            // let's pretty up a date for diplay
+                            pretty_date = new Date(bmark.stored);
+                            bmark.pretty_date = pretty_date;
+
+                            $("#view_template").tmpl([bmark]).prependTo($view);
+
+                        } else {
+                            console.error('ERROR getting bookmark');
+                        }
+
+                    },
+                    'complete': function () {
+                        $.mobile.changePage('#view', 'slide', back=false, changeHash=true);
+                        $.mobile.pageLoading(true);
+                    }
+                }
+        );
     };
 
 
     $b.search = function (ev, extra_params) {
         // search for a url given the search content
-        var url, opts, terms, with_content, data_home;
+        var terms, with_content, data_home;
+
+        // don't do what the click says yet
+        ev.preventDefault();
+
+        $.mobile.pageLoading();
 
         terms = extra_params.terms;
         with_content = extra_params.with_content;
 
         // if the terms are undefined, check if we have any from a previous
         // page call
-        if (terms == undefined) {
-            terms = $b.page.terms;
+        if (terms === undefined) {
+            terms = $b.mobilestate.terms;
         } else {
-            $b.page.terms = terms;
+            $b.mobilestate.terms = terms;
         }
 
-        if (with_content == undefined) {
-            with_content = $b.page.query_params;
-        } else if (with_content == "true") {
-            $b.page.query_params = "&content=" + extra_params.with_content;
+        if (with_content === undefined) {
+            with_content = $b.mobilestate.query_params;
+        } else if (with_content === "true") {
+            $b.mobilestate.query_params = "&content=" + extra_params.with_content;
         }
 
         // the id of the <ul> we're sticking results into
         // (home page vs results page)
         data_home = extra_params.data_home;
 
-        $b.page.url = "/api/v1/bmarks/search/" + terms.join('/');
-        $b.page.url = $b.page.url + "?" + $b.page.generate_url() + $b.page.query_params;
-        $b.page.func = $b.events.SEARCH;
+        $b.mobilestate.func = $b.events.SEARCH;
+        $b.api.search($b.mobilestate.terms,
+                      with_content,
+                      $b.api.pager($b.mobilestate.page, $b.mobilestate.count),
+                      {
+                          'success': function (data) {
+                              if (data.success === true) {
+                                  var page = data.payload.page,
+                                      page_title = "Search: " + data.payload.phrase;
 
-        var opts = {
-            url: $b.page.url,
-            success: function (data) {
-                if (data.success == true) {
-                    var page = data.payload.page,
-                        page_title = "Search: " + data.payload.phrase;
 
+                                  if ($b.mobilestate.query_params !== "") {
+                                      page_title = page_title + "<br /> (searching cached content)";
+                                  }
 
-                    if ($b.page.query_params != "") {
-                        page_title = page_title + "<br /> (searching cached content)"
-                    }
+                                  $b.mobilestate.page = page;
 
-                    $b.page.page = page
+                                  $b.ui.results.update(data.payload.search_results,
+                                                       page_title,
+                                                       data_home);
+                              } else {
+                                  console.error('ERROR getting search');
+                              }
+                          },
+                          'complete': function () {
+                              $.mobile.changePage('#results', 'slide', back=false, changeHash=false);
+                              $.mobile.pageLoading(true);
+                          }
+                      }
+        );
 
-                    $b.ui.results.update(data.payload.search_results,
-                                         page_title,
-                                         data_home)
-                } else {
-                    console.error('ERROR getting search');
-                }
-            },
-            'complete': function () {
-                $.mobile.changePage('#results', 'slide', back=false, changeHash=false);
-                $.mobile.pageLoading(true);
-            }
-        };
-
-        $.mobile.pageLoading();
-        $b.request(opts);
-
-        // don't do what the click says yet
-        ev.preventDefault();
     };
 
 
@@ -274,11 +247,9 @@ var bookie = (function ($b, $) {
         'tpl_id': '#resultLink',
         'title_id': '#results_title',
         'update': function (data, title, data_home) {
-            var page = $b.page.page;
+            var page = $b.mobilestate.page;
             $(data_home).html("");
-            // $(data_home).listview();
 
-            console.log('Updating ' + data_home);
             $("#resultLink").tmpl(data).prependTo(data_home);
             $($b.ui.results.title_id).html(title);
 
@@ -287,14 +258,14 @@ var bookie = (function ($b, $) {
 
             // now bind the swipe event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
+                ev.preventdefault();
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
-                    url = APP_URL + "/redirect/" + hash_id;
+                    url = APP_URL + "/redirect/" + hash_id,
+                    newwindow = window.open(url, '_blank');
 
-                var newwindow = window.open(url, '_blank');
                 newwindow.focus();
                 return false;
-                ev.preventdefault();
             });
 
             // now bind the gear icon to view this bookmark in detail
@@ -310,45 +281,50 @@ var bookie = (function ($b, $) {
 
     // only need to call init on the page read event
     $b.init = function () {
+        var button_list = {
+            'go_recent': $b.events.RECENT,
+            'go_popular': $b.events.POPULAR,
+            'go_search': $b.events.SEARCH,
+        },
 
-        $($b.EVENTID).bind($b.events.RECENT, $b.load_recent);
-        $('.go_recent').bind('click', function (ev) {
-            ev.preventDefault();
+        nav_buttons = function (id, event_id, data_home, callback) {
+            if (callback !== undefined) {
+                $($b.EVENTID).bind(event_id, callback);
+            }
 
-            $b.page.clear();
-            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#results_list'});
-            $('.go_recent').addClass('ui-btn-active ui-state-persist');
-            $('.go_popular').removeClass('ui-btn-active ui-state-persist');
-            $('.go_search').removeClass('ui-btn-active ui-state-persist');
-        });
+            $('.' + id).bind('click', function (ev) {
+                $b.mobilestate.clear();
+                console.log(callback);
 
-        $($b.EVENTID).bind($b.events.POPULAR, $b.load_popular);
-        $('.go_popular').bind('click', function (ev) {
-            ev.preventDefault();
+                if (callback !== undefined) {
+                    ev.preventDefault();
+                    $($b.EVENTID).trigger(event_id, {data_home: data_home});
+                }
 
-            $b.page.clear();
-            $($b.EVENTID).trigger($b.events.POPULAR, {data_home: '#results_list'});
-            $('.go_popular').addClass('ui-btn-active ui-state-persist');
-            $('.go_recent').removeClass('ui-btn-active ui-state-persist');
-            $('.go_search').removeClass('ui-btn-active ui-state-persist');
-        });
+                for (button in button_list) {
+                    if (button == id) {
+                        // then we addClass this one
+                        $('.' + id).addClass('ui-btn-active ui-state-persist');
+                    } else {
+                        // then we remove the classes
+                        $('.' + id).removeClass('ui-btn-active ui-state-persist');
+                    }
+                }
+            });
+        };
 
-        $('.go_search').bind('click', function (ev) {
-            $b.page.clear();
-            $('.go_search').addClass('ui-btn-active ui-state-persist');
-            $('.go_popular').removeClass('ui-btn-active ui-state-persist');
-            $('.go_recent').removeClass('ui-btn-active ui-state-persist');
-
-        });
+        nav_buttons('go_recent', $b.events.RECENT, '#results_list', $b.load_recent);
+        nav_buttons('go_popular', $b.events.POPULAR, '#results_list', $b.load_popular);
+        nav_buttons('go_search');
 
         $('#results_previous').bind('click', function (ev) {
-            $b.page.page = $b.page.page - 1;
-            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'});
+            $b.mobilestate.page = $b.mobilestate.page - 1;
+            $($b.EVENTID).trigger($b.mobilestate.func, {data_home: '#results_list'});
         });
 
         $('#results_next').bind('click', function (ev) {
-            $b.page.page = $b.page.page + 1;
-            $($b.EVENTID).trigger($b.page.func, {data_home: '#results_list'});
+            $b.mobilestate.page = $b.mobilestate.page + 1;
+            $($b.EVENTID).trigger($b.mobilestate.func, {data_home: '#results_list'});
         });
 
         $($b.EVENTID).bind($b.events.SEARCH, $b.search);
@@ -359,7 +335,7 @@ var bookie = (function ($b, $) {
             ev.preventDefault();
 
             // clear any previous search info
-            $b.page.clear();
+            $b.mobilestate.clear();
 
             // the terms need to be pulled from the search box
             my_form_id = $(this).attr('id');
@@ -368,7 +344,7 @@ var bookie = (function ($b, $) {
             // if this is the main search form, then check with_content
             with_content = false;
 
-            if (my_form_id == 'search_page') {
+            if (my_form_id === 'search_page') {
                 with_content = $("#cache_content").val();
                 console.log('content');
                 console.log(with_content);
@@ -381,7 +357,7 @@ var bookie = (function ($b, $) {
         });
 
         $($b.EVENTID).bind($b.events.LOAD, function (ev) {
-            $b.page.count = 5;
+            $b.mobilestate.count = 5;
             $('.listview').listview();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
         });
@@ -390,4 +366,5 @@ var bookie = (function ($b, $) {
     };
 
     return $b;
+
 })(bookie || {}, jQuery);

@@ -150,7 +150,9 @@ def bmark_get(request):
 
     bookmark = BmarkMgr.get_by_hash(hash_id)
     return_obj = dict(bookmark)
-    return_obj['readable'] = dict(bookmark.hashed.readable)
+    if bookmark.hashed.readable:
+        return_obj['readable'] = dict(bookmark.hashed.readable)
+
     return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
     ret = {
