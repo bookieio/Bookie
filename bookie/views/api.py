@@ -5,6 +5,7 @@ from pyramid.view import view_config
 
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
+from bookie.models import TagMgr
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 10
@@ -166,3 +167,34 @@ def bmark_get(request):
     return ret
 
 
+@view_config(route_name="api_tag_complete", renderer="morjson")
+def tag_complete(request):
+    """Complete a tag based on the given text
+
+    :@param tag: GET string, tag=sqlalchemy
+    :@param current: GET string of tags we already have python+database
+
+    """
+    params = request.GET
+
+    if 'current' in params and params['current'] != "":
+        current_tags = params['current'].split()
+    else:
+        current_tags = None
+
+    if 'tag' in params and params['tag']:
+        tag = params['tag']
+        tags = TagMgr.complete(tag, current=current_tags)
+        # reset this for the payload join operation
+        current_tags = []
+
+    ret = {
+        'success': True,
+        'message': "",
+        'payload': {
+             'current': ",".join(current_tags),
+             'tags': [tag.name for tag in tags]
+        }
+    }
+
+    return ret

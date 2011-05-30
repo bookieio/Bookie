@@ -120,4 +120,8 @@ def build_routes(config):
     # this route must be last, none of the above will look like hashes (22char)
     # so it's safe to have as a kind of default route at the end
     config.add_route("api_bmark_hash", "/api/v1/bmarks/{hash_id}")
+
+    # api calls for tag relation information
+    config.add_route("api_tag_complete", "/api/v1/tags/complete")
+
     return config

@@ -11,6 +11,9 @@ var bookie = (function ($b, $) {
     // dom hook for triggering/catching events fired
     $b.EVENTID = 'body';
 
+    // init the api since we'll be using calls to it
+    $b.api.init(APP_URL);
+
     /**
      * Define events supported
      *
@@ -27,8 +30,6 @@ var bookie = (function ($b, $) {
      *
      */
     $b.load = function (ev) {
-        console.log('loading');
-
         // init the tag filter ui completion code
         $($b.EVENTID).trigger($b.events.TAG_FILTER);
 
@@ -57,43 +58,11 @@ var bookie = (function ($b, $) {
     };
 
 
-    /*
-     * fetch a set of completion options
-     * Used for completing tag names in the extension
-     *
-    */
-    $b.call.tagComplete = function (substring, current_terms, callback) {
-        var opts = {
-            url: "/delapi/tags/complete",
-            type: "GET",
-            dataType: "xml",
-            data: {
-                tag: substring,
-                current: current_terms.join(" ")
-            },
-
-            success: function (xml) {
-                tag_list = [];
-                results = $(xml).find("tag");
-                results.map(function () {
-                    tag_list.push($(this).text());
-                });
-
-                callback(tag_list);
-            }
-        };
-
-        $.ajax(opts);
-    };
-
-
     /**
      * Control the tag filter ui on the main pages
      *
      */
     $b.ui.init_tag_filter = function (ev) {
-        console.log('triggering tag filter');
-
         var $tag_filter = $('#tag_filter');
 
         $tag_filter.superblyTagField({
@@ -107,14 +76,19 @@ var bookie = (function ($b, $) {
                     current = current_vals;
                 }
 
-                console.log(current);
-                bookie.call.tagComplete(value, current, callback);
+                $b.api.tag_complete(
+                        value,
+                        current,
+                        { 'success': function (data) {
+                                           callback(data.payload.tags);
+                                     }
+                        }
+                );
             },
         });
 
         // fire off for existing tags
         // but only if we have a tag to pretty up
-        console.log($tag_filter.val());
         if ($tag_filter.val()) {
             $('#tag_filter').change();
         }
