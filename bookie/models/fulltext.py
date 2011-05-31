@@ -86,8 +86,6 @@ class SqliteFulltext(object):
 
             res = qry.order_by(bmarks.stored).all()
             for read in res:
-                LOG.debug(dict(read))
-                LOG.debug(dict(hashed))
                 readable_res.append(read.hashed.bmark[0])
 
         results.update(set(readable_res))
