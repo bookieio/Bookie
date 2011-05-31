@@ -96,7 +96,7 @@ var bookie = (function ($b, $) {
         $('form#filter_form').bind('submit', function (ev) {
             ev.preventDefault();
             terms = $('#tag_filter').val().split(" ");
-            url = "/recent/" + terms.join('/');
+            url = APP_URL + "/recent/" + terms.join('/');
             window.location = url;
         });
     };
@@ -110,7 +110,6 @@ var bookie = (function ($b, $) {
         // bind some other events we might want read to go out of the gates
         $($b.EVENTID).bind($b.events.TAG_FILTER, $b.ui.init_tag_filter);
         $($b.EVENTID).bind($b.events.SEARCH, $b.call.search);
-
 
         // now trigger the load since we're ready to go from here
         $($b.EVENTID).trigger($b.events.LOAD);
