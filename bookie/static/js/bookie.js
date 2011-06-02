@@ -66,7 +66,7 @@ var bookie = (function ($b, $) {
         var $tag_filter = $('#tag_filter');
 
         $tag_filter.superblyTagField({
-            complete: function (value, callback) {
+            complete: function (tag, callback) {
                 var current_vals, current;
 
                 current_vals = $('#tag_filter').val().split(" ");
@@ -77,7 +77,7 @@ var bookie = (function ($b, $) {
                 }
 
                 $b.api.tag_complete(
-                        value,
+                        tag,
                         current,
                         { 'success': function (data) {
                                            callback(data.payload.tags);

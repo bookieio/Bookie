@@ -6,6 +6,21 @@
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/hash.js"></script>
     <script type="text/javascript">
+        var logger = {}
+        logger.log = function(msg) {
+            console.log(msg);
+        };
+        logger.log('setting up fake logger');
+        var bookie_opts = {
+            'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+            'jquery': $,
+            'console_log': logger
+        }
+    </script>
+    <script type="text/javascript" src="lib/bookie-core.js"></script>
+    <script type="text/javascript" src="lib/bookie-api.js"></script>
+    <script type="text/javascript" src="lib/bookie-utils.js"></script>
+    <script type="text/javascript">
         var ui = (function() {
             var module = {};
 
@@ -78,7 +93,7 @@
         );
 
         function check_url_bookmarked(url) {
-            var hash_id = generate_url_hash(url);
+            var hash_id = bookie.utils.hash_url(url);
 
             // check if we have this bookmarked
             // if so update the badge text with +
@@ -90,10 +105,6 @@
             }
         };
 
-        function generate_url_hash(url) {
-            var hash = Sha256.hash(url, true).substr(0, 14);
-            return hash;
-        };
 
         // add some right-click content menu love for a quick "read later"
         chrome.contextMenus.create({"title": "Read Later",

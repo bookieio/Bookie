@@ -85,10 +85,10 @@ def posts_add(request):
                 mark.hashed.readable.status_code = parsed.status
                 mark.hashed.readable.status_message = parsed.status_message
 
-
             return '<result code="done" />'
         else:
             return '<result code="Bad Request: missing url" />'
+
 
 @view_config(route_name="del_post_delete", renderer="string")
 def posts_delete(request):
@@ -110,6 +110,7 @@ def posts_delete(request):
             except NoResultFound:
                 # if it's not found, then there's not a bookmark to delete
                 return '<result code="Bad Request: bookmark not found" />'
+
 
 @view_config(route_name="del_post_get", renderer="/delapi/posts_get.mako")
 def posts_get(request):

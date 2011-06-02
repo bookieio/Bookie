@@ -5,7 +5,10 @@
 
 // now this will extend the original bookie module with added chrome specific
 // functionality
-(function (module, $) {
+(function (opts) {
+    var $b = opts.bookie,
+        $ = opts.jquery;
+
     // PRIVATE
     var background;
 
@@ -14,9 +17,6 @@
     } else {
         background = undefined;
     }
-
-    $b = module;
-
 
     /**
      * Implement the settings storage we need
@@ -158,4 +158,4 @@
 
     return $b;
 
-})(bookie || {}, jq_var);
+})(bookie_opts);

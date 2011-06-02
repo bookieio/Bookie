@@ -116,6 +116,7 @@ def build_routes(config):
     config.add_route('api_bmark_popular', '/api/v1/bmarks/popular')
     config.add_route("api_bmark_search", "/api/v1/bmarks/search/*terms")
     config.add_route("api_bmark_sync", "/api/v1/bmarks/sync")
+    config.add_route("api_bmark_add", "/api/v1/bmarks/add")
 
     # this route must be last, none of the above will look like hashes (22char)
     # so it's safe to have as a kind of default route at the end

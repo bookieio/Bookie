@@ -1,22 +1,30 @@
 <html>
     <head>
         <link type="text/css" href="lib/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
-        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> 
+        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" />
 
         <script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/hash.js"></script>
         <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script>
         <script type="text/javascript">
-            var jq_var = jQuery.noConflict(true);
-            var $ = jq_var;
+            // var jq_var = jQuery.noConflict(true);
+            // var $ = jq_var;
             var logger = {}
             logger.log = function(msg) {
                 console.log(msg);
             };
             logger.log('setting up fake logger');
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
         </script>
 
-        <script type="text/javascript" src="bookie-core.js"></script>
+        <script type="text/javascript" src="lib/bookie-core.js"></script>
+        <script type="text/javascript" src="lib/bookie.api.js"></script>
+        <script type="text/javascript" src="lib/bookie.utils.js"></script>
         <script type="text/javascript" src="bookie-chrome.js"></script>
         <script type="text/javascript">
             var tags = [];
@@ -27,8 +35,8 @@
                     return;
 
                 $("#tags").superblyTagField({
-                    complete:function(value, callback) {
-                        bookie.call.tagComplete(value, callback);
+                    complete: function(value, callback) {
+                        bookie.call.getTagCompletions(value, callback);
                     },
                 });
 
@@ -135,7 +143,7 @@
         <div>
             <span style="float: right;">
                 <a href="" title="" target="_blank" id="bookie_site"><img src="logo.16.png" /></a>
-            </span> 
+            </span>
             <h1>Post to Bookie</h1>
         </div>
         <form id="form" name="form">

@@ -402,7 +402,7 @@ class BmarkMgr(object):
         # normalize the url
         return Bmark.query.join(Bmark.hashed).\
                            options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.hash_id == hash_id).one()
+                           filter(Hashed.hash_id == hash_id).first()
 
     @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):

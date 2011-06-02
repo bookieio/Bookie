@@ -3,9 +3,12 @@
 
 /* chrome-extension-specific bookie functionality */
 
-var bookie = (function (module, $, logger) {
+var bookie = (function (opts) { //module, $, logger) {
     // shortcut bookie. (module) to just $b
-    $b = module;
+    var $b = opts.bookie,
+        $ = opts.jquery;
+
+    $b.log = opts.console_log.log;  // stash the logger onto $b for FF to use and
 
     // bootstrap some custom things that the extensions will jump in on
     $b.ui = {};
@@ -75,9 +78,6 @@ var bookie = (function (module, $, logger) {
     }
 
 
-    // stash the logger onto $b for FF to use and
-    $b.log = logger.log;
-
     // API for accessing setting information
     // this needs to be implemented on the -chrome and -firefox files
     $b.settings = {
@@ -146,6 +146,7 @@ var bookie = (function (module, $, logger) {
         });
     };
 
+
     // bookie methods
     $b.init = function (callback) {
 
@@ -161,7 +162,10 @@ var bookie = (function (module, $, logger) {
             $b.log(callback);
             callback();
         }
+
+        $b.api.init($b.settings.get('api_url'));
     };
+
 
     // cross platform ui calls
     $b.ui.enable_delete = function (ev) {
@@ -173,6 +177,7 @@ var bookie = (function (module, $, logger) {
         // and make sure we bind the delete event
         $($b.EVENTID).bind($b.events.DELETE, $b.events.ondelete);
     };
+
 
     $b.store_changes = function (ev) {
         var data, ext_val;
@@ -227,76 +232,45 @@ var bookie = (function (module, $, logger) {
      */
     $b.call.getBookmark = function (url, callback) {
         $b.log('in get bookmark');
-
-        var opts = {
-            url: $b.settings.get('api_url') + "/delapi/posts/get",
-            data: {
-                'url': url
-            },
-            success: function (xml) {
-                $b.log('GET BOOKMARK');
-                $b.log(callback);
-                if(callback) {
-                    callback(xml);
-                }
-            }
-        };
-
-        request(opts);
+        $b.api.bookmark($b.utils.hash_url(url), {
+                    'success': function (data) {
+                        if (data.success == true) {
+                            if(callback) {
+                                callback(xml);
+                            }
+                        } else {
+                            $b.log('Error on get bookmark');
+                            $b.log(data);
+                        }
+                    }
+                });
     };
 
 
-    $b.call.getTagCompletions = function (tag, callback) {
-        var opts = {
-            url: $b.settings.get('api_url') + "/delapi/tags/complete",
-            data: {tag: tag},
-            success: function (xml) {
-                alert("got xml: " + xml);
-
-                if(callback) {
-                    callback(xml);
-                }
-            }
-        };
-
-        request(opts);
-    }
-
-
     $b.call.saveBookmark = function (params) {
-        var opts;
+        $b.log('saving bookmark');
 
         // we need to add the api key to the params
         params['api_key'] = $b.settings.get('api_key');
-
-        opts = {
-            url: $b.settings.get('api_url') + "/delapi/posts/add",
-            data: params,
-            success: function(xml) {
-                var result, code;
-                result = $(xml).find("result");
-
-                code = result.attr("code");
-
-                if (code == "done") {
-                    $b.ui.notify(new Notification(
-                        "info",
-                        200,
-                        $b.response_codes[code],
-                        "saved"));
-                } else {
-                    // need to notify that it failed
-                    $b.ui.notify(new Notification(
-                        "error",
-                        400, //TODO: correctly determine http status code
-                        $b.response_codes[code],
-                        "Could not save bookmark"));
-                }
-            },
-        };
-
-        request(opts);
-    }
+        $b.api.add(params,
+                   {'success': function (data) {
+                        if (data.success === true) {
+                            $b.ui.notify(new Notification(
+                                "info",
+                                200,
+                                $b.response_codes[data.message],
+                                "saved"));
+                        } else {
+                            // need to notify that it failed
+                            $b.ui.notify(new Notification(
+                                "error",
+                                400, //TODO: correctly determine http status code
+                                $b.response_codes[data.message],
+                                "Could not save bookmark"));
+                        }
+                    },
+                });
+    };
 
 
     /*
@@ -325,7 +299,7 @@ var bookie = (function (module, $, logger) {
                         $b.response_codes[code],
                         "Deleted"));
                 } else {
-                    // need to notify that it failed
+                    // need to notify http://www.semiww.org/forum/memberlist.php?mode=viewprofile&u=5834that it failed
                     $b.ui.notify(new Notification(
                         "error",
                         400, //TODO: correctly determine http status code
@@ -339,35 +313,28 @@ var bookie = (function (module, $, logger) {
     };
 
 
-    /*
-     * fetch a set of completion options
-     * Used for completing tag names in the extension
-     *
-    */
-    $b.call.tagComplete = function (substring, callback) {
-        var opts = {
-            url: $b.settings.get('api_url') + "/delapi/tags/complete",
-            type: "GET",
-            data: {
-                tag: substring
-            },
+    $b.call.getTagCompletions = function (tag, callback) {
+        var current_vals, current;
 
-            success: function (xml) {
-                $b.log('success call to complete');
-                tag_list = [];
-                results = $(xml).find("tag");
-                results.map(function () {
-                    tag_list.push($(this).text());
-                });
+        // we need to get the current list of tags from the input field itself
+        current_vals = $('#tags').val().split(" ");
+        if (current_vals.length === 0) {
+            current = [];
+        } else {
+            current = current_vals;
+        }
 
-                callback(tag_list);
-            }
-        };
-
-        request(opts);
+        $b.api.tag_complete(tag,
+                current,
+                { 'success': function (data) {
+                                   callback(data.payload.tags);
+                             }
+                }
+        );
     };
 
 
     return $b;
 
-})(bookie || {}, jq_var, logger);
+})(bookie_opts);
+// object = 'bookie', 'jquery', 'console.log'
