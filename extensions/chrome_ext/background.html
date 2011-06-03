@@ -18,102 +18,16 @@
         }
     </script>
     <script type="text/javascript" src="lib/bookie-core.js"></script>
-    <script type="text/javascript" src="lib/bookie-api.js"></script>
-    <script type="text/javascript" src="lib/bookie-utils.js"></script>
+    <script type="text/javascript" src="bookie.chrome.js"></script>
+    <script type="text/javascript" src="lib/bookie.api.js"></script>
+    <script type="text/javascript" src="lib/bookie.utils.js"></script>
     <script type="text/javascript">
-        var ui = (function() {
-            var module = {};
-
-            module.badge = {
-                'clear': function(millis) {
-                    var ttl = millis || 0;
-                    window.setTimeout(function() {
-                        chrome.browserAction.setBadgeText({text: ''});
-                    }, ttl);
-                },
-            };
-
-            return module;
-        })();
-
-
-        // test out listening for a call from the content script
-        // readable.js for the content of the page to send along in a
-        // submission as the content
-        chrome.extension.onRequest.addListener(
-            function(request, sender, sendResponse) {
-                if (request.html) {
-                    $('#html_content').val(request.html);
-                    console.log('should have content stored');
-                } else {
-                    console.log('hit the else');
-                }
-            }
-        );
-
-        function get_html_content() {
-            return $('#html_content').val();
-        };
+        bookie.api.init(localStorage.getItem('api_url'));
+        bookie.background_init();
 
         function inject_readable(callback) {
             chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
         };
-
-
-        chrome.tabs.onUpdated.addListener(
-            function(tabId, changeInfo, tab) {
-                var tid = tabId;
-
-                // we only want to grab this if we change the current url in
-                // the current tab
-                if ('url' in changeInfo) {
-                    if (tab.url) {
-                        chrome.tabs.getSelected(undefined, function (tab) {
-                            if (tid === tab.id) {
-                                check_url_bookmarked(tab.url);
-                            }
-                        });
-                    } else {
-                        console.log('no hash for you');
-                    }
-                }
-            }
-        );
-
-        chrome.tabs.onSelectionChanged.addListener(
-            function(tabId, changeInfo) {
-                chrome.tabs.get(tabId, function (tab) {
-                    if (tab.url) {
-                        check_url_bookmarked(tab.url);
-                    } else {
-                        console.log('no hash for you');
-                    }
-                });
-            }
-        );
-
-        function check_url_bookmarked(url) {
-            var hash_id = bookie.utils.hash_url(url);
-
-            // check if we have this bookmarked
-            // if so update the badge text with +
-            if (localStorage.getItem(hash_id) === null) {
-                chrome.browserAction.setBadgeText({text: ''});
-            } else {
-                chrome.browserAction.setBadgeBackgroundColor({color: [0, 191, 255, 255]});
-                chrome.browserAction.setBadgeText({text: '+'});
-            }
-        };
-
-
-        // add some right-click content menu love for a quick "read later"
-        chrome.contextMenus.create({"title": "Read Later",
-                                    "contexts":["page"],
-                                    "onclick": function (info, tab) {
-                                                console.log(info);
-                                                console.log(tab);
-                                               }
-                                  });
 
     </script>
 </head>

@@ -1,6 +1,25 @@
 <html>
     <head>
         <script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript">
+            // var jq_var = jQuery.noConflict(true);
+            // var $ = jq_var;
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
+            logger.log('setting up fake logger');
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
+        </script>
+        <script type="text/javascript" src="lib/bookie.api.js"></script>
+        <script type="text/javascript">
+            bookie.api.init(localStorage.getItem('api_url'));
+        </script>
+
         <style>
             body {
                 font-family: sans-serif;
@@ -151,17 +170,9 @@
 
                 $("#syncBtn").click(function() {
                     $('#circle').show();
-                    opts = {
-                        url: localStorage['api_url'] + '/api/v1/bmarks/sync',
-                        type: "GET",
-                        dataType: "json",
-                        timeout: 30000,
-                        error: function(jqxhr, textStatus, errorThrown) {
-                            console.log('REQUEST_ERROR');
-                            console.log('Response Code: ' + jqxhr.status);
-                        },
+
+                    bookie.api.sync({
                         success: function (data) {
-                            console.log('request done');
                             var bkg, hash_id;
                             bkg = chrome.extension.getBackgroundPage();
                             for (idx in data.payload.hash_list) {
@@ -171,9 +182,7 @@
 
                             $('#circle').hide();
                         }
-                    };
-
-                    $.ajax(opts);
+                    });
                 });
 
                 $('#circle').hide();

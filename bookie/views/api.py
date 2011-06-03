@@ -1,6 +1,7 @@
 """Controllers related to viewing lists of bookmarks"""
 import logging
 
+from datetime import datetime
 from pyramid.view import view_config
 from StringIO import StringIO
 
@@ -9,6 +10,7 @@ from bookie.lib.readable import ReadContent
 
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
+from bookie.models import DBSession
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
@@ -253,6 +255,36 @@ def bmark_add(request):
                      'message': 'Bad Request: missing url',
                      'payload': dict(params)
                  }
+
+
+@view_config(route_name="api_bmark_remove", renderer="morjson")
+def bmark_remove(request):
+    """Remove this bookmark from the system"""
+    params = request.params
+
+    with Authorize(request.registry.settings.get('api_key', ''),
+                   params.get('api_key', None)):
+        if 'url' in params and params['url']:
+            try:
+                bmark = BmarkMgr.get_by_url(params['url'])
+
+                session = DBSession()
+                session.delete(bmark)
+
+                return {
+                        'success': True,
+                        'message': "done",
+                        'payload': {}
+                }
+
+            except NoResultFound:
+                # if it's not found, then there's not a bookmark to delete
+                return {
+                    'success': False,
+                    'message': "Bad Request: bookmark not found",
+                    'payload': {}
+
+                }
 
 
 @view_config(route_name="api_tag_complete", renderer="morjson")

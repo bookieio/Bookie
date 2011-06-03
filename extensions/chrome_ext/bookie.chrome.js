@@ -82,7 +82,7 @@
                 if (notification.longText === "saved") {
                     chrome.tabs.getSelected(null, function (tab) {
                         // we need to hash this into storage
-                        var hash_id = background.generate_url_hash(tab.url);
+                        var hash_id = bookie.utils.hash_url(tab.url);
                         console.log(hash_id);
                         $b.settings.set(hash_id, true);
                     });
@@ -119,9 +119,12 @@
     // these to generic notifications and provide these more as a chrome
     // specific mapper
     $b.ui.badge = {
-        'clear': function (millis) {
-            if (window.chrome !== undefined && chrome.tabs) {
-                background.ui.badge.clear(millis);
+        'clear': function(millis) {
+            var ttl = millis || 0;
+            if (window.chrome !== undefined && chrome.tags) {
+                window.setTimeout(function() {
+                    chrome.browserAction.setBadgeText({text: ''});
+                }, ttl);
             }
         },
 
@@ -144,7 +147,8 @@
         // colors must be defined in the RGBA syntax for the chrome api to work
         'colors': {
             'green': [15, 232, 12, 255],
-            'red': [200, 50, 50, 255]
+            'red': [200, 50, 50, 255],
+            'blue': [0, 191, 255, 255]
         }
     };
 
@@ -155,6 +159,83 @@
         $($b.EVENTID).trigger($b.events.LOAD);
 
     };
+
+
+    $b.background_init = function () {
+        function check_url_bookmarked(url) {
+            var hash_id = bookie.utils.hash_url(url);
+
+            // check if we have this bookmarked
+            // if so update the badge text with +
+            if (localStorage.getItem(hash_id) === null) {
+                $b.ui.badge.clear();
+            } else {
+                $b.ui.badge.set('+', false, $b.ui.badge.colors.blue);
+            }
+        };
+
+        // bind to the events to check if the current url is bookmarked or not
+        chrome.tabs.onUpdated.addListener(
+            function(tabId, changeInfo, tab) {
+                var tid = tabId;
+
+                // we only want to grab this if we change the current url in
+                // the current tab
+                if ('url' in changeInfo) {
+                    if (tab.url) {
+                        chrome.tabs.getSelected(undefined, function (tab) {
+                            if (tid === tab.id) {
+                                check_url_bookmarked(tab.url);
+                            }
+                        });
+                    } else {
+                        console.log('no hash for you');
+                    }
+                }
+            }
+        );
+
+        chrome.tabs.onSelectionChanged.addListener(
+            function(tabId, changeInfo) {
+                chrome.tabs.get(tabId, function (tab) {
+                    if (tab.url) {
+                        check_url_bookmarked(tab.url);
+                    } else {
+                        console.log('no hash for you');
+                    }
+                });
+            }
+        );
+
+        // add some right-click content menu love for a quick "read later"
+        chrome.contextMenus.create({"title": "Read Later",
+                                    "contexts":["page"],
+                                    "onclick": function (info, tab) {
+                                                bookie.call.read_later(tab.url, tab.title);
+                                                console.log(info);
+                                                console.log(tab);
+                                               }
+                                  });
+
+        // test out listening for a call from the content script
+        // readable.js for the content of the page to send along in a
+        // submission as the content
+        chrome.extension.onRequest.addListener(
+            function(request, sender, sendResponse) {
+                if (request.html) {
+                    $('#html_content').val(request.html);
+                    console.log('should have content stored');
+                } else {
+                    console.log('hit the else');
+                }
+            }
+        );
+
+        function get_html_content() {
+            return $('#html_content').val();
+        };
+
+    }
 
     return $b;
 

@@ -112,36 +112,33 @@ var bookie = (function (opts) { //module, $, logger) {
         $('#extended').val("");
 
         $b.log('populate form base');
-        $b.call.getBookmark(url, function (xml) {
+        $b.call.getBookmark(url, function (data) {
             var result, code, found;
-            // this could come back as not found
-            result = $(xml).find("result");
-
             $b.log('form base');
             $b.log(url);
 
-            if (result.length > 0) {
-                code = result.attr("code");
+            if (data.success == false) {
                 $b.log('Page is not currently bookmarked')
-            }
+            } else {
+                var tags = [],
+                    bmark = data.payload.bmark;
 
-            found = $(xml).find("post");
+                for (tg in bmark.tags) {
+                    tags.push(bmark.tags[tg].name);
+                }
 
-            found.map(function () {
-                // add the tags to the tag ui
-                $('#tags').val($(this).attr('tag'));
+                $('#tags').val(tags.join(" "));
                 $('#tags').change();
 
                 // add the description to the ui
-                $('#description').val($(this).attr('description'));
+                $('#description').val(bmark.description);
 
                 // add the description to the ui
-                $('#extended').val($(this).attr('extended'));
+                $('#extended').val(bmark.extended);
 
                 // now enable the delete button in case we want to delete it
                 $b.ui.enable_delete();
-
-            });
+            }
 
         });
     };
@@ -236,7 +233,7 @@ var bookie = (function (opts) { //module, $, logger) {
                     'success': function (data) {
                         if (data.success == true) {
                             if(callback) {
-                                callback(xml);
+                                callback(data);
                             }
                         } else {
                             $b.log('Error on get bookmark');
@@ -268,8 +265,40 @@ var bookie = (function (opts) { //module, $, logger) {
                                 $b.response_codes[data.message],
                                 "Could not save bookmark"));
                         }
-                    },
+                    }
                 });
+    };
+
+
+    $b.call.read_later = function (url, description) {
+        console.log($b.settings.get('api_key'));
+        console.log(localStorage.getItem('api_key'));
+
+        $b.api.add({
+                'url': url,
+                'tags': "!toread",
+                'description': description,
+                'api_key': $b.settings.get('api_key')
+            },
+            {
+                'success': function (data) {
+                    if (data.success === true) {
+                        $b.ui.notify(new Notification(
+                            "info",
+                            200,
+                            $b.response_codes[data.message],
+                            "saved"));
+                    } else {
+                        // need to notify that it failed
+                        $b.ui.notify(new Notification(
+                            "error",
+                            400, //TODO: correctly determine http status code
+                            $b.response_codes[data.message],
+                            "Could not save bookmark"));
+                    }
+                }
+            }
+        );
     };
 
 
@@ -278,38 +307,28 @@ var bookie = (function (opts) { //module, $, logger) {
      * see http://delicious.com/help/api#posts_delete
      *
     */
-    $b.call.removeBookmark = function (url, api_key, callback) {
-        var opts = {
-            url: $b.settings.get('api_url') + "/delapi/posts/delete",
-            data: {
-                url: url,
-                api_key: api_key
-            },
-
-            success: function (xml) {
+    $b.call.removeBookmark = function (url, api_key) {
+        $b.api.remove(url, api_key, {
+             success: function (data) {
                 var result, code;
 
-                result = $(xml).find("result");
-                code = result.attr("code");
-
-                if (code == "done") {
+                if (data.message == "done") {
                     $b.ui.notify(new Notification(
                         "info",
                         200,
-                        $b.response_codes[code],
+                        $b.response_codes[data.message],
                         "Deleted"));
                 } else {
                     // need to notify http://www.semiww.org/forum/memberlist.php?mode=viewprofile&u=5834that it failed
                     $b.ui.notify(new Notification(
                         "error",
                         400, //TODO: correctly determine http status code
-                        $b.response_codes[code],
+                        $b.response_codes[data.message],
                         "Could not delete bookmark"));
                 }
             }
-        };
+        });
 
-        request(opts);
     };
 
 

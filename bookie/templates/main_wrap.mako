@@ -20,6 +20,8 @@
                 app_url = request.route_url('home').rstrip('/')
             %>
             APP_URL = '${app_url}';
+
+
         </script>
     </head>
 
@@ -67,6 +69,18 @@
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>
+        <script type="text/javascript">
+            // prepare for the great bookie js files
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
+        </script>
         <script type="text/javascript" src="/static/js/bookie.api.js"></script>
         <script type="text/javascript" src="/static/js/bookie.js"></script>
         <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>

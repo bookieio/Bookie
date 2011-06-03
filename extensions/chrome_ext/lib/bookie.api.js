@@ -145,13 +145,29 @@ var bookie = (function (opts) {
     $b.api.add = function (data, callbacks) {
         var url = "/api/v1/bmarks/add",
             opts = {
-                method: 'POST',
+                type: 'post',
                 url: url,
+                data: data,
                 success: callbacks.success
             }
         $b.api._request(opts);
     };
 
+
+    $b.api.remove = function (bmark_url, api_key, callbacks) {
+        var url = "/api/v1/bmarks/remove",
+            opts = {
+                url: url,
+                type: "post",
+                data: {
+                        'url': bmark_url,
+                        'api_key': api_key
+                },
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    };
 
     /**
      * Perform a search via the json api
@@ -211,6 +227,24 @@ var bookie = (function (opts) {
         };
 
         $b.api._request(opts);
+    };
+
+
+    /**
+     * Get the full list of hashes for the existing urls we have 
+     * Used to sync the cache of hashes on the extensions
+     *
+     * @param callbacks is an object of success, complete, error callbacks
+     *
+     */
+    $b.api.sync = function (callbacks) {
+        opts = {
+            url: "/api/v1/bmarks/sync",
+            success: callbacks.success
+        }
+
+        $b.api._request(opts);
+
     };
 
     return $b;

@@ -9,7 +9,19 @@
         <link rel="apple-touch-icon" href="/static/images/logo.128.png" />
 
         <script src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+        <script type="text/javascript">
+            // prepare for the great bookie js files
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
 
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
+        </script>
         % if hasattr(self, 'header'):
             ${self.header()}
         % endif
@@ -43,6 +55,5 @@
     </script>
     <script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
     <!--<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>-->
-
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 </html>
