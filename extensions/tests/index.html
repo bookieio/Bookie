@@ -6,17 +6,23 @@
         <script src="qunit.js"></script>
         <script src="../chrome_ext/lib/jquery.min.js"></script>
         <script>
-            var jq_var = jQuery.noConflict(true);
-            var $ = jq_var;
             var logger = {}
             logger.log = function(msg) {
                 console.log(msg);
             };
             logger.log('setting up fake logger');
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
 
         </script>
         <script src="../chrome_ext/lib/tagfield/superbly-tagfield.js"></script>
-        <script src="../chrome_ext/bookie-core.js"></script>
+        <script src="../chrome_ext/lib/hash.js"></script>
+        <script src="../chrome_ext/lib/bookie-core.js"></script>
+        <script src="../chrome_ext/lib/bookie.api.js"></script>
+        <script src="../chrome_ext/lib/bookie.utils.js"></script>
         <script src="../chrome_ext/bookie.chrome.js"></script>
         <script src="tests.js"></script>
         <script src="chrome_tests.js"></script>

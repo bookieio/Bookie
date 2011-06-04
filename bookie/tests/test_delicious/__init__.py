@@ -203,7 +203,6 @@ class DelPostTest(unittest.TestCase):
         res.hash_id = u"Somethingnew.com"
         DBSession.flush()
 
-        print dict(res)
         # now hopefully have an updated value
         ok_(res.updated >= now,
                 "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))

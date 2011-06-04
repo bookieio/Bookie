@@ -12,6 +12,7 @@ from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
 GOOGLE_HASH = 'aa2239c17609b2'
+BMARKUS_HASH = 'c5c21717c99797'
 LOG = logging.getLogger(__name__)
 
 class BookieAPITest(unittest.TestCase):
@@ -94,6 +95,16 @@ class BookieAPITest(unittest.TestCase):
 
         ok_('dude' in bmark['readable']['content'],
                 "We should have 'dude' in our content: " + bmark['readable']['content'])
+
+    def test_bookmark_fetch_fail(self):
+        """Verify we get a failed response when wrong bookmark"""
+        self._get_good_request()
+
+        # test that we only get one resultback
+        res = self.testapp.get('/api/v1/bmarks/' + BMARKUS_HASH, status=200)
+
+        ok_('"success": false' in res.body,
+                "Should have a false success" + res.body)
 
     def test_bookmark_recent(self):
         """Test that we can get list of bookmarks with details"""
@@ -182,3 +193,96 @@ class BookieAPITest(unittest.TestCase):
 
         eq_(len(bmarks), 0,
             "We should not have any results for page 2")
+
+    def test_bookmark_sync(self):
+        """Test that we can get the sync list from the server"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        # test that we only get one resultback
+        res = self.testapp.get('/api/v1/bmarks/sync')
+
+        eq_(res.status, "200 OK",
+                msg='Get status is 200, ' + res.status)
+
+        ok_(GOOGLE_HASH in res.body,
+                "The google hash id should be in the json: " + res.body)
+        ok_(BMARKUS_HASH in res.body,
+                "The bmark.us hash id should be in the json: " + res.body)
+
+    def test_bookmark_add(self):
+        """We should be able to add a new bookmark to the system"""
+        test_bmark = {
+                'url': u'http://bmark.us',
+                'description': u'Bookie',
+                'extended': u'Extended notes',
+                'tags': u'bookmarks',
+                'api_key': u'testapi',
+        }
+
+        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+                status=200)
+
+        ok_('"success": true' in res.body,
+                "Should have a success of true: " + res.body)
+        ok_('message": "done"' in res.body,
+                "Should have a done message: " + res.body)
+
+    def test_bookmark_add_bad_key(self):
+        """We should be able to add a new bookmark to the system"""
+        test_bmark = {
+                'url': u'http://bmark.us',
+                'description': u'Bookie',
+                'extended': u'Extended notes',
+                'tags': u'bookmarks',
+                'api_key': u'badkey',
+        }
+
+        self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+                status=403)
+
+    def test_bookmark_remove(self):
+        """A delete call should remove the bookmark from the system"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        # now let's delete the google bookmark
+        res = self.testapp.post('/api/v1/bmarks/remove', params = {
+            'url': u'http://google.com',
+            'api_key': 'testapi',
+            }, status=200)
+
+        ok_('success": true' in res.body,
+                "Should have a success of true: " + res.body)
+
+        # we're going to cheat like mad, use the sync call to get the hash_ids
+        # of bookmarks in the system and verify that only the bmark.us hash_id
+        # is in the response body
+        res = self.testapp.get('/api/v1/bmarks/sync', status=200)
+
+        ok_(GOOGLE_HASH not in res.body,
+                "Should not have the google hash: " + res.body)
+        ok_(BMARKUS_HASH in res.body,
+                "Should have the bmark.us hash: " + res.body)
+
+    def test_bookmark_tag_complete(self):
+        """Test we can complete tags in the system
+
+        By default we should have tags for python, search, bookmarks
+
+        """
+        self._get_good_request(second_bmark=True)
+
+        res = self.testapp.get('/api/v1/tags/complete',
+                          params={'tag': 'py'},
+                          status=200)
+        ok_('python' in res.body,
+                "Should have python as a tag completion: " + res.body)
+
+        # we shouldn't get python as an option if we supply bookmarks as the
+        # current tag. No bookmarks have both bookmarks & python as tags
+        res = self.testapp.get('/api/v1/tags/complete',
+                          params={'tag': 'py',
+                                  'current': 'bookmarks'},
+                          status=200)
+
+        ok_('python' not in res.body,
+                "Should not have python as a tag completion: " + res.body)

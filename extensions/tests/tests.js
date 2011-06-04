@@ -85,9 +85,7 @@ test('saveBookmarkSuccess', function () {
     var logger, mocked_return, options;
 
     logger = [];
-    mocked_return = '<result code="done"></result>';
-    parser=new DOMParser();
-    mocked_xml=parser.parseFromString(mocked_return,"text/xml");
+    mocked_return = '{"success": true, "message": done, "payload": {}';
 
     // let's try mocking out the ajax method
     $.ajax = function (params) {
