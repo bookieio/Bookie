@@ -92,7 +92,7 @@
             }
         }
 
-    }
+    };
 
     function showBadge(notification) {
         var color,
@@ -214,11 +214,14 @@
             console.log(info);
             console.log(tab);
 
-            if (bookie.settings.get('cache_content') == 'true') {
-                // grab the html content of the page to send along for the ride
-                bookie.call.read_later(tab.url,
+            if (bookie.settings.get('cache_content') === 'true') {
+                inject_readable(function () {
+                    // grab the html content of the page to send along for the ride
+                    bookie.call.read_later(tab.url,
                                        tab.title,
-                                       $('#html_content').val());
+                                       get_html_content());
+
+                });
             } else {
                 bookie.call.read_later(tab.url, tab.title);
             }
@@ -242,11 +245,6 @@
                 }
             }
         );
-
-        function get_html_content() {
-            return $('#html_content').val();
-        };
-
     }
 
     return $b;
