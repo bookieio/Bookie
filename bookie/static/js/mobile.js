@@ -28,7 +28,6 @@ var bookie = (function ($b, $) {
         'VIEW': 'view'
     };
 
-
     $b.mobilestate = {
         'url': '',
         'page': 0,
@@ -45,13 +44,11 @@ var bookie = (function ($b, $) {
         }
     };
 
-
     /**
      * Once the page is loaded, perform some nice basics we need
      *
      */
     $b.load = function (ev) {};
-
 
     $b.load_recent = function (ev, extra_params) {
         // don't do what the click says yet
@@ -62,45 +59,51 @@ var bookie = (function ($b, $) {
         data_home = extra_params.data_home;
 
         $b.api.recent($b.api.pager($b.mobilestate.page, $b.mobilestate.count),
-                      {
-                          // on success update the page count and update the
-                          // results list
-                          'success': function (data) {
-                              if (data.success === true) {
-                                  var page = data.payload.page;
-                                  $b.mobilestate.page = page;
-                                  $b.ui.results.update(data.payload.bmarks,
-                                                       'Recent: Page ' + page,
-                                                       data_home);
-                              } else {
-                                  console.error('ERROR getting recent');
-                              }
+            {
+                // on success update the page count and update the
+                // results list
+                'success': function (data) {
+                    if (data.success === true) {
+                        var page = data.payload.page;
+                        $b.mobilestate.page = page;
+                        $b.ui.results.update(data.payload.bmarks,
+                                             'Recent: Page ' + page,
+                                             data_home);
+                    } else {
+                        console.error('ERROR getting recent');
+                    }
 
-                              $.mobile.pageLoading(true);
-                          },
-                          // once success is done updating results page, switch over
-                          // there
-                          'complete': function () {
-                              if (data_home !== '#home_recent') {
-                                  $.mobile.changePage('#results',
-                                                      'slide',
-                                                      back=false,
-                                                      changeHash=false);
-                              }
+                    $.mobile.pageLoading(true);
+                },
+                // once success is done updating results page, switch over
+                // there
+                'complete': function () {
+                    if (data_home !== '#home_recent') {
+                        $.mobile.changePage('#results',
+                                            'slide',
+                                            back=false,
+                                            changeHash=false);
+                    }
 
-                              $.mobile.pageLoading(true);
-                          }
-                      }
-                );
+                    $.mobile.pageLoading(true);
+                }
+            }
+        );
     };
-
 
     $b.load_popular = function (ev, extra_params) {
         // don't do what the click says yet
         ev.preventDefault();
+
+        // show the loading ui while we load this
         $.mobile.pageLoading();
 
+        // we need to track which function we're on so we can repeat it with
+        // the next/prev buttons
         $b.mobilestate.func = $b.events.POPULAR;
+
+        // and we also need to track if this is going on the home page or the
+        // results page
         data_home = extra_params.data_home;
 
         var pager = $b.api.pager($b.mobilestate.page,

@@ -38,14 +38,15 @@ var bookie = (function ($b, $) {
         $('#readable_content a').bind('click', function (ev) {
             // grab the href value and check if it starts with http or www
             var url = $(this).attr('href'),
-                original_url = "";
+                original_url = "",
+                newwindow;
 
             if (!_.startsWith(url, 'http') && !_.startsWith(url, 'www')) {
                 // instead of this url, open the original web page instead of a
                 // broken look into htt://bookie/blah.html
                 ev.preventDefault();
-                var original_url = $('.bmark').attr('href'),
-                    newwindow = window.open(original_url, '_blank');
+                original_url = $('.bmark').attr('href');
+                newwindow = window.open(original_url, '_blank');
 
                 newwindow.focus();
                 return false;
