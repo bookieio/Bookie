@@ -42,8 +42,8 @@ var bookie = (function (opts) { //module, $, logger) {
          */
         'DELETE': 'delete',
         'ondelete': function (ev) {
-            var url = $('#url').attr('value');
-            var api_key = $('#api_key').attr('value');
+            var url = $('#url').attr('value'),
+                api_key = $('#api_key').attr('value');
             $b.call.removeBookmark(url, api_key);
             ev.preventDefault();
         },
@@ -117,8 +117,8 @@ var bookie = (function (opts) { //module, $, logger) {
             $b.log('form base');
             $b.log(url);
 
-            if (data.success == false) {
-                $b.log('Page is not currently bookmarked')
+            if (data.success === false) {
+                $b.log('Page is not currently bookmarked');
             } else {
                 var tags = [],
                     bmark = data.payload.bmark;
@@ -186,39 +186,12 @@ var bookie = (function (opts) { //module, $, logger) {
             'tags': $('#tags').val(),
             'extended': $('#extended').val(),
             'content': $('#content').val()
-        }
+        };
 
         $b.call.saveBookmark(data);
         if (ev !== undefined) {
             ev.preventDefault();
         }
-    };
-
-    /**
-     * Generate the get reuqest to the API call
-     *
-     */
-    function request(options) {
-        var defaults, opts;
-
-        defaults = {
-            type: "POST",
-            dataType: "xml",
-            context: $b,
-            timeout: 30000,
-            error: function(jqxhr, textStatus, errorThrown) {
-                $b.log('REQUEST_ERROR');
-                $b.log('Response Code: ' + jqxhr.status);
-                $b.ui.notify(new Notification(
-                    "error",
-                    $b.response_codes[jqxhr.status],
-                    textStatus,
-                    "Could not find Bookie instance at " + $b.settings.get('api_url')));
-            }
-        };
-
-        opts = $.extend({}, defaults, options);
-        $.ajax(opts);
     };
 
 
@@ -231,12 +204,12 @@ var bookie = (function (opts) { //module, $, logger) {
         $b.log('in get bookmark');
         $b.api.bookmark($b.utils.hash_url(url), {
                     'success': function (data) {
-                        if (data.success == true) {
+                        if (data.success === true) {
                             if(callback) {
                                 callback(data);
                             }
                         } else {
-                            $b.log('Error on get bookmark');
+                            console.log('bookmark not found: ' + url);
                             $b.log(data);
                         }
                     }
@@ -248,7 +221,7 @@ var bookie = (function (opts) { //module, $, logger) {
         $b.log('saving bookmark');
 
         // we need to add the api key to the params
-        params['api_key'] = $b.settings.get('api_key');
+        params.api_key = $b.settings.get('api_key');
         $b.api.add(params,
                    {'success': function (data) {
                         if (data.success === true) {
@@ -270,17 +243,21 @@ var bookie = (function (opts) { //module, $, logger) {
     };
 
 
-    $b.call.read_later = function (url, description) {
+    $b.call.read_later = function (url, description, content) {
         console.log($b.settings.get('api_key'));
         console.log(localStorage.getItem('api_key'));
-
-        $b.api.add({
+        var data = {
                 'url': url,
                 'tags': "!toread",
                 'description': description,
                 'api_key': $b.settings.get('api_key')
-            },
-            {
+        };
+
+        if (content !== undefined) {
+            data.content = content;
+        }
+
+        $b.api.add(data, {
                 'success': function (data) {
                     if (data.success === true) {
                         $b.ui.notify(new Notification(
@@ -312,7 +289,7 @@ var bookie = (function (opts) { //module, $, logger) {
              success: function (data) {
                 var result, code;
 
-                if (data.message == "done") {
+                if (data.message === "done") {
                     $b.ui.notify(new Notification(
                         "info",
                         200,

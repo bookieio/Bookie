@@ -121,7 +121,7 @@
     $b.ui.badge = {
         'clear': function(millis) {
             var ttl = millis || 0;
-            if (window.chrome !== undefined && chrome.tags) {
+            if (window.chrome !== undefined && chrome.tabs) {
                 window.setTimeout(function() {
                     chrome.browserAction.setBadgeText({text: ''});
                 }, ttl);
@@ -163,14 +163,16 @@
 
     $b.background_init = function () {
         function check_url_bookmarked(url) {
-            var hash_id = bookie.utils.hash_url(url);
+            var is_bookmarked = bookie.utils.is_bookmarked(url);
 
             // check if we have this bookmarked
             // if so update the badge text with +
-            if (localStorage.getItem(hash_id) === null) {
-                $b.ui.badge.clear();
-            } else {
+            if (is_bookmarked) {
                 $b.ui.badge.set('+', false, $b.ui.badge.colors.blue);
+            } else {
+                console.log('running badge clear');
+                $b.ui.badge.clear();
+
             }
         };
 
@@ -208,13 +210,23 @@
         );
 
         // add some right-click content menu love for a quick "read later"
+        var read_later = function (info, tab) {
+            console.log(info);
+            console.log(tab);
+
+            if (bookie.settings.get('cache_content') == 'true') {
+                // grab the html content of the page to send along for the ride
+                bookie.call.read_later(tab.url,
+                                       tab.title,
+                                       $('#html_content').val());
+            } else {
+                bookie.call.read_later(tab.url, tab.title);
+            }
+        };
+
         chrome.contextMenus.create({"title": "Read Later",
                                     "contexts":["page"],
-                                    "onclick": function (info, tab) {
-                                                bookie.call.read_later(tab.url, tab.title);
-                                                console.log(info);
-                                                console.log(tab);
-                                               }
+                                    "onclick": read_later
                                   });
 
         // test out listening for a call from the content script
