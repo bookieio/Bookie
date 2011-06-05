@@ -7,6 +7,7 @@ from StringIO import StringIO
 
 from bookie.lib.access import Authorize
 from bookie.lib.readable import ReadContent
+from bookie.lib.tagcommands import Commander
 
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -202,9 +203,27 @@ def bmark_add(request):
                 mark.description = params.get('description', mark.description)
                 mark.extended = params.get('extended', mark.extended)
 
-                new_tags = params.get('tags', None)
-                if new_tags:
-                    mark.update_tags(new_tags)
+                new_tag_str = params.get('tags', None)
+
+                # if the only new tags are commands, then don't erase the
+                # existing tags
+                # we need to process any commands associated as well
+                new_tags = TagMgr.from_string(new_tag_str)
+                found_cmds = Commander.check_commands(new_tags)
+
+                if new_tag_str and len(new_tags) == len(found_cmds):
+                    # the all the new tags are command tags, just tack them on
+                    # for processing, but don't touch existing tags
+                    for command_tag in new_tags.values():
+                        LOG.debug(command_tag)
+                        mark.tags[command_tag.name] = command_tag
+                else:
+                    if new_tag_str:
+                        # in this case, rewrite the tags wit the new ones
+                        mark.update_tags(new_tags)
+
+                commander = Commander(mark)
+                mark = commander.process()
 
             except NoResultFound:
                 # then let's store this thing
@@ -232,6 +251,12 @@ def bmark_add(request):
                              fulltext=fulltext,
                        )
 
+                # we need to process any commands associated as well
+                commander = Commander(mark)
+                mark = commander.process()
+
+
+
             # if we have content, stick it on the object here
             if 'content' in request.params:
                 content = StringIO(request.params['content'])
@@ -244,11 +269,17 @@ def bmark_add(request):
                 mark.hashed.readable.status_code = parsed.status
                 mark.hashed.readable.status_message = parsed.status_message
 
+            # we need to flush here for new tag ids, etc
+            DBSession.flush()
+
+            mark_data = dict(mark)
+            mark_data['tags'] = [dict(mark.tags[tag]) for tag in mark.tags.keys()]
+
             return {
                         'success': True,
                         'message': "done",
                         'payload': {
-                            'bmark': dict(mark)
+                            'bmark': mark_data
                         }
                     }
         else:

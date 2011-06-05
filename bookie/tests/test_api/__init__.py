@@ -7,6 +7,9 @@ import urllib
 from nose.tools import ok_, eq_
 from pyramid import testing
 
+from bookie.lib.tagcommands import COMMANDLIST
+from bookie.lib.tagcommands import ToRead
+
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
@@ -239,6 +242,59 @@ class BookieAPITest(unittest.TestCase):
 
         self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
                 status=403)
+
+    def test_bookmark_toread(self):
+        """A bookmark with !toread command should have toread tag"""
+
+        # the unit tests for the command code will remove hte list of
+        # COMMANDLIST, so we need to add it back
+        # this feels dirty, but not sure how to get around it. I like the
+        # isolated nature of the unit tests faking the toread command, but want
+        # the 'working system' here
+        COMMANDLIST[ToRead.command_tag] = ToRead
+        test_bmark = {
+                'url': u'http://bmark.us',
+                'description': u'Bookie',
+                'extended': u'Extended notes',
+                'tags': u'bookmarks !toread',
+                'api_key': u'testapi',
+        }
+
+        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+                status=200)
+
+        ok_('"success": true' in res.body,
+                "Should have a success of true: " + res.body)
+        ok_('message": "done"' in res.body,
+                "Should have a done message: " + res.body)
+        ok_('!toread' not in res.body,
+                "Should not have !toread tag: " + res.body)
+        ok_('toread' in res.body,
+                "Should have toread tag: " + res.body)
+
+    def test_bookmark_update_toread(self):
+        """When marking an existing bookmark !toread, shouldn't lose tags"""
+        COMMANDLIST[ToRead.command_tag] = ToRead
+        test_bmark = {
+                'url': u'http://bmark.us',
+                'description': u'Bookie',
+                'extended': u'Extended notes',
+                'tags': u'bookmarks',
+                'api_key': u'testapi',
+        }
+
+        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+                status=200)
+
+        test_bmark['tags'] = u'!toread'
+
+        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+                                status=200)
+
+        ok_('toread' in res.body,
+                "Should have added the toread tag: " + res.body)
+        ok_('bookmarks' in res.body,
+                "Should still have the bookmarks tag: " + res.body)
 
     def test_bookmark_remove(self):
         """A delete call should remove the bookmark from the system"""

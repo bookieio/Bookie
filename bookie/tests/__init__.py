@@ -103,3 +103,6 @@ def empty_db():
     DBSession.flush()
     transaction.commit()
 
+
+# unit tests we want to make sure get run
+from bookie.lib.test_tagcommands import *
