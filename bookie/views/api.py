@@ -185,6 +185,7 @@ def bmark_get(request):
 
     return ret
 
+
 @view_config(route_name="api_bmark_add", renderer="morjson")
 def bmark_add(request):
     """Add a new bookmark to the system"""
@@ -251,9 +252,9 @@ def bmark_add(request):
                         }
                     }
         else:
-            return { 'success': False,
-                     'message': 'Bad Request: missing url',
-                     'payload': dict(params)
+            return {'success': False,
+                    'message': 'Bad Request: missing url',
+                    'payload': dict(params)
                  }
 
 

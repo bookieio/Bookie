@@ -28,10 +28,10 @@
         },
         'get': function (key) {
             $b.log('GET ' + key);
-            return localStorage[key];
+            return localStorage.getItem(key);
         },
         'set': function (key, value) {
-            localStorage[key] = value;
+            localStorage.setItem(key, value);
         }
     };
 
