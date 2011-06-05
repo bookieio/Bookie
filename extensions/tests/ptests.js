@@ -27,5 +27,5 @@ if (phantom.state.length === 0) {
         phantom.exit(0);
       }
     }
-  }, 100);
+  }, 1000);
 }

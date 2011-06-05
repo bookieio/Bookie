@@ -53,7 +53,7 @@
         });
 
     </script>
-    <script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
+    <script src="http://code.jquery.com/mobile/latest/jquery.mobile.js"></script>
     <!--<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>-->
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 </html>
