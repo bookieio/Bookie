@@ -149,7 +149,7 @@ var bookie = (function (opts) {
                 url: url,
                 data: data,
                 success: callbacks.success
-            }
+            };
         $b.api._request(opts);
     };
 
@@ -241,7 +241,7 @@ var bookie = (function (opts) {
         opts = {
             url: "/api/v1/bmarks/sync",
             success: callbacks.success
-        }
+        };
 
         $b.api._request(opts);
 

@@ -113,15 +113,15 @@ var bookie = (function (opts) { //module, $, logger) {
 
         $b.log('populate form base');
         $b.call.getBookmark(url, function (data) {
-            var result, code, found;
+            var result, code, found, tags, bmark;
             $b.log('form base');
             $b.log(url);
 
             if (data.success === false) {
                 $b.log('Page is not currently bookmarked');
             } else {
-                var tags = [],
-                    bmark = data.payload.bmark;
+                tags = [];
+                bmark = data.payload.bmark;
 
                 for (tg in bmark.tags) {
                     tags.push(bmark.tags[tg].name);
@@ -181,7 +181,7 @@ var bookie = (function (opts) { //module, $, logger) {
 
         data = {
             'url': $('#url').attr('value'),
-            'api_key': $('#api_key').attr('value'),
+            'api_key': $b.settings.get('api_key'),
             'description': $('#description').val(),
             'tags': $('#tags').val(),
             'extended': $('#extended').val(),
@@ -201,7 +201,6 @@ var bookie = (function (opts) { //module, $, logger) {
      *
      */
     $b.call.getBookmark = function (url, callback) {
-        $b.log('in get bookmark');
         $b.api.bookmark($b.utils.hash_url(url), {
                     'success': function (data) {
                         if (data.success === true) {
@@ -218,8 +217,6 @@ var bookie = (function (opts) { //module, $, logger) {
 
 
     $b.call.saveBookmark = function (params) {
-        $b.log('saving bookmark');
-
         // we need to add the api key to the params
         params.api_key = $b.settings.get('api_key');
         $b.api.add(params,

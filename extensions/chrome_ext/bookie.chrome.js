@@ -7,10 +7,8 @@
 // functionality
 (function (opts) {
     var $b = opts.bookie,
-        $ = opts.jquery;
-
-    // PRIVATE
-    var background;
+        $ = opts.jquery,
+        background;
 
     if (window.chrome !== undefined && chrome.tabs) {
         background = chrome.extension.getBackgroundPage();
@@ -174,7 +172,7 @@
                 $b.ui.badge.clear();
 
             }
-        };
+        }
 
         // bind to the events to check if the current url is bookmarked or not
         chrome.tabs.onUpdated.addListener(
@@ -245,7 +243,7 @@
                 }
             }
         );
-    }
+    };
 
     return $b;
 
