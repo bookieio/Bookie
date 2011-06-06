@@ -23,10 +23,16 @@ class CommandMock(object):
 class TestTagCommander(TestCase):
     """Commander system"""
 
-    def tearDown(self):
-        """Make sure we clear the commands we put in there"""
+    def setUp(self):
+        """Store off the commands so we can return them"""
+        self.saved_commandlist = COMMANDLIST
         for key in COMMANDLIST.keys():
             del(COMMANDLIST[key])
+
+    def tearDown(self):
+        """Make sure we clear the commands we put in there"""
+        for key in self.saved_commandlist:
+            COMMANDLIST[key] = self.saved_commandlist[key]
 
     def test_command_finds_commands(self):
         """Verify we find commands that we know about"""
@@ -58,10 +64,16 @@ class TestTagCommander(TestCase):
 class TestToRead(TestCase):
     """Test the ToRead Command"""
 
-    def tearDown(self):
-        """Make sure we clear the commands we put in there"""
+    def setUp(self):
+        """Store off the commands so we can return them"""
+        self.saved_commandlist = COMMANDLIST
         for key in COMMANDLIST.keys():
             del(COMMANDLIST[key])
+
+    def tearDown(self):
+        """Make sure we clear the commands we put in there"""
+        for key in self.saved_commandlist:
+            COMMANDLIST[key] = self.saved_commandlist[key]
 
     def test_toread_command(self):
         """If marked toread, then should end up with tag 'toread' on it"""

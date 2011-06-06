@@ -7,9 +7,6 @@ import urllib
 from nose.tools import ok_, eq_
 from pyramid import testing
 
-from bookie.lib.tagcommands import COMMANDLIST
-from bookie.lib.tagcommands import ToRead
-
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
@@ -246,12 +243,6 @@ class BookieAPITest(unittest.TestCase):
     def test_bookmark_toread(self):
         """A bookmark with !toread command should have toread tag"""
 
-        # the unit tests for the command code will remove hte list of
-        # COMMANDLIST, so we need to add it back
-        # this feels dirty, but not sure how to get around it. I like the
-        # isolated nature of the unit tests faking the toread command, but want
-        # the 'working system' here
-        COMMANDLIST[ToRead.command_tag] = ToRead
         test_bmark = {
                 'url': u'http://bmark.us',
                 'description': u'Bookie',
@@ -274,7 +265,6 @@ class BookieAPITest(unittest.TestCase):
 
     def test_bookmark_update_toread(self):
         """When marking an existing bookmark !toread, shouldn't lose tags"""
-        COMMANDLIST[ToRead.command_tag] = ToRead
         test_bmark = {
                 'url': u'http://bmark.us',
                 'description': u'Bookie',
