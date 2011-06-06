@@ -3,6 +3,7 @@ from nose.tools import ok_
 from unittest import TestCase
 from bookie.lib.tagcommands import COMMANDLIST
 from bookie.lib.tagcommands import Commander
+from bookie.lib.tagcommands import IsRead
 from bookie.lib.tagcommands import ToRead
 
 
@@ -96,3 +97,25 @@ class TestToRead(TestCase):
         ok_('!toread' not in updated.tags,
                 "Should not have the !toread tag in the updated bookmark")
 
+
+class TestIsRead(TestCase):
+    """Test the IsRead Command"""
+
+    def setUp(self):
+        """Store off the commands so we can return them"""
+        self.saved_commandlist = COMMANDLIST
+        for key in COMMANDLIST.keys():
+            del(COMMANDLIST[key])
+
+    def tearDown(self):
+        """Make sure we clear the commands we put in there"""
+        for key in self.saved_commandlist:
+            COMMANDLIST[key] = self.saved_commandlist[key]
+
+    def test_isread_command(self):
+        """Should remove the toread tag on a bookmark"""
+        bm = BmarkMock()
+        bm.tags['toread'] = True
+        updated = IsRead.run(bm)
+        ok_('toread' not in updated.tags,
+                "Updated bmark should not have 'toread' tag set")

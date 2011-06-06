@@ -66,3 +66,25 @@ class ToRead(Command):
 
 # add our command to the list of those available
 COMMANDLIST[ToRead.command_tag] = ToRead
+
+
+class IsRead(Command):
+    """Command to mark a bookmark as read
+
+    This is basically just removing to toread tag from the bookmark
+    It's just doing it as a command vs a manual edit to the tags
+
+    """
+    command_tag = "!read"
+    read_tag = "toread"
+
+    @staticmethod
+    def run(bmark):
+        """Make sure we remove the toread tag"""
+        if IsRead.read_tag in bmark.tags:
+            del(bmark.tags[IsRead.read_tag])
+
+        return bmark
+
+# add our command to the list of those available
+COMMANDLIST[IsRead.command_tag] = IsRead
