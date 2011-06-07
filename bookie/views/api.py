@@ -220,7 +220,7 @@ def bmark_add(request):
                 else:
                     if new_tag_str:
                         # in this case, rewrite the tags wit the new ones
-                        mark.update_tags(new_tags)
+                        mark.update_tags(new_tag_str)
 
                 commander = Commander(mark)
                 mark = commander.process()
