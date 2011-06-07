@@ -81,7 +81,6 @@
                     chrome.tabs.getSelected(null, function (tab) {
                         // we need to hash this into storage
                         var hash_id = bookie.utils.hash_url(tab.url);
-                        console.log(hash_id);
                         $b.settings.set(hash_id, true);
                     });
                 }
@@ -168,7 +167,6 @@
             if (is_bookmarked) {
                 $b.ui.badge.set('+', false, $b.ui.badge.colors.blue);
             } else {
-                console.log('running badge clear');
                 $b.ui.badge.clear();
 
             }
@@ -209,9 +207,7 @@
 
         // add some right-click content menu love for a quick "read later"
         var read_later = function (info, tab) {
-            console.log(info);
-            console.log(tab);
-
+            bookie.api.init(bookie.settings.get('api_url'));
             if (bookie.settings.get('cache_content') === 'true') {
                 inject_readable(function () {
                     // grab the html content of the page to send along for the ride

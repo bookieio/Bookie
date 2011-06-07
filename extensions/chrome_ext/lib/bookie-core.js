@@ -146,8 +146,6 @@ var bookie = (function (opts) { //module, $, logger) {
 
     // bookie methods
     $b.init = function (callback) {
-
-        $b.log('in init');
         $b.settings.init();
 
         if (!$b.settings.get('api_url')) {
@@ -160,6 +158,7 @@ var bookie = (function (opts) { //module, $, logger) {
             callback();
         }
 
+        console.log('initing the api code');
         $b.api.init($b.settings.get('api_url'));
     };
 
@@ -241,8 +240,6 @@ var bookie = (function (opts) { //module, $, logger) {
 
 
     $b.call.read_later = function (url, description, content) {
-        console.log($b.settings.get('api_key'));
-        console.log(localStorage.getItem('api_key'));
         var data = {
                 'url': url,
                 'tags': "!toread",
