@@ -349,8 +349,6 @@ var bookie = (function ($b, $) {
 
             if (my_form_id === 'search_page') {
                 with_content = $("#cache_content").val();
-                console.log('content');
-                console.log(with_content);
             }
 
             terms = $(input_id).val().split(" ");
