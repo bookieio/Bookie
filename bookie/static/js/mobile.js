@@ -361,7 +361,6 @@ var bookie = (function ($b, $) {
 
         $($b.EVENTID).bind($b.events.LOAD, function (ev) {
             $b.mobilestate.count = 5;
-            $('.listview').listview();
             $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
         });
 
