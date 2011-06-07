@@ -85,6 +85,22 @@ Available API Calls
     of the data it needs for loading knowledge of existing bookmarks into a new
     browser installation.
 
+`/bmarks/add`:
+    A POST call to add a new bookmark to the system. This is validated by
+    passing the `api_key` parameter to the server in the POST.
+
+`/bmarks/remove/$url`
+    Remove the bookmark and content for this url. This might change and require
+    a `hash_id` instead of a url in the future.
+
+`/tags/complete`?tag=$str&current=test%20tags
+    Provides a list of possible completion strings for the given partial `tag`
+    string. For instance, if `tag` where 'py' then it might return "python",
+    "pylint". `current` is an optional space separated list of current tags to
+    provide context. In this way, the completion will only provide tags that
+    also occur on bookmarks with the list of current tags as well.
+
+
 
 Paging through results
 ~~~~~~~~~~~~~~~~~~~~~~~
