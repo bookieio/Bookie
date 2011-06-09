@@ -32,22 +32,26 @@ class UserMgr(object):
         return User.query.order_by(User.user_name).all()
 
     @staticmethod
-    def get(user_id=None, user_name=None):
+    def get(user_id=None, user_name=None, ignore_activated=False):
         """Get the user instance for this information
 
         :param user_id: integer id of the user in db
         :param user_name: string user's name
+        :param inactive: default to only get activated true
 
         """
         user_query = User.query
+
+        if not ignore_activated:
+            user_query = user_query.filter(User.activated == True)
 
         if user_name is not None:
             return user_query.filter(User.user_name == user_name).first()
 
         if user_id is not None:
-            return user_query.filter(User.user_id == user_id).first()
+            return user_query.filter(User.id == user_id).first()
 
-        return False
+        return None
 
 
 class User(Base):
@@ -109,3 +113,7 @@ class User(Base):
             return self.password == bcrypt.hashpw(password, salt)
         else:
             return False
+
+    def deactivate(self):
+        """In case we need to disable the login"""
+        self.activated = False
