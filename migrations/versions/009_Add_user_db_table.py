@@ -11,7 +11,7 @@ def upgrade(migrate_engine):
         Column('email', Unicode(255), unique=True),
         Column('activated', Boolean, server_default="0"),
         Column('is_admin', Boolean, server_default="0"),
-        Column('last_login', DateTime, server_default=func.now()),
+        Column('last_login', DateTime),
     )
 
     user.create()

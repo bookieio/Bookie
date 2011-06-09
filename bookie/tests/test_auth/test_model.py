@@ -41,6 +41,7 @@ class TestAuthUser(TestCase):
         ok_(tst.validate_password(self.test_password),
                 "The password should check out against the given hash")
 
+
 class TestAuthMgr(TestCase):
     """Test User Manager"""
 
@@ -73,3 +74,19 @@ class TestAuthMgr(TestCase):
         eq_(user.username, 'admin',
                 "Should have a username of admin: " + user.username)
 
+    def test_get_username(self):
+        """Fetching the user by the username"""
+        self._add_user()
+
+        user = UserMgr.get(username='admin')
+        eq_(user.id, 1,
+                "Should have a user id of 1: " + str(user.id))
+        eq_(user.username, 'admin',
+                "Should have a username of admin: " + user.username)
+
+    def test_get_bad_user(self):
+        """We shouldn't get a hit if the user is inactive"""
+        user = UserMgr.get(username='noexist')
+
+        eq_(user, None,
+                "Should not find a non-existant user: " + str(user))

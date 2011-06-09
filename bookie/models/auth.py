@@ -27,26 +27,28 @@ class UserMgr(object):
     """ Wrapper for static/combined operations of User object"""
 
     @staticmethod
-    def get_list():
+    def get_list(ignore_activated=False):
         """Get a list of all of the user accounts"""
-        return User.query.order_by(User.user_name).all()
+        user_query = User.query.order_by(User.username)
+
+        if not ignore_activated:
+            user_query = user_query.filter(User.activated == True)
+
+        return user_query.all()
 
     @staticmethod
-    def get(user_id=None, user_name=None, ignore_activated=False):
+    def get(user_id=None, username=None):
         """Get the user instance for this information
 
         :param user_id: integer id of the user in db
-        :param user_name: string user's name
+        :param username: string user's name
         :param inactive: default to only get activated true
 
         """
         user_query = User.query
 
-        if not ignore_activated:
-            user_query = user_query.filter(User.activated == True)
-
-        if user_name is not None:
-            return user_query.filter(User.user_name == user_name).first()
+        if username is not None:
+            return user_query.filter(User.username == username).first()
 
         if user_id is not None:
             return user_query.filter(User.id == user_id).first()
@@ -64,7 +66,7 @@ class User(Base):
     email = Column(Unicode(255), unique=True)
     activated = Column(Boolean, default=0)
     is_admin = Column(Boolean, default=0)
-    last_login = Column(DateTime, default=datetime.now)
+    last_login = Column(DateTime)
 
     def _set_password(self, password):
         """Hash password on the fly."""
