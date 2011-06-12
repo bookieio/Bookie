@@ -54,7 +54,6 @@ def bmark_list(request):
                          'max_count': RESULTS_MAX,
                          'count': len(bmarks),
                          'page': page,
-                         'allow_edit': access.edit_enabled(request.registry.settings),
                        },
                   request=request)
         return {
@@ -71,5 +70,4 @@ def bmark_list(request):
                  'max_count': RESULTS_MAX,
                  'count': len(bmarks),
                  'page': page,
-                 'allow_edit': access.edit_enabled(request.registry.settings),
                }

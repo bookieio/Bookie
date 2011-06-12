@@ -8,7 +8,7 @@ from pyramid.settings import asbool
 from pyramid.view import view_config
 
 from bookie.lib.importer import Importer
-from bookie.lib.access import Authorize
+from bookie.lib.access import ApiAuthorize
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
@@ -25,7 +25,7 @@ def import_bmarks(request):
     LOG.error(post.get('api_key'))
     if post:
         # we have some posted values
-        with Authorize(request.registry.settings.get('api_key', ''),
+        with ApiAuthorize(request.registry.settings.get('api_key', ''),
                        post.get('api_key', None)):
 
             # if auth fails, it'll raise an HTTPForbidden exception

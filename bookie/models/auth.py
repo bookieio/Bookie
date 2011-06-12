@@ -8,7 +8,6 @@ but it's absolutely independent of TurboGears.
 
 import bcrypt
 import logging
-from datetime import datetime
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -53,6 +52,26 @@ class UserMgr(object):
         if user_id is not None:
             return user_query.filter(User.id == user_id).first()
 
+        return None
+
+    @staticmethod
+    def auth_groupfinder(userid, request):
+        """Pyramid wants to know what groups a user is in
+
+        We need to pull this from the User object that we've stashed in the request
+        object
+
+        """
+        LOG.debug('GROUP FINDER')
+        LOG.debug(userid)
+        LOG.debug(request)
+        user = request.user
+        LOG.debug(user)
+        if user is not None:
+            if user.is_admin:
+                return 'admin'
+            else:
+                return 'user'
         return None
 
 

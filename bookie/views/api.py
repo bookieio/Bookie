@@ -5,7 +5,7 @@ from datetime import datetime
 from pyramid.view import view_config
 from StringIO import StringIO
 
-from bookie.lib.access import Authorize
+from bookie.lib.access import ApiAuthorize
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 
@@ -192,7 +192,7 @@ def bmark_add(request):
     """Add a new bookmark to the system"""
     params = request.params
 
-    with Authorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
 
         if 'url' in params and params['url']:
@@ -294,7 +294,7 @@ def bmark_remove(request):
     """Remove this bookmark from the system"""
     params = request.params
 
-    with Authorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
         if 'url' in params and params['url']:
             try:

@@ -13,8 +13,6 @@
 
         % endfor
     </div>
-
-
 </%def>
 
 <%def name="display_bmark_list(bmark_list)">
@@ -65,7 +63,7 @@
                                 hash_id=bmark.hash_id)}" title="Readable"
                                 class="button"> R </a>
                             </span>
-                        % if allow_edit:
+                        % if user:
                             <span class="item"><a href="#" title="Edit"
                             class="button"> E </a></span>
                             <span class="item"><a

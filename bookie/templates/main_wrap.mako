@@ -37,6 +37,12 @@
                 <span class="item"><a href="/recent" class="nav_button">Recent</a></span>
                 <span class="item"><a href="/popular" class="nav_button">Popular</a></span>
                 <span class="item"><a href="/search" class="nav_button">Search</a></span>
+                % if request.user:
+                    <span class="item"><a href="/logout" class="nav_button">Logout</a></span>
+                % else:
+                    <span class="item"><a href="/login" class="nav_button">Login</a></span>
+                % endif
+
                 <!--<span class="item">-->
 
                 <!--</span>-->

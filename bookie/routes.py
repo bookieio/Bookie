@@ -73,6 +73,11 @@ def build_routes(config):
 
     config.add_route("home", "/")
 
+    # auth routes
+    config.add_route("index", "/")
+    config.add_route("login", "/login")
+    config.add_route("logout", "/logout")
+
     # DELAPI Routes
     config.add_route("del_post_add", "/delapi/posts/add")
     config.add_route("del_post_delete", "/delapi/posts/delete")

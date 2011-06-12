@@ -1,6 +1,7 @@
 """Controllers related to viewing lists of bookmarks"""
 import logging
 
+from pyramid import security
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
@@ -23,6 +24,10 @@ def recent(request):
     rdict = request.matchdict
     params = request.params
 
+    LOG.debug(security.authenticated_userid(request))
+    LOG.debug('REQUEST USER')
+    LOG.debug(request.user)
+
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
 
@@ -42,15 +47,13 @@ def recent(request):
                            tags=tags,
                            page=page)
 
-
-
     ret = {
              'bmarks': recent_list,
              'max_count': RESULTS_MAX,
              'count': len(recent_list),
              'page': page,
              'tags': tags,
-             'allow_edit': access.edit_enabled(request.registry.settings),
+             'user': request.user,
            }
 
     return ret
@@ -86,7 +89,7 @@ def popular(request):
              'count': len(recent_list),
              'page': page,
              'tags': tags,
-             'allow_edit': access.edit_enabled(request.registry.settings),
+             'user': request.user,
            }
 
 
@@ -94,9 +97,6 @@ def popular(request):
 def delete(request):
     """Remove the bookmark in question"""
     rdict = request.POST
-
-    if not access.edit_enabled(request.registry.settings):
-        raise HTTPForbidden("Auth to edit is not enabled")
 
     # make sure we have an id value
     bid = int(rdict.get('bid', 0))

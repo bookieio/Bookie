@@ -7,7 +7,6 @@ from bookie.models import DBSession
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
 
-from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
 class TestPassword(TestCase):
@@ -39,35 +38,15 @@ class TestAuthUser(TestCase):
         ok_(tst._password == self.test_hash, "Setting should have hash")
         ok_(tst.password == self.test_hash, "Getting should have hash")
         ok_(tst.validate_password(self.test_password),
-                "The password should check out against the given hash")
+                "The password should check out against the given hash: " + tst.password)
 
 
 class TestAuthMgr(TestCase):
     """Test User Manager"""
 
-    def tearDown(self):
-        """Tear down each test"""
-        empty_db()
-
-    def _add_user(self, active=True, is_admin=False):
-        """Add a test user the to the system"""
-        dude = User()
-        dude.user_id = 1
-        dude.username = 'admin'
-        dude.password = 'testing'
-        dude.email = 'rharding@mitechie.com'
-        dude.activated = active
-        dude.is_admin = is_admin
-
-        DBSession.add(dude)
-        DBSession.flush()
-        transaction.commit()
-
     def test_get_id(self):
         """Fetching user by the id"""
-        # add a test user to the db
-        self._add_user()
-
+        # the migration adds an initial admin user to the system
         user = UserMgr.get(user_id=1)
         eq_(user.id, 1,
                 "Should have a user id of 1: " + str(user.id))
@@ -76,8 +55,6 @@ class TestAuthMgr(TestCase):
 
     def test_get_username(self):
         """Fetching the user by the username"""
-        self._add_user()
-
         user = UserMgr.get(username='admin')
         eq_(user.id, 1,
                 "Should have a user id of 1: " + str(user.id))

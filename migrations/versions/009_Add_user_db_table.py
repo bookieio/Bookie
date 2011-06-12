@@ -16,6 +16,13 @@ def upgrade(migrate_engine):
 
     user.create()
 
+    # adding an initial user account with user/pass combo of admin:admin
+    migrate_engine.execute(user.insert().values(username='admin',
+                                                password='$2a$10$LoSEVbN6833RtwbGQlMhJOROgkjHNH4gjmzkLrIxOX1xLXNvaKFyW',
+                                                email='testing@dummy.com',
+                                                activated=True,
+                                                is_admin=True))
+
 def downgrade(migrate_engine):
     """And the big drop"""
     meta = MetaData(migrate_engine)

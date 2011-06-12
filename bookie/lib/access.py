@@ -1,17 +1,22 @@
 """Handle auth and authz activities in bookie"""
 import logging
 
+from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPForbidden
-from pyramid.settings import asbool
+from pyramid.request import Request
+from pyramid.security import unauthenticated_userid
+
+from bookie.models.auth import UserMgr
+
 
 LOG = logging.getLogger(__name__)
 
 
-class Authorize(object):
+class ApiAuthorize(object):
     """Context manager to check if the user is authorized
 
     use:
-        with Authorize(some_key):
+        with ApiAuthorize(some_key):
             # do work
 
     Will return NotAuthorized if it fails
@@ -34,17 +39,21 @@ class Authorize(object):
         """No cleanup work to do after usage"""
         pass
 
-def edit_enabled(settings):
-    """Is the config .ini setting for allowing edit enabled?
 
-    If the .ini setting for ui edits is not true, then no authed
+class RequestWithUserAttribute(Request):
+    @reify
+    def user(self):
+        # <your database connection, however you get it, the below line
+        # is just an example>
+        # dbconn = self.registry.settings['dbconn']
+        LOG.debug('in Request with Attribute')
+        user_id = unauthenticated_userid(self)
+        LOG.debug(user_id)
+        if user_id is not None:
+            LOG.debug('user_id is not none')
 
-    """
-    allow_edit = asbool(settings.get('allow_edit', False))
-
-    if allow_edit:
-        return True
-    else:
-        return False
-
-
+            # this should return None if the user doesn't exist
+            # in the database
+            user = UserMgr.get(user_id=user_id)
+            LOG.debug(user)
+            return user

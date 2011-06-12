@@ -99,7 +99,6 @@ def empty_db():
     Bmark.query.delete()
     Tag.query.delete()
     Hashed.query.delete()
-    User.query.delete()
 
     DBSession.execute(bmarks_tags.delete())
     DBSession.flush()
