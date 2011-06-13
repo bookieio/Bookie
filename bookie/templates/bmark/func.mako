@@ -56,7 +56,7 @@
                     <div class="yui3-u-7-8">
                         <a class="bmark" href="${request.route_url('redirect', hash_id=bmark.hash_id)}" title="${bmark.extended}">${bmark.description}</a>
                     </div>
-
+ 
                     <div class="yui3-u-1-8 actions col_end">
                             <span class="item">
                                 <a href="${request.route_url('bmark_readable',
@@ -67,8 +67,9 @@
                             <span class="item"><a href="#" title="Edit"
                             class="button"> E </a></span>
                             <span class="item"><a
-                            href="${request.route_url('bmark_confirm_delete',
-                            bid=bmark.bid)}" title="Delete" class="button"> X </a></span>
+                            href="${
+                                    # request.route_url('bmark_confirm_delete', bid=bmark.bid)
+                                   }" title="Delete" class="button"> X </a></span>
                         % endif
                     </div>
 
@@ -76,7 +77,9 @@
                         <div class="tags">
                             % for tag in bmark.tags:
                                 <a class="tag"
-                                href="${request.route_url('tag_bmarks', tags=[tag], page=prev)}">${tag}</a>
+                                href="${
+                                        # request.route_url('tag_bmarks', tags=[tag], page=prev)
+                                       }">${tag}</a>
                             % endfor
                         </div>
                     </div>

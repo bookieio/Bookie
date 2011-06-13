@@ -98,7 +98,6 @@ class BookieViewsTest(unittest.TestCase):
         ok_(body_str in res.body,
             msg="Request should contain body_str: " + res.body)
 
-
     def test_bookmark_tag_no_edits(self):
          """Verify the tags view"""
          self._add_bmark()
@@ -106,6 +105,5 @@ class BookieViewsTest(unittest.TestCase):
          delete_str = "/bmark/confirm/delete"
          res = self.testapp.get('/tags/bookmarks')
 
-         # The delete link should not render if allow_edits is false
          ok_(delete_str not in res.body,
              msg="Tag view delete link should NOT be visible:" + res.body)

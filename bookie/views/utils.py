@@ -3,12 +3,11 @@ import logging
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.renderers import render
 from pyramid.settings import asbool
 from pyramid.view import view_config
 
 from bookie.lib.importer import Importer
-from bookie.lib.access import ApiAuthorize
+from bookie.lib.access import ReqAuthorize
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
@@ -16,25 +15,24 @@ from bookie.models.fulltext import get_fulltext_handler
 LOG = logging.getLogger(__name__)
 
 
-@view_config(route_name="import", renderer="/utils/import.mako")
+@view_config(route_name="user_import", renderer="/utils/import.mako")
 def import_bmarks(request):
     """Allow users to upload a delicious bookmark export"""
-    data = {}
-    post = request.POST
-    LOG.error(request.registry.settings.get('api_key', ''))
-    LOG.error(post.get('api_key'))
-    if post:
-        # we have some posted values
-        with ApiAuthorize(request.registry.settings.get('api_key', ''),
-                       post.get('api_key', None)):
+    rdict = request.matchdict
+    username = rdict.get('username')
 
-            # if auth fails, it'll raise an HTTPForbidden exception
+    # if auth fails, it'll raise an HTTPForbidden exception
+    with ReqAuthorize(request):
+        data = {}
+        post = request.POST
+        if post:
+            # we have some posted values
             files = post.get('import_file', None)
 
             if files is not None:
                 # upload is there for use
                 # process the file using the import script
-                importer = Importer(files.file)
+                importer = Importer(files.file, username=username)
 
                 # we want to store fulltext info so send that along to the
                 # import processor
@@ -57,9 +55,9 @@ def import_bmarks(request):
                     data['error'] = None
 
             return data
-    else:
-        # just display the form
-        return {}
+        else:
+            # just display the form
+            return {}
 
 
 @view_config(route_name="search", renderer="/utils/search.mako")

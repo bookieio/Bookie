@@ -39,6 +39,31 @@ class ApiAuthorize(object):
         """No cleanup work to do after usage"""
         pass
 
+class ReqAuthorize(object):
+    """Context manager to check if the user is logged in
+
+    use:
+        with ReqAuthorize(request):
+            # do work
+
+    Will return NotAuthorized if it fails
+
+    """
+
+    def __init__(self, request):
+        """Create the context manager"""
+        self.request = request
+
+    def __enter__(self):
+        """Verify api key set in constructor"""
+        if self.request.user is None or self.request.user.username is None:
+            LOG.error('Invalid Request: Not Logged in!')
+            raise HTTPForbidden('Invalid Authorization')
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """No cleanup work to do after usage"""
+        pass
+
 
 class RequestWithUserAttribute(Request):
     @reify

@@ -18,18 +18,15 @@
         <div class="block">
             <div class="head"></div>
             <div class="body">
-                <form class="" action="${request.route_url('import')}" method="POST" enctype=multipart/form-data>
+                <form class="" action="${request.route_url('user_import',
+                                                            username=request.user.username)}"
+                    method="POST" enctype=multipart/form-data>
                     <fieldset>
                         <ul>
                             <li>
                                 <label for="import_file">Import File</label>
                                 <input type="file" name="import_file" id="import_file" />
                             </li>
-                            <li>
-                                <label for="api_key">Api Key</label>
-                                <input type="password" name="api_key" id="api_key" />
-                            </li>
-
                             <li>
                                 <input type="submit" name="upload" value="Upload" id="upload" />
                             </li>
@@ -52,9 +49,6 @@
             <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>
             under the <em>Tools</em> heading on the sidebar.</p>
 
-            <h2>API Key</h2>
-            <p>"API Key" is the secret key specific to this Bookie installation. This setting is in the .ini file associated with this installation (usually found in the Bookie/ directory).
-            </p>
             <p>Note that the import process might take a bit of time on large sets of bookmarks.</p>
         </div>
     </div>

@@ -151,7 +151,7 @@ class TagMgr(object):
         return tag_objects
 
     @staticmethod
-    def find(order_by=None, tags=None):
+    def find(order_by=None, tags=None, username=None):
         """Find all of the tags in the system"""
         qry = Tag.query
 
@@ -405,10 +405,14 @@ class BmarkMgr(object):
                            filter(Hashed.hash_id == hash_id).first()
 
     @staticmethod
-    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):
+    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True,
+            username=None):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
         offset = limit * page
+
+        if username:
+            qry = qry.filter(Bmark.username == username)
 
         if order_by is None:
             order_by = Bmark.stored.desc()
@@ -495,7 +499,7 @@ class BmarkMgr(object):
         return res
 
     @staticmethod
-    def store(url, desc, ext, tags, dt=None, fulltext=None):
+    def store(url, username, desc, ext, tags, dt=None, fulltext=None):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -506,6 +510,7 @@ class BmarkMgr(object):
 
         """
         mark = Bmark(url,
+                     username,
                      desc=desc,
                      ext=ext,
                      tags=tags,
@@ -560,6 +565,8 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, onupdate=datetime.now)
     clicks = Column(Integer, default=0)
+    username = Column(Unicode(255), ForeignKey('users.username'),
+                      nullable=False,)
 
     # DON"T USE
     tag_str = Column(UnicodeText())
@@ -579,7 +586,10 @@ class Bmark(Base):
                       single_parent=True,
                       )
 
-    def __init__(self, url, desc=None, ext=None, tags=None):
+    user = relation("User",
+                    backref="bmark")
+
+    def __init__(self, url, username, desc=None, ext=None, tags=None):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark
@@ -597,6 +607,7 @@ class Bmark(Base):
         else:
             self.hashed = existing
 
+        self.username = username
         self.description = desc
         self.extended = ext
 

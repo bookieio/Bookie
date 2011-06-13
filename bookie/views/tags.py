@@ -13,9 +13,17 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="tag_list", renderer="/tag/list.mako")
+@view_config(route_name="user_tag_list", renderer="/tag/list.mako")
 def tag_list(request):
     """Display a list of your tags"""
-    tags_found = TagMgr.find()
+    rdict = request.matchdict
+
+    if 'username' in rdict:
+        username = rdict.get('username')
+    else:
+        username = None
+
+    tags_found = TagMgr.find(username)
 
     return {
         'tag_list': tags_found,

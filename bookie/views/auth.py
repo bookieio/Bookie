@@ -15,14 +15,22 @@ LOG = logging.getLogger(__name__)
 
 @view_config(route_name="login", renderer="/auth/login.mako")
 def login(request):
+    """Login the user to the system
+
+    If not POSTed then show the form
+    If error, display the form with the error message
+    If successful, forward the user to their /recent
+
+    Note: the came_from stuff we're not using atm. We'll clean out if we keep
+    things this way
+
+    """
     login_url = route_url('login', request)
     referrer = request.url
     if referrer == login_url:
         referrer = '/' # never use the login form itself as came_from
 
     came_from = request.params.get('came_from', referrer)
-    LOG.debug('came_from')
-    LOG.debug(came_from)
 
     message = ''
     login = ''
@@ -38,13 +46,15 @@ def login(request):
         LOG.debug(UserMgr.get_list())
 
         if auth and auth.validate_password(password):
-            """
-                  # We use the Primary Key as our identifier once someone has authenticated rather than the
-                  # username.  You can change what is returned as the userid by altering what is passed to
-                  # remember.
-            """
+            # We use the Primary Key as our identifier once someone has authenticated rather than the
+            # username.  You can change what is returned as the userid by altering what is passed to
+            # remember.
             headers = remember(request, auth.id, max_age='86400')
-            return HTTPFound(location=came_from,
+
+            # we're always going to return a user to their own /recent after a
+            # login
+            return HTTPFound(location=request.route_url('user_bmark_recent',
+                                                        username=auth.username),
                              headers=headers)
         message = 'Failed login'
 
