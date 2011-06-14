@@ -16,6 +16,7 @@ There are some required packages that need to be installed so you can build book
 - python-dev
 - libxslt1-dev
 - libxml2-dev
+- git
 
 Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. We're hoping to `clean this up some`_ some going forward.
 
@@ -36,7 +37,7 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
 
   # install the required packages to build bookie
   # (just needs to be run once)
-  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev
+  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git
 
   # Mysql & Postgresql users
   $ sudo apt-get install libmysqlclient-dev

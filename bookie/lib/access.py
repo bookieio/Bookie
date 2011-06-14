@@ -50,14 +50,21 @@ class ReqAuthorize(object):
 
     """
 
-    def __init__(self, request):
+    def __init__(self, request, username=None):
         """Create the context manager"""
         self.request = request
+        self.username = username
 
     def __enter__(self):
         """Verify api key set in constructor"""
         if self.request.user is None or self.request.user.username is None:
             LOG.error('Invalid Request: Not Logged in!')
+            raise HTTPForbidden('Invalid Authorization')
+
+        # if we have a username we're told to check against, make sure the
+        # username matches
+        if self.username != self.request.user.username:
+            LOG.error('Invalid Request: Wring Username!')
             raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):

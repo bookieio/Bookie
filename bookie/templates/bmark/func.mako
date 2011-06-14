@@ -54,9 +54,19 @@
             <div class="yui3-u-7-8">
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
-                        <a class="bmark" href="${request.route_url('redirect', hash_id=bmark.hash_id)}" title="${bmark.extended}">${bmark.description}</a>
+                            <a class="bmark"
+
+                                % if request.user:
+                                    href="${request.route_url('user_redirect',
+                                                              hash_id=bmark.hash_id,
+                                                              username=request.user.username)}"
+                                % else:
+                                    href="${request.route_url('redirect',
+                                                              hash_id=bmark.hash_id)}"
+                                % endif
+                                title="${bmark.extended}">${bmark.description}</a>
                     </div>
- 
+
                     <div class="yui3-u-1-8 actions col_end">
                             <span class="item">
                                 <a href="${request.route_url('bmark_readable',

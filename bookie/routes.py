@@ -74,7 +74,6 @@ def build_routes(config):
     config.add_route("home", "/")
 
     # auth routes
-    config.add_route("index", "/")
     config.add_route("login", "/login")
     config.add_route("logout", "/logout")
 
@@ -92,6 +91,9 @@ def build_routes(config):
     config.add_route("bmark_popular_tags", "/popular/*tags")
     config.add_route("bmark_readable", "/bmark/readable/{hash_id}")
 
+
+
+
     # user based bmark routes
     config.add_route("user_bmark_recent", "/{username}/recent")
     config.add_route("user_bmark_recent_tags", "/{username}/recent/*tags")
@@ -103,37 +105,38 @@ def build_routes(config):
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
 
     # tag related routes
-    config.add_route("tag_list", "/tags")
+    # config.add_route("tag_list", "/tags")
     # config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
     # config.add_route("tag_bmarks", "/tags/*tags")
 
     # user tag related
-    config.add_route("user_tag_list", "/{username}/tags")
+    # config.add_route("user_tag_list", "/{username}/tags")
     # config.add_route("tag_bmarks_ajax", "/{username}/tags/*tags", xhr=True)
     # config.add_route("tag_bmarks", "/{username}/tags/*tags")
     # config.add_route("user_tag_bmarks", "/{username}/tags/*tags")
 
     config.add_route("user_import", "/{username}/import")
-    # config.add_route("search", "/search")
-    # config.add_route("search_results", "/results")
-    # config.add_route("user_search", "/{username}/search")
-    # config.add_route("search_results", "/{username}/results")
+    config.add_route("search", "/search")
+    config.add_route("user_search", "/{username}/search")
+    config.add_route("search_results", "/results")
+    config.add_route("user_search_results", "/{username}/results")
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
     # config.add_route("search_results_ajax", "/results*terms", xhr=True)
-    # config.add_route("search_results_rest", "/results*terms")
+    config.add_route("search_results_rest", "/results*terms")
+    config.add_route("user_search_results_rest", "/{username}/results*terms")
 
     # removed the overall export. We're not going to have a link for exporting
     # all in one swoop. It'll kill things
-    # config.add_route("user_export", "/{username}/export")
+    config.add_route("user_export", "/{username}/export")
 
     config.add_route("redirect", "/redirect/{hash_id}")
-    # config.add_route("user_redirect", "/{username}/redirect/{hash_id}")
+    config.add_route("user_redirect", "/{username}/redirect/{hash_id}")
 
-    # # MOBILE routes
-    # config.add_route("mobile", "/m")
-    # config.add_route("user_mobile", "/{username}/m")
+    # MOBILE routes
+    config.add_route("mobile", "/m")
+    config.add_route("user_mobile", "/{username}/m")
 
     # API
     # config.add_route('api_bmark_recent', '/api/v1/bmarks/recent')
@@ -149,11 +152,14 @@ def build_routes(config):
 
     # # this route must be last, none of the above will look like hashes (22char)
     # # so it's safe to have as a kind of default route at the end
-    # config.add_route("api_bmark_hash", "/api/v1/bmarks/{hash_id}")
-    # config.add_route("user_api_bmark_hash", "/{username}/api/v1/bmarks/{hash_id}")
+    config.add_route("api_bmark_hash", "/api/v1/bmarks/{hash_id}")
+    config.add_route("user_api_bmark_hash", "/{username}/api/v1/bmarks/{hash_id}")
 
     # # api calls for tag relation information
-    # config.add_route("api_tag_complete", "/api/v1/tags/complete")
-    # config.add_route("user_api_tag_complete", "/api/v1/tags/complete")
+    config.add_route("api_tag_complete", "/api/v1/tags/complete")
+    config.add_route("user_api_tag_complete", "/{username}/api/v1/tags/complete")
+
+    # these are single word matching, they must be after /recent /popular etc
+    config.add_route("user_home", "/{username}")
 
     return config

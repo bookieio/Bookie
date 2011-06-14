@@ -397,12 +397,17 @@ class BmarkMgr(object):
                            filter(Hashed.url == clean_url).one()
 
     @staticmethod
-    def get_by_hash(hash_id):
+    def get_by_hash(hash_id, username=None):
         """Get a bmark from the system via the hash_id"""
         # normalize the url
-        return Bmark.query.join(Bmark.hashed).\
+        qry = Bmark.query.join(Bmark.hashed).\
                            options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.hash_id == hash_id).first()
+                           filter(Hashed.hash_id == hash_id)
+
+        if username:
+            qry = qry.filter(Bmark.username == username)
+
+        return qry.first()
 
     @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, with_tags=True,

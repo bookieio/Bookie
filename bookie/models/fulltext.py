@@ -43,7 +43,7 @@ class SqliteFulltext(object):
     Storing is done automatically via the before_insert mapper hook on Bmark
     obj
     """
-    def search(self, phrase, content=False):
+    def search(self, phrase, content=False, username=None):
         """Perform the search on the index"""
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
@@ -59,9 +59,14 @@ class SqliteFulltext(object):
         ext = SqliteBmarkFT.query.\
                     filter(SqliteBmarkFT.extended.match(phrase))
 
-        res = desc.union(tag_str, ext).join(SqliteBmarkFT.bmark).\
-                    options(contains_eager(SqliteBmarkFT.bmark)).\
-                    order_by('bmarks.stored').all()
+        bmark = aliased(Bmark)
+        qry = desc.union(tag_str, ext).join((bmark, SqliteBmarkFT.bmark)).\
+                    options(contains_eager(SqliteBmarkFT.bmark, alias=bmark))
+
+        if username:
+            qry = qry.filter(bmark.username==username)
+
+        res = qry.order_by(bmark.stored).all()
 
         # everyone else sends a list of bmarks, so need to get our bmarks
         # out of the result set
@@ -83,6 +88,9 @@ class SqliteFulltext(object):
                       options(contains_eager(SqliteContentFT.hashed,
                                              hashed.bmark,
                                              alias=bmarks))
+
+            if username:
+                qry = qry.filter(bmark.username==username)
 
             res = qry.order_by(bmarks.stored).all()
             for read in res:

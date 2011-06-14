@@ -142,6 +142,7 @@ def bmark_sync(request):
 
 
 @view_config(route_name="api_bmark_hash", renderer="morjson")
+@view_config(route_name="user_api_bmark_hash", renderer="morjson")
 def bmark_get(request):
     """Return a bookmark requested via hash_id
 
@@ -152,6 +153,7 @@ def bmark_get(request):
     rdict = request.matchdict
 
     hash_id = rdict.get('hash_id', None)
+    username = rdict.get('username', None)
 
     if not hash_id:
         return {
@@ -160,7 +162,8 @@ def bmark_get(request):
             'payload': {}
         }
 
-    bookmark = BmarkMgr.get_by_hash(hash_id)
+    bookmark = BmarkMgr.get_by_hash(hash_id, username=username)
+
     if not bookmark:
         # then not found
         ret = {
@@ -320,6 +323,7 @@ def bmark_remove(request):
 
 
 @view_config(route_name="api_tag_complete", renderer="morjson")
+@view_config(route_name="user_api_tag_complete", renderer="morjson")
 def tag_complete(request):
     """Complete a tag based on the given text
 
