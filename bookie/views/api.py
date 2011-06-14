@@ -12,6 +12,7 @@ from bookie.lib.tagcommands import Commander
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
+from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
@@ -20,9 +21,11 @@ from bookie.models.fulltext import get_fulltext_handler
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 10
+HARD_MAX = 100
 
 
 @view_config(route_name="api_bmark_recent", renderer="morjson")
+@view_config(route_name="user_api_bmark_recent", renderer="morjson")
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -31,6 +34,12 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
+    username = rdict.get('username', None)
+
+    # thou shalt not have more then the HARD MAX
+    # @todo move this to the .ini as a setting
+    if count > HARD_MAX:
+        count = HARD_MAX
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -47,7 +56,8 @@ def bmark_recent(request):
                            order_by=Bmark.stored.desc(),
                            tags=tags,
                            page=page,
-                           with_tags=True)
+                           with_tags=True,
+                           username=username)
 
     result_set = []
 
@@ -73,6 +83,7 @@ def bmark_recent(request):
 
 
 @view_config(route_name="api_bmark_popular", renderer="morjson")
+@view_config(route_name="user_api_bmark_popular", renderer="morjson")
 def bmark_popular(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -81,6 +92,12 @@ def bmark_popular(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
+    username = rdict.get('username', None)
+
+    # thou shalt not have more then the HARD MAX
+    # @todo move this to the .ini as a setting
+    if count > HARD_MAX:
+        count = HARD_MAX
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -96,7 +113,8 @@ def bmark_popular(request):
     popular_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.clicks.desc(),
                            tags=tags,
-                           page=page)
+                           page=page,
+                           username=username)
     result_set = []
 
     for res in popular_list:
@@ -120,25 +138,32 @@ def bmark_popular(request):
     return ret
 
 
-@view_config(route_name="api_bmark_sync", renderer="morjson")
+@view_config(route_name="user_api_bmark_sync", renderer="morjson")
 def bmark_sync(request):
     """Return a list of the bookmarks we know of in the system
 
     For right now, send down a list of hash_ids
 
     """
+    rdict = request.matchdict
+    params = request.params
 
-    hash_list = BmarkMgr.hash_list()
+    username = rdict.get('username', None)
 
-    ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-             'hash_list': [hash[0] for hash in hash_list]
+    with ApiAuthorize(request.registry.settings.get('api_key', ''),
+                      params.get('api_key', None)):
+
+        hash_list = BmarkMgr.hash_list(username=username)
+
+        ret = {
+            'success': True,
+            'message': "",
+            'payload': {
+                 'hash_list': [hash[0] for hash in hash_list]
+            }
         }
-    }
 
-    return ret
+        return ret
 
 
 @view_config(route_name="api_bmark_hash", renderer="morjson")
@@ -162,7 +187,8 @@ def bmark_get(request):
             'payload': {}
         }
 
-    bookmark = BmarkMgr.get_by_hash(hash_id, username=username)
+    bookmark = BmarkMgr.get_by_hash(hash_id,
+                                    username=username)
 
     if not bookmark:
         # then not found
@@ -190,10 +216,13 @@ def bmark_get(request):
     return ret
 
 
-@view_config(route_name="api_bmark_add", renderer="morjson")
+@view_config(route_name="user_api_bmark_add", renderer="morjson")
 def bmark_add(request):
     """Add a new bookmark to the system"""
     params = request.params
+    rdict = request.matchdict
+
+    username = rdict.get("username", None)
 
     with ApiAuthorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
@@ -201,7 +230,8 @@ def bmark_add(request):
         if 'url' in params and params['url']:
             # check if we already have this
             try:
-                mark = BmarkMgr.get_by_url(params['url'])
+                mark = BmarkMgr.get_by_url(params['url'],
+                                           username=username)
 
                 mark.description = params.get('description', mark.description)
                 mark.extended = params.get('extended', mark.extended)
@@ -252,6 +282,7 @@ def bmark_add(request):
                              params.get('tags', ''),
                              dt=stored_time,
                              fulltext=fulltext,
+                             username=username,
                        )
 
                 # we need to process any commands associated as well
@@ -292,16 +323,21 @@ def bmark_add(request):
                  }
 
 
-@view_config(route_name="api_bmark_remove", renderer="morjson")
+@view_config(route_name="user_api_bmark_remove", renderer="morjson")
 def bmark_remove(request):
     """Remove this bookmark from the system"""
     params = request.params
+    rdict = request.matchdict
+
+    username = rdict.get("username", None)
 
     with ApiAuthorize(request.registry.settings.get('api_key', ''),
-                   params.get('api_key', None)):
+                      params.get('api_key', None)):
+
         if 'url' in params and params['url']:
             try:
-                bmark = BmarkMgr.get_by_url(params['url'])
+                bmark = BmarkMgr.get_by_url(params['url'],
+                                            username=username)
 
                 session = DBSession()
                 session.delete(bmark)
@@ -352,5 +388,69 @@ def tag_complete(request):
              'tags': [tag.name for tag in tags]
         }
     }
+
+    return ret
+
+
+@view_config(route_name="api_bmark_get_readable", renderer="morjson")
+def to_readable(request):
+    """Get a list of urls, hash_ids we need to readable parse"""
+    url_list = Hashed.query.outerjoin(Readable).\
+                filter(Readable.imported == None).all()
+
+    ret = {
+        'success': True,
+        'message': "",
+        'payload': {
+            'urls': [dict(h) for h in url_list]
+        }
+    }
+
+    return ret
+
+@view_config(route_name="api_bmark_readable", renderer="morjson")
+def readable(request):
+    """Take the html given and parse the content in there for readable
+
+    :@param hash_id: POST the hash_id of the bookmark we're readable'ing
+    :@param content: POST the html of the page in question
+
+    """
+    params = request.POST
+    hashed = Hashed.query.get(params.get('hash_id'))
+    if hashed:
+
+        # if we have content, stick it on the object here
+        if 'content' in params:
+            content = StringIO(params['content'])
+            content.seek(0)
+            parsed = ReadContent.parse(content, content_type="text/html")
+
+            hashed.readable = Readable()
+            hashed.readable.content = parsed.content
+            hashed.readable.content_type = parsed.content_type
+            hashed.readable.status_code = parsed.status
+            hashed.readable.status_message = parsed.status_message
+
+            ret = {
+                'success': True,
+                'message': "Parsed url: " + hashed.url,
+                'payload': {}
+            }
+        else:
+            ret = {
+                'success': False,
+                'message': "Missing content for hash id",
+                'payload': {
+                    'hash_id': params.get('hash_id')
+                }
+            }
+
+    else:
+        ret = {
+            'success': False,
+            'message': "Missing hash_id to parse",
+            'payload': {}
+        }
 
     return ret

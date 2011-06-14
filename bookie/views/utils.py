@@ -70,6 +70,7 @@ def search(request):
 @view_config(route_name="search_results", renderer="/utils/results_wrap.mako")
 @view_config(route_name="user_search_results", renderer="/utils/results_wrap.mako")
 @view_config(route_name="api_bmark_search", renderer="morjson")
+@view_config(route_name="user_api_bmark_search", renderer="morjson")
 @view_config(route_name="search_results_rest", renderer="/utils/results_wrap.mako")
 @view_config(route_name="user_search_results_rest", renderer="/utils/results_wrap.mako")
 def search_results(request):

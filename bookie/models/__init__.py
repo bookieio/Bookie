@@ -388,13 +388,19 @@ class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
 
     @staticmethod
-    def get_by_url(url):
+    def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
         # normalize the url
         clean_url = BmarkTools.normalize_url(url)
-        return Bmark.query.join(Bmark.hashed).\
+
+        qry = Bmark.query.join(Bmark.hashed).\
                            options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.url == clean_url).one()
+                           filter(Hashed.url == clean_url)
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        return qry.one()
 
     @staticmethod
     def get_by_hash(hash_id, username=None):
@@ -534,9 +540,14 @@ class BmarkMgr(object):
         return mark
 
     @staticmethod
-    def hash_list():
+    def hash_list(username=None):
         """Get a list of the hash_ids we have stored"""
-        return DBSession.query(Bmark.hash_id).all()
+        qry = DBSession.query(Bmark.hash_id)
+
+        if username:
+            qry = qry.filter(username==username)
+
+        return qry.all()
 
 
 class BmarkTools(object):

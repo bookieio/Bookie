@@ -139,16 +139,18 @@ def build_routes(config):
     config.add_route("user_mobile", "/{username}/m")
 
     # API
-    # config.add_route('api_bmark_recent', '/api/v1/bmarks/recent')
-    # config.add_route('api_bmark_popular', '/api/v1/bmarks/popular')
-    # config.add_route("api_bmark_search", "/api/v1/bmarks/search/*terms")
+    config.add_route('api_bmark_recent', '/api/v1/bmarks/recent')
+    config.add_route('api_bmark_popular', '/api/v1/bmarks/popular')
+    config.add_route("api_bmark_search", "/api/v1/bmarks/search/*terms")
+    config.add_route('api_bmark_get_readable', '/api/v1/bmarks/get_readable')
+    config.add_route('api_bmark_readable', '/api/v1/bmarks/readable')
 
-    # config.add_route("user_api_bmark_recent", "/{username}/api/v1/bmarks/recent")
-    # config.add_route("user_api_bmark_popular", "/{username}/api/v1/bmarks/popular")
-    # config.add_route("user_api_bmark_search", "/{username}/api/v1/bmarks/search/*terms")
-    # config.add_route("user_api_bmark_sync", "/{username}/api/v1/bmarks/sync")
-    # config.add_route("user_api_bmark_add", "/{username}/api/v1/bmarks/add")
-    # config.add_route("user_api_bmark_remove", "/{username}/api/v1/bmarks/remove")
+    config.add_route("user_api_bmark_recent", "/{username}/api/v1/bmarks/recent")
+    config.add_route("user_api_bmark_popular", "/{username}/api/v1/bmarks/popular")
+    config.add_route("user_api_bmark_search", "/{username}/api/v1/bmarks/search/*terms")
+    config.add_route("user_api_bmark_sync", "/{username}/api/v1/bmarks/sync")
+    config.add_route("user_api_bmark_add", "/{username}/api/v1/bmarks/add")
+    config.add_route("user_api_bmark_remove", "/{username}/api/v1/bmarks/remove")
 
     # # this route must be last, none of the above will look like hashes (22char)
     # # so it's safe to have as a kind of default route at the end
