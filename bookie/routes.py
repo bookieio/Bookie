@@ -91,9 +91,6 @@ def build_routes(config):
     config.add_route("bmark_popular_tags", "/popular/*tags")
     config.add_route("bmark_readable", "/bmark/readable/{hash_id}")
 
-
-
-
     # user based bmark routes
     config.add_route("user_bmark_recent", "/{username}/recent")
     config.add_route("user_bmark_recent_tags", "/{username}/recent/*tags")
@@ -123,9 +120,9 @@ def build_routes(config):
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
-    # config.add_route("search_results_ajax", "/results*terms", xhr=True)
     config.add_route("search_results_rest", "/results*terms")
     config.add_route("user_search_results_rest", "/{username}/results*terms")
+    config.add_route("user_search_results_ajax", "/{username}/results*terms", xhr=True)
 
     # removed the overall export. We're not going to have a link for exporting
     # all in one swoop. It'll kill things
