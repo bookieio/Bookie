@@ -36,6 +36,7 @@ while True:
     j = json.loads(urllib.unquote(job.body))
 
     if 'hash_id' in j and 'content' in j:
+        print j['hash_id']
         post_readable(j['hash_id'], j['content'])
     else:
         print "ERROR: missing fields -- " + j['hash_id']

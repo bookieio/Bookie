@@ -1,5 +1,8 @@
 /**
- *
+ * Readable Producer:
+ * Check with the bookie api for bookmarks that we still need to parse
+ * Process those, fetch their content, and pass to the consumer via the
+ * beanstalkd message queue
  *
  * Requirements:
  *     npm install nodestalker request nlogger
@@ -75,20 +78,20 @@ var BookieContent = function (opts) {
 
         try {
             escaped = qs.escape(post_data);
-        } catch (err) {
+
+            qclient.use(that.opts.queue_tube).
+                onSuccess(function (data) {
+                    qclient.put(escaped).
+                        onSuccess(function(data) {
+                            log.info("Added to queue: " + hash_id);
+                            log.info(data);
+                        });
+                });
+         } catch (err) {
             log.error('escaping url content');
             log.error(err);
             log.error(post_data.substr(0,100));
         }
-
-        qclient.use(that.opts.queue_tube).
-            onSuccess(function (data) {
-                qclient.put(escaped + "\r\n").
-                    onSuccess(function(data) {
-                        log.info("Added to queue: " + hash_id);
-                        log.info(data);
-                    });
-            });
     };
 
     /**
@@ -130,10 +133,10 @@ var BookieContent = function (opts) {
                                    if (error) {
                                        log.error('FETCHING URL');
                                        log.error(error);
+                                   } else {
+                                       log.info("Fetched " + someUri + " OK!");
+                                       that.queue_content(hash_id, body);
                                    }
-
-                                   log.info("Fetched " + someUri + " OK!");
-                                   that.queue_content(hash_id, body);
                                };
             log.info("Fetching content for url: " + someUri);
             request(req_data, req_callback);
