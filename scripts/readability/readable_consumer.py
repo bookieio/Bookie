@@ -11,14 +11,6 @@ bean = beanstalkc.Connection(host="localhost",
                              port=11300,
                              parse_yaml=lambda x: x.split("\n"))
 
-# produce data
-# for i in range(5):
-#     print 'put data: %d' % i
-#     data = job.Job(data=str(i), conn=connection)
-#     data.Queue()
-#
-# consume data
-
 def post_readable(hash_id, content):
     """Send off the parsing request to the web server"""
     url = 'http://127.0.0.1:6543/api/v1/bmarks/readable'
