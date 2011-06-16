@@ -17,13 +17,9 @@ RESULTS_MAX = 50
 def tag_list(request):
     """Display a list of your tags"""
     rdict = request.matchdict
+    username = rdict.get("username", None)
 
-    if 'username' in rdict:
-        username = rdict.get('username')
-    else:
-        username = None
-
-    tags_found = TagMgr.find(username)
+    tags_found = TagMgr.find(username=username)
 
     return {
         'tag_list': tags_found,
@@ -41,6 +37,8 @@ def bmark_list(request):
 
     # check if we have a page count submitted
     tags = rdict.get('tags')
+    username = rdict.get("username", None)
+
     page = int(params.get('page', 0))
 
     # verify the tag exists before we go on
@@ -52,7 +50,8 @@ def bmark_list(request):
 
     bmarks = BmarkMgr.find(tags=tags,
                            limit=RESULTS_MAX,
-                           page=page,)
+                           page=page,
+                           username=username)
 
     if 'ajax' in route_name:
         html = render('bookie:templates/tag/bmarks.mako',

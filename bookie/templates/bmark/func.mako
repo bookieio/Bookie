@@ -36,11 +36,10 @@
     <%
         is_new = (last_date != bmark.stored.strftime("%m/%d"))
     %>
-    <div class="yui3-u-1"
+    <div class="yui3-u-1 bmark_block"
          % if is_new:
              style="border-top: 1px solid #999999;"
          % endif
-         class="bmark_block"
     >
         <div class="yui3-g bmark">
             <div class="yui3-u-1-8">

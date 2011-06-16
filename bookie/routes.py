@@ -102,12 +102,12 @@ def build_routes(config):
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
 
     # tag related routes
-    # config.add_route("tag_list", "/tags")
+    config.add_route("tag_list", "/tags")
     # config.add_route("tag_bmarks_ajax", "/tags/*tags", xhr=True)
     # config.add_route("tag_bmarks", "/tags/*tags")
 
     # user tag related
-    # config.add_route("user_tag_list", "/{username}/tags")
+    config.add_route("user_tag_list", "/{username}/tags")
     # config.add_route("tag_bmarks_ajax", "/{username}/tags/*tags", xhr=True)
     # config.add_route("tag_bmarks", "/{username}/tags/*tags")
     # config.add_route("user_tag_bmarks", "/{username}/tags/*tags")
@@ -120,7 +120,9 @@ def build_routes(config):
 
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
+    # ajax versions are used in the mobile search interface
     config.add_route("search_results_rest", "/results*terms")
+    config.add_route("search_results_ajax", "/results*terms", xhr=True)
     config.add_route("user_search_results_rest", "/{username}/results*terms")
     config.add_route("user_search_results_ajax", "/{username}/results*terms", xhr=True)
 

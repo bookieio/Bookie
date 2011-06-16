@@ -159,6 +159,12 @@ class TagMgr(object):
             # limit to only the tag names in this list
             qry = qry.filter(Tag.name.in_(tags))
 
+        if username:
+            # then we'll need to bind to bmarks to be able to limit on the
+            # username field
+            bmark = aliased(Bmark)
+            qry = qry.join((bmark, Tag.bmark)).filter(bmark.username==username)
+
         if order_by is not None:
             qry = qry.order_by(order_by)
         else:
