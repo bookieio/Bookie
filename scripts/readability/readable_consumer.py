@@ -30,9 +30,7 @@ def post_readable(hash_id, content):
 bean.watch('default')
 
 while True:
-    print "reserving"
     job = bean.reserve()
-
     j = json.loads(urllib.unquote(job.body))
 
     if 'hash_id' in j and 'content' in j:

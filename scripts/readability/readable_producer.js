@@ -13,12 +13,14 @@ var bs = require('nodestalker'),
     http = require('http'),
     log = require('nlogger').logger(module),
     qs = require('querystring'),
-    request = require('request'),
-    url = require('url');
+    req = require('get'),
+    url = require('url'),
+    util = require('util');
 
 var bean_client = bs.Client(),
+    inspect = util.inspect,
     API = "http://127.0.0.1:6543/api/v1/bmarks",
-    TIMEOUT = 500;
+    TIMEOUT = 25;
 
 /**
  * Bind this to the global connection instance of the queue
@@ -27,6 +29,10 @@ var bean_client = bs.Client(),
 bean_client.addListener('error', function(data) {
     log.error('QUEUE ERROR');
     log.error(data);
+});
+
+bean_client.use('default').onSuccess(function (data) {
+    log.info('connected to default tube for queue');
 });
 
 
@@ -55,7 +61,7 @@ Object.defineProperty(Object.prototype, "extend", {
  *
  */
 var BookieContent = function (opts) {
-    defaults = {
+    var defaults = {
         bookieurl: 'http://127,.0.0.1:6543/',
         queue_tube: 'default',
         queue_conn: undefined,
@@ -67,8 +73,7 @@ var BookieContent = function (opts) {
 		opts = defaults;
 	}
 
-
-    that = {};
+    var that = {};
     that.opts = opts;
 
     that.queue_content = function (hash_id, content) {
@@ -79,13 +84,9 @@ var BookieContent = function (opts) {
         try {
             escaped = qs.escape(post_data);
 
-            qclient.use(that.opts.queue_tube).
-                onSuccess(function (data) {
-                    qclient.put(escaped).
-                        onSuccess(function(data) {
-                            log.info("Added to queue: " + hash_id);
-                            log.info(data);
-                        });
+            qclient.put(escaped).
+                onSuccess(function(data) {
+                    log.info("Added to queue: " + hash_id);
                 });
          } catch (err) {
             log.error('escaping url content');
@@ -114,6 +115,12 @@ var BookieContent = function (opts) {
         case '.pdf':
           return false;
           break;
+        case '.mp3':
+          return false;
+          break;
+        case '.mp4':
+          return false;
+          break;
         default:
           return true;
         }
@@ -125,21 +132,26 @@ var BookieContent = function (opts) {
             ext = someUri.substr(-4);
 
         if (that.ext_is_valid(ext)) {
+            log.info("Fetching content for url: " + someUri);
             var req_data = {'uri': someUri,
                             'encoding': "utf-8",
-                            "maxSockets": 5
+                            "max_redirs": 10
                 },
-                req_callback = function (error, response, body) {
+                req_callback = function (error, body) {
                                    if (error) {
+                                       // error is an object with message and
+                                       // statusCode we need to send to the
+                                       // server to log this
                                        log.error('FETCHING URL');
-                                       log.error(error);
+                                       log.error(inspect(error));
                                    } else {
                                        log.info("Fetched " + someUri + " OK!");
                                        that.queue_content(hash_id, body);
                                    }
-                               };
-            log.info("Fetching content for url: " + someUri);
-            request(req_data, req_callback);
+                },
+                dl = new req(req_data);
+
+            dl.asString(req_callback);
         } else {
             log.info('Skipping non html file: ' + someUri);
         }
@@ -154,9 +166,10 @@ var BookieContent = function (opts) {
  *
  */
 var BookieAPI = function (opts) {
-    defaults = {
-        bookieurl: 'http://127,.0.0.1:6543/',
-	};
+    var opts,
+        defaults = {
+            bookieurl: 'http://127,.0.0.1:6543/',
+        };
 
 	if (typeof opts === 'object') {
 		opts = defaults.extend(opts);
@@ -166,7 +179,7 @@ var BookieAPI = function (opts) {
 
     log.info('Using API url: ' + opts.bookieurl);
 
-    that = {};
+    var that = {};
     that.opts = opts;
 
     that.processArray = function(items, process) {
@@ -185,7 +198,7 @@ var BookieAPI = function (opts) {
         var req_data = {uri: that.opts.bookieurl + '/get_readable',
                         method: "GET"
             },
-            req_callback = function (error, response, body) {
+            req_callback = function (error, body) {
                                if (error) {
                                    log.error('fetching readable list');
                                    log.error(error);
@@ -203,7 +216,8 @@ var BookieAPI = function (opts) {
                            };
 
         log.info("Requesting list of bookmarks to readable");
-        request(req_data, req_callback);
+        var dl = new req(req_data);
+        dl.asString(req_callback);
 
     };
 

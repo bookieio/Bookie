@@ -1,0 +1,6 @@
+{
+    "color": "auto",
+    "level": {
+        "*": "warn"
+    }
+}
