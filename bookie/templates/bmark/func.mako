@@ -73,12 +73,8 @@
                                 class="button"> R </a>
                             </span>
                         % if user:
-                            <span class="item"><a href="#" title="Edit"
-                            class="button"> E </a></span>
-                            <span class="item">
-                                <a href="${
-                                    # request.route_url('bmark_confirm_delete', bid=bmark.bid)
-                                   }" title="Delete" class="button"> X </a></span>
+                            <span class="item"><a href="#" title="Edit" class="button"> E </a></span>
+                            <!--<span class="item"> <a href="" title="Delete" class="button"> X </a></span>-->
                         % endif
                     </div>
 
