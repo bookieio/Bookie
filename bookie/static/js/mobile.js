@@ -233,7 +233,11 @@ var bookie = (function ($b, $) {
                               }
                           },
                           'complete': function () {
-                              $.mobile.changePage('#results', 'slide', back=false, changeHash=false);
+                              console.log('fired complete');
+                              $.mobile.changePage('#results',
+                                                  'slide',
+                                                  back=false,
+                                                  changeHash=false);
                               $.mobile.pageLoading(true);
                           }
                       }
@@ -257,11 +261,13 @@ var bookie = (function ($b, $) {
             $($b.ui.results.title_id).html(title);
 
             // this isn't always init'd so need to init it first
-            $(data_home).listview('refresh');
+            console.log(data_home);
+
+            $(data_home).listview('destroy').listview();
 
             // now bind the swipe event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
-                ev.preventdefault();
+                ev.preventDefault();
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
                     url = APP_URL + "/redirect/" + hash_id,
@@ -290,6 +296,7 @@ var bookie = (function ($b, $) {
             'go_search': $b.events.SEARCH,
         },
 
+
         nav_buttons = function (id, event_id, data_home, callback) {
             if (callback !== undefined) {
                 $($b.EVENTID).bind(event_id, callback);
@@ -297,7 +304,6 @@ var bookie = (function ($b, $) {
 
             $('.' + id).bind('click', function (ev) {
                 $b.mobilestate.clear();
-                console.log(callback);
 
                 if (callback !== undefined) {
                     ev.preventDefault();

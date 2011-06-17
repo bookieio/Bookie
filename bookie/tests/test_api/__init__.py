@@ -15,6 +15,9 @@ GOOGLE_HASH = 'aa2239c17609b2'
 BMARKUS_HASH = 'c5c21717c99797'
 LOG = logging.getLogger(__name__)
 
+API_KEY = None
+
+
 class BookieAPITest(unittest.TestCase):
     """Test the Bookie API"""
 
@@ -25,6 +28,10 @@ class BookieAPITest(unittest.TestCase):
         self.testapp = TestApp(app)
         testing.setUp()
 
+        global API_KEY
+        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        API_KEY = res['api_key']
+
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
@@ -34,29 +41,13 @@ class BookieAPITest(unittest.TestCase):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
 
-        if second_bmark:
-            prms = {
-                    'url': u'http://bmark.us',
-                    'description': u'Bookie',
-                    'extended': u'Extended notes',
-                    'tags': u'bookmarks',
-                    'api_key': u'testapi',
-            }
-
-            # if we want to test the readable fulltext side we want to make sure we
-            # pass content into the new bookmark
-            prms['content'] = "<h1>Second bookmark man</h1>"
-
-            req_params = urllib.urlencode(prms)
-            res = self.testapp.get('/delapi/posts/add?' + req_params)
-
         # the main bookmark, added second to prove popular will sort correctly
         prms = {
                 'url': u'http://google.com',
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
         }
 
         # if we want to test the readable fulltext side we want to make sure we
@@ -65,16 +56,58 @@ class BookieAPITest(unittest.TestCase):
             prms['content'] = "<h1>There's some content in here dude</h1>"
 
         req_params = urllib.urlencode(prms)
-        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        res = self.testapp.post('/admin/api/v1/bmarks/add?',
+                                params=req_params)
+
+        if second_bmark:
+            prms = {
+                    'url': u'http://bmark.us',
+                    'description': u'Bookie',
+                    'extended': u'Extended notes',
+                    'tags': u'bookmarks',
+                    'api_key': API_KEY,
+            }
+
+            # if we want to test the readable fulltext side we want to make sure we
+            # pass content into the new bookmark
+            prms['content'] = "<h1>Second bookmark man</h1>"
+
+            req_params = urllib.urlencode(prms)
+            res = self.testapp.post('/admin/api/v1/bmarks/add?',
+                                    params=req_params)
 
         session.flush()
         transaction.commit()
         return res
 
+    def test_add_bookmark(self):
+        """We should be able to add a new bookmark to the system"""
+        # we need to know what the current admin's api key is so we can try to
+        # add
+        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+
+        test_bmark = {
+                'url': u'http://bmark.us',
+                'description': u'Bookie',
+                'extended': u'Extended notes',
+                'tags': u'bookmarks',
+                'api_key': key,
+        }
+
+        res = self.testapp.post('/admin/api/v1/bmarks/add',
+                                params=test_bmark,
+                                status=200)
+
+        ok_('"success": true' in res.body,
+                "Should have a success of true: " + res.body)
+        ok_('message": "done"' in res.body,
+                "Should have a done message: " + res.body)
+
     def test_bookmark_fetch(self):
         """Test that we can get a bookmark and it's details"""
         self._get_good_request(content=True)
-        res = self.testapp.get('/api/v1/bmarks/' + GOOGLE_HASH)
+        res = self.testapp.get('/admin/api/v1/bmarks/' + GOOGLE_HASH)
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -101,7 +134,7 @@ class BookieAPITest(unittest.TestCase):
         self._get_good_request()
 
         # test that we only get one resultback
-        res = self.testapp.get('/api/v1/bmarks/' + BMARKUS_HASH, status=200)
+        res = self.testapp.get('/admin/api/v1/bmarks/' + BMARKUS_HASH, status=200)
 
         ok_('"success": false' in res.body,
                 "Should have a false success" + res.body)
@@ -109,7 +142,7 @@ class BookieAPITest(unittest.TestCase):
     def test_bookmark_recent(self):
         """Test that we can get list of bookmarks with details"""
         self._get_good_request(content=True)
-        res = self.testapp.get('/api/v1/bmarks/recent')
+        res = self.testapp.get('/admin/api/v1/bmarks/recent')
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -130,10 +163,10 @@ class BookieAPITest(unittest.TestCase):
         self._get_good_request(content=True, second_bmark=True)
 
         # we want to make sure the click count of 0 is greater than 1
-        res = self.testapp.get('/redirect/' + GOOGLE_HASH)
-        res = self.testapp.get('/redirect/' + GOOGLE_HASH)
+        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
+        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
 
-        res = self.testapp.get('/api/v1/bmarks/popular')
+        res = self.testapp.get('/admin/api/v1/bmarks/popular')
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -148,7 +181,9 @@ class BookieAPITest(unittest.TestCase):
         bmark2 = bmark_list[1]
 
         eq_(GOOGLE_HASH, bmark1[u'hash_id'],
-            "The hash_id should match: " + str(bmark1[u'hash_id']))
+            "The hash_id {0} should match: {1} ".format(
+                str(GOOGLE_HASH),
+                str(bmark1[u'hash_id'])))
 
         ok_('clicks' in bmark1,
             "The clicks field should be in there")
@@ -162,7 +197,7 @@ class BookieAPITest(unittest.TestCase):
         self._get_good_request(content=True, second_bmark=True)
 
         # test that we only get one resultback
-        res = self.testapp.get('/api/v1/bmarks/recent?page=0&count=1')
+        res = self.testapp.get('/admin/api/v1/bmarks/recent?page=0&count=1')
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -172,7 +207,7 @@ class BookieAPITest(unittest.TestCase):
 
         eq_(len(bmarks), 1, "We should only have one result in this page")
 
-        res = self.testapp.get('/api/v1/bmarks/recent?page=1&count=1')
+        res = self.testapp.get('/admin/api/v1/bmarks/recent?page=1&count=1')
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -183,7 +218,7 @@ class BookieAPITest(unittest.TestCase):
         eq_(len(bmarks), 1,
             "We should only have one result in the second page")
 
-        res = self.testapp.get('/api/v1/bmarks/recent?page=2&count=1')
+        res = self.testapp.get('/admin/api/v1/bmarks/recent?page=2&count=1')
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -199,7 +234,9 @@ class BookieAPITest(unittest.TestCase):
         self._get_good_request(content=True, second_bmark=True)
 
         # test that we only get one resultback
-        res = self.testapp.get('/api/v1/bmarks/sync')
+        res = self.testapp.get('/admin/api/v1/bmarks/sync',
+                               params={'api_key': API_KEY},
+                               status=200)
 
         eq_(res.status, "200 OK",
                 msg='Get status is 200, ' + res.status)
@@ -216,10 +253,10 @@ class BookieAPITest(unittest.TestCase):
                 'description': u'Bookie',
                 'extended': u'Extended notes',
                 'tags': u'bookmarks',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
         }
 
-        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+        res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
                 status=200)
 
         ok_('"success": true' in res.body,
@@ -237,7 +274,7 @@ class BookieAPITest(unittest.TestCase):
                 'api_key': u'badkey',
         }
 
-        self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+        self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
                 status=403)
 
     def test_bookmark_toread(self):
@@ -248,10 +285,10 @@ class BookieAPITest(unittest.TestCase):
                 'description': u'Bookie',
                 'extended': u'Extended notes',
                 'tags': u'bookmarks !toread',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
         }
 
-        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+        res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
                 status=200)
 
         ok_('"success": true' in res.body,
@@ -270,15 +307,15 @@ class BookieAPITest(unittest.TestCase):
                 'description': u'Bookie',
                 'extended': u'Extended notes',
                 'tags': u'bookmarks',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
         }
 
-        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+        res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
                 status=200)
 
         test_bmark['tags'] = u'!toread'
 
-        res = self.testapp.post('/api/v1/bmarks/add', params=test_bmark,
+        res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
                                 status=200)
 
         ok_('toread' in res.body,
@@ -291,9 +328,9 @@ class BookieAPITest(unittest.TestCase):
         self._get_good_request(content=True, second_bmark=True)
 
         # now let's delete the google bookmark
-        res = self.testapp.post('/api/v1/bmarks/remove', params = {
+        res = self.testapp.post('/admin/api/v1/bmarks/remove', params = {
             'url': u'http://google.com',
-            'api_key': 'testapi',
+            'api_key': API_KEY
             }, status=200)
 
         ok_('success": true' in res.body,
@@ -302,7 +339,9 @@ class BookieAPITest(unittest.TestCase):
         # we're going to cheat like mad, use the sync call to get the hash_ids
         # of bookmarks in the system and verify that only the bmark.us hash_id
         # is in the response body
-        res = self.testapp.get('/api/v1/bmarks/sync', status=200)
+        res = self.testapp.get('/admin/api/v1/bmarks/sync',
+                               params={'api_key': API_KEY},
+                               status=200)
 
         ok_(GOOGLE_HASH not in res.body,
                 "Should not have the google hash: " + res.body)
@@ -317,7 +356,7 @@ class BookieAPITest(unittest.TestCase):
         """
         self._get_good_request(second_bmark=True)
 
-        res = self.testapp.get('/api/v1/tags/complete',
+        res = self.testapp.get('/admin/api/v1/tags/complete',
                           params={'tag': 'py'},
                           status=200)
         ok_('python' in res.body,
@@ -325,7 +364,7 @@ class BookieAPITest(unittest.TestCase):
 
         # we shouldn't get python as an option if we supply bookmarks as the
         # current tag. No bookmarks have both bookmarks & python as tags
-        res = self.testapp.get('/api/v1/tags/complete',
+        res = self.testapp.get('/admin/api/v1/tags/complete',
                           params={'tag': 'py',
                                   'current': 'bookmarks'},
                           status=200)

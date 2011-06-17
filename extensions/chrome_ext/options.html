@@ -171,7 +171,7 @@
                 $("#syncBtn").click(function() {
                     $('#circle').show();
 
-                    bookie.api.sync({
+                    bookie.api.sync(localStorage.getItem('api_key'), {
                         success: function (data) {
                             var bkg, hash_id;
                             bkg = chrome.extension.getBackgroundPage();
@@ -196,7 +196,7 @@
         <form id="form">
             <fieldset>
                 <legend>Connection</legend>
-                <label for="api_url">Bookie URL</label>
+                <label for="api_url">Bookie User URL [http://someurl/username]</label>
                 <input type="url" id="api_url"/>
                 <label for="api_key">API Key</label>
                 <input type="password" placeholder="api key" id="api_key"/>
@@ -218,12 +218,12 @@
                 <div class="clearfix"></div>
             </div>
             <p><strong>Note:</strong> your Bookie url and api key settings must
-            be set and saved before using Sync</p>
+                be set and saved before using Sync</p>
             <p>This will download information about your bookmarks from the
-            bookie server instance into your browser. This helps us notify you
-            when you're on a page you've already bookmarked. In the future,
-            this might be able to sync Chrome bookmarks with your Bookie
-            bookmarks.</p>
+                bookie server instance into your browser. This helps us notify you
+                when you're on a page you've already bookmarked. In the future,
+                this might be able to sync Chrome bookmarks with your Bookie
+                bookmarks.</p>
         </div>
     </body>
 </html>

@@ -17,6 +17,7 @@ env.new_version_files = ["{project_name}/__init__.py".format(**env),
                          "setup.py", ]
 
 # IMPORT the rest of the commands we have available to us
+from admin import *
 from docs import *
 from database import *
 from development import *

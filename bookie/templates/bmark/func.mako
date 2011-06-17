@@ -68,15 +68,15 @@
 
                     <div class="yui3-u-1-8 actions col_end">
                             <span class="item">
-                                <a href="${request.route_url('bmark_readable',
-                                hash_id=bmark.hash_id)}" title="Readable"
+                                <a href="${request.route_url('bmark_readable', hash_id=bmark.hash_id)}"
+                                   title="Readable"
                                 class="button"> R </a>
                             </span>
                         % if user:
                             <span class="item"><a href="#" title="Edit"
                             class="button"> E </a></span>
-                            <span class="item"><a
-                            href="${
+                            <span class="item">
+                                <a href="${
                                     # request.route_url('bmark_confirm_delete', bid=bmark.bid)
                                    }" title="Delete" class="button"> X </a></span>
                         % endif
@@ -84,11 +84,21 @@
 
                     <div class="yui3-u-7-8">
                         <div class="tags">
+                            <%
+                                if request.user:
+                                    route = 'user_tag_bmarks'
+                                    username = request.user.username
+                                else:
+                                    route = 'tag_bmarks'
+                                    username = None
+                            %>
+
                             % for tag in bmark.tags:
                                 <a class="tag"
-                                href="${
-                                        # request.route_url('tag_bmarks', tags=[tag], page=prev)
-                                       }">${tag}</a>
+                                    href="${request.route_url(route,
+                                                              tags=[tag],
+                                                              page=prev,
+                                                              username=username)}">${tag}</a>
                             % endfor
                         </div>
                     </div>
@@ -110,7 +120,7 @@
     </div>
 </%def>
 
-<%def name="bmarknextprev(page, max_count, count, next_url, url_params=None, tags=None)">
+<%def name="bmarknextprev(page, max_count, count, next_url, url_params=None, tags=None, username=None)">
     <%
         if max_count == count:
             show_next = True
@@ -126,21 +136,21 @@
     %>
 
     % if page != 0:
-        <a href="${request.route_url(next_url, tags=tags, **url_params)}?page=${prev}"
+        <a href="${request.route_url(next_url, tags=tags, username=username, **url_params)}?page=${prev}"
            class="button">Prev</a>
     % endif
 
     % if show_next:
-        <a href="${request.route_url(next_url, tags=tags, **url_params)}?page=${next}"
+        <a href="${request.route_url(next_url, tags=tags, username=username, **url_params)}?page=${next}"
            class="button">Next</a>
     % endif
 
 </%def>
 
-<%def name="tag_filter(url, tags=None)">
+<%def name="tag_filter(url, tags=None, username=None)">
         <div class="tag_filter">
             <form id="filter_form" name="filter_form"
-                action="${request.route_url(url, tags=tags)}" method="GET">
+                action="${request.route_url(url, tags=tags, username=username)}" method="GET">
                 <span class="title">Tags&nbsp;</span>
                 <input type="input" name="tag_filter" id="tag_filter"
                        placeholder="enter tags.."

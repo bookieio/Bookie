@@ -11,16 +11,21 @@
     else:
         url = 'bmark_recent'
 
+    username = None
+    if request.user:
+        url = 'user_' + url
+        username = request.user.username
+
 %>
 <div class="yui3-g data_list">
     <div class="yui3-u-2-3">
-        ${tag_filter(url, tags=tags)}
+        ${tag_filter(url, tags=tags, username=username)}
     </div>
     <div class="yui3-u-1-3 col_end">Showing ${max_count} bookmarks</div>
 
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags)}
+        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
     </div>
 
     <div class="yui3-u-1 data_body">
@@ -30,6 +35,6 @@
     <div class="yui3-u-7-8">&nbsp;</div>
 
     <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags)}
+        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
     </div>
 </div>

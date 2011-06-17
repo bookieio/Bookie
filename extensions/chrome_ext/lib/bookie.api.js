@@ -237,9 +237,12 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error callbacks
      *
      */
-    $b.api.sync = function (callbacks) {
+    $b.api.sync = function (api_key, callbacks) {
         opts = {
             url: "/api/v1/bmarks/sync",
+            data: {
+                    'api_key': api_key
+            },
             success: callbacks.success
         };
 

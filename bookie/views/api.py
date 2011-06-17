@@ -2,6 +2,7 @@
 import logging
 
 from datetime import datetime
+from pyramid.settings import asbool
 from pyramid.view import view_config
 from StringIO import StringIO
 
@@ -16,6 +17,7 @@ from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
+from bookie.models.auth import UserMgr
 
 from bookie.models.fulltext import get_fulltext_handler
 
@@ -149,8 +151,9 @@ def bmark_sync(request):
     params = request.params
 
     username = rdict.get('username', None)
+    user = UserMgr.get(username=username)
 
-    with ApiAuthorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(user.api_key,
                       params.get('api_key', None)):
 
         hash_list = BmarkMgr.hash_list(username=username)
@@ -223,9 +226,10 @@ def bmark_add(request):
     rdict = request.matchdict
 
     username = rdict.get("username", None)
+    user = UserMgr.get(username=username)
 
-    with ApiAuthorize(request.registry.settings.get('api_key', ''),
-                   params.get('api_key', None)):
+    with ApiAuthorize(user.api_key,
+                      params.get('api_key', None)):
 
         if 'url' in params and params['url']:
             # check if we already have this
@@ -276,20 +280,20 @@ def bmark_add(request):
                                                          False)
                 fulltext = get_fulltext_handler(conn_str)
 
+                LOG.debug('Username')
+                LOG.debug(username)
                 mark = BmarkMgr.store(params['url'],
+                             username,
                              params.get('description', ''),
                              params.get('extended', ''),
                              params.get('tags', ''),
                              dt=stored_time,
                              fulltext=fulltext,
-                             username=username,
                        )
 
                 # we need to process any commands associated as well
                 commander = Commander(mark)
                 mark = commander.process()
-
-
 
             # if we have content, stick it on the object here
             if 'content' in request.params:
@@ -330,8 +334,9 @@ def bmark_remove(request):
     rdict = request.matchdict
 
     username = rdict.get("username", None)
+    user = UserMgr.get(username=username)
 
-    with ApiAuthorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(user.api_key,
                       params.get('api_key', None)):
 
         if 'url' in params and params['url']:
@@ -417,33 +422,60 @@ def readable(request):
 
     """
     params = request.POST
-    hashed = Hashed.query.get(params.get('hash_id'))
+    success = params.get('success', None)
+
+    if success is None:
+        ret = {
+            'success': False,
+            'message': "Please submit success data",
+            'payload': {}
+        }
+
+    hashed = Hashed.query.get(params.get('hash_id', None))
+
     if hashed:
+        success = asbool(success)
+        LOG.debug(success)
+        if success:
+            # if we have content, stick it on the object here
+            if 'content' in params:
+                content = StringIO(params['content'])
+                content.seek(0)
+                parsed = ReadContent.parse(content, content_type="text/html")
 
-        # if we have content, stick it on the object here
-        if 'content' in params:
-            content = StringIO(params['content'])
-            content.seek(0)
-            parsed = ReadContent.parse(content, content_type="text/html")
+                hashed.readable = Readable()
+                hashed.readable.content = parsed.content
+                hashed.readable.content_type = parsed.content_type
+                hashed.readable.status_code = 200
+                hashed.readable.status_message = "API Parsed"
 
+                ret = {
+                    'success': True,
+                    'message': "Parsed url: " + hashed.url,
+                    'payload': {}
+                }
+            else:
+                ret = {
+                    'success': False,
+                    'message': "Missing content for hash id",
+                    'payload': {
+                        'hash_id': params.get('hash_id')
+                    }
+                }
+
+        else:
+            # success was false for some reason
+            # could be an image, 404, error, bad domain...
+            # need info for content_type, status_code, status_message
             hashed.readable = Readable()
-            hashed.readable.content = parsed.content
-            hashed.readable.content_type = parsed.content_type
-            hashed.readable.status_code = parsed.status
-            hashed.readable.status_message = parsed.status_message
+            hashed.readable.content_type = params.get('content_type', "Unknown")
+            hashed.readable.status_code = params.get('status_code', 999)
+            hashed.readable.status_message = params.get('status_message', "Missing message")
 
             ret = {
                 'success': True,
-                'message': "Parsed url: " + hashed.url,
-                'payload': {}
-            }
-        else:
-            ret = {
-                'success': False,
-                'message': "Missing content for hash id",
-                'payload': {
-                    'hash_id': params.get('hash_id')
-                }
+                'message': "Stored unsuccessful content fetching result",
+                'payload': dict(params)
             }
 
     else:

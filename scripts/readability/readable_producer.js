@@ -56,6 +56,17 @@ Object.defineProperty(Object.prototype, "extend", {
 });
 
 
+var ResponseData = function (hashed) {
+    var that = {};
+    that.hash_id = hashed.hash_id;
+    that.url = hashed.url;
+    that.content = undefined;
+    that.success = true;
+    that.status_code = undefined;
+    that.status_message = undefined;
+    return that;
+};
+
 /**
  * Handle the fetching and processing of the content of a bookmark
  *
@@ -78,7 +89,7 @@ var BookieContent = function (opts) {
 
     that.queue_content = function (hash_id, content) {
         var escaped,
-            post_data = JSON.stringify({'hash_id': hash_id, 'content': content}),
+            post_data = JSON.stringify({'success': true, 'hash_id': hash_id, 'content': content}),
             qclient = that.opts.queue_conn;
 
         try {
@@ -91,6 +102,38 @@ var BookieContent = function (opts) {
          } catch (err) {
             log.error('escaping url content');
             log.error(err);
+            log.error(post_data.substr(0,50));
+        }
+    };
+
+    /**
+     * If there's a problem parsing, fetching, or otherwise with this url
+     * Queue up that we'd like to store a failed fetch so that we don't
+     * reprocess for now
+     *
+     */
+    that.queue_error = function (resp) {
+        var escaped,
+            data = {
+                    'success': false,
+                    'hash_id': resp.hash_id,
+                    'content_type': resp.content_type,
+                    'status_code': resp.status_code,
+                    'status_message': resp.status_message
+            },
+            post_data = JSON.stringify(data),
+            qclient = that.opts.queue_conn;
+
+        try {
+            escaped = qs.escape(post_data);
+
+            qclient.put(escaped).
+                onSuccess(function(data) {
+                    log.info("Added to error queue: " + data.hash_id);
+                });
+         } catch (err) {
+            log.error('escaping error url content');
+            log.error(err);
             log.error(post_data.substr(0,100));
         }
     };
@@ -101,51 +144,71 @@ var BookieContent = function (opts) {
      * Exclude images, pdfs
      *
      */
-    that.ext_is_valid = function (ext) {
+    that.ext_is_valid = function (ext, resp_data) {
         switch(ext) {
-        case '.png':
-          return false;
-          break;
-        case '.jpg':
-          return false;
-          break;
-        case '.gif':
-          return false;
-          break;
-        case '.pdf':
-          return false;
-          break;
-        case '.mp3':
-          return false;
-          break;
-        case '.mp4':
-          return false;
-          break;
-        default:
-          return true;
+            case '.png':
+            case '.jpg':
+            case '.gif':
+              resp_data.success = false;
+              resp_data.content_type = 'image/' + ext.substr(1);
+              resp_data.status_code = 1;
+              resp_data.status_message = 'url skipped';
+              break;
+            case '.mp3':
+              resp_data.success = false;
+              resp_data.content_type = 'audio/' + ext.substr(1);
+              resp_data.status_code = 1;
+              resp_data.status_message = 'url skipped';
+              break;
+            case '.mp4':
+            case '.mpg':
+            case '.mov':
+            case '.wmv':
+              resp_data.success = false;
+              resp_data.content_type = 'video/' + ext.substr(1);
+              resp_data.status_code = 1;
+              resp_data.status_message = 'url skipped';
+              break;
+            case '.pdf':
+              resp_data.success = false;
+              resp_data.content_type = 'application/' + ext.substr(1);
+              resp_data.status_code = 1;
+              resp_data.status_message = 'url skipped';
+              break;
+            default:
+              // all is well
+              break;
         }
+
+        return resp_data;
     };
 
     that.fetch_url = function (hashed) {
         var hash_id = hashed.hash_id,
             someUri = hashed.url,
-            ext = someUri.substr(-4);
+            ext = someUri.substr(-4),
+            resp = that.ext_is_valid(ext, hashed);
 
-        if (that.ext_is_valid(ext)) {
+        if (resp.success) {
             log.info("Fetching content for url: " + someUri);
             var req_data = {'uri': someUri,
-                            'encoding': "utf-8",
                             "max_redirs": 10
                 },
                 req_callback = function (error, body) {
                                    if (error) {
-                                       // error is an object with message and
-                                       // statusCode we need to send to the
-                                       // server to log this
-                                       log.error('FETCHING URL');
-                                       log.error(inspect(error));
+                                       log.info('FOUND ERROR');
+                                       resp.success = false;
+                                       resp.status_code = error.statusCode;
+                                       resp.status_message = error.message;
+
+                                       // if we got here assume it was html
+                                       // content type
+                                       resp.content_type = 'text/html';
+                                       that.queue_error(resp);
+
                                    } else {
                                        log.info("Fetched " + someUri + " OK!");
+                                       resp.sucess = true;
                                        that.queue_content(hash_id, body);
                                    }
                 },
@@ -153,7 +216,10 @@ var BookieContent = function (opts) {
 
             dl.asString(req_callback);
         } else {
+            // then we skipped this because it was an image/binary send to
+            // queue to store result
             log.info('Skipping non html file: ' + someUri);
+            that.queue_error(resp);
         }
     };
 
@@ -166,8 +232,7 @@ var BookieContent = function (opts) {
  *
  */
 var BookieAPI = function (opts) {
-    var opts,
-        defaults = {
+    var defaults = {
             bookieurl: 'http://127,.0.0.1:6543/',
         };
 
@@ -187,7 +252,7 @@ var BookieAPI = function (opts) {
         log.info("Processing");
 
         setTimeout(function() {
-            process(todo.shift());
+            process(ResponseData(todo.shift()));
             if(todo.length > 0) {
                 setTimeout(arguments.callee, TIMEOUT);
             }
@@ -206,6 +271,7 @@ var BookieAPI = function (opts) {
 
                                var res = JSON.parse(body);
                                that.processArray(res.payload.urls, function (hashed) {
+                                   log.info(inspect(hashed));
                                    content = BookieContent({
                                        bookieurl: API,
                                        queue_conn: bean_client

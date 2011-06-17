@@ -7,7 +7,9 @@ but it's absolutely independent of TurboGears.
 """
 
 import bcrypt
+import hashlib
 import logging
+import random
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -20,6 +22,13 @@ from bookie.models import Base
 
 LOG = logging.getLogger(__name__)
 GROUPS = ['admin', 'user']
+
+
+def get_random_word(wordLen):
+    word = ''
+    for i in xrange(wordLen):
+        word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/&=')
+    return word
 
 
 class UserMgr(object):
@@ -83,9 +92,10 @@ class User(Base):
     username = Column(Unicode(255), unique=True)
     _password = Column('password', Unicode(60))
     email = Column(Unicode(255), unique=True)
-    activated = Column(Boolean, default=0)
-    is_admin = Column(Boolean, default=0)
+    activated = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)
     last_login = Column(DateTime)
+    api_key = Column(Unicode(12))
 
     def _set_password(self, password):
         """Hash password on the fly."""
@@ -138,3 +148,10 @@ class User(Base):
     def deactivate(self):
         """In case we need to disable the login"""
         self.activated = False
+
+    @staticmethod
+    def gen_api_key():
+        """Generate a 12 char api key for the user to use"""
+        m = hashlib.sha256()
+        m.update(get_random_word(12))
+        return unicode(m.hexdigest()[:12])

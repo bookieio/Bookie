@@ -106,7 +106,7 @@ class MySqlFulltext(object):
     Columns: bid, description, extended, tags
 
     """
-    def search(self, phrase, content=False):
+    def search(self, phrase, content=False, username=None):
         """Perform the search on the index"""
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
@@ -122,7 +122,14 @@ class MySqlFulltext(object):
         ext = Bmark.query.\
                     filter(Bmark.extended.match(phrase))
 
-        results.update(set([bmark for bmark in desc.union(tag_str, ext).order_by(Bmark.stored).all()]))
+        qry = desc.union(tag_str, ext)
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        res = qry.order_by(Bmark.stored).all()
+
+        results.update(set([bmark for bmark in qry.all()]))
 
         readable_res = []
         if content:
@@ -138,6 +145,8 @@ class MySqlFulltext(object):
                       options(contains_eager(Readable.hashed,
                                              hashed.bmark,
                                              alias=bmarks))
+            if username:
+                qry = qry.filter(bmarks.username==username)
 
             res = qry.order_by(bmarks.stored).all()
             for read in res:
@@ -155,7 +164,7 @@ class PgSqlFulltext(object):
 
     """
 
-    def search(self, phrase, content=False):
+    def search(self, phrase, content=False, username=None):
         """Need to perform searches against the three columns"""
         phrase = " | ".join(phrase.split())
 
@@ -173,9 +182,14 @@ class PgSqlFulltext(object):
 
         ids = set([r.bid for r in res])
 
-        results.update(set([bmark for bmark in Bmark.query.join(Bmark.tags).\
-                                              options(contains_eager(Bmark.tags)).\
-                                              filter(Bmark.bid.in_(ids)).all()]))
+        qry = Bmark.query.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags)).\
+                  filter(Bmark.bid.in_(ids))
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        results.update(set([bmark for bmark in qry.all()]))
 
         readable_res = []
         if content:
@@ -190,9 +204,14 @@ class PgSqlFulltext(object):
 
             ids = set([r.hash_id for r in res])
 
-            readable_res = [bmark for bmark in Bmark.query.join(Bmark.tags).\
-                                  options(contains_eager(Bmark.tags)).\
-                                  filter(Bmark.hash_id.in_(ids)).all()]
+            qry =  Bmark.query.join(Bmark.tags).\
+                      options(contains_eager(Bmark.tags)).\
+                      filter(Bmark.hash_id.in_(ids))
+
+            if username:
+                qry = qry.filter(Bmark.username==username)
+
+            readable_res = [bmark for bmark in qry.all()]
 
         results.update(set(readable_res))
         return sorted(list(results), key=lambda res: res.stored, reverse=True)

@@ -25,6 +25,7 @@ class BookieViewsTest(unittest.TestCase):
         log = logging.getLogger(__name__)
         log.error('called to add bmark')
         bmark_us = Bmark('http://bmark.us',
+                         username="admin",
                          desc="Bookie Website",
                          ext= "Bookie Documentation Home",
                          tags = "bookmarks")
@@ -81,7 +82,7 @@ class BookieViewsTest(unittest.TestCase):
             'api_key': 'wrong_key'
         }
 
-        res = self.testapp.post('/import', params=post, status=403)
+        res = self.testapp.post('/admin/import', params=post, status=403)
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)

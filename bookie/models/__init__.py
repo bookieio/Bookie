@@ -551,7 +551,7 @@ class BmarkMgr(object):
         qry = DBSession.query(Bmark.hash_id)
 
         if username:
-            qry = qry.filter(username==username)
+            qry = qry.filter(Bmark.username==username)
 
         return qry.all()
 

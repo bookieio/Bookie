@@ -27,11 +27,10 @@ def tag_list(request):
     }
 
 
-@view_config(route_name="tag_bmarks_ajax", renderer="morjson")
 @view_config(route_name="tag_bmarks", renderer="/tag/bmarks_wrap.mako")
+@view_config(route_name="user_tag_bmarks", renderer="/tag/bmarks_wrap.mako")
 def bmark_list(request):
     """Display the list of bookmarks for this tag"""
-    route_name = request.matched_route.name
     rdict = request.matchdict
     params = request.params
 
@@ -53,28 +52,10 @@ def bmark_list(request):
                            page=page,
                            username=username)
 
-    if 'ajax' in route_name:
-        html = render('bookie:templates/tag/bmarks.mako',
-                      {
-                         'tags': tags,
-                         'bmark_list': bmarks,
-                         'max_count': RESULTS_MAX,
-                         'count': len(bmarks),
-                         'page': page,
-                       },
-                  request=request)
-        return {
-            'success': True,
-            'message': "",
-            'payload': {
-                'html': html,
-            }
-        }
-
-    else:
-        return {'tags': tags,
-                 'bmark_list': bmarks,
-                 'max_count': RESULTS_MAX,
-                 'count': len(bmarks),
-                 'page': page,
-               }
+    return {
+             'tags': tags,
+             'bmark_list': bmarks,
+             'max_count': RESULTS_MAX,
+             'count': len(bmarks),
+             'page': page,
+           }
