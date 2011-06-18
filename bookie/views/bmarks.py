@@ -26,6 +26,7 @@ def recent(request):
     rdict = request.matchdict
     params = request.params
 
+    LOG.debug('in recent!')
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
 

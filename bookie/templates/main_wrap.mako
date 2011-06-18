@@ -62,12 +62,12 @@
             <div class="yui3-u-1-4"></div>
             <div class="yui3-u-3-4">
                 <div class="right body">
-                    <a href="http://bmark.us">Bookie</a> |
+                    <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |
                     % if request.user:
-                        <a href="${request.route_url('user_import')}">Import</a> |
-                        <a href="${request.route_url('user_export')}">Export</a> |
+                        <a href="${request.route_url('user_import', username=request.user.username)}">Import</a> |
+                        <a href="${request.route_url('user_export', username=request.user.username)}">Export</a> |
                     % endif
 
                     % if request.user:

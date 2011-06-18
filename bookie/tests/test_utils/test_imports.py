@@ -232,14 +232,13 @@ class ImportViews(unittest.TestCase):
     def test_delicious_import(self):
         """Test that we can upload/import our test file"""
         # first let's login to the site so we can get in
-        req = self.testapp.post('/login',
-                                params={
-                                    "login": "admin",
-                                    "password": "admin",
-                                    "form.submitted": "Log In",
-                                },
-                                status=302)
-        req = req.follow()
+        self.testapp.post('/login',
+                            params={
+                                "login": "admin",
+                                "password": "admin",
+                                "form.submitted": "Log In",
+                            },
+                            status=302)
 
         session = DBSession()
         loc = os.path.dirname(__file__)
@@ -268,14 +267,13 @@ class ImportViews(unittest.TestCase):
 
     def test_google_import(self):
         """Test that we can upload our google file"""
-        req = self.testapp.post('/login',
-                                params={
-                                    "login": "admin",
-                                    "password": "admin",
-                                    "form.submitted": "Log In",
-                                },
-                                status=302)
-        req = req.follow()
+        self.testapp.post('/login',
+                            params={
+                                "login": "admin",
+                                "password": "admin",
+                                "form.submitted": "Log In",
+                            },
+                            status=302)
 
         session = DBSession()
         loc = os.path.dirname(__file__)
