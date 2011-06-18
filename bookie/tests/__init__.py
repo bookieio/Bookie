@@ -106,4 +106,4 @@ def empty_db():
 
 
 # unit tests we want to make sure get run
-from bookie.lib.test_tagcommands import *
+# from bookie.lib.test_tagcommands import *
