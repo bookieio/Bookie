@@ -84,8 +84,8 @@ def build_routes(config):
     # config.add_route("del_tag_complete", "/{username}/delapi/tags/complete")
 
     # bmark routes
-    config.add_route("bmark_recent", "/recent")
-    config.add_route("bmark_recent_tags", "/recent/*tags")
+    config.add_route("bmark_recent", "recent")
+    config.add_route("bmark_recent_tags", "recent/*tags")
 
     config.add_route("bmark_popular", "/popular")
     config.add_route("bmark_popular_tags", "/popular/*tags")
