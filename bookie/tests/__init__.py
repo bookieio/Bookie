@@ -12,7 +12,6 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
 from bookie.models import SqliteBmarkFT
-from bookie.models.auth import User
 
 global_config = {}
 
@@ -97,7 +96,8 @@ def empty_db():
     if BOOKIE_TEST_INI == 'test.ini':
         SqliteBmarkFT.query.delete()
     Bmark.query.delete()
-    Tag.query.delete()
+    # we can't remove the toread tag we have from our commands
+    Tag.query.filter(Tag.name != 'toread').delete()
     Hashed.query.delete()
 
     DBSession.execute(bmarks_tags.delete())
