@@ -46,7 +46,7 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
 
   # go to where you want the bookie source to live and install dependencies
   $ cd to/some/directory/
-  $ wget http://bmark.us/bootstrap.py
+  $ wget http://docs.bmark.us/bootstrap.py
   $ python bootstrap.py bookie
 
   # activate the python virtualenvironment
