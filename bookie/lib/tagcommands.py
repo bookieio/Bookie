@@ -2,7 +2,7 @@
 
 """
 import logging
-from bookie.models import Tag
+from bookie.models import TagMgr
 
 LOG = logging.getLogger(__name__)
 COMMANDLIST = {}
@@ -60,7 +60,8 @@ class ToRead(Command):
     def run(bmark):
         """Update this bookmark to toread status"""
         if ToRead.read_tag not in bmark.tags:
-            bmark.tags[ToRead.read_tag] = Tag(ToRead.read_tag)
+
+            bmark.tags[ToRead.read_tag] = TagMgr.find(tags=[ToRead.read_tag])[0]
 
         return bmark
 
