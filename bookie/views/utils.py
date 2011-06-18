@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.settings import asbool
 from pyramid.view import view_config
+from sqlalchemy.orm import contains_eager
 
 from bookie.lib.importer import Importer
 from bookie.lib.access import ReqAuthorize
@@ -45,7 +46,8 @@ def import_bmarks(request):
                 # message. Forward to / and display the import message
 
                 # request.session.flash("Error something")
-                return HTTPFound(location=request.route_url('home'))
+                return HTTPFound(location=request.route_url('user_home',
+                                                            username=username))
             else:
                 msg = request.session.pop_flash()
 
@@ -67,14 +69,18 @@ def search(request):
     return {}
 
 
-@view_config(route_name="search_results", renderer="/utils/results_wrap.mako")
-@view_config(route_name="user_search_results", renderer="/utils/results_wrap.mako")
+@view_config(route_name="search_results",
+             renderer="/utils/results_wrap.mako")
+@view_config(route_name="user_search_results",
+             renderer="/utils/results_wrap.mako")
 @view_config(route_name="api_bmark_search", renderer="morjson")
 @view_config(route_name="user_api_bmark_search", renderer="morjson")
 @view_config(route_name="search_results_ajax", renderer="morjson")
 @view_config(route_name="user_search_results_ajax", renderer="morjson")
-@view_config(route_name="search_results_rest", renderer="/utils/results_wrap.mako")
-@view_config(route_name="user_search_results_rest", renderer="/utils/results_wrap.mako")
+@view_config(route_name="search_results_rest",
+             renderer="/utils/results_wrap.mako")
+@view_config(route_name="user_search_results_rest",
+             renderer="/utils/results_wrap.mako")
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
 
@@ -159,10 +165,19 @@ def export(request):
     rdict = request.matchdict
     username = rdict.get('username')
 
-    bmark_list = Bmark.query.join(Bmark.tags).filter(Bmark.username==username).all()
+    bmark_list = Bmark.query.join(Bmark.tags).\
+                             options(
+                                contains_eager(Bmark.tags)
+                             ).\
+                             join(Bmark.hashed).\
+                             options(
+                                 contains_eager(Bmark.hashed)
+                             ).\
+                             filter(Bmark.username == username).all()
     request.response_content_type = 'text/html'
 
-    headers = [('Content-Disposition', 'attachment; filename="bookie_export.html"')]
+    headers = [('Content-Disposition',
+                'attachment; filename="bookie_export.html"')]
     setattr(request, 'response_headerlist', headers)
 
     return {
@@ -192,8 +207,8 @@ def redirect(request):
 
     if username is not None:
         bookmark = Bmark.query.\
-                         filter(Bmark.hash_id==hash_id).\
-                         filter(Bmark.username==username).one()
+                         filter(Bmark.hash_id == hash_id).\
+                         filter(Bmark.username == username).one()
         bookmark.clicks = bookmark.clicks + 1
 
     return HTTPFound(location=hashed.url)
