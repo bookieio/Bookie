@@ -8,7 +8,7 @@ from StringIO import StringIO
 
 from pyramid.view import view_config
 
-from bookie.lib.access import Authorize
+from bookie.lib.access import ApiAuthorize
 from bookie.lib.readable import ReadContent
 from bookie.models import DBSession, NoResultFound
 from bookie.models import BmarkMgr
@@ -31,7 +31,7 @@ def posts_add(request):
     """
     params = request.params
 
-    with Authorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
 
         request.response_content_type = 'text/xml'
@@ -96,7 +96,7 @@ def posts_delete(request):
     params = request.params
     request.response_content_type = 'text/xml'
 
-    with Authorize(request.registry.settings.get('api_key', ''),
+    with ApiAuthorize(request.registry.settings.get('api_key', ''),
                    params.get('api_key', None)):
         if 'url' in params and params['url']:
             try:

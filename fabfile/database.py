@@ -183,6 +183,7 @@ def db_init_bookmark():
     from bookie.models import Bmark
 
     bmark_us = Bmark(u'http://bmark.us',
+                     u'admin',
                      desc=u"Bookie Website",
                      ext= u"Bookie Documentation Home",
                      tags = u"bookmarks")

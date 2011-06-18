@@ -21,7 +21,6 @@ var bookie = (function ($b, $) {
     $b.events = {
         'LOAD': 'load',
         'TAG_FILTER': 'tag_filter',
-        'SEARCH': 'search'
     };
 
 
@@ -110,7 +109,6 @@ var bookie = (function ($b, $) {
 
         // bind some other events we might want read to go out of the gates
         $($b.EVENTID).bind($b.events.TAG_FILTER, $b.ui.init_tag_filter);
-        $($b.EVENTID).bind($b.events.SEARCH, $b.call.search);
 
         // now trigger the load since we're ready to go from here
         $($b.EVENTID).trigger($b.events.LOAD);

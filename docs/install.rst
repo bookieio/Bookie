@@ -6,13 +6,13 @@ If you don't use the `bootstrap.py` to install Bookie, you can perform its
 steps manually. The idea is to setup a virtualenv_ to install Bookie into. The
 list of app packages required for development work are in the
 `requirements.txt` file with hard locked versions that help make sure things
-work. 
+work.
 
 ::
 
   # install the required packages to build bookie
   # (just needs to be run once)
-  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev
+  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git
 
   # Mysql & Postgresql users
   $ sudo apt-get install libmysqlclient-dev
@@ -53,4 +53,4 @@ http://127.0.0.1:6543
 
 
 
-.. _virtualenv: 
+.. _virtualenv:

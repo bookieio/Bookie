@@ -25,6 +25,7 @@ class BookieViewsTest(unittest.TestCase):
         log = logging.getLogger(__name__)
         log.error('called to add bmark')
         bmark_us = Bmark('http://bmark.us',
+                         username="admin",
                          desc="Bookie Website",
                          ext= "Bookie Documentation Home",
                          tags = "bookmarks")
@@ -56,22 +57,14 @@ class BookieViewsTest(unittest.TestCase):
     def test_bookmark_recent(self):
         """Verify we can call the /recent url """
         self._add_bmark()
-
         body_str = "Recent Bookmarks"
-        delete_str = "/bmark/confirm/delete"
 
-        access.edit_enabled = Mock(return_value=True)
         res = self.testapp.get('/recent')
 
         eq_(res.status, "200 OK",
             msg='recent status is 200, ' + res.status)
         ok_(body_str in res.body,
             msg="Request should contain body_str: " + res.body)
-
-        # there should be a delete link for the default bookie bookmark in the
-        # body as well
-        ok_(delete_str in res.body,
-            msg="The delete link should be visible in the body:" + res.body)
 
     def test_recent_page(self):
         """We should be able to page through the list"""
@@ -83,26 +76,13 @@ class BookieViewsTest(unittest.TestCase):
         ok_(body_str in res.body,
             msg="Page 1 should contain body_str: " + res.body)
 
-    def test_allow_edit_requests(self):
-        """Verify that if allow_edit is false we don't get edit/delete links"""
-        self._add_bmark()
-        delete_str = "/bmark/confirm/delete"
-
-        access.edit_enabled = Mock(return_value=False)
-
-        res = self.testapp.get('/recent')
-
-        # the delete link should not render if allow_edits is false
-        ok_(delete_str not in res.body,
-            msg="The delete link should NOT be visible:" + res.body)
-
-    def test_delete_auth_failed(self):
+    def test_import_auth_failed(self):
         """Veryify that without the right API key we get forbidden"""
         post = {
             'api_key': 'wrong_key'
         }
 
-        res = self.testapp.post('/import', params=post, status=403)
+        res = self.testapp.post('/admin/import', params=post, status=403)
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
@@ -112,9 +92,6 @@ class BookieViewsTest(unittest.TestCase):
         self._add_bmark()
 
         body_str = "Bookmarks: bookmarks"
-        delete_str = "/bmark/confirm/delete"
-
-        access.edit_enabled = Mock(return_value=True)
         res = self.testapp.get('/tags/bookmarks')
 
         eq_(res.status, "200 OK",
@@ -122,20 +99,12 @@ class BookieViewsTest(unittest.TestCase):
         ok_(body_str in res.body,
             msg="Request should contain body_str: " + res.body)
 
-        # there should be a delete link for the default bookie bookmark in the
-        # body as well
-        ok_(delete_str in res.body,
-            msg="Tag view delete link should be visible in the body:" + res.body)
-
     def test_bookmark_tag_no_edits(self):
          """Verify the tags view"""
          self._add_bmark()
 
-         access.edit_enabled = Mock(return_value=False)
-
          delete_str = "/bmark/confirm/delete"
          res = self.testapp.get('/tags/bookmarks')
 
-         # The delete link should not render if allow_edits is false
          ok_(delete_str not in res.body,
              msg="Tag view delete link should NOT be visible:" + res.body)

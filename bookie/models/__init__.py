@@ -151,13 +151,19 @@ class TagMgr(object):
         return tag_objects
 
     @staticmethod
-    def find(order_by=None, tags=None):
+    def find(order_by=None, tags=None, username=None):
         """Find all of the tags in the system"""
         qry = Tag.query
 
         if tags:
             # limit to only the tag names in this list
             qry = qry.filter(Tag.name.in_(tags))
+
+        if username:
+            # then we'll need to bind to bmarks to be able to limit on the
+            # username field
+            bmark = aliased(Bmark)
+            qry = qry.join((bmark, Tag.bmark)).filter(bmark.username==username)
 
         if order_by is not None:
             qry = qry.order_by(order_by)
@@ -388,27 +394,42 @@ class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
 
     @staticmethod
-    def get_by_url(url):
+    def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
         # normalize the url
         clean_url = BmarkTools.normalize_url(url)
-        return Bmark.query.join(Bmark.hashed).\
+
+        qry = Bmark.query.join(Bmark.hashed).\
                            options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.url == clean_url).one()
+                           filter(Hashed.url == clean_url)
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        return qry.one()
 
     @staticmethod
-    def get_by_hash(hash_id):
+    def get_by_hash(hash_id, username=None):
         """Get a bmark from the system via the hash_id"""
         # normalize the url
-        return Bmark.query.join(Bmark.hashed).\
+        qry = Bmark.query.join(Bmark.hashed).\
                            options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.hash_id == hash_id).first()
+                           filter(Hashed.hash_id == hash_id)
+
+        if username:
+            qry = qry.filter(Bmark.username == username)
+
+        return qry.first()
 
     @staticmethod
-    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True):
+    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True,
+            username=None):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
         offset = limit * page
+
+        if username:
+            qry = qry.filter(Bmark.username == username)
 
         if order_by is None:
             order_by = Bmark.stored.desc()
@@ -495,7 +516,7 @@ class BmarkMgr(object):
         return res
 
     @staticmethod
-    def store(url, desc, ext, tags, dt=None, fulltext=None):
+    def store(url, username, desc, ext, tags, dt=None, fulltext=None):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -506,6 +527,7 @@ class BmarkMgr(object):
 
         """
         mark = Bmark(url,
+                     username,
                      desc=desc,
                      ext=ext,
                      tags=tags,
@@ -524,9 +546,14 @@ class BmarkMgr(object):
         return mark
 
     @staticmethod
-    def hash_list():
+    def hash_list(username=None):
         """Get a list of the hash_ids we have stored"""
-        return DBSession.query(Bmark.hash_id).all()
+        qry = DBSession.query(Bmark.hash_id)
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        return qry.all()
 
 
 class BmarkTools(object):
@@ -560,6 +587,8 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, onupdate=datetime.now)
     clicks = Column(Integer, default=0)
+    username = Column(Unicode(255), ForeignKey('users.username'),
+                      nullable=False,)
 
     # DON"T USE
     tag_str = Column(UnicodeText())
@@ -579,7 +608,10 @@ class Bmark(Base):
                       single_parent=True,
                       )
 
-    def __init__(self, url, desc=None, ext=None, tags=None):
+    user = relation("User",
+                    backref="bmark")
+
+    def __init__(self, url, username, desc=None, ext=None, tags=None):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark
@@ -597,6 +629,7 @@ class Bmark(Base):
         else:
             self.hashed = existing
 
+        self.username = username
         self.description = desc
         self.extended = ext
 

@@ -1,6 +1,7 @@
 """Controllers related to viewing lists of bookmarks"""
 import logging
 
+from pyramid import security
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
@@ -18,11 +19,14 @@ RESULTS_MAX = 50
 
 @view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
 @view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
+@view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")
+@view_config(route_name="user_bmark_recent_tags", renderer="/bmark/recent.mako")
 def recent(request):
     """Most recent list of bookmarks capped at MAX"""
     rdict = request.matchdict
     params = request.params
 
+    LOG.debug('in recent!')
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
 
@@ -32,6 +36,13 @@ def recent(request):
     if isinstance(tags, str):
         tags = [tags]
 
+    # check for auth related stuff
+    # are we looking for a specific user
+    if 'username' in rdict:
+        username = rdict.get('username')
+    else:
+        username = None
+
     # if we don't have tags, we might have them sent by a non-js browser as a
     # string in a query string
     if not tags and 'tag_filter' in params:
@@ -40,9 +51,8 @@ def recent(request):
     recent_list = BmarkMgr.find(limit=RESULTS_MAX,
                            order_by=Bmark.stored.desc(),
                            tags=tags,
-                           page=page)
-
-
+                           page=page,
+                           username=username)
 
     ret = {
              'bmarks': recent_list,
@@ -50,14 +60,15 @@ def recent(request):
              'count': len(recent_list),
              'page': page,
              'tags': tags,
-             'allow_edit': access.edit_enabled(request.registry.settings),
            }
 
     return ret
 
 
 @view_config(route_name="bmark_popular", renderer="/bmark/popular.mako")
+@view_config(route_name="user_bmark_popular", renderer="/bmark/popular.mako")
 @view_config(route_name="bmark_popular_tags", renderer="/bmark/popular.mako")
+@view_config(route_name="user_bmark_popular_tags", renderer="/bmark/popular.mako")
 def popular(request):
     """Most popular list of bookmarks capped at MAX"""
     rdict = request.matchdict
@@ -70,6 +81,13 @@ def popular(request):
     if isinstance(tags, str):
         tags = [tags]
 
+    # check for auth related stuff
+    # are we looking for a specific user
+    if 'username' in rdict:
+        username = rdict.get('username')
+    else:
+        username = None
+
     # if we don't have tags, we might have them sent by a non-js browser as a
     # string in a query string
     if not tags and 'tag_filter' in params:
@@ -78,7 +96,8 @@ def popular(request):
     recent_list = BmarkMgr.find(limit=RESULTS_MAX,
                            order_by=Bmark.clicks.desc(),
                            tags=tags,
-                           page=page)
+                           page=page,
+                           username=username, )
 
     return {
              'bmarks': recent_list,
@@ -86,7 +105,7 @@ def popular(request):
              'count': len(recent_list),
              'page': page,
              'tags': tags,
-             'allow_edit': access.edit_enabled(request.registry.settings),
+             'user': request.user,
            }
 
 
@@ -94,9 +113,6 @@ def popular(request):
 def delete(request):
     """Remove the bookmark in question"""
     rdict = request.POST
-
-    if not access.edit_enabled(request.registry.settings):
-        raise HTTPForbidden("Auth to edit is not enabled")
 
     # make sure we have an id value
     bid = int(rdict.get('bid', 0))

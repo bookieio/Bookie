@@ -12,12 +12,11 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="mobile", renderer="/mobile/index.mako")
+@view_config(route_name="user_mobile", renderer="/mobile/index.mako")
 def mobile_index(request):
-    """Mobile index page"""
-    # tags_found = TagMgr.find()
+    """Mobile index page
+    
+    The content is loaded via ajax calls so we just return the base html/js
 
-    return {
-        'test': 'Testing'
-        # 'tag_list': tags_found,
-        # 'tag_count': len(tags_found),
-    }
+    """
+    return {}

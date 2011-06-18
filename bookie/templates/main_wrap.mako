@@ -18,10 +18,11 @@
         <script type="text/javascript" charset="utf-8">
             <%
                 app_url = request.route_url('home').rstrip('/')
+                # if this is a request with a user then api call for that user
+                if request.user:
+                    app_url = app_url + "/" + request.user.username
             %>
             APP_URL = '${app_url}';
-
-
         </script>
     </head>
 
@@ -29,7 +30,7 @@
         <div id="navigation" class="yui3-g">
             <div class="yui3-u-2-3">
                 <div class="logo">
-                    <a href="/recent" class="logo">Bookie</a>
+                    <a href="${app_url}" class="logo">Bookie</a>
                     <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
                 </div>
             </div>
@@ -37,6 +38,12 @@
                 <span class="item"><a href="/recent" class="nav_button">Recent</a></span>
                 <span class="item"><a href="/popular" class="nav_button">Popular</a></span>
                 <span class="item"><a href="/search" class="nav_button">Search</a></span>
+                % if request.user:
+                    <span class="item"><a href="/logout" class="nav_button">Logout</a></span>
+                % else:
+                    <span class="item"><a href="/login" class="nav_button">Login</a></span>
+                % endif
+
                 <!--<span class="item">-->
 
                 <!--</span>-->
@@ -55,12 +62,19 @@
             <div class="yui3-u-1-4"></div>
             <div class="yui3-u-3-4">
                 <div class="right body">
-                    <a href="http://bmark.us">Bookie</a> |
+                    <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |
-                    <a href="${request.route_url('import')}">Import</a> |
-                    <a href="${request.route_url('export')}">Export</a> |
-                    <a href="${request.route_url('mobile')}">Mobile</a>
+                    % if request.user:
+                        <a href="${request.route_url('user_import', username=request.user.username)}">Import</a> |
+                        <a href="${request.route_url('user_export', username=request.user.username)}">Export</a> |
+                    % endif
+
+                    % if request.user:
+                        <a href="${request.route_url('user_mobile', username=request.user.username) }">Mobile</a>
+                    % else:
+                        <a href="${request.route_url('mobile')}">Mobile</a>
+                    % endif
                 </div>
             </div>
             </div>

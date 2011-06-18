@@ -12,6 +12,7 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Tag, bmarks_tags
 from bookie.models import SqliteBmarkFT
+from bookie.models.auth import User
 
 global_config = {}
 

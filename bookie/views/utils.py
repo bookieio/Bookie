@@ -3,12 +3,11 @@ import logging
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.renderers import render
 from pyramid.settings import asbool
 from pyramid.view import view_config
 
 from bookie.lib.importer import Importer
-from bookie.lib.access import Authorize
+from bookie.lib.access import ReqAuthorize
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
@@ -16,25 +15,24 @@ from bookie.models.fulltext import get_fulltext_handler
 LOG = logging.getLogger(__name__)
 
 
-@view_config(route_name="import", renderer="/utils/import.mako")
+@view_config(route_name="user_import", renderer="/utils/import.mako")
 def import_bmarks(request):
     """Allow users to upload a delicious bookmark export"""
-    data = {}
-    post = request.POST
-    LOG.error(request.registry.settings.get('api_key', ''))
-    LOG.error(post.get('api_key'))
-    if post:
-        # we have some posted values
-        with Authorize(request.registry.settings.get('api_key', ''),
-                       post.get('api_key', None)):
+    rdict = request.matchdict
+    username = rdict.get('username')
 
-            # if auth fails, it'll raise an HTTPForbidden exception
+    # if auth fails, it'll raise an HTTPForbidden exception
+    with ReqAuthorize(request):
+        data = {}
+        post = request.POST
+        if post:
+            # we have some posted values
             files = post.get('import_file', None)
 
             if files is not None:
                 # upload is there for use
                 # process the file using the import script
-                importer = Importer(files.file)
+                importer = Importer(files.file, username=username)
 
                 # we want to store fulltext info so send that along to the
                 # import processor
@@ -57,23 +55,26 @@ def import_bmarks(request):
                     data['error'] = None
 
             return data
-    else:
-        # just display the form
-        return {}
+        else:
+            # just display the form
+            return {}
 
 
 @view_config(route_name="search", renderer="/utils/search.mako")
+@view_config(route_name="user_search", renderer="/utils/search.mako")
 def search(request):
     """Display the search form to the user"""
-    return {
-
-    }
+    return {}
 
 
 @view_config(route_name="search_results", renderer="/utils/results_wrap.mako")
-@view_config(route_name="search_results_ajax", renderer="morjson")
+@view_config(route_name="user_search_results", renderer="/utils/results_wrap.mako")
 @view_config(route_name="api_bmark_search", renderer="morjson")
+@view_config(route_name="user_api_bmark_search", renderer="morjson")
+@view_config(route_name="search_results_ajax", renderer="morjson")
+@view_config(route_name="user_search_results_ajax", renderer="morjson")
 @view_config(route_name="search_results_rest", renderer="/utils/results_wrap.mako")
+@view_config(route_name="user_search_results_rest", renderer="/utils/results_wrap.mako")
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
 
@@ -99,6 +100,8 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
+    username = rdict.get('username', None)
+
     # with content is always in the get string
     with_content = asbool(rdict.get('content', False))
     LOG.debug('with_content')
@@ -112,7 +115,7 @@ def search_results(request):
     page = params.get('page', None)
     count = params.get('count', None)
 
-    res_list = searcher.search(phrase, content=with_content)
+    res_list = searcher.search(phrase, content=with_content, username=username)
 
     # we're going to fake this since we dont' have a good way to do this query
     # side
@@ -150,11 +153,15 @@ def search_results(request):
         }
 
 
-@view_config(route_name="export", renderer="/utils/export.mako")
+@view_config(route_name="user_export", renderer="/utils/export.mako")
 def export(request):
     """Handle exporting a user's bookmarks to file"""
-    bmark_list = Bmark.query.join(Bmark.tags).all()
+    rdict = request.matchdict
+    username = rdict.get('username')
+
+    bmark_list = Bmark.query.join(Bmark.tags).filter(Bmark.username==username).all()
     request.response_content_type = 'text/html'
+
     headers = [('Content-Disposition', 'attachment; filename="bookie_export.html"')]
     setattr(request, 'response_headerlist', headers)
 
@@ -164,6 +171,7 @@ def export(request):
 
 
 @view_config(route_name="redirect", renderer="/utils/redirect.mako")
+@view_config(route_name="user_redirect", renderer="/utils/redirect.mako")
 def redirect(request):
     """Handle redirecting to the selected url
 
@@ -172,6 +180,7 @@ def redirect(request):
     """
     rdict = request.matchdict
     hash_id = rdict.get('hash_id', None)
+    username = rdict.get('username', None)
 
     hashed = Hashed.query.get(hash_id)
 
@@ -181,7 +190,10 @@ def redirect(request):
 
     hashed.clicks = hashed.clicks + 1
 
-    bookmark = Bmark.query.filter(Bmark.hash_id==hash_id).one()
-    bookmark.clicks = bookmark.clicks + 1
+    if username is not None:
+        bookmark = Bmark.query.\
+                         filter(Bmark.hash_id==hash_id).\
+                         filter(Bmark.username==username).one()
+        bookmark.clicks = bookmark.clicks + 1
 
     return HTTPFound(location=hashed.url)

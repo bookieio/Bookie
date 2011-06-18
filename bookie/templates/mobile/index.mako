@@ -187,7 +187,9 @@
     </header>
 
     <div data-role="content">
-        <ul data-role="listview" data-split-icon="gear" data-split-theme="c" data-theme="c" id="results_list" class="listview">
+        <ul data-role="listview" data-split-icon="gear" data-split-theme="c"
+            data-theme="c" id="results_list" class="listview">
+            <li>No results</li>
         </ul>
     </div>
 

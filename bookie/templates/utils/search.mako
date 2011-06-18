@@ -7,7 +7,14 @@
 <div class="tag_filter fullpage">
     <h2 class="title">Search</h2>
     <div class="body">
-        <form action="${request.route_url('search_results')}" method="get" />
+        <form
+            % if request.user:
+                action="${request.route_url('user_search_results',
+                                             username=request.user.username)}"
+            % else:
+                action="${request.route_url('search_results')}"
+            % endif
+            method="get" />
             <div>
                 <input type="search" name="search" id="search" placeholder="keywords.." />
             </div>

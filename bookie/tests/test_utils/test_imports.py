@@ -21,6 +21,8 @@ from bookie.lib.importer import GBookmarkImporter
 
 LOG = logging.getLogger(__name__)
 
+API_KEY = None
+
 
 def _delicious_data_test():
     """Test that we find the correct set of declicious data after import"""
@@ -93,7 +95,7 @@ class ImporterBaseTest(unittest.TestCase):
         del_file = os.path.join(loc, 'delicious.html')
 
         with open(del_file) as del_io:
-            imp = Importer(del_io)
+            imp = Importer(del_io, username="admin")
 
             ok_(isinstance(imp, DelImporter),
                     "Instance should be a delimporter instance")
@@ -104,7 +106,7 @@ class ImporterBaseTest(unittest.TestCase):
         google_file = os.path.join(loc, 'googlebookmarks.html')
 
         with open(google_file) as google_io:
-            imp = Importer(google_io)
+            imp = Importer(google_io, username="admin")
 
             ok_(isinstance(imp, GBookmarkImporter),
                     "Instance should be a GBookmarkImporter instance")
@@ -156,7 +158,7 @@ class ImportDeliciousTest(unittest.TestCase):
     def test_import_process(self):
         """Verify importer inserts the correct records"""
         good_file = self._get_del_file()
-        imp = Importer(good_file)
+        imp = Importer(good_file, username="admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -199,7 +201,7 @@ class ImportGoogleTest(unittest.TestCase):
     def test_import_process(self):
         """Verify importer inserts the correct google bookmarks"""
         good_file = self._get_google_file()
-        imp = Importer(good_file)
+        imp = Importer(good_file, username="admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -229,15 +231,26 @@ class ImportViews(unittest.TestCase):
 
     def test_delicious_import(self):
         """Test that we can upload/import our test file"""
+        # first let's login to the site so we can get in
+        self.testapp.post('/login',
+                            params={
+                                "login": "admin",
+                                "password": "admin",
+                                "form.submitted": "Log In",
+                            },
+                            status=302)
+
         session = DBSession()
         loc = os.path.dirname(__file__)
         del_file = open(os.path.join(loc, 'delicious.html'))
+        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        API_KEY = res['api_key']
 
         post = {
-            'api_key': 'testapi',
+            'api_key': API_KEY,
         }
 
-        res = self.testapp.post('/import',
+        res = self.testapp.post('/admin/import',
                                 params=post,
                                 upload_files=[('import_file',
                                                'delicious.html',
@@ -254,15 +267,26 @@ class ImportViews(unittest.TestCase):
 
     def test_google_import(self):
         """Test that we can upload our google file"""
+        self.testapp.post('/login',
+                            params={
+                                "login": "admin",
+                                "password": "admin",
+                                "form.submitted": "Log In",
+                            },
+                            status=302)
+
         session = DBSession()
         loc = os.path.dirname(__file__)
         del_file = open(os.path.join(loc, 'googlebookmarks.html'))
+        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        API_KEY = res['api_key']
 
         post = {
-            'api_key': 'testapi',
+            'api_key': API_KEY,
         }
 
-        res = self.testapp.post('/import',
+
+        res = self.testapp.post('/admin/import',
                                 params=post,
                                 upload_files=[('import_file',
                                                'googlebookmarks.html',

@@ -1,8 +1,19 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Displaying: ${bmark.url}</%def>
-<h1>Displaying: <a class="bmark" href="${request.route_url('redirect',
-    hash_id=bmark.hash_id)}">${bmark.bmark[0].description}</a></h1>
 
+<%
+    username = None
+    if request.user:
+        username = request.user.username
+%>
+
+<h1>Displaying: <a class="bmark"
+                % if username:
+                    href="${request.route_url('user_redirect', hash_id=bmark.hash_id, username=username)}">${bmark.bmark[0].description}</a></h1>
+                % else:
+                    href="${request.route_url('redirect', hash_id=bmark.hash_id)}">
+                % endif
+                ${bmark.bmark[0].description}</a></h1>
 <div id="readable_content">
     % if bmark.readable:
         ${bmark.readable.content}

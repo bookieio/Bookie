@@ -8,9 +8,10 @@ from bookie.models import BmarkMgr
 class Importer(object):
     """The actual factory object we use for handling imports"""
 
-    def __init__(self, import_io):
+    def __init__(self, import_io, username=None):
         """work on getting an importer instance"""
         self.file_handle = import_io
+        self.username = username
 
     def __new__(cls, *args, **kwargs):
         """Overriding new we return a subclass based on the file content"""
@@ -42,7 +43,7 @@ class Importer(object):
         :param fulltext: Fulltext handler instance used to store that info
 
         """
-        BmarkMgr.store(url, desc, ext, tags, dt=dt, fulltext=fulltext)
+        BmarkMgr.store(url, self.username, desc, ext, tags, dt=dt, fulltext=fulltext)
 
 
 class DelImporter(Importer):
