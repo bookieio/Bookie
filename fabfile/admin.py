@@ -43,3 +43,28 @@ def new_user(username, email):
     sess.add(u)
     sess.flush()
     transaction.commit()
+
+
+def reset_password(username, password):
+    """Reset a user's password"""
+    require('hosts', provided_by=[sample])
+    require('ini', provided_by=[sample])
+
+    parse_ini(env["ini_file"])
+
+    import transaction
+    from bookie.models import initialize_sql
+    from sqlalchemy import create_engine
+
+    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
+    initialize_sql(engine)
+
+    from bookie.models import DBSession
+    from bookie.models.auth import UserMgr
+    sess = DBSession()
+
+    u = UserMgr.get(username=username)
+    u.password = password
+    sess.flush()
+    transaction.commit()
+

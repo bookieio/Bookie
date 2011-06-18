@@ -115,7 +115,7 @@ like: (no page is 0 based)
 
 ::
 
-    http://rick.bmark.us/api/v1/bmarks/recent?count=20&page=2
+    http://bmark.us/{username}/api/v1/bmarks/recent?count=20&page=2
 
 
 Delicious API
@@ -159,4 +159,4 @@ Available API Calls
     input. You must pass a `tag` with the characters entered so far. It also
     optionally supports a `current_tags` parameter so that completion will take
     into account existing tags. You can see this in action at the demo site tag
-    filter at http://rick.bmark.us
+    filter at http://bmark.us
