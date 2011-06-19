@@ -11,10 +11,8 @@
     else:
         url = 'bmark_recent'
 
-    username = None
-    if request.user:
+    if username:
         url = 'user_' + url
-        username = request.user.username
 
 %>
 <div class="yui3-g data_list">
