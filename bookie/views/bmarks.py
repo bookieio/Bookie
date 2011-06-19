@@ -38,10 +38,7 @@ def recent(request):
 
     # check for auth related stuff
     # are we looking for a specific user
-    if 'username' in rdict:
-        username = rdict.get('username')
-    else:
-        username = None
+    username = rdict.get('username', None)
 
     # if we don't have tags, we might have them sent by a non-js browser as a
     # string in a query string
@@ -60,6 +57,7 @@ def recent(request):
              'count': len(recent_list),
              'page': page,
              'tags': tags,
+             'username': username,
            }
 
     return ret
@@ -83,10 +81,7 @@ def popular(request):
 
     # check for auth related stuff
     # are we looking for a specific user
-    if 'username' in rdict:
-        username = rdict.get('username')
-    else:
-        username = None
+    username = rdict.get('username', None)
 
     # if we don't have tags, we might have them sent by a non-js browser as a
     # string in a query string
@@ -106,6 +101,7 @@ def popular(request):
              'page': page,
              'tags': tags,
              'user': request.user,
+             'username': username,
            }
 
 
@@ -150,7 +146,11 @@ def readable(request):
     """Display a readable version of this url if we can"""
     rdict = request.matchdict
     bid = rdict.get('hash_id', None)
+    username = rdict.get('username', None)
 
     if bid:
         found = Hashed.query.get(bid)
-        return { 'bmark': found }
+        return {
+                'bmark': found,
+                'username': username,
+                }

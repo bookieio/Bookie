@@ -2,11 +2,6 @@
 <%def name="title()">Your Tags</%def>
 
 <h1>${tag_count} Tags</h1>
-<%
-    username = None
-    if request.user:
-        username = request.user.username
-%>
 <div class="yui3-g data_list">
 % for tag in tag_list:
     <div class="yui3-u-1">

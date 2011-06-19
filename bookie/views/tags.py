@@ -24,6 +24,7 @@ def tag_list(request):
     return {
         'tag_list': tags_found,
         'tag_count': len(tags_found),
+        'username': username,
     }
 
 
@@ -58,4 +59,5 @@ def bmark_list(request):
              'max_count': RESULTS_MAX,
              'count': len(bmarks),
              'page': page,
+             'username': username,
            }

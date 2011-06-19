@@ -4,7 +4,9 @@
 
 <div class="yui3-g data_list">
     <div class="yui3-u-2-3">
-        ${search_form(terms=phrase.split(" "), with_content=with_content)}
+        ${search_form(terms=phrase.split(" "),
+                      with_content=with_content,
+                      username=username)}
     </div>
     <div class="yui3-u-1-3 col_end"></div>
     <div class="yui3-u-1 data_body">

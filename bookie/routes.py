@@ -132,7 +132,6 @@ def build_routes(config):
     config.add_route("user_redirect", "{username}/redirect/{hash_id}")
 
     # MOBILE routes
-    config.add_route("mobile", "m")
     config.add_route("user_mobile", "{username}/m")
 
     # API

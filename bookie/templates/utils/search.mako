@@ -1,16 +1,13 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Search your bookmarks</%def>
 
-
-<%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
-
 <div class="tag_filter fullpage">
     <h2 class="title">Search</h2>
     <div class="body">
         <form
-            % if request.user:
+            % if username:
                 action="${request.route_url('user_search_results',
-                                             username=request.user.username)}"
+                                             username=username)}"
             % else:
                 action="${request.route_url('search_results')}"
             % endif

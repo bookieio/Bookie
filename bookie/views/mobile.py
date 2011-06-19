@@ -11,7 +11,6 @@ LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
 
-@view_config(route_name="mobile", renderer="/mobile/index.mako")
 @view_config(route_name="user_mobile", renderer="/mobile/index.mako")
 def mobile_index(request):
     """Mobile index page
@@ -19,4 +18,6 @@ def mobile_index(request):
     The content is loaded via ajax calls so we just return the base html/js
 
     """
-    return {}
+    return {
+            'username': request.user.username,
+            }

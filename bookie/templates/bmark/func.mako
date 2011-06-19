@@ -1,4 +1,4 @@
-<%def name="display_popular_bmarks(bmark_list)">
+<%def name="display_popular_bmarks(bmark_list, username=None)">
     <%
         from datetime import datetime
         current_date = datetime(1900, 1, 1).strftime("%m/%d")
@@ -6,7 +6,7 @@
     %>
     <div class="yui3-g">
         % for hashed in bmark_list:
-            ${bmark_block(hashed.bmark[0], last_date)}
+            ${bmark_block(hashed.bmark[0], last_date, username=username)}
             <%
                 last_date = hashed.bmark[0].stored.strftime("%m/%d")
             %>
@@ -15,7 +15,7 @@
     </div>
 </%def>
 
-<%def name="display_bmark_list(bmark_list)">
+<%def name="display_bmark_list(bmark_list, username=None)">
     <%
         from datetime import datetime
         current_date = datetime(1900, 1, 1).strftime("%m/%d")
@@ -23,7 +23,7 @@
     %>
     <div class="yui3-g">
         % for bmark in bmark_list:
-            ${bmark_block(bmark, last_date)}
+            ${bmark_block(bmark, last_date, username=username)}
             <%
                 last_date = bmark.stored.strftime("%m/%d")
             %>
@@ -32,7 +32,7 @@
     </div>
 </%def>
 
-<%def name="bmark_block(bmark, last_date)">
+<%def name="bmark_block(bmark, last_date, username)">
     <%
         is_new = (last_date != bmark.stored.strftime("%m/%d"))
     %>
@@ -54,11 +54,10 @@
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
                             <a class="bmark"
-
-                                % if request.user:
-                                    href="${request.route_url('user_redirect',
-                                                              hash_id=bmark.hash_id,
-                                                              username=request.user.username)}"
+                                % if username:
+                                href="${request.route_url('user_redirect',
+                                                          hash_id=bmark.hash_id,
+                                                          username=username)}"
                                 % else:
                                     href="${request.route_url('redirect',
                                                               hash_id=bmark.hash_id)}"
@@ -81,12 +80,10 @@
                     <div class="yui3-u-7-8">
                         <div class="tags">
                             <%
-                                if request.user:
+                                if username:
                                     route = 'user_tag_bmarks'
-                                    username = request.user.username
                                 else:
                                     route = 'tag_bmarks'
-                                    username = None
                             %>
 
                             % for tag in bmark.tags:
@@ -160,7 +157,7 @@
         </div>
 </%def>
 
-<%def name="search_form(terms=None, with_content=False)">
+<%def name="search_form(terms=None, with_content=False, username=None)">
         <div class="tag_filter">
             <form id="search_form" name="search_form"
                 action="${request.route_url('search_results')}" method="GET">

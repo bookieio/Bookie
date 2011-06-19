@@ -68,12 +68,7 @@
                     % if request.user:
                         <a href="${request.route_url('user_import', username=request.user.username)}">Import</a> |
                         <a href="${request.route_url('user_export', username=request.user.username)}">Export</a> |
-                    % endif
-
-                    % if request.user:
                         <a href="${request.route_url('user_mobile', username=request.user.username) }">Mobile</a>
-                    % else:
-                        <a href="${request.route_url('mobile')}">Mobile</a>
                     % endif
                 </div>
             </div>

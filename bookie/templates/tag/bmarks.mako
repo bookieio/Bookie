@@ -12,7 +12,7 @@
                         tags=tags)}
     </div>
 
-    ${display_bmark_list(bmark_list)}
+    ${display_bmark_list(bmark_list, username=username)}
 
     <div class="yui3-u-7-8">&nbsp;</div>
     <div class="yui3-u-1-8 col_end buttons">

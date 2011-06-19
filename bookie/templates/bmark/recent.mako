@@ -29,7 +29,7 @@
     </div>
 
     <div class="yui3-u-1 data_body">
-        ${display_bmark_list(bmarks)}
+        ${display_bmark_list(bmarks, username=username)}
     </div>
 
     <div class="yui3-u-7-8">&nbsp;</div>

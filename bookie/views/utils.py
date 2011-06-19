@@ -66,7 +66,11 @@ def import_bmarks(request):
 @view_config(route_name="user_search", renderer="/utils/search.mako")
 def search(request):
     """Display the search form to the user"""
-    return {}
+    # if this is a url /username/search then we need to update the search form
+    # action to /username/results
+    rdict = request.matchdict
+    username = rdict.get('username', None)
+    return {'username': username}
 
 
 @view_config(route_name="search_results",
@@ -147,6 +151,7 @@ def search_results(request):
                 'phrase': phrase,
                 'page': page,
                 'with_content': with_content,
+                'username': username,
             }
         }
     else:
@@ -156,6 +161,7 @@ def search_results(request):
             'phrase': phrase,
             'page': page,
             'with_content': with_content,
+            'username': username,
         }
 
 

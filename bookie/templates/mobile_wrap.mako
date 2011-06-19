@@ -30,9 +30,7 @@
         <script type="text/javascript" charset="utf-8">
             <%
                 app_url = request.route_url('home').rstrip('/')
-                # if this is a request with a user then api call for that user
-                if request.user:
-                    app_url = app_url + "/" + request.user.username
+                app_url = app_url + "/" + username
             %>
             APP_URL = '${app_url}';
         </script>

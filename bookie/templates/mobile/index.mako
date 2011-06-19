@@ -251,7 +251,7 @@
 
     <script id="view_template" type="text/x-jquery-tmpl">
         <h3 id="view_desc">
-            <a href="${request.route_url('home').rstrip('/')}/redirect/${'${hash_id}'|n}"
+            <a href="${request.route_url('home').rstrip('/')}/${username}/redirect/${'${hash_id}'|n}"
                 rel="external" target="_blank">
                 ${'${description}'|n}
             </a>
