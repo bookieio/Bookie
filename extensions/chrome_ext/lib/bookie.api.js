@@ -121,14 +121,21 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.bookmark = function (hash_id, callbacks) {
+    $b.api.bookmark = function (hash_id, callbacks, get_last) {
         // we need to get the list of recent from the api
+        console.log('get last');
+        console.log(get_last);
+
         var url = "/api/v1/bmarks/" + hash_id;
             opts = {
                 url: url,
                 success: callbacks.success,
                 complete: callbacks.complete
             };
+
+        if (get_last !== undefined) {
+            opts.data = {'last_bmark': true};
+        }
 
         $b.api._request(opts);
     };
@@ -231,7 +238,7 @@ var bookie = (function (opts) {
 
 
     /**
-     * Get the full list of hashes for the existing urls we have 
+     * Get the full list of hashes for the existing urls we have
      * Used to sync the cache of hashes on the extensions
      *
      * @param callbacks is an object of success, complete, error callbacks

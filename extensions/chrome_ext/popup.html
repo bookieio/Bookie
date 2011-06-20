@@ -100,6 +100,9 @@
             h1 {
                 font-size:12pt;
             }
+
+            #latest_tags { display: none; }
+
             #suggestions {
                 margin: 0;
                 padding: 0;
@@ -150,6 +153,7 @@
             <input type="hidden" id="url" name="url" />
             <input type="text" id="description" placeholder="title" name="description" />
             <input type="text" placeholder="tags" name="tags" id="tags" />
+            <div id="latest_tags">Recent Tags: <a href="#"></a></div>
             <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
 

@@ -154,7 +154,6 @@
         }
 
         function addItem(value, focus){
-            console.log('added value' + value);
             value = value.trim();
             var index = $.inArray(value,tagstmp);
             if(($.inArray(value,inserted) == -1) && ( index > -1 || allowNewTags)){

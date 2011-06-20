@@ -29,6 +29,13 @@ Bookie Features
 
 See the features_ page for full length details.
 
+
+Important Links
+----------------
+:Github: http://github.com/mitechie/Bookie
+:Mailing List: https://groups.google.com/forum/?hl=en#!forum/bookie_bookmarks
+:Main Site: https://bmark.us
+
 Contents:
 ---------
 

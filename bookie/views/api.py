@@ -179,6 +179,7 @@ def bmark_get(request):
             - readable
     """
     rdict = request.matchdict
+    params = request.params
 
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
@@ -193,12 +194,25 @@ def bmark_get(request):
     bookmark = BmarkMgr.get_by_hash(hash_id,
                                     username=username)
 
-    if not bookmark:
+    LOG.debug("BOOKMARK FOUND")
+    LOG.debug(bookmark)
+    if bookmark is None:
         # then not found
+        # check to see if they want the last tags used on the last bookmark
+        # but only for the last
+        if 'last_bmark' in request.params:
+            last = BmarkMgr.get_recent_bmark(username=username)
+            if last is not None:
+                payload = {'last':  dict(last)}
+            else:
+                payload = {}
+        else:
+            payload = {}
+
         ret = {
             'success': False,
             'message': "Bookmark for hash id {0} not found".format(hash_id),
-            'payload': {}
+            'payload': payload
         }
 
     else:

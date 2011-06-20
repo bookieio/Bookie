@@ -4,6 +4,7 @@ import logging
 from bookie.lib.urlhash import generate_hash
 
 from datetime import datetime
+from datetime import timedelta
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -290,6 +291,7 @@ class BmarkFTSExtension(MapperExtension):
                                   instance.description,
                                   instance.extended,
                                   instance.tag_string())
+            instance.tag_str = instance.tag_string()
         else:
             instance.tag_str = instance.tag_string()
 
@@ -304,6 +306,7 @@ class BmarkFTSExtension(MapperExtension):
             instance.fulltext.description = instance.description
             instance.fulltext.extended = instance.extended
             instance.fulltext.tag_str = instance.tag_string()
+            instance.tag_str = instance.tag_string()
         else:
             instance.tag_str = instance.tag_string()
 
@@ -420,6 +423,21 @@ class BmarkMgr(object):
             qry = qry.filter(Bmark.username == username)
 
         return qry.first()
+
+    @staticmethod
+    def get_recent_bmark(username=None):
+        """Get the last bookmark a user submitted
+
+        Only check for a recent one, last 3 hours
+
+        """
+        last_hours = datetime.now() - timedelta(hours=3)
+        qry = Bmark.query.filter(Bmark.stored > last_hours)
+
+        if username:
+            qry = qry.filter(Bmark.username==username)
+
+        return qry.order_by(Bmark.stored.desc()).first()
 
     @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, with_tags=True,

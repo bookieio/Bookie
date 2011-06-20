@@ -150,11 +150,29 @@
     };
 
 
+    /**
+     * Copy any tags we have from the last run into our tags ui
+     *
+     */
+    $b.ui.dupe_tags = function () {
+        var recent_tags = $("#latest_tags a").html();
+        $('#tags').val(recent_tags.trim());
+        $('#tags').change();
+        $('#latest_tags').hide().html("");
+    };
+
+
     $b.chrome_init = function () {
         $b.log($);
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
-        $($b.EVENTID).trigger($b.events.LOAD);
 
+        $($b.EVENTID).bind($b.events.DUPE_TAGS, $b.ui.dupe_tags);
+
+        $('#latest_tags').bind('click', function (ev) {
+            $($b.EVENTID).trigger($b.events.DUPE_TAGS);
+        });
+
+        $($b.EVENTID).trigger($b.events.LOAD);
     };
 
 

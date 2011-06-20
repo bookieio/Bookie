@@ -34,6 +34,7 @@ var bookie = (function (opts) { //module, $, logger) {
 
         'SAVE': 'save',
         'ERROR': 'error',
+        'DUPE_TAGS': 'dupe_tags',
 
         /**
          * Make the call to remove the bookmark
@@ -117,29 +118,32 @@ var bookie = (function (opts) { //module, $, logger) {
             $b.log('form base');
             $b.log(url);
 
-            if (data.success === false) {
-                $b.log('Page is not currently bookmarked');
-            } else {
-                tags = [];
-                bmark = data.payload.bmark;
+            tags = [];
+            bmark = data.payload.bmark;
 
-                for (tg in bmark.tags) {
-                    tags.push(bmark.tags[tg].name);
-                }
-
-                $('#tags').val(tags.join(" "));
-                $('#tags').change();
-
-                // add the description to the ui
-                $('#description').val(bmark.description);
-
-                // add the description to the ui
-                $('#extended').val(bmark.extended);
-
-                // now enable the delete button in case we want to delete it
-                $b.ui.enable_delete();
+            for (tg in bmark.tags) {
+                tags.push(bmark.tags[tg].name);
             }
 
+            $('#tags').val(tags.join(" "));
+            $('#tags').change();
+
+            // add the description to the ui
+            $('#description').val(bmark.description);
+
+            // add the description to the ui
+            $('#extended').val(bmark.extended);
+
+            // now enable the delete button in case we want to delete it
+            $b.ui.enable_delete();
+
+        }, function (data) {
+            $b.log('Page is not currently bookmarked');
+
+            // see if we have the last set of tags to add
+            if (data.payload.hasOwnProperty('last')) {
+                $('#latest_tags a').html(data.payload.last.tag_str).parent().show();
+            }
         });
     };
 
@@ -199,19 +203,22 @@ var bookie = (function (opts) { //module, $, logger) {
      * see http://delicious.com/help/api#posts_get
      *
      */
-    $b.call.getBookmark = function (url, callback) {
+    $b.call.getBookmark = function (url, success_callback, fail_callback) {
         $b.api.bookmark($b.utils.hash_url(url), {
                     'success': function (data) {
                         if (data.success === true) {
-                            if(callback) {
-                                callback(data);
+                            if(success_callback) {
+                                success_callback(data);
                             }
                         } else {
                             console.log('bookmark not found: ' + url);
                             $b.log(data);
+                            if (fail_callback) {
+                                fail_callback(data);
+                            }
                         }
                     }
-                });
+                }, true);
     };
 
 
