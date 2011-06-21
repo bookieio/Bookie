@@ -25,11 +25,11 @@ var bookie = (function (opts) { //module, $, logger) {
      */
     $b.events = {
         'LOAD': 'load',
-        'onload': function (ev) {
+        'onload': function (ev, current_tab_info) {
             $b.log('in onload event');
             $('#tags').focus();
             $('#form').bind('submit', $b.store_changes);
-            $b.populateForm();
+            $b.populateForm(current_tab_info);
         },
 
         'SAVE': 'save',
@@ -149,21 +149,23 @@ var bookie = (function (opts) { //module, $, logger) {
 
 
     // bookie methods
-    $b.init = function (callback) {
+    $b.init = function (callback, callback_data) {
         $b.settings.init();
 
         if (!$b.settings.get('api_url')) {
             $b.log('No API URL');
             $b.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
         } else {
-            $b.log('no api url');
+            $b.api.init($b.settings.get('api_url'));
+
             // allow for the browser specific plugins to do some custom init
-            $b.log(callback);
-            callback();
+            if (callback_data !== undefined) {
+                callback(callback_data);
+            } else {
+                callback();
+            }
         }
 
-        console.log('initing the api code');
-        $b.api.init($b.settings.get('api_url'));
     };
 
 
@@ -212,7 +214,6 @@ var bookie = (function (opts) { //module, $, logger) {
                             }
                         } else {
                             console.log('bookmark not found: ' + url);
-                            $b.log(data);
                             if (fail_callback) {
                                 fail_callback(data);
                             }

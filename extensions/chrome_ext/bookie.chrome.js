@@ -39,9 +39,17 @@
      * The specifics here is getting the tab info from Chrome vs FF
      *
      */
-    $b.populateForm = function () {
+    $b.populateForm = function (tab_obj) {
+        console.log("POPULATEFORM");
+        console.log(tab_obj);
         if (window.chrome !== undefined && chrome.tabs) {
-            chrome.tabs.getSelected(null, $b.populateFormBase);
+
+            if (tab_obj !== undefined) {
+                $b.populateFormBase({'url': tab_obj.url,
+                                     'title': tab_obj.title});
+            } else {
+                chrome.tabs.getSelected(null, $b.populateFormBase);
+            }
 
             var api_url = $b.settings.get('api_url');
             $('#bookie_site').attr('href', api_url).attr('title', api_url);
@@ -162,17 +170,15 @@
     };
 
 
-    $b.chrome_init = function () {
-        $b.log($);
+    $b.chrome_init = function (current_tab_info) {
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
-
         $($b.EVENTID).bind($b.events.DUPE_TAGS, $b.ui.dupe_tags);
 
         $('#latest_tags').bind('click', function (ev) {
             $($b.EVENTID).trigger($b.events.DUPE_TAGS);
         });
 
-        $($b.EVENTID).trigger($b.events.LOAD);
+        $($b.EVENTID).trigger($b.events.LOAD, current_tab_info);
     };
 
 
@@ -254,6 +260,22 @@
                     console.log('should have content stored');
                 } else {
                     console.log('hit the else');
+                }
+            }
+        );
+
+        chrome.extension.onRequest.addListener(
+            function(request, sender, sendResponse) {
+                if (request.url) {
+                    chrome.tabs.getSelected(null, function(tab_obj) {
+                        var encoded_url = window.btoa(tab_obj.url),
+                            encoded_title = window.btoa(tab_obj.title),
+                            encoded_api_url = window.btoa(bookie.settings.get('api_url')),
+                            encoded_api_key = window.btoa(bookie.settings.get('api_key')),
+                            hash = [encoded_url, encoded_title, encoded_api_url, encoded_api_key].join('|');
+
+                        chrome.tabs.create({url: "popup.html#" + hash});
+                    });
                 }
             }
         );
