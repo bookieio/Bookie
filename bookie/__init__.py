@@ -17,7 +17,8 @@ class RootFactory(object):
     __acl__ = [ (Allow, Everyone, ALL_PERMISSIONS)]
 
     def __init__(self, request):
-        self.__dict__.update(request.matchdict)
+        if request.matchdict:
+            self.__dict__.update(request.matchdict)
 
 
 def main(global_config, **settings):
