@@ -142,7 +142,19 @@ var bookie = (function (opts) { //module, $, logger) {
 
             // see if we have the last set of tags to add
             if (data.payload.hasOwnProperty('last')) {
-                $('#latest_tags a').html(data.payload.last.tag_str).parent().show();
+                var tag_str = data.payload.last.tag_str,
+                    tags = tag_str.split(' '),
+                    tag_html;
+
+                for (tag in tags) {
+                     tags[tag] = '<a href="" class="prev_tag">' + tags[tag] + '</a>';
+                }
+
+                $('#latest_tags').append(tags.join(" ")).show();
+
+                $("table").delegate("td", "hover", function(){
+                    $(this).toggleClass("hover");
+                });
             }
         });
     };

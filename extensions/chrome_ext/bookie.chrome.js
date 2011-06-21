@@ -162,11 +162,21 @@
      * Copy any tags we have from the last run into our tags ui
      *
      */
-    $b.ui.dupe_tags = function () {
-        var recent_tags = $("#latest_tags a").html();
-        $('#tags').val(recent_tags.trim());
+    $b.ui.dupe_tags = function (node) {
+        var current = $('#tags').val().trim();
+        if (current.length > 0) {
+            current = current + " ";
+        }
+
+        $('#tags').val(current + node.html().trim());
         $('#tags').change();
-        $('#latest_tags').hide().html("");
+        node.remove();
+
+        // if we've added all the tags and there are none left, then just hide
+        // that div
+        if ($("#latest_tags a").length === 0) {
+            $('#latest_tags').hide();
+        }
     };
 
 
@@ -174,28 +184,29 @@
         $($b.EVENTID).bind($b.events.LOAD, $b.events.onload);
         $($b.EVENTID).bind($b.events.DUPE_TAGS, $b.ui.dupe_tags);
 
-        $('#latest_tags').bind('click', function (ev) {
-            $($b.EVENTID).trigger($b.events.DUPE_TAGS);
+        $('#latest_tags').delegate('a', 'click', function (ev) {
+            ev.preventDefault();
+            $b.ui.dupe_tags($(this));
         });
 
         $($b.EVENTID).trigger($b.events.LOAD, current_tab_info);
     };
 
+    $b.check_url_bookmarked = function(url) {
+        var is_bookmarked = $b.utils.is_bookmarked(url);
+        console.log('Checking ' + url + ' is bookmarked: ' + is_bookmarked);
+
+        // check if we have this bookmarked
+        // if so update the badge text with +
+        if (is_bookmarked) {
+            $b.ui.badge.set('+', false, $b.ui.badge.colors.blue);
+        } else {
+            $b.ui.badge.clear();
+
+        }
+    }
 
     $b.background_init = function () {
-        function check_url_bookmarked(url) {
-            var is_bookmarked = bookie.utils.is_bookmarked(url);
-
-            // check if we have this bookmarked
-            // if so update the badge text with +
-            if (is_bookmarked) {
-                $b.ui.badge.set('+', false, $b.ui.badge.colors.blue);
-            } else {
-                $b.ui.badge.clear();
-
-            }
-        }
-
         // bind to the events to check if the current url is bookmarked or not
         chrome.tabs.onUpdated.addListener(
             function(tabId, changeInfo, tab) {
@@ -207,7 +218,7 @@
                     if (tab.url) {
                         chrome.tabs.getSelected(undefined, function (tab) {
                             if (tid === tab.id) {
-                                check_url_bookmarked(tab.url);
+                                $b.check_url_bookmarked(tab.url);
                             }
                         });
                     } else {
@@ -221,7 +232,7 @@
             function(tabId, changeInfo) {
                 chrome.tabs.get(tabId, function (tab) {
                     if (tab.url) {
-                        check_url_bookmarked(tab.url);
+                        $b.check_url_bookmarked(tab.url);
                     } else {
                         console.log('no hash for you');
                     }
@@ -269,10 +280,8 @@
                 if (request.url) {
                     chrome.tabs.getSelected(null, function(tab_obj) {
                         var encoded_url = window.btoa(tab_obj.url),
-                            encoded_title = window.btoa(tab_obj.title),
-                            encoded_api_url = window.btoa(bookie.settings.get('api_url')),
-                            encoded_api_key = window.btoa(bookie.settings.get('api_key')),
-                            hash = [encoded_url, encoded_title, encoded_api_url, encoded_api_key].join('|');
+                            encoded_title = window.btoa(tab_obj.title)
+                            hash = [encoded_url, encoded_title].join('|');
 
                         chrome.tabs.create({url: "popup.html#" + hash});
                     });

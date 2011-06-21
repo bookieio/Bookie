@@ -34,22 +34,12 @@
                 // usually in the case of a keyboard shortcut loading this in a
                 // new tab vs the icon popup
                 var parts = window.location.hash.substring(1).split('|');
-                if (parts.length === 4) {
+                if (parts.length === 2) {
                     var tab_data = {
                         'url': window.atob(parts[0]),
-                        'title': window.atob(parts[1]),
-                        'api_url': window.atob(parts[2]),
-                        'api_key': window.atob(parts[3])
+                        'title': window.atob(parts[1])
                     }
 
-                    // we need to set our api info into the localStorage of
-                    // this new tab we've opened since we're using the keyboard
-                    // shortcut
-                    console.log('setting');
-                    console.log(tab_data);
-                    localStorage.setItem('api_url', tab_data.api_url);
-                    localStorage.setItem('api_key', tab_data.api_key);
-                    console.log(localStorage.getItem('api_url'));
 
 
                 } else {
@@ -106,6 +96,7 @@
                 }
 
             });
+
         </script>
         <style>
             body {
@@ -181,7 +172,7 @@
             <input type="hidden" id="url" name="url" />
             <input type="text" id="description" placeholder="title" name="description" />
             <input type="text" placeholder="tags" name="tags" id="tags" />
-            <div id="latest_tags">Recent Tags: <a href="#"></a></div>
+            <div id="latest_tags">Recent Tags: </div>
             <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
 
