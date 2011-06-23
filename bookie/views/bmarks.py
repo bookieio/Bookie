@@ -150,7 +150,10 @@ def readable(request):
 
     if bid:
         found = Hashed.query.get(bid)
-        return {
-                'bmark': found,
-                'username': username,
-                }
+        if found:
+            return {
+                    'bmark': found,
+                    'username': username,
+                    }
+        else:
+            return HTTPNotFound()

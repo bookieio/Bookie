@@ -42,7 +42,7 @@ var bookie = (function ($b, $) {
 
             if (!_.startsWith(url, 'http') && !_.startsWith(url, 'www')) {
                 // instead of this url, open the original web page instead of a
-                // broken look into htt://bookie/blah.html
+                // broken look into http://bookie/blah.html
                 ev.preventDefault();
                 original_url = $('.bmark').attr('href');
                 newwindow = window.open(original_url, '_blank');
