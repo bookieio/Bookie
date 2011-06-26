@@ -48,6 +48,31 @@ class AuthLog(Log):
         AuthLog.store(status, message, **data)
 
 
+class BmarkLog(Log):
+    """Bookmark specific log items"""
+    component = "BMARKS"
+
+    @staticmethod
+    def export(for_user, current_user):
+        """Note that a user has exported their bookmarks"""
+        get_status = lambda x: Log.WARNING if x else Log.INFO
+
+        your_export = False
+        if current_user and current_user == for_user:
+            your_export = True
+
+        status = get_status(your_export)
+        message = "User {0} exported the bookmarks for {1}".format(current_user,
+                                                          for_user)
+
+        data = {
+                'user': current_user,
+                'component': BmarkLog.component,
+        }
+
+        BmarkLog.store(status, message, **data)
+
+
 class LogRecord(object):
     """A record in the log"""
 

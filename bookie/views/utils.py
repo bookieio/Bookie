@@ -7,8 +7,10 @@ from pyramid.settings import asbool
 from pyramid.view import view_config
 from sqlalchemy.orm import contains_eager
 
-from bookie.lib.importer import Importer
 from bookie.lib.access import ReqAuthorize
+from bookie.lib.importer import Importer
+from bookie.lib.applog import BmarkLog
+
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
@@ -171,6 +173,11 @@ def export(request):
     rdict = request.matchdict
     username = rdict.get('username')
 
+    if request.user is not None:
+        current_user = request.user.username
+    else:
+        current_user = None
+
     bmark_list = Bmark.query.join(Bmark.tags).\
                              options(
                                 contains_eager(Bmark.tags)
@@ -180,6 +187,9 @@ def export(request):
                                  contains_eager(Bmark.hashed)
                              ).\
                              filter(Bmark.username == username).all()
+
+    BmarkLog.export(username, current_user)
+
     request.response_content_type = 'text/html'
 
     headers = [('Content-Disposition',

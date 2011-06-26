@@ -5,7 +5,9 @@
 
 <ul>
     <li>${user.username}</li>
+    <li>${user.name}</li>
     <li>${user.email}</li>
+    <li>${user.signup}</li>
     <li>${user.last_login}</li>
 </ul>
 
