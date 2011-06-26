@@ -4,6 +4,8 @@ from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from bookie.models import BmarkMgr
 
+IMPORTED = "importer"
+
 
 class Importer(object):
     """The actual factory object we use for handling imports"""
@@ -43,7 +45,14 @@ class Importer(object):
         :param fulltext: Fulltext handler instance used to store that info
 
         """
-        BmarkMgr.store(url, self.username, desc, ext, tags, dt=dt, fulltext=fulltext)
+        BmarkMgr.store(url,
+                       self.username,
+                       desc,
+                       ext,
+                       tags,
+                       dt=dt,
+                       fulltext=fulltext,
+                       inserted_by=IMPORTED)
 
 
 class DelImporter(Importer):

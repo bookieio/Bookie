@@ -40,13 +40,12 @@
      *
      */
     $b.populateForm = function (tab_obj) {
-        console.log("POPULATEFORM");
-        console.log(tab_obj);
         if (window.chrome !== undefined && chrome.tabs) {
 
             if (tab_obj !== undefined) {
                 $b.populateFormBase({'url': tab_obj.url,
-                                     'title': tab_obj.title});
+                                     'title': tab_obj.title},
+                                     'chrome_ext');
             } else {
                 chrome.tabs.getSelected(null, $b.populateFormBase);
             }

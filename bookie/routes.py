@@ -153,9 +153,22 @@ def build_routes(config):
     config.add_route("api_bmark_hash", "api/v1/bmarks/{hash_id}")
     config.add_route("user_api_bmark_hash", "{username}/api/v1/bmarks/{hash_id}")
 
-    # # api calls for tag relation information
+    # api calls for tag relation information
     config.add_route("api_tag_complete", "api/v1/tags/complete")
     config.add_route("user_api_tag_complete", "{username}/api/v1/tags/complete")
+
+    # calls/api for account related information
+    config.add_route("user_account", "{username}/account")
+    config.add_route("api_user_account", "{username}/api/v1/account")
+
+    config.add_route("user_account_reset_password", "{username}//account/password")
+    config.add_route("api_user_account_reset_password", "{username}/api/v1/account/password")
+
+    config.add_route("user_account_api_key", "{username}/account/api_key")
+    config.add_route("api_user_account_api_key", "{username}/api/v1/account/api_key")
+
+    config.add_route("user_account_update", "{username}/account/update")
+    config.add_route("api_user_account_update", "{username}/api/v1/account/update")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

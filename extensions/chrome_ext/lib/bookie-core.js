@@ -100,12 +100,14 @@ var bookie = (function (opts) { //module, $, logger) {
      * consistent between them
      *
      */
-    $b.populateFormBase = function (tab_obj) {
+    $b.populateFormBase = function (tab_obj, inserted_by) {
         var url;
 
         $('#url').attr('value', tab_obj.url);
         $('#description').attr('value', tab_obj.title);
         $('#api_key').attr('value', $b.settings.get('api_key'));
+        // is this coming from the chrome extension, firefox, elsewhere?
+        $('#inserted_by').attr('value', inserted_by);
 
         url = $('#url').attr('value');
 

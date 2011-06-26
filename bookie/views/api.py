@@ -294,6 +294,9 @@ def bmark_add(request):
                                                          False)
                 fulltext = get_fulltext_handler(conn_str)
 
+                # check to see if we know where this is coming from
+                inserted_by = params.get('inserted_by', 'unknown_api')
+
                 LOG.debug('Username')
                 LOG.debug(username)
                 mark = BmarkMgr.store(params['url'],
@@ -303,6 +306,7 @@ def bmark_add(request):
                              params.get('tags', ''),
                              dt=stored_time,
                              fulltext=fulltext,
+                             inserted_by=inserted_by,
                        )
 
                 # we need to process any commands associated as well

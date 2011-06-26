@@ -1,5 +1,6 @@
 import logging
 
+from datetime import datetime
 from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render_to_response
 from pyramid.security import remember
@@ -7,6 +8,7 @@ from pyramid.security import forget
 from pyramid.url import route_url
 from pyramid.view import view_config
 
+from bookie.lib.applog import AuthLog
 from bookie.models.auth import UserMgr
 
 
@@ -50,13 +52,19 @@ def login(request):
             # username.  You can change what is returned as the userid by altering what is passed to
             # remember.
             headers = remember(request, auth.id, max_age='86400')
+            auth.last_login = datetime.now()
+
+            # log the successful login
+            AuthLog.login(login, True)
 
             # we're always going to return a user to their own /recent after a
             # login
             return HTTPFound(location=request.route_url('user_bmark_recent',
                                                         username=auth.username),
                              headers=headers)
+
         message = 'Failed login'
+        AuthLog.login(login, False, password=password)
 
     return {
         'message': message,

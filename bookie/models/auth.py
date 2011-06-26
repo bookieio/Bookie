@@ -11,17 +11,26 @@ import hashlib
 import logging
 import random
 
+from datetime import datetime
+from datetime import timedelta
+
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import Boolean
+
+from sqlalchemy.orm import relation
 from sqlalchemy.orm import synonym
 
 from bookie.models import Base
+from bookie.models import DBSession
+
 
 LOG = logging.getLogger(__name__)
 GROUPS = ['admin', 'user']
+ACTIVATION_AGE = timedelta(days=1)
 
 
 def get_random_word(wordLen):
@@ -29,6 +38,43 @@ def get_random_word(wordLen):
     for i in xrange(wordLen):
         word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/&=')
     return word
+
+
+class Activation(Base):
+    """Handle activations/password reset items for users
+
+    The id is the user's id. Each user can only have one valid activation in
+    process at a time
+
+    The code should be a random hash that is valid only one time
+    After that hash is used to access the site it'll be removed
+
+    The created by is a system: new user registration, password reset, forgot
+    password, etc.
+
+    """
+    __tablename__ = u'activations'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    code = Column(Unicode(60))
+    valid_until = Column(DateTime,
+                    default=lambda: datetime.now + ACTIVATION_AGE)
+    created_by = Column('created_by', Unicode(255))
+
+    def __init__(self, user_id, created_system):
+        """Create a new activation"""
+        self.id = user_id
+        self.code = Activation._gen_activation_hash()
+        self.created_by = created_system
+
+    def _gen_activation_hash():
+        """Generate a random activation hash for this user account"""
+        # for now just cheat and generate an api key, that'll work for now
+        return User.gen_api_key()
+
+    def deactivate(self):
+        """Remove this activation"""
+        DBSession.remove(self)
 
 
 class UserMgr(object):
@@ -67,15 +113,11 @@ class UserMgr(object):
     def auth_groupfinder(userid, request):
         """Pyramid wants to know what groups a user is in
 
-        We need to pull this from the User object that we've stashed in the request
-        object
+        We need to pull this from the User object that we've stashed in the
+        request object
 
         """
-        LOG.debug('GROUP FINDER')
-        LOG.debug(userid)
-        LOG.debug(request)
         user = request.user
-        LOG.debug(user)
         if user is not None:
             if user.is_admin:
                 return 'admin'
@@ -90,12 +132,18 @@ class User(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     username = Column(Unicode(255), unique=True)
+    name = Column(Unicode(255))
     _password = Column('password', Unicode(60))
     email = Column(Unicode(255), unique=True)
     activated = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     last_login = Column(DateTime)
+    signup = Column(DateTime, default=datetime.now)
     api_key = Column(Unicode(12))
+
+    activation = relation(Activation,
+                    uselist=False,
+                    backref='user')
 
     def _set_password(self, password):
         """Hash password on the fly."""
@@ -136,9 +184,9 @@ class User(Base):
         :return: Whether the password is valid.
 
         """
-        # the password might be null as in the case of morpace employees logging
-        # in via ldap. We check for that here and return them as an incorrect
-        # login
+        # the password might be null as in the case of morpace employees
+        # logging in via ldap. We check for that here and return them as an
+        # incorrect login
         if self.password:
             salt = self.password[:29]
             return self.password == bcrypt.hashpw(password, salt)

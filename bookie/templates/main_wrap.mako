@@ -44,7 +44,7 @@
                 <span class="item"><a href="${prefix}/popular" class="nav_button">Popular</a></span>
                 <span class="item"><a href="${prefix}/search" class="nav_button">Search</a></span>
                 % if request.user:
-                    <span class="item"><a href="/logout" class="nav_button">Logout</a></span>
+                    <span class="item"><a href="${request.route_url('user_account', username=request.user.username)}" class="nav_button">Account</a></span>
                 % else:
                     <span class="item"><a href="/login" class="nav_button">Login</a></span>
                 % endif

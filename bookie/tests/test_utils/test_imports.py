@@ -40,6 +40,8 @@ def _delicious_data_test():
     ok_(found.hashed.url == check_url, "The url should match our search")
     eq_(len(found.tags), 7,
         "We should have gotten 7 tags, got: " + str(len(found.tags)))
+    eq_('importer', found.inserted_by,
+            "The bookmark should have come from importing: " + found.inserted_by)
 
     # and check we have a right tag or two
     ok_('canonical' in found.tag_string(),

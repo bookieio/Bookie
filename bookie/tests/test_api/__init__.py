@@ -48,6 +48,7 @@ class BookieAPITest(unittest.TestCase):
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'api_key': API_KEY,
+                'inserted_by': 'chrome_ext',
         }
 
         # if we want to test the readable fulltext side we want to make sure we
@@ -63,9 +64,10 @@ class BookieAPITest(unittest.TestCase):
             prms = {
                     'url': u'http://bmark.us',
                     'description': u'Bookie',
-                    'extended': u'Extended notes',
+                    'extended': u'Exteded notes',
                     'tags': u'bookmarks',
                     'api_key': API_KEY,
+                    'inserted_by': 'chrome_ext',
             }
 
             # if we want to test the readable fulltext side we want to make sure we
@@ -191,6 +193,8 @@ class BookieAPITest(unittest.TestCase):
             "The clicks should be 2: " + str(bmark1['clicks']))
         eq_(0, bmark2['clicks'],
             "The clicks should be 0: " + str(bmark2['clicks']))
+        eq_('chrome_ext', bmark2['inserted_by'],
+            "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
 
     def test_paging_results(self):
         """Test that we can page results"""

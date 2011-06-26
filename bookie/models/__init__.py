@@ -534,7 +534,8 @@ class BmarkMgr(object):
         return res
 
     @staticmethod
-    def store(url, username, desc, ext, tags, dt=None, fulltext=None):
+    def store(url, username, desc, ext, tags, dt=None, fulltext=None,
+                inserted_by=None):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -550,6 +551,8 @@ class BmarkMgr(object):
                      ext=ext,
                      tags=tags,
                )
+
+        mark.inserted_by = inserted_by
 
         DBSession.add(mark)
 
@@ -605,6 +608,10 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, onupdate=datetime.now)
     clicks = Column(Integer, default=0)
+
+    # this could be chrome_extension, firefox_extension, website, browser XX,
+    # import, etc
+    inserted_by = Column(Unicode(255))
     username = Column(Unicode(255), ForeignKey('users.username'),
                       nullable=False,)
 
