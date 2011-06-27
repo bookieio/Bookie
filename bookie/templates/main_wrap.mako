@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="yui3-u-1-3 navigation">
-                <% 
+                <%
                     if username:
                         prefix = "/" + username
                     else:
@@ -71,12 +71,9 @@
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="#changelog">Changes</a> |
                     % if request.user:
-                        <a href="${request.route_url('user_import', username=request.user.username)}">Import</a> |
-                        <a href="${request.route_url('user_export', username=request.user.username)}">Export</a> |
                         <a href="${request.route_url('user_mobile', username=request.user.username) }">Mobile</a>
                     % endif
                 </div>
-            </div>
             </div>
         </div>
 
