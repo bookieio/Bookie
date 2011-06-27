@@ -61,6 +61,9 @@ class BmarkLog(Log):
         if current_user and current_user == for_user:
             your_export = True
 
+        elif current_user is None:
+            current_user = "None"
+
         status = get_status(your_export)
         message = "User {0} exported the bookmarks for {1}".format(current_user,
                                                           for_user)
