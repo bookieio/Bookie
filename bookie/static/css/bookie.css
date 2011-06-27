@@ -423,6 +423,12 @@ form li label {
 
 }
 
+.tabs li:hover {
+    background-color: #EEE;
+    -webkit-transition-duration: .33s;
+    -webkit-transition-property: background-color;
+}
+
 .tabs li a {
     text-decoration: none;
     color: #333;
