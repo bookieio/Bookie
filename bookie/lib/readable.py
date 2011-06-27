@@ -107,14 +107,16 @@ class ReadUrl(object):
         """Fetch the given url and parse out a Readable Obj for the content"""
         read = Readable()
 
+        if not isinstance(url,unicode):
+            url = url.decode('utf-8')
 
         # first check if we have a special url with the #! content in it
-        if '#!' in url:
+        if u'#!' in url:
             # rewrite it with _escaped_fragment_=xxx
             # we should be doing with this some regex, but cheating for now
-            idx = url.index('#')
+            idx = url.index(u'#')
             fragment = url[idx:]
-            clean_url = "{0}?_escaped_fragment_={1}".format(url[0:idx],
+            clean_url = u"{0}?_escaped_fragment_={1}".format(url[0:idx],
                                                             fragment)
         else:
             # we need to clean up the url first, we can't have any anchor tag on
@@ -122,11 +124,11 @@ class ReadUrl(object):
             parsed = urlparse(url)
 
             if parsed.query is not None and parsed.query != '':
-                query = '?'
+                query = u'?'
             else:
-                query = ''
+                query = u''
 
-            clean_url = "{0}://{1}{2}{query}{3}".format(parsed[0],
+            clean_url = u"{0}://{1}{2}{query}{3}".format(parsed[0],
                                               parsed[1],
                                               parsed[2],
                                               parsed[4],
@@ -134,7 +136,7 @@ class ReadUrl(object):
 
         try:
             LOG.debug('Readable Parsed: ' + clean_url)
-            fh = urllib2.urlopen(clean_url)
+            fh = urllib2.urlopen(clean_url.encode('utf-8'))
 
             # if it works, then we default to a 200 request
             # it's ok, promise :)
