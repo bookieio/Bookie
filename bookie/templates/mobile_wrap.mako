@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-        <link href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
         <link rel="apple-touch-icon" href="/static/images/logo.128.png" />
 
         <script src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
@@ -48,7 +48,6 @@
             // do not do form submissions via ajax by default. We catch and
             // override them to handle things manually
             $.mobile.ajaxFormsEnabled = false;
-            $('#results_list').listview();
             bookie.init();
         });
 
@@ -58,6 +57,6 @@
 
     </script>
     <!--<script src="http://code.jquery.com/mobile/latest/jquery.mobile.js"></script>-->
-    <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 </html>

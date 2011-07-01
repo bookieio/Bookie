@@ -224,7 +224,10 @@ var bookie = (function ($b, $) {
                                   }
 
                                   $b.mobilestate.page = page;
-
+                                  $.mobile.changePage('#results',
+                                                      'slide',
+                                                      back=false,
+                                                      changeHash=false);
                                   $b.ui.results.update(data.payload.search_results,
                                                        page_title,
                                                        data_home);
@@ -234,10 +237,7 @@ var bookie = (function ($b, $) {
                           },
                           'complete': function () {
                               console.log('fired complete');
-                              $.mobile.changePage('#results',
-                                                  'slide',
-                                                  back=false,
-                                                  changeHash=false);
+
                               $.mobile.pageLoading(true);
                           }
                       }
@@ -263,7 +263,7 @@ var bookie = (function ($b, $) {
             // this isn't always init'd so need to init it first
             console.log(data_home);
 
-            $(data_home).listview('destroy').listview();
+            $(data_home).listview();
 
             // now bind the swipe event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
@@ -284,6 +284,9 @@ var bookie = (function ($b, $) {
 
                 $($b.EVENTID).trigger($b.events.VIEW, {'hash_id': hash_id});
             });
+
+            $(data_home).listview('refresh');
+
         }
     };
 

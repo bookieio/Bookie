@@ -56,7 +56,7 @@
 
 </%def>
 
-<div data-role="page" id="home">
+<div data-role="page" id="home" data-url='index'>
 
     <header data-role="header" class="head">
         <h1>Bookie  <span>- bookmark your web</span</h1>
@@ -64,7 +64,7 @@
 
     <div data-role="content">
 
-        <form action="#" method="get" class="search_form" id="footer_search">
+        <form action="#" method="get" class="search_form" id="footer_search" data-ajax="false">
             <input type="search" name="home_search" id="home_search"
                    class="search" placeholder="search..."/>
         </form>
@@ -102,13 +102,13 @@
 
 </div>
 
-<div data-role="page" id="search">
+<div data-role="page" id="search" data-url='search'>
     <header data-role="header" class="head">
         <h1>Search</h1>
     </header>
 
     <div data-role="content">
-        <form action="#" method="GET" class="search_form" id="search_page">
+        <form action="#" method="GET" class="search_form" id="search_page" data-ajax="false">
             <div data-role="fieldcontain">
                 <label for="cache_content">Include Content?</label>
                 <select name="cache_content" id="cache_content" data-role="slider" data-inline="true">
@@ -162,8 +162,7 @@
     - results body
     - paging footer
 -->
-<div data-role="page" id="results">
-
+<div data-role="page" id="results" data-url='results'>
     <header data-role="header" class="head">
         <h1 id="results_title">...</h1>
         <div data-role="navbar" data-type="horizontal" data-position="fixed">
@@ -218,7 +217,6 @@
              </ul>
         </div>
     </footer>
-
     <script id="resultLink" type="text/x-jquery-tmpl">
         <li>
             <a href="#"
@@ -239,7 +237,7 @@
 
 </div>
 
-<div data-role="page" id="view">
+<div data-role="page" id="view" data-url='view'>
 
     <header data-role="header" class="head">
         <h1 id="view_title">Details</h1>
