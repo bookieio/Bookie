@@ -261,6 +261,23 @@ var bookie = (function (opts) {
 
     };
 
-    return $b;
 
+    /**
+     * Fetch the api key for the currently logged in user
+     *
+     * @param callbacks is an object of success, complete, error
+     *
+     */
+    $b.api.api_key = function (callbacks) {
+        // we need to get the list of recent from the api
+        var url = "/api/v1/account/api_key",
+            opts = {
+                url: url,
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    };
+
+    return $b;
 })(bookie_opts);

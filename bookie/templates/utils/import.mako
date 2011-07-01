@@ -1,6 +1,8 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
 <%def name="title()">Import Bookmarks</%def>
+<%namespace file="../accounts/func.mako" import="account_nav"/>
+
+${account_nav()}
 
 <h1>Import Bookmarks</h1>
 
