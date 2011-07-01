@@ -65,7 +65,6 @@
     $b.ui.notify = function(notification) {
         showBadge(notification);
 
-
         if (window.chrome !== undefined && chrome.tabs) {
             if(notification.type === "error") {
                 //show a desktop notification
@@ -90,8 +89,11 @@
                         var hash_id = bookie.utils.hash_url(tab.url);
                         $b.settings.set(hash_id, true);
                     });
+
+                    window.close();
                 }
-                window.close();
+
+                // if
 
             }
         }
@@ -287,6 +289,75 @@
                 }
             }
         );
+    };
+
+
+    $b.options = {
+        'init': function () {
+            // populate default field values
+            $('#api_key').val(localStorage['api_key']);
+            $('#api_url').val(localStorage['api_url']);
+
+            if (localStorage['cache_content'] != 'false') {
+                $('#cache_content').attr('checked', 'checked');
+            } else {
+                $('#cache_content').removeAttr('checked');
+            }
+
+            // close window on cancel
+            $("#cancelBtn").click(function() { window.close(); });
+
+            // save new values on submit
+            $("#form").submit(function(e) {
+                localStorage['api_key'] = $('#api_key').val();
+                localStorage['api_url'] = $('#api_url').val();
+
+                // do you want us to store the cached content of the
+                // current page?
+                var cache = $("#cache_content:checked").length;
+                if (cache == 1) {
+                    localStorage['cache_content'] = true;
+                } else {
+                    localStorage['cache_content'] = false;
+                };
+
+                // notify of successful save
+                $('#info').text("Saved").slideDown().delay(3000).slideUp();
+
+                e.preventDefault();
+            });
+
+            $("#syncBtn").bind('click', bookie.options.sync);
+            $('#circle').hide();
+        },
+
+        'sync': function () {
+            $('#circle').show();
+
+            // the user might have just added the api and hit save
+            // so make sure we reload that info
+            $b.api.init($b.settings.get('api_url'));
+            $b.api.sync($b.settings.get('api_key'), {
+                success: function (data) {
+                    var bkg, hash_id;
+                    bkg = chrome.extension.getBackgroundPage();
+                    for (idx in data.payload.hash_list) {
+                        hash_id = data.payload.hash_list[idx];
+                        localStorage.setItem(hash_id, true);
+                    }
+
+                    $('#circle').hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(thrownError);
+                    console.log(xhr);
+
+                    $b.ui.notify(new $b.Notification('error', 0, 'Error Syncing', 'Check your Bookie URL has been set properly'));
+                    $('#circle').hide();
+                }
+            });
+        } // end sync
+
     };
 
     return $b;

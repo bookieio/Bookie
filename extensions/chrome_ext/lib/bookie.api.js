@@ -253,6 +253,10 @@ var bookie = (function (opts) {
             success: callbacks.success
         };
 
+        if (callbacks.error !== undefined) {
+            opts.error = callbacks.error;
+        }
+
         $b.api._request(opts);
 
     };
