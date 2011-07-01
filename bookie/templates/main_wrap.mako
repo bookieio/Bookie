@@ -5,8 +5,9 @@
         <link type="text/css" href="/static/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
         <link rel="stylesheet" type="text/css" href="/static/css/yui_reset_layout_grids_3.3.0.css">
 
-        <link href='https://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Cabin&v2' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Cabin+Sketch:bold&text=Bookie' rel='stylesheet' type='text/css'>
+
 
         <link rel="stylesheet" type="text/css" href="/static/tagfield/superbly-tagfield.css">
         <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
