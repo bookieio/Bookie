@@ -12,6 +12,70 @@ from bookie.models.auth import UserMgr
 LOG = logging.getLogger(__name__)
 
 
+class AuthHelper(object):
+    """Manage the inner workings of authorizing things"""
+
+    @staticmethod
+    def check_api(submitted_key, users_key):
+        """Verify the api key is valid"""
+        if users_key != submitted_key:
+            LOG.error('Invalid API Key! {0} v {1}'.format(users_key,
+                                                          submitted_key))
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def check_login(request, username=None):
+        """Check that the user is logged in correctly
+
+        :param username: a username to make sure the current user is in fact
+
+        """
+        if request.user is None:
+            LOG.error('Invalid Request: Not Logged in!')
+            return False
+
+        # if we have a username we're told to check against, make sure the
+        # username matches
+        if username is not None and username != request.user.username:
+            return False
+
+        return True
+
+
+class ReqOrApiAuthorize(object):
+    """A context manager that works with either Api key or logged in user"""
+
+    def __init__(self, request, api_key, user_acct, username=None):
+        self.request = request
+        self.api_key = api_key
+        self.user_acct = user_acct
+        self.username = username
+
+    def __enter__(self):
+        """Handle the verification side
+
+        Logged in user checked first, then api matching
+
+        """
+
+        if AuthHelper.check_login(self.request, username=self.username):
+            LOG.debug("CHECK LOGIN SUCCESS")
+            return True
+
+        if AuthHelper.check_api(self.api_key, self.user_acct.api_key):
+            LOG.debug("CHECK API SUCCESS")
+            return True
+
+        LOG.debug("FAILED AUTH CHECKS")
+        raise HTTPForbidden('Invalid Authorization')
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """No cleanup to do here"""
+        pass
+
+
 class ApiAuthorize(object):
     """Context manager to check if the user is authorized
 
@@ -30,14 +94,13 @@ class ApiAuthorize(object):
 
     def __enter__(self):
         """Verify api key set in constructor"""
-        if self.api_key != self.check_key:
-            LOG.error('Invalid API Key! {0} v {1}'.format(self.api_key,
-                                                          self.check_key))
+        if not AuthHelper.check_api(self.check_key, self.api_key):
             raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
         """No cleanup work to do after usage"""
         pass
+
 
 class ReqAuthorize(object):
     """Context manager to check if the user is logged in
@@ -52,22 +115,12 @@ class ReqAuthorize(object):
 
     def __init__(self, request, username=None):
         """Create the context manager"""
-        LOG.debug('USER')
-        LOG.debug(request.user)
-
         self.request = request
         self.username = username
 
     def __enter__(self):
         """Verify api key set in constructor"""
-        if self.request.user is None:
-            LOG.error('Invalid Request: Not Logged in!')
-            raise HTTPForbidden('Invalid Authorization')
-
-        # if we have a username we're told to check against, make sure the
-        # username matches
-        if self.username is not None and self.username != self.request.user.username:
-            LOG.error('Invalid Request: Wrong Username!')
+        if not AuthHelper.check_login(self.request, self.username):
             raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):

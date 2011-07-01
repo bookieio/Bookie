@@ -102,5 +102,9 @@
                 bookie.init();
             });
         </script>
+
+        % if hasattr(self, 'add_js'):
+            ${self.add_js()}
+        % endif
     </body>
 </html>

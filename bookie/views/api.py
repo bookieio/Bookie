@@ -7,6 +7,7 @@ from pyramid.view import view_config
 from StringIO import StringIO
 
 from bookie.lib.access import ApiAuthorize
+from bookie.lib.access import ReqOrApiAuthorize
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 
@@ -431,6 +432,7 @@ def to_readable(request):
 
     return ret
 
+
 @view_config(route_name="api_bmark_readable", renderer="morjson")
 def readable(request):
     """Take the html given and parse the content in there for readable
@@ -504,3 +506,38 @@ def readable(request):
         }
 
     return ret
+
+
+@view_config(route_name="api_user_account_api_key", renderer="morjson")
+def api_key(request):
+    """Return the currently logged in user's api key
+
+    This api call is available both on the website via a currently logged in
+    user and via a valid api key passed into the request. In this way we should
+    be able to add this to the mobile view with an ajax call as well as we do
+    into the account information on the main site.
+
+    """
+    params = request.params
+    rdict = request.matchdict
+    api_key = params.get('api_key', None)
+    username = rdict.get('username', None)
+
+    if request.user is None and api_key is not None:
+        # then see if we can find a user for this api key
+        user_acct = UserMgr.get(username=username)
+
+    if request.user is not None:
+        user_acct = request.user
+
+    with ReqOrApiAuthorize(request, api_key, user_acct):
+
+
+        return {
+            'success': True,
+            'message': None,
+            'payload': {
+                'api_key': user_acct.api_key,
+                'username': user_acct.username
+            }
+        }

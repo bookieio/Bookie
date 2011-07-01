@@ -114,5 +114,50 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).trigger($b.events.LOAD);
     };
 
+    $b.accounts = {
+        'init': function () {
+            // we need to bind the api key show click
+            $('#show_key').bind('click', $b.accounts.show_api_key);
+            $('#show_password').bind('click', $b.accounts.show_password_reset);
+        },
+
+        'show_api_key': function (ev) {
+            var $key_div = $('#api_key');
+
+            ev.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if($key_div.is(':visible')) {
+                $key_div.hide();
+            } else {
+                // make an ajax request to get the api key for this user and then
+                // show it in the container for it
+                $b.api.api_key({
+                    'success': function (data) {
+                        if (data.success) {
+                            $('#api_key').html(data.payload.api_key).show();
+                        } else {
+                            console.log('Some error, check out the request');
+                            console.log(data);
+                        }
+                    }
+                });
+            }
+        },
+
+        'show_password_reset': function (ev) {
+            var $div = $('#password_reset');
+
+            ev.preventDefault();
+
+            if ($div.is(':visible')) {
+                $div.hide();
+            } else {
+                $div.show();
+
+            }
+        }
+    };
+
     return $b;
 })(bookie || {}, jQuery);
