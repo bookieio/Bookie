@@ -64,6 +64,7 @@ var bookie = (function (opts) { //module, $, logger) {
         '403': 'NoAuth',
         '404': '404',
 
+        'syn': 'Sync',
         // some codes from the xml response in the delicious api
         'done': 'Ok',
         'Not Found': '404',
@@ -78,6 +79,9 @@ var bookie = (function (opts) { //module, $, logger) {
         this.longText = longText;
     }
 
+    // I need this to create a notification object from the bookie.chrome.js
+    // file
+    $b.Notification = Notification;
 
     // API for accessing setting information
     // this needs to be implemented on the -chrome and -firefox files

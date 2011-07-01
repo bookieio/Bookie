@@ -15,10 +15,10 @@
                 'console_log': logger
             }
         </script>
+        <script type="text/javascript" src="lib/bookie-core.js"></script>
         <script type="text/javascript" src="lib/bookie.api.js"></script>
-        <script type="text/javascript">
-            bookie.api.init(localStorage.getItem('api_url'));
-        </script>
+        <script type="text/javascript" src="bookie.chrome.js"></script>
+
 
         <style>
             body {
@@ -132,63 +132,7 @@
         }
         </style>
 
-        <script type="text/javascript">
-            $(function() {
-                // populate default field values
-                $('#api_key').val(localStorage['api_key']);
-                $('#api_url').val(localStorage['api_url']);
 
-                if (localStorage['cache_content'] != 'false') {
-                    $('#cache_content').attr('checked', 'checked');
-                } else {
-                    $('#cache_content').removeAttr('checked');
-                }
-
-                // close window on cancel
-                $("#cancelBtn").click(function() { window.close(); });
-
-                // save new values on submit
-                $("#form").submit(function(e) {
-                    localStorage['api_key'] = $('#api_key').val();
-                    localStorage['api_url'] = $('#api_url').val();
-
-                    // do you want us to store the cached content of the
-                    // current page?
-                    var cache = $("#cache_content:checked").length;
-                    if (cache == 1) {
-                        localStorage['cache_content'] = true;
-                    } else {
-                        localStorage['cache_content'] = false;
-                    };
-
-                    // notify of successful save
-                    $('#info').text("Saved").slideDown().delay(3000).slideUp();
-
-                    e.preventDefault();
-                });
-
-
-                $("#syncBtn").click(function() {
-                    $('#circle').show();
-
-                    bookie.api.sync(localStorage.getItem('api_key'), {
-                        success: function (data) {
-                            var bkg, hash_id;
-                            bkg = chrome.extension.getBackgroundPage();
-                            for (idx in data.payload.hash_list) {
-                                hash_id = data.payload.hash_list[idx];
-                                localStorage.setItem(hash_id, true);
-                            }
-
-                            $('#circle').hide();
-                        }
-                    });
-                });
-
-                $('#circle').hide();
-
-            });
-        </script>
     </head>
     <body>
         <h1>Bookie Settings</h1>
@@ -196,8 +140,10 @@
         <form id="form">
             <fieldset>
                 <legend>Connection</legend>
-                <label for="api_url">Bookie User URL [http://someurl/username]</label>
+                <label for="api_url">Bookie User URL</label>
                 <input type="url" id="api_url"/>
+                <div style="display: inline-block; margin: 5px;">[http[s]://someurl/{username}]</div>
+
                 <label for="api_key">API Key</label>
                 <input type="password" placeholder="api key" id="api_key"/>
                 <label for="cache_content">Cache Content</label>
@@ -226,4 +172,7 @@
                 bookmarks.</p>
         </div>
     </body>
+    <script type="text/javascript">
+        bookie.options.init();
+    </script>
 </html>
