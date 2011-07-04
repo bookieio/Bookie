@@ -488,9 +488,11 @@ def readable(request):
             # could be an image, 404, error, bad domain...
             # need info for content_type, status_code, status_message
             hashed.readable = Readable()
-            hashed.readable.content_type = params.get('content_type', "Unknown")
+            hashed.readable.content_type = params.get('content_type',
+                                                      "Unknown")
             hashed.readable.status_code = params.get('status_code', 999)
-            hashed.readable.status_message = params.get('status_message', "Missing message")
+            hashed.readable.status_message = params.get('status_message',
+                                                        "Missing message")
 
             ret = {
                 'success': True,
@@ -532,7 +534,6 @@ def api_key(request):
 
     with ReqOrApiAuthorize(request, api_key, user_acct):
 
-
         return {
             'success': True,
             'message': None,
@@ -541,3 +542,57 @@ def api_key(request):
                 'username': user_acct.username
             }
         }
+
+
+@view_config(route_name="api_user_account_reset_password", renderer="morjson")
+def reset_password(request):
+    """Change a user's password from the current string
+
+    :params current_password:
+    :params new_password:
+
+    Callable by either a logged in user or the api key for mobile apps/etc
+
+    """
+    params = request.params
+    rdict = request.matchdict
+    api_key = params.get('api_key', None)
+    username = rdict.get('username', None)
+
+    # now also load the password info
+    current = params.get('current_password', None)
+    new = params.get('new_password', None)
+
+    # @todo boilerplate to find the user from the api key or from the current
+    # logged in status need to remove/clear up
+    if request.user is None and api_key is not None:
+        # then see if we can find a user for this api key
+        user_acct = UserMgr.get(username=username)
+
+    if request.user is not None:
+        user_acct = request.user
+
+    with ReqOrApiAuthorize(request, api_key, user_acct):
+        if not UserMgr.acceptable_password(new):
+            return {
+                'success': False,
+                'message': "Come on, let's try a real password this time",
+                'payload': {}
+            }
+
+        # before we change the password, let's verify it
+        if user_acct.validate_password(current):
+            # we're good to change it
+            user_acct.password = new
+
+            return {
+                'success': True,
+                'message': "Password changed",
+                'payload': {}
+            }
+        else:
+            return {
+                'success': False,
+                'message': "Ooops, there was a typo somewhere. Please check your request",
+                'payload': {}
+            }

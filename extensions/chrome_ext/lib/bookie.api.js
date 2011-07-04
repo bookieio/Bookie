@@ -279,5 +279,27 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+    /**
+     * Change the user's password
+     *
+     * @param current password
+     * @param new password
+     * @param callbacks used with the api call
+     *
+     */
+    $b.api.change_password = function (current_pass, new_pass, callbacks) {
+        var url = "/api/v1/account/password",
+            data = {'current_password': current_pass,
+                    'new_password': new_pass
+            },
+            opts = {
+                url: url,
+                data: data,
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    };
+
     return $b;
 })(bookie_opts);

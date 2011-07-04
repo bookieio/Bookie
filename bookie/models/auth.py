@@ -125,6 +125,21 @@ class UserMgr(object):
                 return 'user'
         return None
 
+    @staticmethod
+    def acceptable_password(password):
+        """Verify that the password is acceptable
+
+        Basically not empty, has more than 3 chars...
+
+        """
+        if password is None:
+            return False
+
+        if len(password) < 3:
+            return False
+
+        return True
+
 
 class User(Base):
     """Basic User def"""

@@ -119,6 +119,7 @@ var bookie = (function ($b, $) {
             // we need to bind the api key show click
             $('#show_key').bind('click', $b.accounts.show_api_key);
             $('#show_password').bind('click', $b.accounts.show_password_reset);
+            $('#submit_password_reset').bind('click', $b.accounts.reset_password);
         },
 
         'show_api_key': function (ev) {
@@ -156,6 +157,23 @@ var bookie = (function ($b, $) {
                 $div.show();
 
             }
+        },
+
+        // Change the user's password, get the things together and visit the
+        // api with the current password and new one
+        'reset_password': function (ev) {
+            ev.preventDefault();
+
+            $b.api.change_password(
+                $('#current_password').val(),
+                $('#new_password').val(),
+                { 'success': function (data) {
+                                console.log(data);
+                                $('#password_reset').append(data.message);
+                             }
+                }
+            );
+
         }
     };
 

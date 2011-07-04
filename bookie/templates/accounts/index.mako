@@ -31,13 +31,9 @@ ${account_nav()}
 
                 <li>
                     <label>New Password</label>
-                    <input type="password" id="current_password" name="current_password" />
+                    <input type="password" id="new_password" name="new_password" />
                 </li>
 
-                <li>
-                    <label>Verify New Password</label>
-                    <input type="password" id="current_password" name="current_password" />
-                </li>
                 <li>
                     <label></label>
                     <input type="button" id="submit_password_reset" value="Change" />
