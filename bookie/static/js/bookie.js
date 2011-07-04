@@ -118,8 +118,7 @@ var bookie = (function ($b, $) {
         'init': function () {
             // we need to bind the api key show click
             $('#show_key').bind('click', $b.accounts.show_api_key);
-            $('#show_password').bind('click', $b.accounts.show_password_reset);
-            $('#submit_password_reset').bind('click', $b.accounts.reset_password);
+            $b.accounts.passwordui.init();
         },
 
         'show_api_key': function (ev) {
@@ -146,35 +145,60 @@ var bookie = (function ($b, $) {
             }
         },
 
-        'show_password_reset': function (ev) {
-            var $div = $('#password_reset');
+        'passwordui': {
+            'init': function () {
+                $('#show_password').bind('click', $b.accounts.passwordui.show);
+                $('#submit_password_change').bind('click', $b.accounts.passwordui.change);
+            },
 
-            ev.preventDefault();
+            'show': function (ev) {
+                var $div = $('#password_change');
 
-            if ($div.is(':visible')) {
-                $div.hide();
-            } else {
-                $div.show();
+                ev.preventDefault();
+
+                if ($div.is(':visible')) {
+                    $div.hide();
+                } else {
+                    $div.show();
+
+                }
+            },
+
+            'reset': function () {
+                $('#current_password').val("");
+                $('#new_password').val("");
+                $('#password_change').hide();
+            },
+
+            'message': function (msg) {
+                $('#password_msg').html(msg);
+            },
+
+            // Change the user's password, get the things together and visit the
+            // api with the current password and new one
+            'change': function (ev) {
+                ev.preventDefault();
+
+                $b.api.change_password(
+                    $('#current_password').val(),
+                    $('#new_password').val(),
+                    {
+                        'success': function (data) {
+                            console.log(data);
+                            $b.accounts.passwordui.message(data.message);
+                            if (data.success) {
+                                $b.accounts.passwordui.reset();
+                            }
+                         }
+                    }
+                );
 
             }
-        },
 
-        // Change the user's password, get the things together and visit the
-        // api with the current password and new one
-        'reset_password': function (ev) {
-            ev.preventDefault();
-
-            $b.api.change_password(
-                $('#current_password').val(),
-                $('#new_password').val(),
-                { 'success': function (data) {
-                                console.log(data);
-                                $('#password_reset').append(data.message);
-                             }
-                }
-            );
 
         }
+
+
     };
 
     return $b;

@@ -21,7 +21,7 @@ ${account_nav()}
 
 <div class="account_group">
     <a href="#" id="show_password">Reset Password</a>
-    <div id="password_reset" style="display: none;">
+    <div id="password_change" style="display: none;">
         <form>
             <ul>
                 <li>
@@ -36,11 +36,12 @@ ${account_nav()}
 
                 <li>
                     <label></label>
-                    <input type="button" id="submit_password_reset" value="Change" />
+                    <input type="button" id="submit_password_change" value="Change" />
                 </li>
             </ul>
         </form>
     </div>
+    <div id="password_msg"></div>
 </div>
 
 <%def name="add_js()">
