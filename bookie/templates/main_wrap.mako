@@ -1,3 +1,6 @@
+<%
+    date_fmt = "%m/%d/%Y"
+%>
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />

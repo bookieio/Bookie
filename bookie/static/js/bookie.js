@@ -122,20 +122,22 @@ var bookie = (function ($b, $) {
         },
 
         'show_api_key': function (ev) {
-            var $key_div = $('#api_key');
+            var $key_div = $('#api_key'),
+                $key_container = $('#api_key_container');
 
             ev.preventDefault();
 
             // if the api key is showing and they click this, hide it
-            if($key_div.is(':visible')) {
-                $key_div.hide();
+            if($key_container.is(':visible')) {
+                $key_container.hide();
             } else {
                 // make an ajax request to get the api key for this user and then
                 // show it in the container for it
                 $b.api.api_key({
                     'success': function (data) {
                         if (data.success) {
-                            $('#api_key').html(data.payload.api_key).show();
+                            $key_div.html(data.payload.api_key);
+                            $key_container.show();
                         } else {
                             console.log('Some error, check out the request');
                             console.log(data);
@@ -170,8 +172,15 @@ var bookie = (function ($b, $) {
                 $('#password_change').hide();
             },
 
-            'message': function (msg) {
-                $('#password_msg').html(msg);
+            'message': function (msg, is_success) {
+                var $msg = $('#password_msg');
+                $msg.html(msg);
+
+                if (is_success) {
+                    $msg.attr('class', 'success');
+                } else {
+                    $msg.attr('class', 'error');
+                }
             },
 
             // Change the user's password, get the things together and visit the
@@ -184,7 +193,6 @@ var bookie = (function ($b, $) {
                     $('#new_password').val(),
                     {
                         'success': function (data) {
-                            console.log(data);
                             $b.accounts.passwordui.message(data.message);
                             if (data.success) {
                                 $b.accounts.passwordui.reset();

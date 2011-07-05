@@ -4,37 +4,43 @@
 
 ${account_nav()}
 
-<h1>Import Bookmarks</h1>
 
 <div class="yui3-g">
     <div class="yui3-u-3-4">
 
-    % if error:
-        <h3>
-        % for err in error:
-            ${err}
-        % endfor
-        </h3>
-    % endif
+
 
         <div class="block">
             <div class="head"></div>
             <div class="body">
-                <form class="" action="${request.route_url('user_import',
-                                                            username=request.user.username)}"
-                    method="POST" enctype=multipart/form-data>
-                    <fieldset>
-                        <ul>
-                            <li>
-                                <label for="import_file">Import File</label>
-                                <input type="file" name="import_file" id="import_file" />
-                            </li>
-                            <li>
-                                <input type="submit" name="upload" value="Upload" id="upload" />
-                            </li>
-                        </ul>
-                    </fieldset>
-                </form>
+                <div class="form">
+
+                    <div class="heading">Import Bookmarks</div>
+                    <form class="" action="${request.route_url('user_import',
+                                                                username=request.user.username)}"
+                        method="POST" enctype=multipart/form-data>
+                        <fieldset>
+                            <ul>
+                                <li>
+                                    <label for="import_file">Import File</label>
+                                    <input type="file" name="import_file" id="import_file" />
+                                </li>
+                                <li>
+                                    <label>&nbsp;</label>
+                                    <input type="submit" name="upload" value="Upload" id="upload" class="button" />
+                                </li>
+                            </ul>
+                        </fieldset>
+
+                        % if error:
+                            <div class="error">
+                                % for err in error:
+                                    ${err}
+                                % endfor
+                            </div>
+                        % endif
+                    </form>
+                </div>
             </div>
             <div class="head"></div>
         </div>
