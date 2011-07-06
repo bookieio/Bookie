@@ -1,8 +1,3 @@
-<%
-from datetime import datetime
-today = datetime.now()
-%>
-
 <%def name="display_popular_bmarks(bmark_list, username=None)">
     <%
         from datetime import datetime
