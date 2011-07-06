@@ -1,3 +1,8 @@
+<%
+from datetime import datetime
+today = datetime.now()
+%>
+
 <%def name="display_popular_bmarks(bmark_list, username=None)">
     <%
         from datetime import datetime
@@ -106,9 +111,24 @@
     </div>
 </%def>
 
+<%def name="cal_formatter(dateobj)">
+    <%
+        # if the year of this is not the current year, then add that to the
+        # output
+        from datetime import datetime
+        today = datetime.now()
+    %>
+    % if today.strftime("%y") != dateobj.strftime("%y"):
+        ${dateobj.strftime("%b '%y")}
+    % else:
+        ${dateobj.strftime("%b")}
+    % endif
+
+</%def>
+
 <%def name="date_divider(dateobj)">
     <div class="calendar" title=" ${dateobj.strftime("%m/%d/%Y")} ">
-        <h2>${dateobj.strftime("%b")}</h2>
+        <h2>${cal_formatter(dateobj)}</h2>
         <div>${dateobj.strftime("%d")}</div>
     </div>
 </%def>

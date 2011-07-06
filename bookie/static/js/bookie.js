@@ -200,13 +200,8 @@ var bookie = (function ($b, $) {
                          }
                     }
                 );
-
             }
-
-
         }
-
-
     };
 
     return $b;
