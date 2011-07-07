@@ -170,6 +170,8 @@ a.button_minimal {
 .form .heading {
     font-size: larger;
     text-decoration: none;
+    margin-bottom: .3em;
+    color: #000;
 }
 
 .form .heading:hover {

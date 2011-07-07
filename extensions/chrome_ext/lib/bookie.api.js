@@ -301,5 +301,25 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+
+    /**
+     * Change the user's account details
+     *
+     * @param data
+     * @param callbacks used with the api call
+     *
+     */
+    $b.api.account_update = function (new_data, callbacks) {
+        var url = "/api/v1/account/update",
+            data = new_data,
+            opts = {
+                url: url,
+                data: data,
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    };
+
     return $b;
 })(bookie_opts);

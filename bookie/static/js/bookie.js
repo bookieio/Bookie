@@ -119,6 +119,7 @@ var bookie = (function ($b, $) {
             // we need to bind the api key show click
             $('#show_key').bind('click', $b.accounts.show_api_key);
             $b.accounts.passwordui.init();
+            $b.accounts.updateui.init();
         },
 
         'show_api_key': function (ev) {
@@ -129,7 +130,7 @@ var bookie = (function ($b, $) {
 
             // if the api key is showing and they click this, hide it
             if($key_container.is(':visible')) {
-                $key_container.hide();
+                $key_container.hide('fast');
             } else {
                 // make an ajax request to get the api key for this user and then
                 // show it in the container for it
@@ -137,13 +138,52 @@ var bookie = (function ($b, $) {
                     'success': function (data) {
                         if (data.success) {
                             $key_div.html(data.payload.api_key);
-                            $key_container.show();
+                            $key_container.show(400);
                         } else {
                             console.log('Some error, check out the request');
                             console.log(data);
                         }
                     }
                 });
+            }
+        },
+
+        'updateui': {
+            'init': function () {
+                $('#submit_account_change').bind('click', $b.accounts.updateui.change);
+            },
+
+            'change': function (ev) {
+                ev.preventDefault();
+                $b.accounts.updateui.clear();
+
+                $b.api.account_update(
+                    {
+                        'name': $('#name').val(),
+                        'email': $('#email').val()
+                    },
+                    {
+                        'success': function (data) {
+                            $b.accounts.updateui.message(data.message, data.success);
+                         }
+                    });
+            },
+
+            'clear': function () {
+                $('#account_msg').hide('fast');
+            },
+
+            'message': function (msg, is_success) {
+                var $msg = $('#account_msg');
+                $msg.html(msg);
+
+                if (is_success) {
+                    $msg.attr('class', 'success');
+                } else {
+                    $msg.attr('class', 'error');
+                }
+
+                $msg.show('slow');
             }
         },
 
@@ -159,14 +199,17 @@ var bookie = (function ($b, $) {
                 ev.preventDefault();
 
                 if ($div.is(':visible')) {
-                    $div.hide();
+                    $div.hide('fast');
                 } else {
-                    $div.show();
+                    $div.show(400);
 
                 }
             },
 
             'reset': function () {
+                // hide the current message window
+                $('#password_msg').hide('fast');
+
                 $('#current_password').val("");
                 $('#new_password').val("");
                 $('#password_change').hide();
@@ -181,6 +224,8 @@ var bookie = (function ($b, $) {
                 } else {
                     $msg.attr('class', 'error');
                 }
+
+                $msg.show('slow');
             },
 
             // Change the user's password, get the things together and visit the

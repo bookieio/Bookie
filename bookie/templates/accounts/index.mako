@@ -6,37 +6,42 @@
 %>
 ${account_nav()}
 
-<div class="form">
-    <form>
-        <ul>
-            <li>
-                <label>Username</label>
-                <span>${user.username}</span>
-            </li>
-            <li>
-                <label>Name</label>
-                <input type="text" id="name" name="name" value="${user.name}" />
-            </li>
-            <li>
-                <label>Email</label>
-                <input type="text" id="email" name="email" value="${user.email}" />
-            </li>
-            <li>
-                <label>Signup Date</label>
-                <span>
-                    % if user.signup:
-                        ${user.signup.strftime(date_fmt)}
-                    % else:
-                        Unknown
-                    % endif
+<div class="form yui3-g">
+    <div class="yui3-u-1-4">
+        <div class="heading">${user.username}</div>
+
+        <div>Member since: <span>
+                        % if user.signup:
+                            ${user.signup.strftime(date_fmt)}
+                        % else:
+                            Unknown
+                        % endif
                 </span>
-            </li>
-            <li>
-                <label>Last Login</label>
-                <span>${user.last_login.strftime(date_fmt)}</span>
-            </li>
-        </ul>
-    </form>
+        </div>
+        <div>
+            Last Seen: <span>${user.last_login.strftime(date_fmt)}</span>
+        </div>
+    </div>
+    <div class="yui3-u-3-4">
+        <form>
+            <ul>
+                <li>
+                    <label>Name</label>
+                    <input type="text" id="name" name="name" value="${user.name}" />
+                </li>
+                <li>
+                    <label>Email</label>
+                    <input type="text" id="email" name="email" value="${user.email}" />
+                </li>
+                <li>
+                    <label></label>
+                    <input type="button" id="submit_account_change" value="Update" class="button" />
+                </li>
+
+            </ul>
+        </form>
+        <div id="account_msg" class="error"></div>
+    </div>
 </div>
 
 <div class="form">
@@ -59,7 +64,7 @@ ${account_nav()}
 </div>
 
 <div class="form">
-    <a href="#" id="show_password" class="heading">Reset Password</a>
+    <a href="#" id="show_password" class="heading">Change Password</a>
     <div id="password_change" style="display: none;">
         <form>
             <ul>
