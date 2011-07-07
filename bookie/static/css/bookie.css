@@ -34,7 +34,7 @@ BODY {
     text-decoration: none;
     color: #363d52;
     font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
-    text-shadow: 4px 4px 4px #CCCCCC;
+    text-shadow: 1px 1px 0 #CCCCCC;
 }
 
 .logo .alt_logo {
