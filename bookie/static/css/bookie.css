@@ -15,6 +15,10 @@ BODY {
     text-shadow: 1px 1px 1px #CCCCCC;
 }
 
+.block {
+    margin: 1em .5em;
+}
+
 /* NAVIGATION */
 .navigation {
     text-align: right;
@@ -91,7 +95,6 @@ form .button {
 form div {
     margin: .5em 0em;
 }
-
 
 
 /* BUTTON UI stolen from http://ubuwaits.github.com/css3-buttons/ */

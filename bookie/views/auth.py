@@ -47,7 +47,7 @@ def login(request):
         LOG.debug(auth)
         LOG.debug(UserMgr.get_list())
 
-        if auth and auth.validate_password(password):
+        if auth and auth.validate_password(password) and auth.activated:
             # We use the Primary Key as our identifier once someone has authenticated rather than the
             # username.  You can change what is returned as the userid by altering what is passed to
             # remember.
@@ -63,8 +63,19 @@ def login(request):
                                                         username=auth.username),
                              headers=headers)
 
-        message = 'Failed login'
-        AuthLog.login(login, False, password=password)
+        # log the right level of problem
+        if auth and not auth.validate_password(password):
+            message = "Invalid login"
+            AuthLog.login(login, False, password=password)
+
+        elif auth and not auth.activated:
+            message = "User account deactivated. Please check your email."
+            AuthLog.login(login, False, password=password)
+            AuthLog.disabled(login)
+
+        elif auth is None:
+            message = "Invalid login"
+            AuthLog.login(login, False, password=password)
 
     return {
         'message': message,
@@ -79,6 +90,45 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(location = route_url('home', request),
                      headers = headers)
+
+@view_config(route_name="api_user_reactivate", renderer="morjson")
+def reactivate(request):
+    """Reset a user account to enable them to change their password"""
+    params = request.params
+
+    # we need to get the user from the email
+    email = params.get('email', None)
+
+    if email is None:
+        return {
+            'success': False,
+            'message':  "Please submit an email address",
+            'payload': {},
+        }
+
+    user = UserMgr.get(email=email)
+    if user is None:
+        return {
+            'success': False,
+            'message':  "Please submit a valid address",
+            'payload': {},
+        }
+
+    # mark them for reactivation
+    user.reactivate("FORGOTTEN")
+
+    # log it
+    AuthLog.reactivate(user.username)
+
+    # and then send an email notification
+    # @todo the email side of things
+    return {
+        'success': True,
+        'message':  """Your account has been marked for reactivation. Please
+                    check your email for instructions to reset your
+                    password""",
+        'payload': {},
+    }
 
 
 def forbidden_view(request):

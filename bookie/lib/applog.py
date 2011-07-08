@@ -47,6 +47,30 @@ class AuthLog(Log):
 
         AuthLog.store(status, message, **data)
 
+    @staticmethod
+    def disabled(username):
+        """Attempt to log into a disabled account"""
+        msg = "{0} is a disabled user account".format(username)
+
+        data = {
+                'user': username,
+                'component': AuthLog.component
+        }
+
+        AuthLog.store(Log.INFO, msg, **data)
+
+    @staticmethod
+    def reactivate(username):
+        """The account was marked for reactivation"""
+        msg = "{0} is a marked for reactivation".format(username)
+
+        data = {
+                'user': username,
+                'component': AuthLog.component
+        }
+
+        AuthLog.store(Log.INFO, msg, **data)
+
 
 class BmarkLog(Log):
     """Bookmark specific log items"""

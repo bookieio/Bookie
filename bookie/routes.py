@@ -157,10 +157,12 @@ def build_routes(config):
     config.add_route("api_tag_complete", "api/v1/tags/complete")
     config.add_route("user_api_tag_complete", "{username}/api/v1/tags/complete")
 
+    # auth related
+    config.add_route("api_user_reactivate", "api/v1/reactivate")
+
     # calls/api for account related information
     config.add_route("user_account", "{username}/account")
     config.add_route("api_user_account", "{username}/api/v1/account")
-
     config.add_route("api_user_account_reset_password", "{username}/api/v1/account/password")
     config.add_route("api_user_account_api_key", "{username}/api/v1/account/api_key")
     config.add_route("api_user_account_update", "{username}/api/v1/account/update")

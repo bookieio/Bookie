@@ -30,7 +30,7 @@ from bookie.models import DBSession
 
 LOG = logging.getLogger(__name__)
 GROUPS = ['admin', 'user']
-ACTIVATION_AGE = timedelta(days=1)
+ACTIVATION_AGE = timedelta(days=3)
 
 
 def get_random_word(wordLen):
@@ -61,12 +61,13 @@ class Activation(Base):
                     default=lambda: datetime.now + ACTIVATION_AGE)
     created_by = Column('created_by', Unicode(255))
 
-    def __init__(self, user_id, created_system):
+    def __init__(self, created_system):
         """Create a new activation"""
-        self.id = user_id
         self.code = Activation._gen_activation_hash()
         self.created_by = created_system
+        self.valid_until = datetime.now() + ACTIVATION_AGE
 
+    @staticmethod
     def _gen_activation_hash():
         """Generate a random activation hash for this user account"""
         # for now just cheat and generate an api key, that'll work for now
@@ -91,7 +92,7 @@ class UserMgr(object):
         return user_query.all()
 
     @staticmethod
-    def get(user_id=None, username=None):
+    def get(user_id=None, username=None, email=None):
         """Get the user instance for this information
 
         :param user_id: integer id of the user in db
@@ -106,6 +107,9 @@ class UserMgr(object):
 
         if user_id is not None:
             return user_query.filter(User.id == user_id).first()
+
+        if email is not None:
+            return user_query.filter(User.email == email).first()
 
         return None
 
@@ -210,6 +214,16 @@ class User(Base):
 
     def deactivate(self):
         """In case we need to disable the login"""
+        self.activated = False
+
+    def reactivate(self, creator):
+        """Put the account through the reactivation process
+
+        This can come about via a signup or from forgotten password link
+
+        """
+        # if we reactivate then reinit this
+        self.activation = Activation(creator)
         self.activated = False
 
     @staticmethod

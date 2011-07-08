@@ -114,6 +114,60 @@ var bookie = (function ($b, $) {
         $($b.EVENTID).trigger($b.events.LOAD);
     };
 
+    $b.login = {
+        'init': function () {
+            // we need to bind the api key show click
+            $('#show_forgotten').bind('click', $b.login.show_forgotten);
+            $('#submit_forgotten').bind('click', $b.login.submit_forgotten);
+        },
+
+        'show_forgotten': function (ev) {
+            var $show = $('#forgotten_password');
+            ev.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if($show.is(':visible')) {
+                $show.hide('fast');
+            } else {
+                $show.show(400);
+            }
+        },
+
+        'clear': function () {
+            $('#email').val("");
+        },
+
+        'message': function (msg, is_success) {
+            var $msg = $('#forgotten_msg');
+            $msg.html(msg);
+
+            if (is_success) {
+                $msg.attr('class', 'success');
+            } else {
+                $msg.attr('class', 'error');
+            }
+
+            $msg.show('slow');
+        },
+
+        'submit_forgotten': function (ev) {
+            var email;
+            ev.preventDefault();
+
+            email = $('#email').val();
+
+            $b.api.reactivate(email, {
+                'success': function (data)  {
+                    console.log(data);
+
+                    $b.login.clear();
+                    $b.login.message(data.message, data.success);
+                }
+            });
+
+        }
+    };
+
     $b.accounts = {
         'init': function () {
             // we need to bind the api key show click

@@ -321,5 +321,24 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+    /**
+     * Mark the user account to go through reactivation procedures
+     *
+     * @param email of the user we want to reactivate (reset password)
+     * @param callbacks used with the api call
+     *
+     */
+    $b.api.reactivate = function (email, callbacks) {
+        var url = "/api/v1/reactivate",
+            data = { 'email': email },
+            opts = {
+                url: url,
+                data: data,
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    }
+
     return $b;
 })(bookie_opts);
