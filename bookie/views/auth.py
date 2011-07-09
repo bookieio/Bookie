@@ -10,6 +10,7 @@ from pyramid.url import route_url
 from pyramid.view import view_config
 
 from bookie.lib.applog import AuthLog
+from bookie.lib.message import ReactivateMsg
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
 
@@ -125,6 +126,15 @@ def reactivate(request):
 
     # and then send an email notification
     # @todo the email side of things
+    settings = request.registry.settings
+    msg = ReactivateMsg("rharding@mitechie.com",
+                        "Activate your Bookie account",
+                        settings)
+
+    msg.send(request.route_url('reset',
+                         username=user.username,
+                         reset_key=user.activation.code))
+
     return {
         'success': True,
         'message':  """Your account has been marked for reactivation. Please
