@@ -60,13 +60,20 @@ class AuthLog(Log):
         AuthLog.store(Log.INFO, msg, **data)
 
     @staticmethod
-    def reactivate(username):
+    def reactivate(username, success=True, code=None):
         """The account was marked for reactivation"""
-        msg = "{0} is a marked for reactivation".format(username)
+        if success:
+            msg = "{0} was reactivated".format(username)
+        else:
+            msg = "{0} was attempted to be reactivated with invalid credentials".format(username)
 
         data = {
                 'user': username,
-                'component': AuthLog.component
+                'component': AuthLog.component,
+                'payload': {
+                    'success': success,
+                    'code': code,
+                }
         }
 
         AuthLog.store(Log.INFO, msg, **data)

@@ -60,6 +60,11 @@ class ReqOrApiAuthorize(object):
 
         """
 
+        # if the user account is not activated then no go
+        if not self.user_acct.activated:
+            LOG.debug("API call with deactivated account")
+            raise HTTPForbidden('Deactivated Account')
+
         if AuthHelper.check_login(self.request, username=self.username):
             LOG.debug("CHECK LOGIN SUCCESS")
             return True
@@ -87,14 +92,20 @@ class ApiAuthorize(object):
 
     """
 
-    def __init__(self, submitted_key, config_key):
+    def __init__(self, user, submitted_key):
         """Create the context manager"""
-        self.api_key = config_key
+        self.user = user
+        self.api_key = user.api_key
         self.check_key = submitted_key
 
     def __enter__(self):
         """Verify api key set in constructor"""
-        if not AuthHelper.check_api(self.check_key, self.api_key):
+        # if the user account is not activated then no go
+        if not self.user.activated:
+            LOG.debug("API only call with deactivated account")
+            raise HTTPForbidden('Deactivated Account')
+
+        if not AuthHelper.check_api(self.check_key, self.user.api_key):
             raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):

@@ -8,6 +8,7 @@ from StringIO import StringIO
 
 from bookie.lib.access import ApiAuthorize
 from bookie.lib.access import ReqOrApiAuthorize
+from bookie.lib.applog import AuthLog
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 
@@ -18,6 +19,7 @@ from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
+from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr
 
 from bookie.models.fulltext import get_fulltext_handler
@@ -154,7 +156,7 @@ def bmark_sync(request):
     username = rdict.get('username', None)
     user = UserMgr.get(username=username)
 
-    with ApiAuthorize(user.api_key,
+    with ApiAuthorize(user,
                       params.get('api_key', None)):
 
         hash_list = BmarkMgr.hash_list(username=username)
@@ -243,7 +245,7 @@ def bmark_add(request):
     username = rdict.get("username", None)
     user = UserMgr.get(username=username)
 
-    with ApiAuthorize(user.api_key,
+    with ApiAuthorize(user,
                       params.get('api_key', None)):
 
         if 'url' in params and params['url']:
@@ -355,7 +357,7 @@ def bmark_remove(request):
     username = rdict.get("username", None)
     user = UserMgr.get(username=username)
 
-    with ApiAuthorize(user.api_key,
+    with ApiAuthorize(user,
                       params.get('api_key', None)):
 
         if 'url' in params and params['url']:
@@ -634,4 +636,47 @@ def account_update(request):
             'success': True,
             'message': "Account updated",
             'payload': {'user': dict(user_acct)}
+        }
+
+
+@view_config(route_name="api_user_account_activate", renderer="morjson")
+def account_activate(request):
+    """Reset a user after being deactivated
+
+    :param username: required to know what user we're resetting
+    :param activation: code needed to activate
+    :param password: new password to use for the user
+
+    """
+    params = request.params
+    rdict = request.matchdict
+
+    username = rdict.get('username', None)
+    activation = params.get('activation', None)
+    password = params.get('password', None)
+
+    if not UserMgr.acceptable_password(password):
+        return {
+            'success': False,
+            'message': "Come on, pick a real password please",
+            'payload': {}
+        }
+
+    res = ActivationMgr.activate_user(username, activation, password)
+
+    if res:
+        # success so respond nicely
+        AuthLog.reactivate(username, success=True)
+        return {
+            'success': True,
+            'message': "Account activated, please log in.",
+            'payload': {}
+        }
+    else:
+
+        AuthLog.reactivate(username, success=False, code=activation)
+        return {
+            'success': False,
+            'message': "There was an issue attempting to activate this account.",
+            'payload': {}
         }

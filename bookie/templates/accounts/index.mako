@@ -1,6 +1,6 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Account Information: ${user.username}</%def>
-<%namespace file="func.mako" import="account_nav"/>
+<%namespace file="func.mako" import="account_nav, password_reset"/>
 <%
     date_fmt = "%m/%d/%Y"
 %>
@@ -63,30 +63,7 @@ ${account_nav()}
     </div>
 </div>
 
-<div class="form">
-    <a href="#" id="show_password" class="heading">Change Password</a>
-    <div id="password_change" style="display: none;">
-        <form>
-            <ul>
-                <li>
-                    <label>Current Password</label>
-                    <input type="password" id="current_password" name="current_password" />
-                </li>
-
-                <li>
-                    <label>New Password</label>
-                    <input type="password" id="new_password" name="new_password" />
-                </li>
-
-                <li>
-                    <label></label>
-                    <input type="button" id="submit_password_change" value="Change" class="button" />
-                </li>
-            </ul>
-        </form>
-    </div>
-    <div id="password_msg" class="error"></div>
-</div>
+${password_reset(reset=False)}
 
 <%def name="add_js()">
     <script type="text/javascript">

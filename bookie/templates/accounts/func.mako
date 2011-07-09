@@ -16,3 +16,44 @@
         class="selected"
     % endif
 </%def>
+
+<%def name="password_reset(reset)">
+    <%
+        if reset:
+            title = "Reactivate account by resetting your password"
+        else:
+            title = "Change password"
+    %>
+    <div class="form">
+        <a href="#" id="show_password" class="heading">${title}</a>
+
+        <div id="password_change"
+            % if not reset:
+                style="display: none;"
+            % endif
+        >
+            <form id="password_reset">
+                <ul>
+                    % if not reset:
+                        <li>
+                            <label>Current Password</label>
+                            <input type="password" id="current_password" name="current_password" />
+                        </li>
+                    % endif
+
+
+                    <li>
+                        <label>New Password</label>
+                        <input type="password" id="new_password" name="new_password" />
+                    </li>
+
+                    <li>
+                        <label></label>
+                        <input type="button" id="submit_password_change" value="Change" class="button" />
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div id="password_msg" class="error"></div>
+    </div>
+</%def>

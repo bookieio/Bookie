@@ -1,8 +1,6 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Login</%def>
 
-
-
 <div class="login_form" class="block">
     <form action="${request.route_url('login')}" method="post" class="login form">
         <div class="heading">Log In</div>
@@ -24,7 +22,6 @@
         </ul>
     </form>
 </div>
-
 
 <div class="block form">
     <a href="" id="show_forgotten" class="heading">Forgotten Password</a>

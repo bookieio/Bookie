@@ -76,6 +76,7 @@ def build_routes(config):
     # auth routes
     config.add_route("login", "login")
     config.add_route("logout", "logout")
+    config.add_route("reset", "{username}/reset/{reset_key}")
 
     # DELAPI Routes
     # config.add_route("del_post_add", "/{username}/delapi/posts/add")
@@ -166,6 +167,7 @@ def build_routes(config):
     config.add_route("api_user_account_reset_password", "{username}/api/v1/account/password")
     config.add_route("api_user_account_api_key", "{username}/api/v1/account/api_key")
     config.add_route("api_user_account_update", "{username}/api/v1/account/update")
+    config.add_route("api_user_account_activate", "{username}/api/v1/account/activate")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

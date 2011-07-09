@@ -40,6 +40,46 @@ def get_random_word(wordLen):
     return word
 
 
+class ActivationMgr(object):
+
+    @staticmethod
+    def get_user(username, code):
+        """Get the user for this code"""
+        qry = Activation.query.\
+                filter(Activation.code == code).\
+                filter(User.username == username)
+
+        res = qry.first()
+
+        if res is not None:
+            return res.user
+        else:
+            return None
+
+
+    @staticmethod
+    def activate_user(username, code, new_pass):
+        """Given this code get the user with this code make sure they exist"""
+
+        qry = Activation.query.\
+                filter(Activation.code == code).\
+                filter(User.username == username)
+
+        res = qry.first()
+
+        if UserMgr.acceptable_password(new_pass) and res is not None:
+            user = res.user
+            user.activated = True
+            user.password = new_pass
+            res.activate()
+
+            LOG.debug(dict(user))
+
+            return True
+        else:
+            return None
+
+
 class Activation(Base):
     """Handle activations/password reset items for users
 
@@ -73,9 +113,9 @@ class Activation(Base):
         # for now just cheat and generate an api key, that'll work for now
         return User.gen_api_key()
 
-    def deactivate(self):
+    def activate(self):
         """Remove this activation"""
-        DBSession.remove(self)
+        DBSession.delete(self)
 
 
 class UserMgr(object):

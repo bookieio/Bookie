@@ -2,6 +2,7 @@ import logging
 
 from datetime import datetime
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.renderers import render_to_response
 from pyramid.security import remember
 from pyramid.security import forget
@@ -10,6 +11,7 @@ from pyramid.view import view_config
 
 from bookie.lib.applog import AuthLog
 from bookie.models.auth import UserMgr
+from bookie.models.auth import ActivationMgr
 
 
 LOG = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ def login(request):
 
         # log the right level of problem
         if auth and not auth.validate_password(password):
-            message = "Invalid login"
+            message = "Failed login"
             AuthLog.login(login, False, password=password)
 
         elif auth and not auth.activated:
@@ -74,7 +76,7 @@ def login(request):
             AuthLog.disabled(login)
 
         elif auth is None:
-            message = "Invalid login"
+            message = "Failed login"
             AuthLog.login(login, False, password=password)
 
     return {
@@ -90,6 +92,7 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(location = route_url('home', request),
                      headers = headers)
+
 
 @view_config(route_name="api_user_reactivate", renderer="morjson")
 def reactivate(request):
@@ -128,6 +131,27 @@ def reactivate(request):
                     check your email for instructions to reset your
                     password""",
         'payload': {},
+    }
+
+
+@view_config(route_name="reset", renderer="/auth/reset.mako")
+def reset(request):
+    """Once deactivated, allow for changing the password via activation key"""
+    rdict = request.matchdict
+
+    username = rdict.get('username', None)
+    activation_key = rdict.get('reset_key', None)
+
+    # this can only be visited if user is visiting the reset with the right key
+    # for the username in the url
+    user = ActivationMgr.get_user(username, activation_key)
+
+    if user is None:
+        # just 404 if we don't have an activation code for this user
+        raise HTTPNotFound()
+
+    return {
+        'user': user,
     }
 
 

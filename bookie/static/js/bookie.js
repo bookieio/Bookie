@@ -244,6 +244,7 @@ var bookie = (function ($b, $) {
         'passwordui': {
             'init': function () {
                 $('#show_password').bind('click', $b.accounts.passwordui.show);
+                $('form#password_reset').bind('submit', $b.accounts.passwordui.change);
                 $('#submit_password_change').bind('click', $b.accounts.passwordui.change);
             },
 
@@ -261,9 +262,6 @@ var bookie = (function ($b, $) {
             },
 
             'reset': function () {
-                // hide the current message window
-                $('#password_msg').hide('fast');
-
                 $('#current_password').val("");
                 $('#new_password').val("");
                 $('#password_change').hide();
@@ -287,12 +285,15 @@ var bookie = (function ($b, $) {
             'change': function (ev) {
                 ev.preventDefault();
 
+                // hide the current message window
+                $('#password_msg').hide('fast');
+
                 $b.api.change_password(
                     $('#current_password').val(),
                     $('#new_password').val(),
                     {
                         'success': function (data) {
-                            $b.accounts.passwordui.message(data.message);
+                            $b.accounts.passwordui.message(data.message, data.success);
                             if (data.success) {
                                 $b.accounts.passwordui.reset();
                             }
@@ -302,6 +303,46 @@ var bookie = (function ($b, $) {
             }
         }
     };
+
+    $b.reset = {
+        'init': function () {
+            $('#submit_password_change').bind('click', $b.reset.change);
+            $('form#password_reset').bind('submit', $b.reset.change);
+        },
+
+        'message': function (msg, is_success) {
+            var $msg = $('#password_msg');
+            $msg.html(msg);
+
+            if (is_success) {
+                $msg.attr('class', 'success');
+            } else {
+                $msg.attr('class', 'error');
+            }
+
+            $msg.show('slow');
+        },
+
+        // Change the user's password, get the things together and visit the
+        // api with the current password and new one
+        'change': function (ev) {
+            ev.preventDefault();
+
+            console.log('calling activate');
+
+            $b.api.activate(
+                $('#username').val(),
+                $('#code').val(),
+                $('#new_password').val(),
+                {
+                    'success': function (data) {
+                        console.log(data);
+                        $b.reset.message(data.message, data.success);
+                     }
+                }
+            );
+        }
+    }
 
     return $b;
 })(bookie || {}, jQuery);

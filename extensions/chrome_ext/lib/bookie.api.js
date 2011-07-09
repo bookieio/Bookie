@@ -294,6 +294,7 @@ var bookie = (function (opts) {
             },
             opts = {
                 url: url,
+                type: 'post',
                 data: data,
                 success: callbacks.success
             };
@@ -333,6 +334,29 @@ var bookie = (function (opts) {
             data = { 'email': email },
             opts = {
                 url: url,
+                data: data,
+                success: callbacks.success
+            };
+
+        $b.api._request(opts);
+    }
+
+    /**
+     * Activate the account after being deactivated
+     *
+     * @param uesrname
+     * @param code
+     * @param new_password
+     *
+     */
+    $b.api.activate = function (username, code, new_password, callbacks) {
+        var url = "/" + username + "/api/v1/account/activate",
+            data = { 'activation': code,
+                     'password': new_password
+            },
+            opts = {
+                url: url,
+                type: 'post',
                 data: data,
                 success: callbacks.success
             };
