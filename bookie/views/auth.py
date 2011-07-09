@@ -127,7 +127,7 @@ def reactivate(request):
     # and then send an email notification
     # @todo the email side of things
     settings = request.registry.settings
-    msg = ReactivateMsg("rharding@mitechie.com",
+    msg = ReactivateMsg(user.email,
                         "Activate your Bookie account",
                         settings)
 
