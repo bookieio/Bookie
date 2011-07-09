@@ -666,7 +666,7 @@ def account_activate(request):
 
     if res:
         # success so respond nicely
-        AuthLog.reactivate(username, success=True)
+        AuthLog.reactivate(username, success=True, code=activation)
         return {
             'success': True,
             'message': "Account activated, please log in.",
