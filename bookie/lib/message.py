@@ -93,7 +93,7 @@ class Message(object):
                 smtp_server = self.settings.get('email.host')
 
                 if smtp_server == 'sendmail':
-                    sendmail(msg['From'], msg['To'], msg['Subject'], self.body)
+                    sendmail(msg['To'], msg['From'], msg['Subject'], self.body)
                 else:
                     mail_server = smtplib.SMTP(smtp_server)
                     mail_server.sendmail(msg['From'],
