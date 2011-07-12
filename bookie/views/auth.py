@@ -10,7 +10,6 @@ from pyramid.url import route_url
 from pyramid.view import view_config
 
 from bookie.lib.applog import AuthLog
-from bookie.lib.message import ReactivateMsg
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
 
@@ -93,56 +92,6 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(location = route_url('home', request),
                      headers = headers)
-
-
-@view_config(route_name="api_user_reactivate", renderer="morjson")
-def reactivate(request):
-    """Reset a user account to enable them to change their password"""
-    params = request.params
-
-    # we need to get the user from the email
-    email = params.get('email', None)
-
-    if email is None:
-        return {
-            'success': False,
-            'message':  "Please submit an email address",
-            'payload': {},
-        }
-
-    user = UserMgr.get(email=email)
-    if user is None:
-        return {
-            'success': False,
-            'message':  "Please submit a valid address",
-            'payload': {},
-        }
-
-    # mark them for reactivation
-    user.reactivate("FORGOTTEN")
-
-    # log it
-    AuthLog.reactivate(user.username)
-
-    # and then send an email notification
-    # @todo the email side of things
-    settings = request.registry.settings
-    msg = ReactivateMsg(user.email,
-                        "Activate your Bookie account",
-                        settings)
-
-    msg.send(request.route_url('reset',
-                         username=user.username,
-                         reset_key=user.activation.code))
-
-    return {
-        'success': True,
-        'message':  """Your account has been marked for reactivation. Please
-                    check your email for instructions to reset your
-                    password""",
-        'payload': {},
-    }
-
 
 @view_config(route_name="reset", renderer="/auth/reset.mako")
 def reset(request):

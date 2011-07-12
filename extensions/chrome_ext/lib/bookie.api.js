@@ -155,7 +155,8 @@ var bookie = (function (opts) {
                 type: 'post',
                 url: url,
                 data: data,
-                success: callbacks.success
+                success: callbacks.success,
+                error: callbacks.error
             };
         $b.api._request(opts);
     };
@@ -351,7 +352,7 @@ var bookie = (function (opts) {
      */
     $b.api.activate = function (username, code, new_password, callbacks) {
         var url = "/" + username + "/api/v1/account/activate",
-            data = { 'activation': code,
+            data = { 'code': code,
                      'password': new_password
             },
             opts = {

@@ -260,6 +260,15 @@ var bookie = (function (opts) { //module, $, logger) {
                                 $b.response_codes[data.message],
                                 "Could not save bookmark"));
                         }
+                    },
+                    'error': function (jqxhr, textStatus, errorThrown) {
+                        // if there's an error, say a 403 or something display
+                        // an error
+                        $b.ui.notify(new Notification(
+                            "error",
+                            jqxhr.status, //TODO: correctly determine http status code
+                            $b.response_codes[jqxhr.status],
+                            "Could not save bookmark. Please check error code."));
                     }
                 });
     };
@@ -293,7 +302,18 @@ var bookie = (function (opts) { //module, $, logger) {
                             $b.response_codes[data.message],
                             "Could not save bookmark"));
                     }
+                },
+
+                'error': function (jqxhr, textStatus, errorThrown) {
+                    // if there's an error, say a 403 or something display
+                    // an error
+                    $b.ui.notify(new Notification(
+                        "error",
+                        jqxhr.status, //TODO: correctly determine http status code
+                        $b.response_codes[jqxhr.status],
+                        "Could not save bookmark. Please check error code."));
                 }
+
             }
         );
     };
