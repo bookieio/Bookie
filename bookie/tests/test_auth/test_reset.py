@@ -19,7 +19,7 @@ import json
 import logging
 import transaction
 
-from nose.tools import ok_, eq_
+from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
