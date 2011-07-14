@@ -493,6 +493,21 @@ class BmarkMgr(object):
 
 
     @staticmethod
+    def user_dump(username):
+        """Get a list of all of the user's bookmarks for an export dump usually
+
+        """
+        return Bmark.query.join(Bmark.tags).\
+                             options(
+                                contains_eager(Bmark.tags)
+                             ).\
+                             join(Bmark.hashed).\
+                             options(
+                                 contains_eager(Bmark.hashed)
+                             ).\
+                             filter(Bmark.username == username).all()
+
+    @staticmethod
     def recent(limit=50, page=0, with_tags=False):
         """Get a recent set of bookmarks"""
         qry = Bmark.query

@@ -148,6 +148,7 @@ def build_routes(config):
     config.add_route("user_api_bmark_sync", "{username}/api/v1/bmarks/sync")
     config.add_route("user_api_bmark_add", "{username}/api/v1/bmarks/add")
     config.add_route("user_api_bmark_remove", "{username}/api/v1/bmarks/remove")
+    config.add_route("user_api_bmark_export", "{username}/api/v1/bmarks/export")
 
     # # this route must be last, none of the above will look like hashes (22char)
     # # so it's safe to have as a kind of default route at the end

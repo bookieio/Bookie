@@ -4,11 +4,13 @@ import logging
 from datetime import datetime
 from pyramid.settings import asbool
 from pyramid.view import view_config
+from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
 from bookie.lib.access import ApiAuthorize
 from bookie.lib.access import ReqOrApiAuthorize
 from bookie.lib.applog import AuthLog
+from bookie.lib.applog import BmarkLog
 from bookie.lib.message import ReactivateMsg
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
@@ -385,6 +387,36 @@ def bmark_remove(request):
                 }
 
 
+@view_config(route_name="user_api_bmark_export", renderer="morjson")
+def bmark_exportexport(request):
+    """Export via the api call to json dump
+
+    """
+    params = request.params
+    rdict = request.matchdict
+
+    username = rdict.get("username", None)
+    user = UserMgr.get(username=username)
+
+    with ApiAuthorize(user,
+                      params.get('api_key', None)):
+
+        bmark_list = BmarkMgr.user_dump(username)
+        # log that the user exported this
+        BmarkLog.export(username, username)
+
+        def build_bmark(bmark):
+            d = dict(bmark)
+            d['hashed'] = dict(bmark.hashed)
+            return d
+
+        return {
+            'success': True,
+            'message': "",
+            'payload': [build_bmark(bmark) for bmark in bmark_list],
+        }
+
+
 @view_config(route_name="api_tag_complete", renderer="morjson")
 @view_config(route_name="user_api_tag_complete", renderer="morjson")
 def tag_complete(request):
@@ -740,3 +772,6 @@ def account_activate(request):
             'message': "There was an issue attempting to activate this account.",
             'payload': {}
         }
+
+
+
