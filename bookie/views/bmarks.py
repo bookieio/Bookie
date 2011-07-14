@@ -1,13 +1,10 @@
 """Controllers related to viewing lists of bookmarks"""
 import logging
 
-from pyramid import security
-from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
-from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -20,7 +17,8 @@ RESULTS_MAX = 50
 @view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
 @view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
 @view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="user_bmark_recent_tags", renderer="/bmark/recent.mako")
+@view_config(route_name="user_bmark_recent_tags",
+             renderer="/bmark/recent.mako")
 def recent(request):
     """Most recent list of bookmarks capped at MAX"""
     rdict = request.matchdict
@@ -66,7 +64,8 @@ def recent(request):
 @view_config(route_name="bmark_popular", renderer="/bmark/popular.mako")
 @view_config(route_name="user_bmark_popular", renderer="/bmark/popular.mako")
 @view_config(route_name="bmark_popular_tags", renderer="/bmark/popular.mako")
-@view_config(route_name="user_bmark_popular_tags", renderer="/bmark/popular.mako")
+@view_config(route_name="user_bmark_popular_tags",
+             renderer="/bmark/popular.mako")
 def popular(request):
     """Most popular list of bookmarks capped at MAX"""
     rdict = request.matchdict

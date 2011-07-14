@@ -122,7 +122,9 @@ def build_routes(config):
     # ajax versions are used in the mobile search interface
     config.add_route("search_results_ajax", "results*terms", xhr=True)
     config.add_route("search_results_rest", "results*terms")
-    config.add_route("user_search_results_ajax", "{username}/results*terms", xhr=True)
+    config.add_route("user_search_results_ajax",
+                     "{username}/results*terms",
+                     xhr=True)
     config.add_route("user_search_results_rest", "{username}/results*terms")
 
     # removed the overall export. We're not going to have a link for exporting
@@ -142,22 +144,29 @@ def build_routes(config):
     config.add_route('api_bmark_get_readable', 'api/v1/bmarks/get_readable')
     config.add_route('api_bmark_readable', 'api/v1/bmarks/readable')
 
-    config.add_route("user_api_bmark_recent", "{username}/api/v1/bmarks/recent")
-    config.add_route("user_api_bmark_popular", "{username}/api/v1/bmarks/popular")
-    config.add_route("user_api_bmark_search", "{username}/api/v1/bmarks/search/*terms")
+    config.add_route("user_api_bmark_recent",
+                     "{username}/api/v1/bmarks/recent")
+    config.add_route("user_api_bmark_popular",
+                     "{username}/api/v1/bmarks/popular")
+    config.add_route("user_api_bmark_search",
+                     "{username}/api/v1/bmarks/search/*terms")
     config.add_route("user_api_bmark_sync", "{username}/api/v1/bmarks/sync")
     config.add_route("user_api_bmark_add", "{username}/api/v1/bmarks/add")
-    config.add_route("user_api_bmark_remove", "{username}/api/v1/bmarks/remove")
-    config.add_route("user_api_bmark_export", "{username}/api/v1/bmarks/export")
+    config.add_route("user_api_bmark_remove",
+                     "{username}/api/v1/bmarks/remove")
+    config.add_route("user_api_bmark_export",
+                     "{username}/api/v1/bmarks/export")
 
-    # # this route must be last, none of the above will look like hashes (22char)
-    # # so it's safe to have as a kind of default route at the end
+    # this route must be last, none of the above will look like hashes
+    # (22char) # so it's safe to have as a kind of default route at the end
     config.add_route("api_bmark_hash", "api/v1/bmarks/{hash_id}")
-    config.add_route("user_api_bmark_hash", "{username}/api/v1/bmarks/{hash_id}")
+    config.add_route("user_api_bmark_hash",
+                     "{username}/api/v1/bmarks/{hash_id}")
 
     # api calls for tag relation information
     config.add_route("api_tag_complete", "api/v1/tags/complete")
-    config.add_route("user_api_tag_complete", "{username}/api/v1/tags/complete")
+    config.add_route("user_api_tag_complete",
+                     "{username}/api/v1/tags/complete")
 
     # auth related
     config.add_route("api_user_reactivate", "api/v1/reactivate")
@@ -165,10 +174,14 @@ def build_routes(config):
     # calls/api for account related information
     config.add_route("user_account", "{username}/account")
     config.add_route("api_user_account", "{username}/api/v1/account")
-    config.add_route("api_user_account_reset_password", "{username}/api/v1/account/password")
-    config.add_route("api_user_account_api_key", "{username}/api/v1/account/api_key")
-    config.add_route("api_user_account_update", "{username}/api/v1/account/update")
-    config.add_route("api_user_account_activate", "{username}/api/v1/account/activate")
+    config.add_route("api_user_account_reset_password",
+                     "{username}/api/v1/account/password")
+    config.add_route("api_user_account_api_key",
+                     "{username}/api/v1/account/api_key")
+    config.add_route("api_user_account_update",
+                     "{username}/api/v1/account/update")
+    config.add_route("api_user_account_activate",
+                     "{username}/api/v1/account/activate")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

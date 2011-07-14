@@ -14,6 +14,7 @@ from urlparse import urlparse
 
 LOG = logging.getLogger(__name__)
 
+
 class DictObj(dict):
     def __getattr__(self, name):
         try:
@@ -68,7 +69,8 @@ class Readable(object):
         # we can only get this if we have headers
         LOG.debug('content type')
         LOG.debug(self.content_type)
-        if self.content_type is not None and self.content_type.lower() in IMAGE_TYPES.values():
+        if self.content_type is not None and \
+           self.content_type.lower() in IMAGE_TYPES.values():
             return True
         else:
             return False
@@ -107,7 +109,7 @@ class ReadUrl(object):
         """Fetch the given url and parse out a Readable Obj for the content"""
         read = Readable()
 
-        if not isinstance(url,unicode):
+        if not isinstance(url, unicode):
             url = url.decode('utf-8')
 
         # first check if we have a special url with the #! content in it
@@ -119,8 +121,8 @@ class ReadUrl(object):
             clean_url = u"{0}?_escaped_fragment_={1}".format(url[0:idx],
                                                             fragment)
         else:
-            # we need to clean up the url first, we can't have any anchor tag on
-            # the url or urllib2 gets cranky
+            # we need to clean up the url first, we can't have any anchor tag
+            # on the url or urllib2 gets cranky
             parsed = urlparse(url)
 
             if parsed.query is not None and parsed.query != '':

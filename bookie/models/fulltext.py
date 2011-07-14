@@ -64,7 +64,7 @@ class SqliteFulltext(object):
                     options(contains_eager(SqliteBmarkFT.bmark, alias=bmark))
 
         if username:
-            qry = qry.filter(bmark.username==username)
+            qry = qry.filter(bmark.username == username)
 
         res = qry.order_by(bmark.stored).all()
 
@@ -90,7 +90,7 @@ class SqliteFulltext(object):
                                              alias=bmarks))
 
             if username:
-                qry = qry.filter(bmark.username==username)
+                qry = qry.filter(bmark.username == username)
 
             res = qry.order_by(bmarks.stored).all()
             for read in res:
@@ -125,7 +125,7 @@ class MySqlFulltext(object):
         qry = desc.union(tag_str, ext)
 
         if username:
-            qry = qry.filter(Bmark.username==username)
+            qry = qry.filter(Bmark.username == username)
 
         res = qry.order_by(Bmark.stored).all()
 
@@ -146,7 +146,7 @@ class MySqlFulltext(object):
                                              hashed.bmark,
                                              alias=bmarks))
             if username:
-                qry = qry.filter(bmarks.username==username)
+                qry = qry.filter(bmarks.username == username)
 
             res = qry.order_by(bmarks.stored).all()
             for read in res:
@@ -187,7 +187,7 @@ class PgSqlFulltext(object):
                   filter(Bmark.bid.in_(ids))
 
         if username:
-            qry = qry.filter(Bmark.username==username)
+            qry = qry.filter(Bmark.username == username)
 
         results.update(set([bmark for bmark in qry.all()]))
 
@@ -204,12 +204,12 @@ class PgSqlFulltext(object):
 
             ids = set([r.hash_id for r in res])
 
-            qry =  Bmark.query.join(Bmark.tags).\
+            qry = Bmark.query.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags)).\
                       filter(Bmark.hash_id.in_(ids))
 
             if username:
-                qry = qry.filter(Bmark.username==username)
+                qry = qry.filter(Bmark.username == username)
 
             readable_res = [bmark for bmark in qry.all()]
 

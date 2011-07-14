@@ -32,7 +32,7 @@ def login(request):
     login_url = route_url('login', request)
     referrer = request.url
     if referrer == login_url:
-        referrer = '/' # never use the login form itself as came_from
+        referrer = '/'  # never use the login form itself as came_from
 
     came_from = request.params.get('came_from', referrer)
 
@@ -50,9 +50,9 @@ def login(request):
         LOG.debug(UserMgr.get_list())
 
         if auth and auth.validate_password(password) and auth.activated:
-            # We use the Primary Key as our identifier once someone has authenticated rather than the
-            # username.  You can change what is returned as the userid by altering what is passed to
-            # remember.
+            # We use the Primary Key as our identifier once someone has
+            # authenticated rather than the username.  You can change what is
+            # returned as the userid by altering what is passed to remember.
             headers = remember(request, auth.id, max_age='86400')
             auth.last_login = datetime.now()
 
@@ -61,8 +61,9 @@ def login(request):
 
             # we're always going to return a user to their own /recent after a
             # login
-            return HTTPFound(location=request.route_url('user_bmark_recent',
-                                                        username=auth.username),
+            return HTTPFound(location=request.route_url(
+                                            'user_bmark_recent',
+                                            username=auth.username),
                              headers=headers)
 
         # log the right level of problem
@@ -90,8 +91,9 @@ def login(request):
 @view_config(route_name="logout", renderer="/auth/login.mako")
 def logout(request):
     headers = forget(request)
-    return HTTPFound(location = route_url('home', request),
-                     headers = headers)
+    return HTTPFound(location=route_url('home', request),
+                     headers=headers)
+
 
 @view_config(route_name="reset", renderer="/auth/reset.mako")
 def reset(request):
@@ -118,12 +120,12 @@ def forbidden_view(request):
     login_url = route_url('login', request)
     referrer = request.url
     if referrer == login_url:
-        referrer = '/' # never use the login form itself as came_from
+        referrer = '/'  # never use the login form itself as came_from
     came_from = request.params.get('came_from', referrer)
     return render_to_response('/auth/login.mako', dict(
-               message = '',
-               url = request.application_url + '/login',
-               came_from = came_from,
-               login = '',
-               password = '',
+               message='',
+               url=request.application_url + '/login',
+               came_from=came_from,
+               login='',
+               password='',
            ), request=request)

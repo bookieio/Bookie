@@ -56,7 +56,6 @@ class ActivationMgr(object):
         else:
             return None
 
-
     @staticmethod
     def activate_user(username, code, new_pass):
         """Given this code get the user with this code make sure they exist"""

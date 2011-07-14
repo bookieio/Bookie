@@ -772,6 +772,3 @@ def account_activate(request):
             'message': "There was an issue attempting to activate this account.",
             'payload': {}
         }
-
-
-

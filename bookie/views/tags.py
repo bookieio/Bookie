@@ -1,10 +1,8 @@
 """Controllers related to viewing Tag information"""
 import logging
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.renderers import render
 from pyramid.view import view_config
 
-from bookie.lib import access
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 

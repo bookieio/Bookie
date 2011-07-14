@@ -14,7 +14,7 @@ from pyramid.security import ALL_PERMISSIONS
 
 
 class RootFactory(object):
-    __acl__ = [ (Allow, Everyone, ALL_PERMISSIONS)]
+    __acl__ = [(Allow, Everyone, ALL_PERMISSIONS)]
 
     def __init__(self, request):
         if request.matchdict:
@@ -27,8 +27,9 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     initialize_sql(engine)
 
-    authn_policy = AuthTktAuthenticationPolicy(settings.get('auth.secret'),
-                                               callback=UserMgr.auth_groupfinder)
+    authn_policy = AuthTktAuthenticationPolicy(
+                       settings.get('auth.secret'),
+                       callback=UserMgr.auth_groupfinder)
     authz_policy = ACLAuthorizationPolicy()
 
     config = Configurator(settings=settings,

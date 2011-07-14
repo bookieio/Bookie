@@ -28,7 +28,7 @@ def sendmail(to, from_addr, subject, body):
     p.write("From: {0}\n".format(from_addr))
     p.write("To: {0}\n".format(to))
     p.write("Subject: {0}\n".format(subject))
-    p.write("\n") # blank line separating headers from body
+    p.write("\n")  # blank line separating headers from body
     p.write(body)
     status = p.close()
     if status != 0:

@@ -12,6 +12,7 @@ def resource_not_found(exc, request):
     request.response_status = "404 Not Found"
     return {'message': str(exc)}
 
+
 def resource_forbidden(exc, request):
     """Display a custom 403 page when the HTTPForbidden fired"""
     request.response_status = "403 Forbidden"

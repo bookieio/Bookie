@@ -17,4 +17,4 @@ def mobile_index(request):
 
     with access.ReqAuthorize(request):
         # you have to be auth'd to get to the mobile right now
-        return { 'username': request.user.username, }
+        return {'username': request.user.username, }

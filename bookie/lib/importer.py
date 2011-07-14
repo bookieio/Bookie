@@ -206,7 +206,8 @@ class GBookmarkImporter(Importer):
                             'description': link.text,
                             'tags': tags,
                             'extended': extended,
-                            'date_added': datetime.fromtimestamp(timestamp_added),
+                            'date_added': datetime.fromtimestamp(
+                                            timestamp_added),
                         }
 
         # save the bookmark

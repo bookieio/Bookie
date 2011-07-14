@@ -150,7 +150,8 @@ def posts_get(request):
         return '<result code="Not Found" />'
 
 
-@view_config(route_name="del_tag_complete", renderer="/delapi/tags_complete.mako")
+@view_config(route_name="del_tag_complete",
+             renderer="/delapi/tags_complete.mako")
 def tags_complete(request):
     """Complete a tag based on the given text
 
@@ -174,4 +175,4 @@ def tags_complete(request):
         tags = TagMgr.complete(tag, current=current_tags)
 
         # we need to escape any html entities in things
-        return { 'tags': tags }
+        return {'tags': tags}

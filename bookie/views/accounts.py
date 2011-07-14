@@ -20,6 +20,6 @@ def account(request):
     with ReqAuthorize(request):
         user = UserMgr.get(username=request.user.username)
 
-        return { 
-                    'user': user 
+        return {
+                    'user': user
                }
