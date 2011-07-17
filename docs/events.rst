@@ -2,6 +2,21 @@
 Hacking Events
 =============================
 
+Sprint: July 29th and 30th
+----------------------------
+
+Location: PyOhio see @mitechie for where on Friday and Saturday info is on the
+site: http://pyohio.org/Sprints/
+Time: Friday will be in the evening and Saturday with the PyOhio peeps after
+the conference
+
+The Plan
+~~~~~~~~
+Prepping for 0.3 release. It's almost here, testing, documentation, there's
+room for all to help out. We'll also start planning out the list of things to
+target for 0.4, and hopefully testing out the installs for a few people.
+
+
 Sprint: April 22nd 2011:
 --------------------------
 

@@ -51,10 +51,6 @@
             bookie.init();
         });
 
-        $(document).ready(function () {
-            $(bookie.EVENTID).trigger(bookie.events.LOAD);
-        });
-
     </script>
     <!--<script src="http://code.jquery.com/mobile/latest/jquery.mobile.js"></script>-->
     <script src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.js"></script>
