@@ -15,17 +15,23 @@ Beyond that, there's some features I think that are long overdue.
     :scale: 100
 
 
+Latest
+--------
+:Stable: v0.2_
+:Development: v0.3_
+
+.. _v0.2: https://github.com/mitechie/Bookie/tree/master
+.. _v0.3: https://github.com/mitechie/Bookie/tree/develop
+
+
 Bookie Features
 ----------------
 - Open source!
-- Supports importing from Delicious.com and Google Bookmarks
+- Imports from Delicious.com and Google Bookmarks
 - Google Chrome and Firefox extensions
 - Mobile view powered by JQuery Mobile
-- Fulltext index and search of your bookmark descriptions and tags
-- Cached copy of bookmark's content into a searchable index (in develop branch)
-- Popularity tracking of your most commonly used (clicked) bookmarks
-- Support for Sqlite, MySQL, and Postgres
-- Delicious API compatibility
+- Store page content and fulltext search
+- Support for Sqlite, MySQL, and Postgresql
 
 See the features_ page for full length details.
 
@@ -52,7 +58,7 @@ Contents:
 
 .. Indices and tables
 .. ==================
-.. 
+..
 .. * :ref:`genindex`
 .. * :ref:`modindex`
 .. * :ref:`search`
@@ -63,5 +69,8 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
+Our next sprint is taking place at PyOhio_ July 29th and 30th!
+
 .. _events: events.html
 .. _features: features.html
+.. _PyOhio: http://pyohio.org

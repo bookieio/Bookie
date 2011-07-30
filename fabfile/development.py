@@ -1,6 +1,4 @@
 """Fabric commands useful for working on developing Bookie are loaded here"""
-import os
-
 from fabric.api import hosts
 from fabric.api import local
 from fabric.contrib.project import rsync_project
@@ -27,13 +25,13 @@ def push_bootstrap():
     rsync_project(bootstrap_server, bootstrap_local)
 
 
-
 def build_chrome_ext():
     """Package the chrome extension into a .crx file"""
     local('{0} --pack-extension={1} --pack-extension-key={2}'.format(chrome_bin,
                                                                     chrome_path,
                                                                     key))
     local('rm chrome_ext.zip && cd extensions/chrome_ext && zip -r ../../chrome_ext.zip .')
+
 
 def build_ff_ext():
     """Package the firefox extension into a .xpi file"""

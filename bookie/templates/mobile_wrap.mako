@@ -51,8 +51,10 @@
             bookie.init();
         });
 
-        $(document).ready(function () {
-            $(bookie.EVENTID).trigger(bookie.events.LOAD);
+        $(document).bind("ready", function() {
+            if (!bookie.initialized) {
+                bookie.pc.manual(bookie.pages.home);
+            }
         });
 
     </script>
