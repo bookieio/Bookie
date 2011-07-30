@@ -7,6 +7,8 @@ var bookie = (function ($b, $) {
     $b.ui = {};
     $b.call = {};
 
+    $b.initialized = false;
+
     // some constants we'll use throughout
     // dom hook for triggering/catching events fired
     $b.EVENTID = 'body';
@@ -59,7 +61,6 @@ var bookie = (function ($b, $) {
          *
          */
         that.forward = function(page) {
-            alert("FORWARD");
             history.pushState(page, null, page.id);
 
             $.mobile.pageLoading();
@@ -75,7 +76,6 @@ var bookie = (function ($b, $) {
          *
          */
         that.manual = function (page) {
-            alert("MANUAL");
             process(page, true);
         };
 
@@ -86,7 +86,6 @@ var bookie = (function ($b, $) {
          */
         that.backward = function(page) {
             if (page !== null) {
-                alert('BACKWARD');
                 // this page is from the history api which somehow removes my
                 // functions so we need to get the function to call
                 var func_name = page.id.substr(1);
@@ -97,7 +96,6 @@ var bookie = (function ($b, $) {
                 page.load(page.data);
                 $.mobile.pageLoading(true);
             } else {
-                alert('back too far, should hopefully be at home page');
                 // the default page to load is the home page?
                 page = $b.pages.home;
                 that.manual(page);
@@ -123,6 +121,8 @@ var bookie = (function ($b, $) {
             'data': {'data_home': '#home_recent'},
             'call': 'load',
             'load': function (page_data) {
+                $b.inialized = true;
+
                 // we only want to load 5 for the home page
                 $b.pagination.count = 5;
                 $b.pagination.page = 0;
@@ -230,7 +230,6 @@ var bookie = (function ($b, $) {
             'load': function (page_data) {
                 $('.search_form').bind('submit', function (ev) {
                     var my_form_id, input_id, terms, with_content;
-                    console.log('triggered search');
                     ev.preventDefault();
 
                     // the terms need to be pulled from the search box

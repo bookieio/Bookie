@@ -51,6 +51,12 @@
             bookie.init();
         });
 
+        $(document).bind("ready", function() {
+            if (!bookie.initialized) {
+                bookie.pc.manual(bookie.pages.home);
+            }
+        });
+
     </script>
     <!--<script src="http://code.jquery.com/mobile/latest/jquery.mobile.js"></script>-->
     <script src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.js"></script>
