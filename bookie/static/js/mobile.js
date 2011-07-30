@@ -61,6 +61,7 @@ var bookie = (function ($b, $) {
          *
          */
         that.forward = function(page) {
+            alert('Forward');
             history.pushState(page, null, page.id);
 
             $.mobile.pageLoading();
@@ -247,7 +248,7 @@ var bookie = (function ($b, $) {
 
                     $b.pages.results.data = {terms: terms,
                                                     with_content: with_content,
-                                                    data_home: '#results_list'}
+                                                    data_home: '#results_list'};
                     $b.pc.forward($b.pages.results);
                 });
             }
@@ -330,9 +331,12 @@ var bookie = (function ($b, $) {
 
             // this isn't always init'd so need to init it first
             $(data_home).listview();
+            $(data_home).listview('refresh');
 
+            alert('binding links');
             // now bind the event to allow following of the links
-            $('.bookmark_link').bind('click', function (ev) {
+            $('.bookmark_link').bind('tap', function (ev) {
+                alert('click fired');
                 ev.preventDefault();
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
@@ -343,16 +347,15 @@ var bookie = (function ($b, $) {
                 return false;
             });
 
-
+            alert('binding views');
             // now bind the gear icon to view this bookmark in detail
-            $('.bookmark_view').bind('click', function (ev) {
+            $('.bookmark_view').bind('tap', function (ev) {
+                alert('view fired');
                 var hash_id = $(this).attr('data-hash');
                 ev.preventDefault();
                 $b.pages.view.data = {'hash_id': hash_id};
                 $b.pc.forward($b.pages.view);
             });
-
-            $(data_home).listview('refresh');
         }
     };
 
@@ -373,19 +376,19 @@ var bookie = (function ($b, $) {
         });
 
         // bind the recent button
-        $('.go_recent').bind('click', function (ev) {
+        $('.go_recent').bind('tap', function (ev) {
             ev.preventDefault();
             $b.pagination.clear();
             $b.pc.forward($b.pages.recent);
         });
 
-        $('.go_popular').bind('click', function (ev) {
+        $('.go_popular').bind('tap', function (ev) {
             ev.preventDefault();
             $b.pagination.clear();
             $b.pc.forward($b.pages.popular);
         });
 
-        $('.go_search').bind('click', function (ev) {
+        $('.go_search').bind('tap', function (ev) {
             ev.preventDefault();
             $b.pagination.clear();
             $b.pc.forward($b.pages.search);
