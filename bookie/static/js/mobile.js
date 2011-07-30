@@ -89,9 +89,11 @@ var bookie = (function ($b, $) {
                 // this page is from the history api which somehow removes my
                 // functions so we need to get the function to call
                 var func_name = page.id.substr(1);
+                console.log(func_name);
                 page.load = $b.pages[func_name].load;
 
                 $.mobile.pageLoading();
+                console.log(page.id);
                 $.mobile.changePage(page.id, 'slide', back=false, changeHash=false);
                 page.load(page.data);
                 $.mobile.pageLoading(true);
@@ -361,7 +363,10 @@ var bookie = (function ($b, $) {
 
         window.addEventListener("popstate", function(ev) {
             ev.preventDefault();
+            console.log('POPPING STATE');
             console.log(ev);
+            // this is null on android and after we hit back twice :-/
+            console.log(ev.state);
             $b.pc.backward(ev.state);
         });
 

@@ -241,6 +241,7 @@
             </a>
             <a href="#"
                data-hash="${'${hash_id}'|n}"
+               data-ajax="false"
                class="bookmark_view"></a>
         </li>
     </script>
