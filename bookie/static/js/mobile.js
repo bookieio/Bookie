@@ -348,7 +348,7 @@ var bookie = (function ($b, $) {
             $('.bookmark_view').bind('click', function (ev) {
                 var hash_id = $(this).attr('data-hash');
                 ev.preventDefault();
-                $b.pages.bookmark.data = {'hash_id': hash_id};
+                $b.pages.view.data = {'hash_id': hash_id};
                 $b.pc.forward($b.pages.view);
             });
 
