@@ -7,6 +7,8 @@ var bookie = (function ($b, $) {
     $b.ui = {};
     $b.call = {};
 
+    $b.initialized = false;
+
     // some constants we'll use throughout
     // dom hook for triggering/catching events fired
     $b.EVENTID = 'body';
@@ -14,143 +16,191 @@ var bookie = (function ($b, $) {
     // init the api since we'll be using calls to it
     $b.api.init(APP_URL);
 
+
     /**
-     * Define events supported
+     * Handle our paging keep tabs on counts, page number, etc
      *
      */
-    $b.events = {
-        'LOAD': 'load',
-        'RECENT': 'recent',
-        'POPULAR': 'popular',
-        'SEARCH': 'search',
-        'NEXT_PAGE': 'next',
-        'PREV_PAGE': 'prev',
-        'VIEW': 'view'
-    };
-
-    $b.mobilestate = {
-        'url': '',
+    $b.pagination = {
         'page': 0,
         'count': 10,
-        'func': "",             // used for what type of thing are we looking at, load_recent
         'terms': [],
         'query_params': "",
         'clear': function () {
-            $b.mobilestate.url = "";
-            $b.mobilestate.page = 0;
-            $b.mobilestate.count = 10;
-            $b.mobilestate.terms = [];
-            $b.mobilestate.query_params = "";
+            $b.pagination.page = 0;
+            $b.pagination.count = 10;
+            $b.pagination.terms = [];
+            $b.pagination.query_params = "";
         }
     };
 
+
     /**
-     * Once the page is loaded, perform some nice basics we need
+     * Handling our history stack and changing pages back/forth overriding
+     * jquerymobile
      *
      */
-    $b.load = function (ev) {};
+    var PageControl = function() {
+        var process, that = {};
+        that.current_page = undefined;
 
-    $b.load_recent = function (ev, extra_params) {
-        // don't do what the click says yet
-        ev.preventDefault();
-        $.mobile.pageLoading();
+        /**
+         * Perform the history alteration
+         *
+         */
+        process = function (page, nochange) {
+            that.current_page = page;
 
-        $b.mobilestate.func = $b.events.RECENT;
-        data_home = extra_params.data_home;
+            // now run the function
+            page.load(page.data);
+        };
 
-        $b.api.recent($b.api.pager($b.mobilestate.page, $b.mobilestate.count),
-            {
-                // on success update the page count and update the
-                // results list
-                'success': function (data) {
-                    if (data.success === true) {
-                        var page = data.payload.page;
-                        $b.mobilestate.page = page;
-                        $b.ui.results.update(data.payload.bmarks,
-                                             'Recent: Page ' + page,
-                                             data_home);
-                    } else {
-                        console.error('ERROR getting recent');
-                    }
+        /**
+         * forward will not only perform the load function, but also change the
+         * page
+         *
+         */
+        that.forward = function(page) {
+            history.pushState(page, null, page.id);
 
-                    $.mobile.pageLoading(true);
-                },
-                // once success is done updating results page, switch over
-                // there
-                'complete': function () {
-                    if (data_home !== '#home_recent') {
-                        $.mobile.changePage('#results',
-                                            'slide',
-                                            back=false,
-                                            changeHash=false);
-                    }
+            $.mobile.pageLoading();
+            $.mobile.changePage(page.id, 'slide', back=false, changeHash=false);
+            process(page);
+            // and remove the loading icon
+            $.mobile.pageLoading(true);
+        };
 
-                    $.mobile.pageLoading(true);
-                }
+        /**
+         * manual will only perform the load function. This is handy if we're
+         * already on the page or for loading the home page content
+         *
+         */
+        that.manual = function (page) {
+            process(page, true);
+        };
+
+        /**
+         * Pop the history stack and run the load function for the page
+         * requested
+         *
+         */
+        that.backward = function(page) {
+            if (page !== null) {
+                // this page is from the history api which somehow removes my
+                // functions so we need to get the function to call
+                var func_name = page.id.substr(1);
+                page.load = $b.pages[func_name].load;
+
+                $.mobile.pageLoading();
+                $.mobile.changePage(page.id, 'slide', back=false, changeHash=false);
+                page.load(page.data);
+                $.mobile.pageLoading(true);
+            } else {
+                // the default page to load is the home page?
+                page = $b.pages.home;
+                that.manual(page);
             }
-        );
-    };
+        };
 
-    $b.load_popular = function (ev, extra_params) {
-        // don't do what the click says yet
-        ev.preventDefault();
-
-        // show the loading ui while we load this
-        $.mobile.pageLoading();
-
-        // we need to track which function we're on so we can repeat it with
-        // the next/prev buttons
-        $b.mobilestate.func = $b.events.POPULAR;
-
-        // and we also need to track if this is going on the home page or the
-        // results page
-        data_home = extra_params.data_home;
-
-        var pager = $b.api.pager($b.mobilestate.page,
-                                 $b.mobilestate.count);
-
-        $b.api.popular(pager,
-            {
-                'success': function (data) {
-                    if (data.success === true) {
-                        var page = data.payload.page;
-                        $b.mobilestate.page = page;
-                        $b.ui.results.update(data.payload.bmarks,
-                                             'Popular: Page ' + page,
-                                             data_home);
-                    } else {
-                        console.error('ERROR getting popular');
-                    }
-
-                    $.mobile.pageLoading(true);
-                },
-                'complete': function () {
-                    $.mobile.changePage('#results',
-                                        'slide',
-                                        back=false,
-                                        changeHash=false);
-                    $.mobile.pageLoading(true);
-                }
-            }
-        );
+        return that;
     };
 
 
     /**
-     * Handle the event to load a bookmark
-     * extra_params:
-     *     - hash_id
+     * List of pages of content we support.
+     *
+     * Each page has
+     *  - a page id
+     *  - data needed for loading that page
+     *  - the load * function itself that the history code will call
      *
      */
-    $b.load_bookmark = function (ev, extra_params) {
-        // don't do what the click says yet
-        ev.preventDefault();
-        $.mobile.pageLoading();
+    $b.pages = {
+        'home': {
+            'id': '#home',
+            'data': {'data_home': '#home_recent'},
+            'call': 'load',
+            'load': function (page_data) {
+                $b.inialized = true;
 
-        $b.mobilestate.func = $b.events.VIEW;
+                // we only want to load 5 for the home page
+                $b.pagination.count = 5;
+                $b.pagination.page = 0;
 
-        $b.api.bookmark(extra_params.hash_id,
-                {
+                $b.api.recent($b.api.pager($b.pagination.page, $b.pagination.count), {
+                    // on success update the page count and update the
+                    // results list
+                    'success': function (data) {
+                        if (data.success === true) {
+                            var page = data.payload.page;
+                            $b.pagination.page = 0;
+                            $b.ui.results.update(data.payload.bmarks,
+                                                 'Bookie Bookmarks',
+                                                 page_data.data_home);
+                        } else {
+                            console.error('ERROR getting recent');
+                        }
+                    },
+                });
+            }
+        },
+
+        'recent': {
+            'id': '#results',
+            'data': {'data_home': '#results_list'},
+            'call': 'load',
+            'load': function (page_data) {
+                $b.api.recent($b.api.pager($b.pagination.page, $b.pagination.count), {
+                    // on success update the page count and update the
+                    // results list
+                    'success': function (data) {
+                        if (data.success === true) {
+                            var page = data.payload.page;
+                            $b.pagination.page = page;
+                            $b.ui.results.update(data.payload.bmarks,
+                                                 'Recent: Page ' + page,
+                                                 page_data.data_home);
+                        } else {
+                            console.error('ERROR getting recent');
+                        }
+                    },
+                });
+            }
+        },
+
+        'popular': {
+            'id': '#results',
+            'data': {'data_home': '#results_list'},
+            'call': 'load',
+            'load': function (page_data) {
+                var pager = $b.api.pager($b.pagination.page,
+                                         $b.pagination.count);
+
+                $b.api.popular(pager, {
+                        'success': function (data) {
+                            if (data.success === true) {
+                                var page = data.payload.page;
+                                $b.pagination.page = page;
+                                $b.ui.results.update(data.payload.bmarks,
+                                                     'Popular: Page ' + page,
+                                                     page_data.data_home);
+                            } else {
+                                console.error('ERROR getting popular');
+                            }
+
+                            $.mobile.pageLoading(true);
+                        },
+                    }
+                );
+            }
+        },
+
+        'view': {
+            'id': '#view',
+            'data': {},
+            'call': 'load',
+            'load': function (page_data) {
+                $b.api.bookmark(page_data.hash_id, {
                     'success': function (data) {
                         if (data.success === true) {
                             var bmark = data.payload.bmark;
@@ -168,80 +218,97 @@ var bookie = (function ($b, $) {
                             console.error('ERROR getting bookmark');
                         }
 
-                    },
-                    'complete': function () {
-                        $.mobile.changePage('#view', 'slide', back=false, changeHash=true);
-                        $.mobile.pageLoading(true);
                     }
+                });
+            }
+        },
+
+        'search': {
+            'id': '#search',
+            'data': {},
+            'call': 'load',
+            'load': function (page_data) {
+                $('.search_form').bind('submit', function (ev) {
+                    var my_form_id, input_id, terms, with_content;
+                    ev.preventDefault();
+
+                    // the terms need to be pulled from the search box
+                    my_form_id = $(this).attr('id');
+                    input_id = "#" + my_form_id + " input";
+
+                    // if this is the main search form, then check with_content
+                    with_content = false;
+
+                    if (my_form_id === 'search_page') {
+                        with_content = $("#cache_content").val();
+                    }
+
+                    terms = $(input_id).val().split(" ");
+
+                    $b.pages.results.data = {terms: terms,
+                                                    with_content: with_content,
+                                                    data_home: '#results_list'}
+                    $b.pc.forward($b.pages.results);
+                });
+            }
+        },
+
+        'results': {
+            'id': '#results',
+            'data': {'data_home': '#results_list'},
+            'call': 'load',
+            'load': function (page_data) {
+                var terms = page_data.terms,
+                    with_content = page_data.with_content,
+                    data_home = page_data.data_home;
+
+                // if the terms are undefined, check if we have any from a previous
+                // page call
+                if (terms === undefined) {
+                    terms = $b.pagination.terms;
+                } else {
+                    $b.pagination.terms = terms;
                 }
-        );
-    };
 
+                if (with_content === undefined) {
+                    with_content = $b.pagination.query_params;
+                } else if (with_content === "true") {
+                    $b.pagination.query_params = "&content=" + with_content;
+                }
 
-    $b.search = function (ev, extra_params) {
-        // search for a url given the search content
-        var terms, with_content, data_home;
+                // the id of the <ul> we're sticking results into
+                // (home page vs results page)
+                data_home = page_data.data_home;
 
-        // don't do what the click says yet
-        ev.preventDefault();
+                $b.api.search(
+                    $b.pagination.terms,
+                    with_content,
+                    $b.api.pager($b.pagination.page, $b.pagination.count),
+                    {
+                        'success': function (data) {
+                            if (data.success === true) {
+                                var page = data.payload.page,
+                                    page_title = "Search: " + data.payload.phrase;
 
-        $.mobile.pageLoading();
+                                if ($b.pagination.query_params !== "") {
+                                    page_title = page_title + "<br /> (searching cached content)";
+                                }
 
-        terms = extra_params.terms;
-        with_content = extra_params.with_content;
-
-        // if the terms are undefined, check if we have any from a previous
-        // page call
-        if (terms === undefined) {
-            terms = $b.mobilestate.terms;
-        } else {
-            $b.mobilestate.terms = terms;
+                                $b.pagination.page = page;
+                                $.mobile.changePage('#results',
+                                                    'slide',
+                                                    back=false,
+                                                    changeHash=false);
+                                $b.ui.results.update(data.payload.search_results,
+                                                     page_title,
+                                                     data_home);
+                            } else {
+                                console.error('ERROR getting search');
+                            }
+                        }
+                    });
+            }
         }
-
-        if (with_content === undefined) {
-            with_content = $b.mobilestate.query_params;
-        } else if (with_content === "true") {
-            $b.mobilestate.query_params = "&content=" + extra_params.with_content;
-        }
-
-        // the id of the <ul> we're sticking results into
-        // (home page vs results page)
-        data_home = extra_params.data_home;
-
-        $b.mobilestate.func = $b.events.SEARCH;
-        $b.api.search($b.mobilestate.terms,
-                      with_content,
-                      $b.api.pager($b.mobilestate.page, $b.mobilestate.count),
-                      {
-                          'success': function (data) {
-                              if (data.success === true) {
-                                  var page = data.payload.page,
-                                      page_title = "Search: " + data.payload.phrase;
-
-
-                                  if ($b.mobilestate.query_params !== "") {
-                                      page_title = page_title + "<br /> (searching cached content)";
-                                  }
-
-                                  $b.mobilestate.page = page;
-                                  $.mobile.changePage('#results',
-                                                      'slide',
-                                                      back=false,
-                                                      changeHash=false);
-                                  $b.ui.results.update(data.payload.search_results,
-                                                       page_title,
-                                                       data_home);
-                              } else {
-                                  console.error('ERROR getting search');
-                              }
-                          },
-                          'complete': function () {
-                              console.log('fired complete');
-
-                              $.mobile.pageLoading(true);
-                          }
-                      }
-        );
 
     };
 
@@ -254,18 +321,17 @@ var bookie = (function ($b, $) {
         'tpl_id': '#resultLink',
         'title_id': '#results_title',
         'update': function (data, title, data_home) {
-            var page = $b.mobilestate.page;
+            var page = $b.pagination.page;
             $(data_home).html("");
+            $(data_home).listview('destroy');
 
-            $("#resultLink").tmpl(data).prependTo(data_home);
+            $("#resultLink").tmpl(data).appendTo(data_home);
             $($b.ui.results.title_id).html(title);
 
             // this isn't always init'd so need to init it first
-            console.log(data_home);
-
             $(data_home).listview();
 
-            // now bind the swipe event to allow following of the links
+            // now bind the event to allow following of the links
             $('.bookmark_link').bind('click', function (ev) {
                 ev.preventDefault();
                 // the url we need to call is /redirect/hash_id
@@ -277,102 +343,162 @@ var bookie = (function ($b, $) {
                 return false;
             });
 
+
             // now bind the gear icon to view this bookmark in detail
             $('.bookmark_view').bind('click', function (ev) {
                 var hash_id = $(this).attr('data-hash');
                 ev.preventDefault();
-
-                $($b.EVENTID).trigger($b.events.VIEW, {'hash_id': hash_id});
+                $b.pages.view.data = {'hash_id': hash_id};
+                $b.pc.forward($b.pages.view);
             });
 
             $(data_home).listview('refresh');
-
         }
     };
 
 
     // only need to call init on the page read event
     $b.init = function () {
-        var button_list = {
-            'go_recent': $b.events.RECENT,
-            'go_popular': $b.events.POPULAR,
-            'go_search': $b.events.SEARCH,
-        },
+        $b.pc = PageControl();
 
-
-        nav_buttons = function (id, event_id, data_home, callback) {
-            if (callback !== undefined) {
-                $($b.EVENTID).bind(event_id, callback);
-            }
-
-            $('.' + id).bind('click', function (ev) {
-                $b.mobilestate.clear();
-
-                if (callback !== undefined) {
-                    ev.preventDefault();
-                    $($b.EVENTID).trigger(event_id, {data_home: data_home});
-                }
-
-                for (button in button_list) {
-                    if (button == id) {
-                        // then we addClass this one
-                        $('.' + id).addClass('ui-btn-active ui-state-persist');
-                    } else {
-                        // then we remove the classes
-                        $('.' + id).removeClass('ui-btn-active ui-state-persist');
-                    }
-                }
-            });
-        };
-
-        nav_buttons('go_recent', $b.events.RECENT, '#results_list', $b.load_recent);
-        nav_buttons('go_popular', $b.events.POPULAR, '#results_list', $b.load_popular);
-        nav_buttons('go_search');
-
-        $('#results_previous').bind('click', function (ev) {
-            $b.mobilestate.page = $b.mobilestate.page - 1;
-            $($b.EVENTID).trigger($b.mobilestate.func, {data_home: '#results_list'});
-        });
-
-        $('#results_next').bind('click', function (ev) {
-            $b.mobilestate.page = $b.mobilestate.page + 1;
-            $($b.EVENTID).trigger($b.mobilestate.func, {data_home: '#results_list'});
-        });
-
-        $($b.EVENTID).bind($b.events.SEARCH, $b.search);
-        $('.search_form').bind('submit', function (ev) {
-            var my_form_id, input_id, terms, with_content;
-            console.log('triggered search');
-
+        window.addEventListener("popstate", function(ev) {
             ev.preventDefault();
-
-            // clear any previous search info
-            $b.mobilestate.clear();
-
-            // the terms need to be pulled from the search box
-            my_form_id = $(this).attr('id');
-            input_id = "#" + my_form_id + " input";
-
-            // if this is the main search form, then check with_content
-            with_content = false;
-
-            if (my_form_id === 'search_page') {
-                with_content = $("#cache_content").val();
-            }
-
-            terms = $(input_id).val().split(" ");
-            $($b.EVENTID).trigger($b.events.SEARCH, {terms: terms,
-                                                     with_content: with_content,
-                                                     data_home: '#results_list'});
+            console.log(ev);
+            $b.pc.backward(ev.state);
         });
 
-        $($b.EVENTID).bind($b.events.LOAD, function (ev) {
-            $b.mobilestate.count = 5;
-            $($b.EVENTID).trigger($b.events.RECENT, {data_home: '#home_recent'});
+        window.addEventListener('unload', function(ev) {
+            console.log('unload');
+            ev.preventDefault();
         });
 
-        $($b.EVENTID).bind($b.events.VIEW, $b.load_bookmark);
+        // bind the recent button
+        $('.go_recent').bind('click', function (ev) {
+            ev.preventDefault();
+            $b.pagination.clear();
+            $b.pc.forward($b.pages.recent);
+        });
+
+        $('.go_popular').bind('click', function (ev) {
+            ev.preventDefault();
+            $b.pagination.clear();
+            $b.pc.forward($b.pages.popular);
+        });
+
+        $('.go_search').bind('click', function (ev) {
+            ev.preventDefault();
+            $b.pagination.clear();
+            $b.pc.forward($b.pages.search);
+        });
+
     };
+
+    // $b.search = function (ev, extra_params) {
+    //     // search for a url given the search content
+    //     var terms, with_content, data_home;
+
+    //     // don't do what the click says yet
+    //     ev.preventDefault();
+
+    //     $.mobile.pageLoading();
+
+    //     terms = extra_params.terms;
+    //     with_content = extra_params.with_content;
+
+    //     // if the terms are undefined, check if we have any from a previous
+    //     // page call
+    //     if (terms === undefined) {
+    //         terms = $b.pagination.terms;
+    //     } else {
+    //         $b.pagination.terms = terms;
+    //     }
+
+    //     if (with_content === undefined) {
+    //         with_content = $b.pagination.query_params;
+    //     } else if (with_content === "true") {
+    //         $b.pagination.query_params = "&content=" + extra_params.with_content;
+    //     }
+
+    //     // the id of the <ul> we're sticking results into
+    //     // (home page vs results page)
+    //     data_home = extra_params.data_home;
+
+    //     $b.pagination.func = $b.events.SEARCH;
+    //     $b.api.search($b.paginatino.terms,
+    //                   with_content,
+    //                   $b.api.pager($b.pagination.page, $b.pagination.count),
+    //                   {
+    //                       'success': function (data) {
+    //                           if (data.success === true) {
+    //                               var page = data.payload.page,
+    //                                   page_title = "Search: " + data.payload.phrase;
+
+
+    //                               if ($b.pagination.query_params !== "") {
+    //                                   page_title = page_title + "<br /> (searching cached content)";
+    //                               }
+
+    //                               $b.pagination.page = page;
+    //                               $.mobile.changePage('#results',
+    //                                                   'slide',
+    //                                                   back=false,
+    //                                                   changeHash=false);
+    //                               $b.ui.results.update(data.payload.search_results,
+    //                                                    page_title,
+    //                                                    data_home);
+    //                           } else {
+    //                               console.error('ERROR getting search');
+    //                           }
+    //                       },
+    //                       'complete': function () {
+    //                           console.log('fired complete');
+
+    //                           $.mobile.pageLoading(true);
+    //                       }
+    //                   }
+    //     );
+
+    // };
+
+        // nav_buttons = function (id, event_id, data_home, callback) {
+        //     if (callback !== undefined) {
+        //         $($b.EVENTID).bind(event_id, callback);
+        //     }
+
+        //     $('.' + id).bind('click', function (ev) {
+        //         $b.pagination.clear();
+
+        //         if (callback !== undefined) {
+        //             ev.preventDefault();
+        //             $($b.EVENTID).trigger(event_id, {data_home: data_home});
+        //         }
+
+        //         for (button in button_list) {
+        //             if (button == id) {
+        //                 // then we addClass this one
+        //                 $('.' + id).addClass('ui-btn-active ui-state-persist');
+        //             } else {
+        //                 // then we remove the classes
+        //                 $('.' + id).removeClass('ui-btn-active ui-state-persist');
+        //             }
+        //         }
+        //     });
+        // };
+
+        // nav_buttons('go_recent', $b.events.RECENT, '#results_list', $b.load_recent);
+        // nav_buttons('go_popular', $b.events.POPULAR, '#results_list', $b.load_popular);
+        // nav_buttons('go_search');
+
+        // $('#results_previous').bind('click', function (ev) {
+        //     $b.pagination.page = $b.pagination.page - 1;
+        //     $($b.EVENTID).trigger($b.pagination.func, {data_home: '#results_list'});
+        // });
+
+        // $('#results_next').bind('click', function (ev) {
+        //     $b.pagination.page = $b.pagination.page + 1;
+        //     $($b.EVENTID).trigger($b.pagination.func, {data_home: '#results_list'});
+        // });
+
 
     return $b;
 

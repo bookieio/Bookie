@@ -123,9 +123,6 @@ var bookie = (function (opts) {
      */
     $b.api.bookmark = function (hash_id, callbacks, get_last) {
         // we need to get the list of recent from the api
-        console.log('get last');
-        console.log(get_last);
-
         var url = "/api/v1/bmarks/" + hash_id;
             opts = {
                 url: url,

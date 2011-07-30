@@ -10,15 +10,6 @@ site: http://pyohio.org/Sprints/
 Time: Friday will be in the evening and Saturday with the PyOhio peeps after
 the conference
 
-The Plan
-~~~~~~~~
-Prepping for 0.3 release. It's almost here, testing, documentation, there's
-room for all to help out. We'll also start planning out the list of things to
-target for 0.4, and hopefully testing out the installs for a few people.
-
-For complete list of ideas see the current Github issues: https://github.com/mitechie/Bookie/issues
-
-
 Tasks
 ``````
 - Update documentation for the full set of api commands (see routes.py and
@@ -42,7 +33,6 @@ Current 0.4 Tasks
 - add some css styling to the readable view for website + mobile view
 - Add a !private tag command which sets private on the bookmark of the user
 - Start celery task runner for running stats against individual bookmarks daily
-
 
 Sprint: April 22nd 2011:
 --------------------------
