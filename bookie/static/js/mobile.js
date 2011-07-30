@@ -61,7 +61,6 @@ var bookie = (function ($b, $) {
          *
          */
         that.forward = function(page) {
-            alert('Forward');
             history.pushState(page, null, page.id);
 
             $.mobile.pageLoading();
@@ -333,10 +332,8 @@ var bookie = (function ($b, $) {
             $(data_home).listview();
             $(data_home).listview('refresh');
 
-            alert('binding links');
             // now bind the event to allow following of the links
             $('.bookmark_link').bind('tap', function (ev) {
-                alert('click fired');
                 ev.preventDefault();
                 // the url we need to call is /redirect/hash_id
                 var hash_id = $(this).attr('data-hash'),
@@ -347,10 +344,8 @@ var bookie = (function ($b, $) {
                 return false;
             });
 
-            alert('binding views');
             // now bind the gear icon to view this bookmark in detail
             $('.bookmark_view').bind('tap', function (ev) {
-                alert('view fired');
                 var hash_id = $(this).attr('data-hash');
                 ev.preventDefault();
                 $b.pages.view.data = {'hash_id': hash_id};
