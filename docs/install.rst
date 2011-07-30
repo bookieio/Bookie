@@ -40,7 +40,7 @@ These instructions assume you will be installing Bookie on an Ubuntu machine. Yo
   # $myname is a name you're giving your installation. Just one word will do
   # This will create a config file for you called $myname.ini
   # Feel free to edit this config for your needs (port, apikey, etc).
-  $ fab new_install:$myname
+  $ fab new_install:$myname (Ignore the error that recommends that you re-run this command)
   $ fab $myname db_new_install
 
   # Startup the development web server with your configuration.
