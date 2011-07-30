@@ -9,7 +9,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
     'pyramid<=1.0.9999',
-    'SQLAlchemy',
+    'SQLAlchemy<0.8',
     'transaction',
     'repoze.tm2>=1.0b1', # default_commit_veto
     'zope.sqlalchemy',
