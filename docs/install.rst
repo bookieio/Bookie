@@ -8,6 +8,8 @@ list of app packages required for development work are in the
 `requirements.txt` file with hard locked versions that help make sure things
 work.
 
+These instructions assume you will be installing Bookie on an Ubuntu machine. You may need to translate these steps for your particular environment. (Better yet, please supply us with the steps you used to get your environment working.)
+
 ::
 
   # install the required packages to build bookie
