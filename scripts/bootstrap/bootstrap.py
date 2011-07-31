@@ -1267,6 +1267,10 @@ def adjust_options(options, args):
     """
     options.no_site_packages = True
 
+def extend_parser(optparse_parser):
+    optparse_parser.add_option("-b", "--branch", dest="git_branch", default="develop",
+                  help="specify existing git branch or tag to switch to",
+                  metavar="GIT_BRANCH")
 
 def after_install(options, home_dir):
     """This is a hook to add this code to run after a new virtualenv"""
@@ -1332,7 +1336,7 @@ def after_install(options, home_dir):
     # define a ton of env vars we'll use in our scripted commands
     env = {}
     env['git_url'] = 'git://github.com/mitechie/Bookie.git'
-    env['branch'] = 'develop'
+    env['branch'] = options.git_branch
 
     # normalize this to the abs path so win/linux play nice
     # we have to do this retarded replacing of space with an escaped space so
