@@ -154,7 +154,7 @@ class ReqAuthorize(object):
     def __enter__(self):
         """Verify api key set in constructor"""
         if not AuthHelper.check_login(self.request, self.username):
-            AuthHelper.not_valid(self.request, redirect=self.redirect)
+            raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
         """No cleanup work to do after usage"""
