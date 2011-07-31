@@ -77,7 +77,10 @@
                         % endif
                     </div>
 
-                    <div class="yui3-u-7-8">
+                    <div class="yui3-u-3-8 url">
+                        ${bmark.hashed.url}
+                    </div>
+                    <div class="yui3-u-1-2">
                         <div class="tags">
                             <%
                                 if username:
