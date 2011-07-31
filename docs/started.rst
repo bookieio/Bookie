@@ -18,7 +18,7 @@ There are some required packages that need to be installed so you can build book
 - libxml2-dev
 - git
 
-Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. We're hoping to `clean this up some`_ some going forward.
+Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv.
 
 MySQL & Postgresql Users
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,11 +55,11 @@ If you're running Ubuntu 10.10 (Maverick), here's some actual commands to get yo
   $ cd bookie/bookie/
 
   # Create a new fabric configuration file.
-  # $myname is a name you're giving your installation. Just one word will do
-  # This will create a config file for you called $myname.ini
+  # [myname] is a name you're giving your installation. Just one word will do
+  # This will create a config file for you called [myname].ini
   # Feel free to edit this config for your needs (port, apikey, etc).
-  $ fab new_install:$myname
-  $ fab $myname db_new_install
+  $ fab new_install:[myname]
+  $ fab [myname] db_new_install
 
   # Startup the development web server with your configuration.
   $ paster serve --reload $myname.ini
@@ -81,17 +81,17 @@ configuration file.
 
 You can view your recent bookmarks at: http://127.0.0.1:6543/recent
 
+Installing Extension
+~~~~~~~~~~~~~~~~~~~~~
 You probably also want to install a `browser extension`_ to be able to store
 new bookmarks going forward. Once you install the extension, you'll need to set
 the options for it to work. See the `browser extension`_ docs for those
 settings.
 
-
 Hosting Bookie
 ~~~~~~~~~~~~~~
 You can setup Bookie to run in a variety of ways. Make sure to check out some
 samples in the `hosting docs`_
-
 
 To Do
 ~~~~~~
@@ -99,4 +99,3 @@ To Do
 
 .. _`browser extension`: extensions.html
 .. _`hosting docs`: hosting.html
-.. _`clean this up some`: https://github.com/mitechie/Bookie/issues/37

@@ -12,14 +12,11 @@ Still todo
 - ui for db migrations, setup, some sort of /install /upgrade urls or something
 - add deployment examples to docs
 
-
-
 Subprojects
 ~~~~~~~~~~~
 
 - ncurses client
 - firefox extension
-
 
 Completed
 ----------

@@ -11,7 +11,7 @@ Time: Friday will be in the evening and Saturday with the PyOhio peeps after
 the conference
 
 Tasks
-``````
+~~~~~
 - Update documentation for the full set of api commands (see routes.py and
   views/api.py)
 - Update documentation with screenshots from more recent builds (including the

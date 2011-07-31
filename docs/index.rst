@@ -49,7 +49,6 @@ Contents:
    :maxdepth: 1
 
    started
-   database
    hosting
    user
    extensions

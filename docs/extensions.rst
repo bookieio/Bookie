@@ -17,31 +17,34 @@ Features
   readable version of the page so it's immediately available. This slows down
   the plugin, so uncheck the *Cache Content* if you experience adverse
   performance
+- Assists by providing recently used tags for completion
+
 
 Installation
 ------------
 
-- Chrome users can get it from the Gallery: http://goo.gl/NYinc 
+- Chrome users can get it from the Gallery: http://goo.gl/NYinc
   *Hint* good reviews would be appreciated!
-- Chromium users should be able to get the extension from the url: http://docs.bmark.us/bookie_chrome.crx
+- To get the development version of the extension (to use with the develop
+  branch) use the url: http://docs.bmark.us/bookie_chrome.crx
 - Updates currently need to be done manually
 
 Setting up
 ----------
-In order to setup the extension you'll need ot set a couple of options. To pull
+In order to setup the extension you'll need to set a couple of options. To pull
 up the options page right-click on the extension in the toolbar and select the
 *Options* menu.
 
 API Url
     set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543`. If you do not set the api url you should get an error
-    about not being able to find a bookie instance at that url.
+    it's `127.0.0.1:6543/admin`. If you do not set the api url you should get
+    an error about not being able to find a bookie instance at that url.
 
 API Key
-    this is the same key you set in your installations *.ini* config
-    file. You should set this to be your own unique string and make sure that
-    your server install and extension match. If they don't, you'll be unable to
-    store bookmarks to your Bookie server.
+    You can get the API key for your user by logging into the website and going
+    to the *Account* page. There you will find a link for "View API Key" that
+    will show you your key. The default login for a fresh install is a
+    admin:admin.
 
 Cache Content
     If you check this, then the html of the page is sent to the Bookie

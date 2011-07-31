@@ -14,7 +14,7 @@ These instructions assume you will be installing Bookie on an Ubuntu machine. Yo
 
   # install the required packages to build bookie
   # (just needs to be run once)
-  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git
+  $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git python-virtualenv
 
   # Mysql & Postgresql users
   $ sudo apt-get install libmysqlclient-dev
@@ -49,10 +49,5 @@ These instructions assume you will be installing Bookie on an Ubuntu machine. Yo
 You should now be able to pull up:
 
 http://127.0.0.1:6543
-
-
-
-
-
 
 .. _virtualenv:
