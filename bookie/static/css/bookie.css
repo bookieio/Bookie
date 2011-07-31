@@ -288,11 +288,11 @@ a.bmark {
     color: #003366;
 }
 
-.url {
+.bmark .url {
     color: #CCC;
 }
 
-.url:hover {
+.bmark .url:hover {
     color: #999;
 }
 
