@@ -10,9 +10,7 @@ For best performance and so that we can implement an api that meets the
 features we hold important we have our own api you can implement. It's JSON
 based and will return a standard JSON response for any call
 
-All api calls should be against `http://$yoursite.com/api/v1`. From this point
-forward, all urls are expected to be rooted off of this url. So when you see
-`/bmarks/recent` you know the url is `http://$yoursite.com/api/v1/bmarks/recent`.
+All api calls should be against `http://$yoursite.com/api/v1`.
 
 Response Description
 ~~~~~~~~~~~~~~~~~~~~
@@ -45,22 +43,25 @@ payload:
 
 
 Available API Calls
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
-`/bmarks/recent`:
+System Wide
+````````````
+
+`/api/v1/bmarks/recent`:
     This will return a list of the most recent bookmarks added to the system in
     descending order. Each bookmark returned will be contain the information
     from the main bookmark table and does not contain information of related
     tables stored such as the `readable` table.
 
-`/bmarks/popular`:
+`/api/v1/bmarks/popular`:
     This will return a list of the most popular bookmarks in the system as
     determined by the click counter implemented in the `bmarks` table.  Each
     bookmark returned will be contain the information from the main bookmark
     table and does not contain information of related tables stored such as the
     `readable` table.
 
-`/bmarks/search/$term1/$term2`:
+`/api/v1/bmarks/search/$term1/$term2`:
     Search will return a set of results for a query based on `OR` of the terms
     requested. Each term is expected to be added as a part of the url as
     `/term1/term2/term3`. This search will check against a bookmarks
@@ -69,7 +70,15 @@ Available API Calls
     does not contain information of related tables stored such as the
     `readable` table.
 
-`/bmarks/$hash_id`:
+`/api/v1/bmarks/get_readable`:
+    Get a list of the urls in the system that we haven't gotten readable
+    content for and need to process.
+
+`/api/v1/bmarks/readable/{hash_id}`:
+    Returns the readable content for the bookmark specified *hash_id* in the
+    url.
+
+`/api/v1/bmarks/$hash_id`:
     Will return the detailed information for a single bookmark in the system.
     This query is based on the `hash_id` parameter of the bookmark. Generally,
     you'd fetch a list of the bookmarks via the `recent` or `popular` api calls
@@ -78,28 +87,91 @@ Available API Calls
     `item.readable` object that will include the readable content for the
     bookmark.
 
-`/bmarks/sync`:
-    This is experimental and very likely to change, so use at your own risk.
-    We're investigating syncing bookmarks with browsers via their extensions.
-    This api call will be the trigger point to allow a browser to request all
-    of the data it needs for loading knowledge of existing bookmarks into a new
-    browser installation.
-
-`/bmarks/add`:
-    A POST call to add a new bookmark to the system. This is validated by
-    passing the `api_key` parameter to the server in the POST.
-
-`/bmarks/remove/$url`
-    Remove the bookmark and content for this url. This might change and require
-    a `hash_id` instead of a url in the future.
-
-`/tags/complete`?tag=$str&current=test%20tags
+`/api/v1/tags/complete`?tag=$str&current=test%20tags
     Provides a list of possible completion strings for the given partial `tag`
     string. For instance, if `tag` where 'py' then it might return "python",
     "pylint". `current` is an optional space separated list of current tags to
     provide context. In this way, the completion will only provide tags that
     also occur on bookmarks with the list of current tags as well.
 
+`/api/v1/reactivate`:
+    Causes a user's account to be disabled and the reset process to go begin.
+    This will send the user an email with details on how to reset their
+    account.
+
+
+User Specific
+`````````````
+The user specific calls require a username in the url before the */api/v1/*.
+
+`{user}/api/v1/bmarks/recent`:
+    This will return a list of the most recent bookmarks added to the system by
+    the specified user in descending order. Each bookmark returned will be
+    contain the information from the main bookmark table and does not contain
+    information of related tables stored such as the `readable` table.
+
+`{user}/api/v1/bmarks/popular`:
+    This will return a list of the most popular bookmarks for the user as
+    determined by the click counter implemented in the `bmarks` table.  Each
+    bookmark returned will be contain the information from the main bookmark
+    table and does not contain information of related tables stored such as the
+    `readable` table.
+
+`{user}/api/v1/bmarks/search/*terms`:
+    Search will return a set of results for a query based on `OR` of the terms
+    requested. Each term is expected to be added as a part of the url as
+    `/term1/term2/term3`. This search will check against a bookmarks
+    `description`, `extended`, and `tag_str` data. Again, each bookmark
+    returned will be contain the information from the main bookmark table and
+    does not contain information of related tables stored such as the
+    `readable` table.
+
+`{user}/api/v1/bmarks/sync`:
+    This is experimental and very likely to change, so use at your own risk.
+    We're investigating syncing bookmarks with browsers via their extensions.
+    This api call will be the trigger point to allow a browser to request all
+    of the data it needs for loading knowledge of existing bookmarks into a new
+    browser installation.
+
+`{user}/api/v1/bmarks/add`:
+    A POST call to add a new bookmark to the system. This is validated by
+    passing the `api_key` parameter to the server in the POST.
+
+`{user}/api/v1/bmarks/remove`:
+    Remove the bookmark and content for this url. This might change and require
+    a `hash_id` instead of a url in the future.
+
+`{user}/api/v1/bmarks/export`:
+    Provide a JSON dump of the user's bookmarks. It includes all material
+    except the full content currently. This is very useful as a backup
+    mechanism.
+
+`{user}/api/v1/tags/complete`?tag=$str&current=test%20tags
+    Provides a list of possible completion strings for the given partial `tag`
+    string. For instance, if `tag` where 'py' then it might return "python",
+    "pylint". `current` is an optional space separated list of current tags to
+    provide context. In this way, the completion will only provide tags that
+    also occur on bookmarks with the list of current tags as well.
+
+`{user}/api/v1/account`:
+
+
+
+`{user}/api/v1/account/password`:
+    Alter a user's password to the new string provided in the api call.
+
+    :params: current_password
+    :params: new_password
+
+`{user}/api/v1/account/api_key`:
+    Return the user's api key.
+
+`{user}/api/v1/account/update`:
+    Update the user's account information such as name or email.
+
+`{user}/api/v1/account/activate`:
+    Reset a user after being deactivated. Requires you to submit hte activation
+    code as *activation* along with a new password as *password*.
 
 
 Paging through results

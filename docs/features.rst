@@ -6,8 +6,8 @@ Open source!
 -------------
 We're big fans of Open Source development. Bookie is AGPL licensed and we
 encourage you to fork it from Github and try it out. Have a pet feature you'd
-love to work with, let us know. Jump into our IRC channel #bookie on freenode
-to chat with the other developers.
+love to work with? Then let us know. Jump into our IRC channel #bookie on
+freenode to chat with the other developers.
 
 Importing bookmarks
 --------------------
@@ -33,7 +33,7 @@ Mobile View
 Bookie supports a web based mobile view implementing using `JQuery Mobile`_.
 You can view your bookmarks, read the content from the page, if you've enabled
 the readable content features, and search your bookmarks from a number of
-devices. Just head to the `/m` url for your site. See http://rick.bmark.us/m
+devices. Just head to the `/m` url for your site. See http://rick.bmark.us/{user}/m
 for an example of how things look.
 
 .. _JQuery Mobile: http://jquerymobile.com/

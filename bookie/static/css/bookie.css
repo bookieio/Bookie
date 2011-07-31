@@ -288,6 +288,14 @@ a.bmark {
     color: #003366;
 }
 
+.bmark .url {
+    color: #CCC;
+}
+
+.bmark .url:hover {
+    color: #999;
+}
+
 .bmark .time {
     text-align: right;
     font-size: .7em;

@@ -4,3 +4,5 @@ Thanks to these people that have contributed code/assistance to bookie
 - Greg Grossmeier
 - Adam Lincoln
 - Craig Maloney
+- Ben Rousch
+- Dave Brondsema
