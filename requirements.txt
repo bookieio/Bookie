@@ -36,6 +36,7 @@ repoze.tm2==1.0b1
 rope==0.9.3
 ropemode==0.1-rc2
 ropevim==0.3-rc
+snot==0.2
 sqlalchemy-migrate==0.6.1
 transaction==1.1.1
 translationstring==0.3

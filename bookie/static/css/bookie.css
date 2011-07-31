@@ -288,6 +288,10 @@ a.bmark {
     color: #003366;
 }
 
+.url {
+    color: #CCC;
+}
+
 .bmark .time {
     text-align: right;
     font-size: .7em;
