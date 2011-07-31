@@ -394,114 +394,17 @@ var bookie = (function ($b, $) {
             $b.pc.forward($b.pages.search);
         });
 
+        $('#results_previous').bind('click', function (ev) {
+            $b.pagination.page = $b.pagination.page - 1;
+            $b.pc.forward($b.pc.current_page);
+        });
+
+        $('#results_next').bind('click', function (ev) {
+            $b.pagination.page = $b.pagination.page + 1;
+            $b.pc.forward($b.pc.current_page);
+        });
+
     };
-
-    // $b.search = function (ev, extra_params) {
-    //     // search for a url given the search content
-    //     var terms, with_content, data_home;
-
-    //     // don't do what the click says yet
-    //     ev.preventDefault();
-
-    //     $.mobile.pageLoading();
-
-    //     terms = extra_params.terms;
-    //     with_content = extra_params.with_content;
-
-    //     // if the terms are undefined, check if we have any from a previous
-    //     // page call
-    //     if (terms === undefined) {
-    //         terms = $b.pagination.terms;
-    //     } else {
-    //         $b.pagination.terms = terms;
-    //     }
-
-    //     if (with_content === undefined) {
-    //         with_content = $b.pagination.query_params;
-    //     } else if (with_content === "true") {
-    //         $b.pagination.query_params = "&content=" + extra_params.with_content;
-    //     }
-
-    //     // the id of the <ul> we're sticking results into
-    //     // (home page vs results page)
-    //     data_home = extra_params.data_home;
-
-    //     $b.pagination.func = $b.events.SEARCH;
-    //     $b.api.search($b.paginatino.terms,
-    //                   with_content,
-    //                   $b.api.pager($b.pagination.page, $b.pagination.count),
-    //                   {
-    //                       'success': function (data) {
-    //                           if (data.success === true) {
-    //                               var page = data.payload.page,
-    //                                   page_title = "Search: " + data.payload.phrase;
-
-
-    //                               if ($b.pagination.query_params !== "") {
-    //                                   page_title = page_title + "<br /> (searching cached content)";
-    //                               }
-
-    //                               $b.pagination.page = page;
-    //                               $.mobile.changePage('#results',
-    //                                                   'slide',
-    //                                                   back=false,
-    //                                                   changeHash=false);
-    //                               $b.ui.results.update(data.payload.search_results,
-    //                                                    page_title,
-    //                                                    data_home);
-    //                           } else {
-    //                               console.error('ERROR getting search');
-    //                           }
-    //                       },
-    //                       'complete': function () {
-    //                           console.log('fired complete');
-
-    //                           $.mobile.pageLoading(true);
-    //                       }
-    //                   }
-    //     );
-
-    // };
-
-        // nav_buttons = function (id, event_id, data_home, callback) {
-        //     if (callback !== undefined) {
-        //         $($b.EVENTID).bind(event_id, callback);
-        //     }
-
-        //     $('.' + id).bind('click', function (ev) {
-        //         $b.pagination.clear();
-
-        //         if (callback !== undefined) {
-        //             ev.preventDefault();
-        //             $($b.EVENTID).trigger(event_id, {data_home: data_home});
-        //         }
-
-        //         for (button in button_list) {
-        //             if (button == id) {
-        //                 // then we addClass this one
-        //                 $('.' + id).addClass('ui-btn-active ui-state-persist');
-        //             } else {
-        //                 // then we remove the classes
-        //                 $('.' + id).removeClass('ui-btn-active ui-state-persist');
-        //             }
-        //         }
-        //     });
-        // };
-
-        // nav_buttons('go_recent', $b.events.RECENT, '#results_list', $b.load_recent);
-        // nav_buttons('go_popular', $b.events.POPULAR, '#results_list', $b.load_popular);
-        // nav_buttons('go_search');
-
-        // $('#results_previous').bind('click', function (ev) {
-        //     $b.pagination.page = $b.pagination.page - 1;
-        //     $($b.EVENTID).trigger($b.pagination.func, {data_home: '#results_list'});
-        // });
-
-        // $('#results_next').bind('click', function (ev) {
-        //     $b.pagination.page = $b.pagination.page + 1;
-        //     $($b.EVENTID).trigger($b.pagination.func, {data_home: '#results_list'});
-        // });
-
 
     return $b;
 
