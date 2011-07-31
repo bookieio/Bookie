@@ -3,6 +3,7 @@ import logging
 
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.security import unauthenticated_userid
 
@@ -43,15 +44,32 @@ class AuthHelper(object):
 
         return True
 
+    @staticmethod
+    def not_valid(request, redirect=None):
+        """Handle the Forbidden exception unless redirect is there
+
+        The idea is that if there's a redirect we shoot them to the login form
+        instead
+
+        """
+        if redirect is None:
+            raise HTTPForbidden('Deactivated Account')
+        else:
+            LOG.debug('Redirecting to: ' + redirect)
+            raise HTTPFound(location=request.route_url(redirect))
+
 
 class ReqOrApiAuthorize(object):
     """A context manager that works with either Api key or logged in user"""
 
-    def __init__(self, request, api_key, user_acct, username=None):
+    def __init__(self, request, api_key, user_acct, username=None, redirect=None):
         self.request = request
         self.api_key = api_key
         self.user_acct = user_acct
         self.username = username
+
+        if redirect:
+            self.redirect = redirect
 
     def __enter__(self):
         """Handle the verification side
@@ -92,11 +110,14 @@ class ApiAuthorize(object):
 
     """
 
-    def __init__(self, user, submitted_key):
+    def __init__(self, user, submitted_key, redirect=None):
         """Create the context manager"""
         self.user = user
         self.api_key = user.api_key
         self.check_key = submitted_key
+
+        if redirect:
+            self.redirect = redirect
 
     def __enter__(self):
         """Verify api key set in constructor"""
@@ -124,15 +145,16 @@ class ReqAuthorize(object):
 
     """
 
-    def __init__(self, request, username=None):
+    def __init__(self, request, username=None, redirect=None):
         """Create the context manager"""
         self.request = request
         self.username = username
+        self.redirect = redirect
 
     def __enter__(self):
         """Verify api key set in constructor"""
         if not AuthHelper.check_login(self.request, self.username):
-            raise HTTPForbidden('Invalid Authorization')
+            AuthHelper.not_valid(self.request, redirect=self.redirect)
 
     def __exit__(self, exc_type, exc_value, traceback):
         """No cleanup work to do after usage"""
