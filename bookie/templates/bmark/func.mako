@@ -77,7 +77,7 @@
                         % endif
                     </div>
 
-                    <div class="yui3-u-3-8 url">
+                    <div class="yui3-u-3-8 url" title="${bmark.hashed.url}">
                         ${bmark.hashed.url}
                     </div>
                     <div class="yui3-u-1-2">

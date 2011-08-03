@@ -280,6 +280,8 @@ a.tag {
     background: #DDDDDD;
     color: #666666;
     text-decoration: none;
+    margin-bottom: .2em;
+    display: inline-block;
 }
 
 a.bmark {
@@ -290,6 +292,8 @@ a.bmark {
 
 .bmark .url {
     color: #CCC;
+    overflow: hidden;
+    white-space:nowrap;
 }
 
 .bmark .url:hover {
