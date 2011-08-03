@@ -46,7 +46,7 @@ class MorJSON:
 
     def jsonify(self, dict_response):
         """Return a json string of the response """
-        return json.dumps(dict_response)
+        return json.dumps(dict_response, sort_keys=True, indent=2)
 
 
 def build_routes(config):
