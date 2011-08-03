@@ -16,23 +16,23 @@ Response Description
 ~~~~~~~~~~~~~~~~~~~~
 ::
 
-    // sample api call object
+    // sample api response object
     {
         "message": "",
-        "payload": {},
+        "payload": {"some_data": "val"},
         "success": true
     }
 
 success:
-    Success will be a boolean if the call was successful or not. If falst, this
+    Success will be a boolean if the call was successful or not. If false, this
     just means that while the http call was correct, it failed for some reason.
     Perhaps you were missing a parameter in the call? Perhaps a record was not
     found. Check the `message` value for more information
 
 message:
     Message will help describe details on the current api call. On most
-    occassions, it will be empty on a successful call, and it will have some
-    details for an api call with `success: false`.
+    occasions, it will be empty. On an unsuccessful call, and it will have some
+    details in the message and set `success: false`.
 
 payload:
     Any data requested will be included in the payload. It's a nested object
@@ -44,6 +44,62 @@ payload:
 
 Available API Calls
 ~~~~~~~~~~~~~~~~~~~
+In development
+
+/bmarks
+---------
+
+GET `/api/v1/bmarks`:
+    Return a list of the most recent bookmarks
+
+    :query param: api_key *required* - the api key for your account to make the call with
+    :query param: count - the number in the result you wish to return
+    :query param: page - the page number to get results for based off of the count specified
+    :query param: content - do you wish the readable content of the urls if available
+
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/bmarks?api_key=12345...')
+    >>> {
+        "success": true,
+        "message": "",
+        "payload": ...
+    }
+
+/search/:terms
+---------------
+
+GET `/api/v1/bmarks/search/:terms`
+    Return a list of bookmarks based on the fulltext search of the given terms.
+    There can be one or more search terms. All search terms are *OR*'d
+    together. Fulltext search will find matches in the *description*,
+    *extended*, and tag string fields of a bookmark. You can also perform
+    fulltext search against the readable content of pages with the correct
+    query parameter from below.
+
+    :query param: api_key *required* - the api key for your account to make the call with
+    :query param: count - the number in the result you wish to return
+    :query param: page - the page number to get results for based off of the count specified
+    :query param: content - include the readable text in the fulltext search.  This can slow down the response.
+
+    ::
+
+        requests.get('http://127.0.0.1:6543/api/v1/bmarks/search/ubuntu/linux?api_key=12345...')
+        >>> {
+            "success": true,
+            "message": "",
+            "payload": ...
+        }
+
+        requests.get('http://127.0.0.1:6543/api/v1/bmarks/search/ubuntu/linux?api_key=12345...&content=true')
+        >>> {
+            "success": true,
+            "message": "",
+            "payload": ...
+        }
+
+
+
 
 System Wide
 ````````````
