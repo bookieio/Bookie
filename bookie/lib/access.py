@@ -1,6 +1,7 @@
 """Handle auth and authz activities in bookie"""
 import logging
 
+from decorator import decorator
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
@@ -8,7 +9,6 @@ from pyramid.request import Request
 from pyramid.security import unauthenticated_userid
 
 from bookie.models.auth import UserMgr
-
 
 LOG = logging.getLogger(__name__)
 
@@ -179,3 +179,69 @@ class RequestWithUserAttribute(Request):
             user = UserMgr.get(user_id=user_id)
             LOG.debug(user)
             return user
+
+class api_auth():
+    """View decorator to set check the client is permitted
+
+    Since api calls can come from the api via a api_key or a logged in user via
+    the website, we need to check/authorize both
+
+    If this is an api call and the api key is valid, stick the user object
+    found onto the request.user so that the view can find it there in one
+    place.
+
+    """
+
+    def __init__(self, api_field, user_fetcher):
+        """
+        :param api_field: the name of the data in the request.params and the
+                          User object we compare to make sure they match
+        :param user_fetcher: a callable that I can give a username to and
+                             get back the user object
+
+        :sample: @ApiAuth('api_key', UserMgr.get)
+
+        """
+        self.api_field = api_field
+        self.user_fetcher = user_fetcher
+
+    def __call__(self, action_):
+        """ Return :meth:`wrap_action` as the decorator for ``action_``. """
+        return decorator(self.wrap_action, action_)
+
+    def wrap_action(self, action_, *args, **kwargs):
+        """
+        Wrap the controller action ``action_``.
+
+        :param action_: The controller action to be wrapped.
+
+        ``args`` and ``kwargs`` are the positional and named arguments which
+        will be passed to ``action_`` when called.
+
+        """
+        # check request.user to see if this is a logged in user
+        # if so, then make sure it matches the matchdict user
+
+        # request should be the one and only arg to the view function
+        request = args[0]
+        username = request.matchdict.get('username', None)
+
+        if request.user is not None:
+            if AuthHelper.check_login(request, username):
+                # then we're good, this is a valid user for this url
+                return action_(*args, **kwargs)
+
+        # if request.user is None we want to check if this is an api call,
+        # if there's an api key in the GET params and api is in the url.
+        # get the user and validate the api key
+        request.user = self.user_fetcher(username=username)
+        api_key = request.params.get(self.api_field, None)
+
+        if request.user and AuthHelper.check_api(api_key,
+                                getattr(request.user, self.api_field)):
+            # then we're good, this is a valid user for this url
+            return action_(*args, **kwargs)
+
+        # otherwise, we're done, you're not allowed
+        request.response.status_int = 403
+        return { 'error': "Not authorized for request." }

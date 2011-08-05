@@ -9,51 +9,51 @@ from bookie.views.exceptions import resource_forbidden
 import json
 
 
-class MorJSON:
-    def __init__(self, info):
-        """ Constructor: info will be an object having the the
-        following attributes: name (the renderer name), package
-        (the package that was 'current' at the time the
-        renderer was registered), type (the renderer type
-        name), registry (the current application registry) and
-        settings (the deployment settings dictionary).  """
-        pass
-
-    def __call__(self, value, system):
-        """ Call a the renderer implementation with the value
-        and the system value passed in as arguments and return
-        the result (a string or unicode object).  The value is
-        the return value of a view.  The system value is a
-        dictionary containing available system values
-        (e.g. view, context, and request). """
-        request = system.get('request')
-
-        if request is not None:
-            request.response_content_type = 'application/json'
-
-        # the dictionary sent back needs to have a success, message, and
-        # payload passed in
-        if 'success' not in value:
-            raise Exception('you must return a success value for a morjson renderer')
-
-        if 'message' not in value:
-            raise Exception('you must return a message value for a morjson renderer')
-
-        if 'payload' not in value:
-            raise Exception('you must return a payload value for a morjson renderer')
-
-        return self.jsonify(value)
-
-    def jsonify(self, dict_response):
-        """Return a json string of the response """
-        return json.dumps(dict_response, sort_keys=True, indent=2)
+# class MorJSON:
+#     def __init__(self, info):
+#         """ Constructor: info will be an object having the the
+#         following attributes: name (the renderer name), package
+#         (the package that was 'current' at the time the
+#         renderer was registered), type (the renderer type
+#         name), registry (the current application registry) and
+#         settings (the deployment settings dictionary).  """
+#         pass
+# 
+#     def __call__(self, value, system):
+#         """ Call a the renderer implementation with the value
+#         and the system value passed in as arguments and return
+#         the result (a string or unicode object).  The value is
+#         the return value of a view.  The system value is a
+#         dictionary containing available system values
+#         (e.g. view, context, and request). """
+#         request = system.get('request')
+# 
+#         if request is not None:
+#             request.response_content_type = 'application/json'
+# 
+#         # the dictionary sent back needs to have a success, message, and
+#         # payload passed in
+#         if 'success' not in value:
+#             raise Exception('you must return a success value for a morjson renderer')
+# 
+#         if 'message' not in value:
+#             raise Exception('you must return a message value for a morjson renderer')
+# 
+#         if 'payload' not in value:
+#             raise Exception('you must return a payload value for a morjson renderer')
+# 
+#         return self.jsonify(value)
+# 
+#     def jsonify(self, dict_response):
+#         """Return a json string of the response """
+#         return json.dumps(dict_response, sort_keys=True, indent=2)
 
 
 def build_routes(config):
     """Add any routes to the config"""
 
     # add the MorJSON renderer to the list of known ones
-    config.add_renderer('morjson', MorJSON)
+    # config.add_renderer('morjson', MorJSON)
 # 
 #     config.add_view(resource_not_found,
 #                     context=NotFound,

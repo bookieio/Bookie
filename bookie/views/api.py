@@ -2,13 +2,12 @@
 import logging
 
 from datetime import datetime
-from pyramid.httpexceptions import HTTPNotFound
-from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.settings import asbool
 from pyramid.view import view_config
-from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
+from bookie.lib.access import api_auth
 from bookie.lib.access import ApiAuthorize
 from bookie.lib.access import ReqOrApiAuthorize
 from bookie.lib.applog import AuthLog
@@ -178,6 +177,7 @@ def bmark_sync(request):
 
 
 @view_config(route_name="api_bmark_hash", renderer="json")
+@api_auth('api_key', UserMgr.get)
 def bmark_get(request):
     """Return a bookmark requested via hash_id
 
@@ -188,48 +188,27 @@ def bmark_get(request):
     rdict = request.matchdict
 
     hash_id = rdict.get('hash_id', None)
-    username = rdict.get('username', None)
-    user = UserMgr.get(username=username)
+    username = request.user.username
 
-    with ApiAuthorize(user,
-                      request.params.get('api_key', None)):
-        if not hash_id:
-            raise HTTPBadRequest({
-                'error': "Request is missing the hash id.",
-                'payload': {}
-            })
+    # the hash id will always be there or the route won't match
+    bookmark = BmarkMgr.get_by_hash(hash_id,
+                                    username=username)
 
-        bookmark = BmarkMgr.get_by_hash(hash_id,
-                                        username=username)
+    if bookmark is None:
+        request.response.status_int = 404
+        return { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
+    else:
+        return_obj = dict(bookmark)
 
-        LOG.debug("BOOKMARK FOUND")
-        LOG.debug(bookmark)
-        if bookmark is None:
-            # then not found
-            # go ahead and show them the last bookmark for the user
-            last = BmarkMgr.get_recent_bmark(username=username)
-            if last is not None:
-                payload = {'last':  dict(last)}
-            else:
-                payload = {}
+        if 'with_content' in request.params:
+            if bookmark.hashed.readable:
+                return_obj['readable'] = dict(bookmark.hashed.readable)
 
-            raise HTTPNotFound({
-                "error": "Bookmark for hash id {0} not found".format(hash_id),
-                "payload": payload
-            })
+        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
-        else:
-            return_obj = dict(bookmark)
-
-            if 'with_content' in request.params:
-                if bookmark.hashed.readable:
-                    return_obj['readable'] = dict(bookmark.hashed.readable)
-
-            return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
-
-            return {
-             'bmark': return_obj
-            }
+        return {
+         'bmark': return_obj
+        }
 
 
 @view_config(route_name="user_api_bmark_add", renderer="json")

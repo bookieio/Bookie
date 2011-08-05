@@ -15,53 +15,58 @@ User specific calls
 
 /:username/bmark/:hash_id
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET `/api/v1/admin/bmark/c605a21cf19560`
+Usage
+'''''
+*GET* `/api/v1/admin/bmark/c605a21cf19560`
 
-    Get the information about this bookmark.
+Get the information about this bookmark.
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: with_content - do you wish the readable content of the urls if available
-    :query param: last_bmark - do you want the information of the last bookmark saved. This is used to supply tag hints in the Chrome extension.
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: with_content - do you wish the readable content of the urls if available
+:query param: last_bmark - do you want the information of the last bookmark saved. This is used to supply tag hints in the Chrome extension.
 
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+:error 404: if the hash id can not be found you'll get a 404
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+All error responses will have a json body with an error message string and
+possibly other helpful information.
+
+Example
+'''''''
 ::
 
     requests.get('http://127.0.0.1:6543/api/v1/admin/bmark/c605a21cf19560?api_key=12345...')
     >>> {
-          "message": "",
-          "payload": {
-            "bmarks": [
+          "bmark": {
+            "bid": 2,
+            "clicks": 1,
+            "description": "Bookie: Recent Bookmarks",
+            "extended": "",
+            "hash_id": "c605a21cf19560",
+            "inserted_by": null,
+            "stored": "2011-06-21 13:20:26",
+            "tag_str": "test bookmarks",
+            "tags": [
               {
-                "bid": 2,
-                "clicks": 1,
-                "content": {
-                    ...
-                },
-                "description": "Bookie: Recent Bookmarks",
-                "extended": "",
-                "hash_id": "c605a21cf19560",
-                "inserted_by": null,
-                "overall_clicks": 10,
-                "stored": "2011-06-21 13:20:26",
-                "tag_str": "test bookmarks",
-                "tags": [
-                  {
-                    "name": "test",
-                    "tid": 3
-                  },
-                  {
-                    "name": "bookmarks",
-                    "tid": 2
-                  }
-                ],
-                "url": "http://bmark.us/recent",
-                "updated": "2011-07-29 22:23:42",
-                "username": "admin"
+                "name": "test",
+                "tid": 3
               },
-              ...
-            ]
+              {
+                "name": "bookmarks",
+                "tid": 2
+              }
+            ],
+            "updated": "2011-07-29 22:23:42",
+            "username": "admin"
           }
-          "success": true
         }
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmark/c605a21cf19560?api_key=000')
+    >>> {"error": "Not authorized for request."}
+
 
 POST `/api/v1/bmark/admin/c605a21cf19560`
 

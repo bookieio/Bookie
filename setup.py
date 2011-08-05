@@ -8,14 +8,13 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
-    'pyramid<=1.0.9999',
+    'pyramid<=1.1',
     'SQLAlchemy<0.8',
     'transaction',
     'repoze.tm2>=1.0b1', # default_commit_veto
     'zope.sqlalchemy',
     'WebError',
     'WebTest',
-    'Chameleon<1.9999',
     'BeautifulSoup==3.2.0',
     ]
 
