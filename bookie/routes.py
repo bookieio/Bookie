@@ -54,22 +54,22 @@ def build_routes(config):
 
     # add the MorJSON renderer to the list of known ones
     config.add_renderer('morjson', MorJSON)
-
-    config.add_view(resource_not_found,
-                    context=NotFound,
-                    renderer="exceptions/404.mako")
-
-    config.add_view(resource_not_found,
-                    context=HTTPNotFound,
-                    renderer="exceptions/404.mako")
-
-    config.add_view(resource_forbidden,
-                    context=Forbidden,
-                    renderer="exceptions/403.mako")
-
-    config.add_view(resource_forbidden,
-                    context=HTTPForbidden,
-                    renderer="exceptions/403.mako")
+# 
+#     config.add_view(resource_not_found,
+#                     context=NotFound,
+#                     renderer="exceptions/404.mako")
+# 
+#     config.add_view(resource_not_found,
+#                     context=HTTPNotFound,
+#                     renderer="exceptions/404.mako")
+# 
+#     config.add_view(resource_forbidden,
+#                     context=Forbidden,
+#                     renderer="exceptions/403.mako")
+# 
+#     config.add_view(resource_forbidden,
+#                     context=HTTPForbidden,
+#                     renderer="exceptions/403.mako")
 
     config.add_route("home", "/")
 
@@ -137,6 +137,9 @@ def build_routes(config):
     # MOBILE routes
     config.add_route("user_mobile", "{username}/m")
 
+    # NEW API
+    config.add_route("api_bmark_hash", "/api/v1/{username}/bmark/{hash_id}")
+
     # API
     config.add_route('api_bmark_recent', 'api/v1/bmarks/recent')
     config.add_route('api_bmark_popular', 'api/v1/bmarks/popular')
@@ -157,11 +160,7 @@ def build_routes(config):
     config.add_route("user_api_bmark_export",
                      "{username}/api/v1/bmarks/export")
 
-    # this route must be last, none of the above will look like hashes
-    # (22char) # so it's safe to have as a kind of default route at the end
-    config.add_route("api_bmark_hash", "api/v1/bmarks/{hash_id}")
-    config.add_route("user_api_bmark_hash",
-                     "{username}/api/v1/bmarks/{hash_id}")
+
 
     # api calls for tag relation information
     config.add_route("api_tag_complete", "api/v1/tags/complete")

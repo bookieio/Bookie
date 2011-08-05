@@ -2,6 +2,8 @@
 import logging
 
 from datetime import datetime
+from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.settings import asbool
 from pyramid.view import view_config
 from sqlalchemy.orm import contains_eager
@@ -32,8 +34,8 @@ RESULTS_MAX = 10
 HARD_MAX = 100
 
 
-@view_config(route_name="api_bmark_recent", renderer="morjson")
-@view_config(route_name="user_api_bmark_recent", renderer="morjson")
+@view_config(route_name="api_bmark_recent", renderer="json")
+@view_config(route_name="user_api_bmark_recent", renderer="json")
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -90,8 +92,8 @@ def bmark_recent(request):
     return ret
 
 
-@view_config(route_name="api_bmark_popular", renderer="morjson")
-@view_config(route_name="user_api_bmark_popular", renderer="morjson")
+@view_config(route_name="api_bmark_popular", renderer="json")
+@view_config(route_name="user_api_bmark_popular", renderer="json")
 def bmark_popular(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -146,7 +148,7 @@ def bmark_popular(request):
     return ret
 
 
-@view_config(route_name="user_api_bmark_sync", renderer="morjson")
+@view_config(route_name="user_api_bmark_sync", renderer="json")
 def bmark_sync(request):
     """Return a list of the bookmarks we know of in the system
 
@@ -175,8 +177,7 @@ def bmark_sync(request):
         return ret
 
 
-@view_config(route_name="api_bmark_hash", renderer="morjson")
-@view_config(route_name="user_api_bmark_hash", renderer="morjson")
+@view_config(route_name="api_bmark_hash", renderer="json")
 def bmark_get(request):
     """Return a bookmark requested via hash_id
 
@@ -185,61 +186,53 @@ def bmark_get(request):
             - readable
     """
     rdict = request.matchdict
-    params = request.params
 
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
+    user = UserMgr.get(username=username)
 
-    if not hash_id:
-        return {
-            'success': False,
-            'message': "Could not find bookmark for hash " + hash_id,
-            'payload': {}
-        }
+    with ApiAuthorize(user,
+                      request.params.get('api_key', None)):
+        if not hash_id:
+            raise HTTPBadRequest({
+                'error': "Request is missing the hash id.",
+                'payload': {}
+            })
 
-    bookmark = BmarkMgr.get_by_hash(hash_id,
-                                    username=username)
+        bookmark = BmarkMgr.get_by_hash(hash_id,
+                                        username=username)
 
-    LOG.debug("BOOKMARK FOUND")
-    LOG.debug(bookmark)
-    if bookmark is None:
-        # then not found
-        # check to see if they want the last tags used on the last bookmark
-        # but only for the last
-        if 'last_bmark' in request.params:
+        LOG.debug("BOOKMARK FOUND")
+        LOG.debug(bookmark)
+        if bookmark is None:
+            # then not found
+            # go ahead and show them the last bookmark for the user
             last = BmarkMgr.get_recent_bmark(username=username)
             if last is not None:
                 payload = {'last':  dict(last)}
             else:
                 payload = {}
+
+            raise HTTPNotFound({
+                "error": "Bookmark for hash id {0} not found".format(hash_id),
+                "payload": payload
+            })
+
         else:
-            payload = {}
+            return_obj = dict(bookmark)
 
-        ret = {
-            'success': False,
-            'message': "Bookmark for hash id {0} not found".format(hash_id),
-            'payload': payload
-        }
+            if 'with_content' in request.params:
+                if bookmark.hashed.readable:
+                    return_obj['readable'] = dict(bookmark.hashed.readable)
 
-    else:
-        return_obj = dict(bookmark)
-        if bookmark.hashed.readable:
-            return_obj['readable'] = dict(bookmark.hashed.readable)
+            return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
-        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
-
-        ret = {
-            'success': True,
-            'message': "",
-            'payload': {
-                 'bmark': return_obj
+            return {
+             'bmark': return_obj
             }
-        }
-
-    return ret
 
 
-@view_config(route_name="user_api_bmark_add", renderer="morjson")
+@view_config(route_name="user_api_bmark_add", renderer="json")
 def bmark_add(request):
     """Add a new bookmark to the system"""
     params = request.params
@@ -351,7 +344,7 @@ def bmark_add(request):
                  }
 
 
-@view_config(route_name="user_api_bmark_remove", renderer="morjson")
+@view_config(route_name="user_api_bmark_remove", renderer="json")
 def bmark_remove(request):
     """Remove this bookmark from the system"""
     params = request.params
@@ -387,7 +380,7 @@ def bmark_remove(request):
                 }
 
 
-@view_config(route_name="user_api_bmark_export", renderer="morjson")
+@view_config(route_name="user_api_bmark_export", renderer="json")
 def bmark_exportexport(request):
     """Export via the api call to json dump
 
@@ -417,8 +410,8 @@ def bmark_exportexport(request):
         }
 
 
-@view_config(route_name="api_tag_complete", renderer="morjson")
-@view_config(route_name="user_api_tag_complete", renderer="morjson")
+@view_config(route_name="api_tag_complete", renderer="json")
+@view_config(route_name="user_api_tag_complete", renderer="json")
 def tag_complete(request):
     """Complete a tag based on the given text
 
@@ -451,7 +444,7 @@ def tag_complete(request):
     return ret
 
 
-@view_config(route_name="api_bmark_get_readable", renderer="morjson")
+@view_config(route_name="api_bmark_get_readable", renderer="json")
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
     url_list = Hashed.query.outerjoin(Readable).\
@@ -468,7 +461,7 @@ def to_readable(request):
     return ret
 
 
-@view_config(route_name="api_bmark_readable", renderer="morjson")
+@view_config(route_name="api_bmark_readable", renderer="json")
 def readable(request):
     """Take the html given and parse the content in there for readable
 
@@ -545,7 +538,7 @@ def readable(request):
     return ret
 
 
-@view_config(route_name="api_user_account_api_key", renderer="morjson")
+@view_config(route_name="api_user_account_api_key", renderer="json")
 def api_key(request):
     """Return the currently logged in user's api key
 
@@ -579,7 +572,7 @@ def api_key(request):
         }
 
 
-@view_config(route_name="api_user_account_reset_password", renderer="morjson")
+@view_config(route_name="api_user_account_reset_password", renderer="json")
 def reset_password(request):
     """Change a user's password from the current string
 
@@ -633,7 +626,7 @@ def reset_password(request):
             }
 
 
-@view_config(route_name="api_user_account_update", renderer="morjson")
+@view_config(route_name="api_user_account_update", renderer="json")
 def account_update(request):
     """Update the account information for a user
 
@@ -672,7 +665,7 @@ def account_update(request):
         }
 
 
-@view_config(route_name="api_user_reactivate", renderer="morjson")
+@view_config(route_name="api_user_reactivate", renderer="json")
 def reactivate(request):
     """Reset a user account to enable them to change their password"""
     params = request.params
@@ -731,7 +724,7 @@ check your spam folder.""",
     }
 
 
-@view_config(route_name="api_user_account_activate", renderer="morjson")
+@view_config(route_name="api_user_account_activate", renderer="json")
 def account_activate(request):
     """Reset a user after being deactivated
 

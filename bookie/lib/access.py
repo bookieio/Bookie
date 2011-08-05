@@ -19,6 +19,7 @@ class AuthHelper(object):
     @staticmethod
     def check_api(submitted_key, users_key):
         """Verify the api key is valid"""
+        LOG.debug(submitted_key, users_key)
         if users_key != submitted_key:
             LOG.error('Invalid API Key! {0} v {1}'.format(users_key,
                                                           submitted_key))
