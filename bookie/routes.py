@@ -138,6 +138,7 @@ def build_routes(config):
     config.add_route("user_mobile", "{username}/m")
 
     # NEW API
+    config.add_route("api_bmark_add", "/api/v1/{username}/bmark/add")
     config.add_route("api_bmark_hash", "/api/v1/{username}/bmark/{hash_id}")
 
     # API
@@ -154,7 +155,6 @@ def build_routes(config):
     config.add_route("user_api_bmark_search",
                      "{username}/api/v1/bmarks/search/*terms")
     config.add_route("user_api_bmark_sync", "{username}/api/v1/bmarks/sync")
-    config.add_route("user_api_bmark_add", "{username}/api/v1/bmarks/add")
     config.add_route("user_api_bmark_remove",
                      "{username}/api/v1/bmarks/remove")
     config.add_route("user_api_bmark_export",

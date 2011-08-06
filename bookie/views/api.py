@@ -2,7 +2,6 @@
 import logging
 
 from datetime import datetime
-from pyramid.httpexceptions import HTTPForbidden
 from pyramid.settings import asbool
 from pyramid.view import view_config
 from StringIO import StringIO
@@ -31,6 +30,146 @@ from bookie.models.fulltext import get_fulltext_handler
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 10
 HARD_MAX = 100
+
+@view_config(route_name="api_bmark_hash", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def bmark_get(request):
+    """Return a bookmark requested via hash_id
+
+    We need to return a nested object with parts
+        bmark
+            - readable
+    """
+    rdict = request.matchdict
+
+    hash_id = rdict.get('hash_id', None)
+    username = request.user.username
+
+    # the hash id will always be there or the route won't match
+    bookmark = BmarkMgr.get_by_hash(hash_id,
+                                    username=username)
+
+    if bookmark is None:
+        request.response.status_int = 404
+        return { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
+    else:
+        return_obj = dict(bookmark)
+
+        if 'with_content' in request.params:
+            if bookmark.hashed.readable:
+                return_obj['readable'] = dict(bookmark.hashed.readable)
+
+        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
+
+        return {
+         'bmark': return_obj
+        }
+
+
+@view_config(route_name="api_bmark_add", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def bmark_add(request):
+    """Add a new bookmark to the system"""
+    params = request.params
+    user = request.user
+
+    if 'url' not in params and params['url']:
+        request.response.status_int = 400
+        return {
+            'error': 'Bad Request: missing url',
+         }
+    else:
+        # check if we already have this
+        try:
+            mark = BmarkMgr.get_by_url(params['url'],
+                                       username=user.username)
+
+            mark.description = params.get('description', mark.description)
+            mark.extended = params.get('extended', mark.extended)
+
+            new_tag_str = params.get('tags', None)
+
+            # if the only new tags are commands, then don't erase the
+            # existing tags
+            # we need to process any commands associated as well
+            new_tags = TagMgr.from_string(new_tag_str)
+            found_cmds = Commander.check_commands(new_tags)
+
+            if new_tag_str and len(new_tags) == len(found_cmds):
+                # the all the new tags are command tags, just tack them on
+                # for processing, but don't touch existing tags
+                for command_tag in new_tags.values():
+                    LOG.debug(command_tag)
+                    mark.tags[command_tag.name] = command_tag
+            else:
+                if new_tag_str:
+                    # in this case, rewrite the tags wit the new ones
+                    mark.update_tags(new_tag_str)
+
+            commander = Commander(mark)
+            mark = commander.process()
+
+        except NoResultFound:
+            # then let's store this thing
+            # if we have a dt param then set the date to be that manual
+            # date
+            if 'dt' in request.params:
+                # date format by delapi specs:
+                # CCYY-MM-DDThh:mm:ssZ
+                fmt = "%Y-%m-%dT%H:%M:%SZ"
+                stored_time = datetime.strptime(request.params['dt'], fmt)
+            else:
+                stored_time = None
+
+            # we want to store fulltext info so send that along to the
+            # import processor
+            conn_str = request.registry.settings.get('sqlalchemy.url',
+                                                     False)
+            fulltext = get_fulltext_handler(conn_str)
+
+            # check to see if we know where this is coming from
+            inserted_by = params.get('inserted_by', 'unknown_api')
+
+            LOG.debug('Username')
+            LOG.debug(username)
+            mark = BmarkMgr.store(params['url'],
+                         username,
+                         params.get('description', ''),
+                         params.get('extended', ''),
+                         params.get('tags', ''),
+                         dt=stored_time,
+                         fulltext=fulltext,
+                         inserted_by=inserted_by,
+                   )
+
+            # we need to process any commands associated as well
+            commander = Commander(mark)
+            mark = commander.process()
+
+        # if we have content, stick it on the object here
+        if 'content' in request.params:
+            content = StringIO(request.params['content'])
+            content.seek(0)
+            parsed = ReadContent.parse(content, content_type="text/html")
+
+            mark.hashed.readable = Readable()
+            mark.hashed.readable.content = parsed.content
+            mark.hashed.readable.content_type = parsed.content_type
+            mark.hashed.readable.status_code = parsed.status
+            mark.hashed.readable.status_message = parsed.status_message
+
+        # we need to flush here for new tag ids, etc
+        DBSession.flush()
+
+        mark_data = dict(mark)
+        mark_data['tags'] = [dict(mark.tags[tag]) for tag in mark.tags.keys()]
+
+        return {
+            'bmark': mark_data,
+            'location': request.route_url('bmark_readable',
+                                          hash_id=mark.hash_id,
+                                          username=user.username),
+        }
 
 
 @view_config(route_name="api_bmark_recent", renderer="json")
@@ -176,151 +315,7 @@ def bmark_sync(request):
         return ret
 
 
-@view_config(route_name="api_bmark_hash", renderer="json")
-@api_auth('api_key', UserMgr.get)
-def bmark_get(request):
-    """Return a bookmark requested via hash_id
 
-    We need to return a nested object with parts
-        bmark
-            - readable
-    """
-    rdict = request.matchdict
-
-    hash_id = rdict.get('hash_id', None)
-    username = request.user.username
-
-    # the hash id will always be there or the route won't match
-    bookmark = BmarkMgr.get_by_hash(hash_id,
-                                    username=username)
-
-    if bookmark is None:
-        request.response.status_int = 404
-        return { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
-    else:
-        return_obj = dict(bookmark)
-
-        if 'with_content' in request.params:
-            if bookmark.hashed.readable:
-                return_obj['readable'] = dict(bookmark.hashed.readable)
-
-        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
-
-        return {
-         'bmark': return_obj
-        }
-
-
-@view_config(route_name="user_api_bmark_add", renderer="json")
-def bmark_add(request):
-    """Add a new bookmark to the system"""
-    params = request.params
-    rdict = request.matchdict
-
-    username = rdict.get("username", None)
-    user = UserMgr.get(username=username)
-
-    with ApiAuthorize(user,
-                      params.get('api_key', None)):
-
-        if 'url' in params and params['url']:
-            # check if we already have this
-            try:
-                mark = BmarkMgr.get_by_url(params['url'],
-                                           username=username)
-
-                mark.description = params.get('description', mark.description)
-                mark.extended = params.get('extended', mark.extended)
-
-                new_tag_str = params.get('tags', None)
-
-                # if the only new tags are commands, then don't erase the
-                # existing tags
-                # we need to process any commands associated as well
-                new_tags = TagMgr.from_string(new_tag_str)
-                found_cmds = Commander.check_commands(new_tags)
-
-                if new_tag_str and len(new_tags) == len(found_cmds):
-                    # the all the new tags are command tags, just tack them on
-                    # for processing, but don't touch existing tags
-                    for command_tag in new_tags.values():
-                        LOG.debug(command_tag)
-                        mark.tags[command_tag.name] = command_tag
-                else:
-                    if new_tag_str:
-                        # in this case, rewrite the tags wit the new ones
-                        mark.update_tags(new_tag_str)
-
-                commander = Commander(mark)
-                mark = commander.process()
-
-            except NoResultFound:
-                # then let's store this thing
-                # if we have a dt param then set the date to be that manual
-                # date
-                if 'dt' in request.params:
-                    # date format by delapi specs:
-                    # CCYY-MM-DDThh:mm:ssZ
-                    fmt = "%Y-%m-%dT%H:%M:%SZ"
-                    stored_time = datetime.strptime(request.params['dt'], fmt)
-                else:
-                    stored_time = None
-
-                # we want to store fulltext info so send that along to the
-                # import processor
-                conn_str = request.registry.settings.get('sqlalchemy.url',
-                                                         False)
-                fulltext = get_fulltext_handler(conn_str)
-
-                # check to see if we know where this is coming from
-                inserted_by = params.get('inserted_by', 'unknown_api')
-
-                LOG.debug('Username')
-                LOG.debug(username)
-                mark = BmarkMgr.store(params['url'],
-                             username,
-                             params.get('description', ''),
-                             params.get('extended', ''),
-                             params.get('tags', ''),
-                             dt=stored_time,
-                             fulltext=fulltext,
-                             inserted_by=inserted_by,
-                       )
-
-                # we need to process any commands associated as well
-                commander = Commander(mark)
-                mark = commander.process()
-
-            # if we have content, stick it on the object here
-            if 'content' in request.params:
-                content = StringIO(request.params['content'])
-                content.seek(0)
-                parsed = ReadContent.parse(content, content_type="text/html")
-
-                mark.hashed.readable = Readable()
-                mark.hashed.readable.content = parsed.content
-                mark.hashed.readable.content_type = parsed.content_type
-                mark.hashed.readable.status_code = parsed.status
-                mark.hashed.readable.status_message = parsed.status_message
-
-            # we need to flush here for new tag ids, etc
-            DBSession.flush()
-
-            mark_data = dict(mark)
-            mark_data['tags'] = [dict(mark.tags[tag]) for tag in mark.tags.keys()]
-
-            return {
-                        'success': True,
-                        'message': "done",
-                        'payload': {
-                            'bmark': mark_data
-                        }
-                    }
-        else:
-            return {'success': False,
-                    'message': 'Bad Request: missing url',
-                    'payload': dict(params)
-                 }
 
 
 @view_config(route_name="user_api_bmark_remove", renderer="json")
