@@ -13,6 +13,57 @@ about this before setting up a server exposed to the internet.
 User specific calls
 -------------------
 
+/:username/bmark
+~~~~~~~~~~~~~~~~
+
+Usage
+'''''
+*POST* `/api/v1/admin/bmark`
+
+Submit a new bookmark for storing
+
+:query param: api_key *required* - the api key for your account to make the call with
+:post param: description
+:post param: extended
+:post param: tags - space separated tag string
+:post param: content - html content of the page to readable parse
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+All error responses will have a json body with an error message string and
+possibly other helpful information.
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/bmark/admin?api_key=12345...')
+    >>> {
+            "bmark": {
+                "username": "admin",
+                "updated": "",
+                "extended": "Extended notes",
+                "description": "Bookie",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-08-06 20:35:54",
+                "inserted_by": "unknown_api",
+                "tag_str": "bookmarks",
+                "clicks": 0,
+                "hash_id": "c5c21717c99797"
+            },
+            "location": "http://localhost/bmark/readable/c5c21717c99797"
+        }
+
+
 /:username/bmark/:hash_id
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Usage
@@ -67,43 +118,81 @@ Example
     requests.get('http://127.0.0.1:6543/api/v1/admin/bmark/c605a21cf19560?api_key=000')
     >>> {"error": "Not authorized for request."}
 
+Usage
+'''''
+*POST* `/api/v1/bmark/admin/c605a21cf19560`
 
-POST `/api/v1/bmark/admin/c605a21cf19560`
+Update the stored bookmark with new information.
 
-    Update the stored bookmark with new information.
+:query param: api_key *required* - the api key for your account to make the call with
+:post param: description
+:post param: extended
+:post param: tags - space separated tag string
+:post param: content - html content of the page to readable parse
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :post param: description
-    :post param: extended
-    :post param: tags - space separated tag string
-    :post param: content - html content of the page to readable parse
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+:error 404: if the hash id can not be found you'll get a 404
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
+All error responses will have a json body with an error message string and
+possibly other helpful information.
+
+Example
+'''''''
 ::
 
     requests.post('http://127.0.0.1:6543/api/v1/bmark/admin/c605a21cf19560?api_key=12345...')
     >>> {
-          "message": "",
-          "payload": {
             "bmark": {
-              ... updated bookmark data
-            }
-          },
-          "success": true
+                "username": "admin",
+                "updated": "",
+                "extended": "Extended notes",
+                "description": "Bookie",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-08-06 20:35:54",
+                "inserted_by": "unknown_api",
+                "tag_str": "bookmarks",
+                "clicks": 0,
+                "hash_id": "c5c21717c99797"
+            },
+            "location": "http://localhost/bmark/readable/c5c21717c99797"
         }
 
-DELETE `/api/v1/bmark/admin/c605a21cf19560`
+Usage
+'''''
+*DELETE* `/api/v1/bmark/admin/c605a21cf19560`
 
-    Remove the bookmark from the user's list
+Remove the bookmark from the user's list
 
-    :query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *required* - the api key for your account to make the call with
+
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 404: if the hash id can not be found you'll get a 404
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+All error responses will have a json body with an error message string and
+possibly other helpful information.
+
+Example
+'''''''
+
 
 ::
 
     requests.delete('http://127.0.0.1:6543/api/v1/bmark/admin/c605a21cf19560?api_key=12345...')
     >>> {
-          "message": "",
-          "payload": {},
-          "success": true
+          "message": "done",
         }
 
 

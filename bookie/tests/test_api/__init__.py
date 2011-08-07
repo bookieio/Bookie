@@ -57,7 +57,7 @@ class BookieAPITest(unittest.TestCase):
             prms['content'] = "<h1>There's some content in here dude</h1>"
 
         req_params = urllib.urlencode(prms)
-        res = self.testapp.post('/api/v1/admin/bmark/add?',
+        res = self.testapp.post('/api/v1/admin/bmark?',
                                 params=req_params)
 
         if second_bmark:
@@ -75,7 +75,7 @@ class BookieAPITest(unittest.TestCase):
             prms['content'] = "<h1>Second bookmark man</h1>"
 
             req_params = urllib.urlencode(prms)
-            res = self.testapp.post('/api/v1/admin/bmark/add?',
+            res = self.testapp.post('/api/v1/admin/bmark?',
                                     params=req_params)
 
         session.flush()
@@ -97,25 +97,25 @@ class BookieAPITest(unittest.TestCase):
                 'api_key': key,
         }
 
-        res = self.testapp.post('/admin/api/v1/bmarks/add',
+        res = self.testapp.post('/api/v1/admin/bmark',
                                 params=test_bmark,
                                 status=200)
 
-        ok_('"success": true' in res.body,
-                "Should have a success of true: " + res.body)
-        ok_('message": "done"' in res.body,
-                "Should have a done message: " + res.body)
+        ok_('"location":' in res.body,
+                "Should have a location result: " + res.body)
+        ok_('description": "Bookie"' in res.body,
+                "Should have Bookie in description: " + res.body)
 
     def test_bookmark_fetch(self):
         """Test that we can get a bookmark and it's details"""
         self._get_good_request(content=True)
-        res = self.testapp.get('/api/v1/admin/bmark/' + GOOGLE_HASH)
-
-        eq_(res.status, "200 OK",
-                msg='Get status is 200, ' + res.status)
+        res = self.testapp.get('/api/v1/admin/bmark/{0}?api_key={1}'.format(
+                               GOOGLE_HASH,
+                               API_KEY),
+                               status=200)
 
         # make sure we can decode the body
-        bmark = json.loads(res.body)['payload']['bmark']
+        bmark = json.loads(res.body)['bmark']
         eq_(GOOGLE_HASH, bmark[u'hash_id'],
             "The hash_id should match: " + str(bmark[u'hash_id']))
 
@@ -125,21 +125,59 @@ class BookieAPITest(unittest.TestCase):
         ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
             "Tag should be either python or search:" + str(bmark[u'tags'][0][u'name']))
 
+        ok_(u'readable' not in bmark,
+            "We should not have readable content")
+
+        # to get readble content we need to pass the flash with_content
+        res = self.testapp.get('/api/v1/admin/bmark/{0}?api_key={1}&with_content=true'.format(
+                               GOOGLE_HASH,
+                               API_KEY),
+                               status=200)
+
+        # make sure we can decode the body
+        bmark = json.loads(res.body)['bmark']
+
         ok_(u'readable' in bmark,
             "We should have readable content")
 
         ok_('dude' in bmark['readable']['content'],
                 "We should have 'dude' in our content: " + bmark['readable']['content'])
 
-    # def test_bookmark_fetch_fail(self):
-    #     """Verify we get a failed response when wrong bookmark"""
-    #     self._get_good_request()
+    def test_bookmark_fetch_fail(self):
+        """Verify we get a failed response when wrong bookmark"""
+        self._get_good_request()
 
-    #     # test that we only get one resultback
-    #     res = self.testapp.get('/admin/api/v1/bmarks/' + BMARKUS_HASH, status=200)
+        # test that we get a 404
+        self.testapp.get('/api/v1/admin/bmark/{0}?api_key={1}'.format(
+                             BMARKUS_HASH,
+                             API_KEY),
+                         status=404)
 
-    #     ok_('"success": false' in res.body,
-    #             "Should have a false success" + res.body)
+    def test_bookmark_remove(self):
+        """A delete call should remove the bookmark from the system"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        # now let's delete the google bookmark
+        res = self.testapp.delete('/api/v1/admin/bmark/{0}?api_key={1}'.format(
+                                    GOOGLE_HASH,
+                                    API_KEY),
+                                    status=200)
+
+        ok_('message": "done"' in res.body,
+                "Should have a message of done: " + res.body)
+
+        # # we're going to cheat like mad, use the sync call to get the hash_ids
+        # # of bookmarks in the system and verify that only the bmark.us hash_id
+        # # is in the response body
+        # res = self.testapp.get('/admin/api/v1/bmarks/sync',
+        #                        params={'api_key': API_KEY},
+        #                        status=200)
+
+        # ok_(GOOGLE_HASH not in res.body,
+        #         "Should not have the google hash: " + res.body)
+        # ok_(BMARKUS_HASH in res.body,
+        #         "Should have the bmark.us hash: " + res.body)
+
 
     # def test_bookmark_recent(self):
     #     """Test that we can get list of bookmarks with details"""
@@ -327,30 +365,6 @@ class BookieAPITest(unittest.TestCase):
     #     ok_('bookmarks' in res.body,
     #             "Should still have the bookmarks tag: " + res.body)
 
-    # def test_bookmark_remove(self):
-    #     """A delete call should remove the bookmark from the system"""
-    #     self._get_good_request(content=True, second_bmark=True)
-
-    #     # now let's delete the google bookmark
-    #     res = self.testapp.post('/admin/api/v1/bmarks/remove', params = {
-    #         'url': u'http://google.com',
-    #         'api_key': API_KEY
-    #         }, status=200)
-
-    #     ok_('success": true' in res.body,
-    #             "Should have a success of true: " + res.body)
-
-    #     # we're going to cheat like mad, use the sync call to get the hash_ids
-    #     # of bookmarks in the system and verify that only the bmark.us hash_id
-    #     # is in the response body
-    #     res = self.testapp.get('/admin/api/v1/bmarks/sync',
-    #                            params={'api_key': API_KEY},
-    #                            status=200)
-
-    #     ok_(GOOGLE_HASH not in res.body,
-    #             "Should not have the google hash: " + res.body)
-    #     ok_(BMARKUS_HASH in res.body,
-    #             "Should have the bmark.us hash: " + res.body)
 
     # def test_bookmark_tag_complete(self):
     #     """Test we can complete tags in the system

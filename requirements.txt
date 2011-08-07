@@ -24,7 +24,7 @@ logilab-astng==0.21.1
 logilab-common==0.55.0
 lxml==2.3
 mock==0.7.0
-nose==1.0.0
+nose==1.1.2
 paramiko==1.7.6
 pep8==0.6.1
 py-bcrypt==0.2.0

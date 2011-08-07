@@ -66,48 +66,66 @@ def bmark_get(request):
         }
 
 
+def _update_mark(mark, params):
+    """Update the bookmark found with settings passed in"""
+    mark.description = params.get('description', mark.description)
+    mark.extended = params.get('extended', mark.extended)
+
+    new_tag_str = params.get('tags', None)
+
+    # if the only new tags are commands, then don't erase the
+    # existing tags
+    # we need to process any commands associated as well
+    new_tags = TagMgr.from_string(new_tag_str)
+    found_cmds = Commander.check_commands(new_tags)
+
+    if new_tag_str and len(new_tags) == len(found_cmds):
+        # the all the new tags are command tags, just tack them on
+        # for processing, but don't touch existing tags
+        for command_tag in new_tags.values():
+            mark.tags[command_tag.name] = command_tag
+    else:
+        if new_tag_str:
+            # in this case, rewrite the tags wit the new ones
+            mark.update_tags(new_tag_str)
+
+    return mark
+
+
 @view_config(route_name="api_bmark_add", renderer="json")
+@view_config(route_name="api_bmark_update", renderer="json")
 @api_auth('api_key', UserMgr.get)
 def bmark_add(request):
     """Add a new bookmark to the system"""
+    rdict = request.matchdict
     params = request.params
     user = request.user
 
-    if 'url' not in params and params['url']:
+    if 'url' not in params and 'hash_id' not in rdict:
         request.response.status_int = 400
         return {
             'error': 'Bad Request: missing url',
          }
+
+    elif 'hash_id' in rdict:
+        try:
+            mark = BmarkMgr.get_by_hash(rdict['hash_id'],
+                                       username=user.username)
+            mark = _update_mark(mark, params)
+
+        except NoResultFound:
+            request.response.status_code = 404
+            return {
+                'error': 'Bookmark with hash id {0} not found.'.format(
+                            rdict['hash_id'])
+            }
+
     else:
         # check if we already have this
         try:
             mark = BmarkMgr.get_by_url(params['url'],
                                        username=user.username)
-
-            mark.description = params.get('description', mark.description)
-            mark.extended = params.get('extended', mark.extended)
-
-            new_tag_str = params.get('tags', None)
-
-            # if the only new tags are commands, then don't erase the
-            # existing tags
-            # we need to process any commands associated as well
-            new_tags = TagMgr.from_string(new_tag_str)
-            found_cmds = Commander.check_commands(new_tags)
-
-            if new_tag_str and len(new_tags) == len(found_cmds):
-                # the all the new tags are command tags, just tack them on
-                # for processing, but don't touch existing tags
-                for command_tag in new_tags.values():
-                    LOG.debug(command_tag)
-                    mark.tags[command_tag.name] = command_tag
-            else:
-                if new_tag_str:
-                    # in this case, rewrite the tags wit the new ones
-                    mark.update_tags(new_tag_str)
-
-            commander = Commander(mark)
-            mark = commander.process()
+            mark = _update_mark(mark, params)
 
         except NoResultFound:
             # then let's store this thing
@@ -130,10 +148,8 @@ def bmark_add(request):
             # check to see if we know where this is coming from
             inserted_by = params.get('inserted_by', 'unknown_api')
 
-            LOG.debug('Username')
-            LOG.debug(username)
             mark = BmarkMgr.store(params['url'],
-                         username,
+                         user.username,
                          params.get('description', ''),
                          params.get('extended', ''),
                          params.get('tags', ''),
@@ -142,9 +158,9 @@ def bmark_add(request):
                          inserted_by=inserted_by,
                    )
 
-            # we need to process any commands associated as well
-            commander = Commander(mark)
-            mark = commander.process()
+        # we need to process any commands associated as well
+        commander = Commander(mark)
+        mark = commander.process()
 
         # if we have content, stick it on the object here
         if 'content' in request.params:
@@ -172,8 +188,35 @@ def bmark_add(request):
         }
 
 
+@view_config(route_name="api_bmark_remove", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def bmark_remove(request):
+    """Remove this bookmark from the system"""
+    rdict = request.matchdict
+    user = request.user
+
+    try:
+        bmark = BmarkMgr.get_by_hash(rdict['hash_id'],
+                                    username=user.username)
+
+        session = DBSession()
+        session.delete(bmark)
+
+        return {
+            'message': "done",
+        }
+
+    except NoResultFound:
+        request.response.status_code = 404
+        return {
+            'error': 'Bookmark with hash id {0} not found.'.format(
+                        rdict['hash_id'])
+        }
+
+
 @view_config(route_name="api_bmark_recent", renderer="json")
 @view_config(route_name="user_api_bmark_recent", renderer="json")
+@api_auth('api_key', UserMgr.get)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -318,42 +361,6 @@ def bmark_sync(request):
 
 
 
-@view_config(route_name="user_api_bmark_remove", renderer="json")
-def bmark_remove(request):
-    """Remove this bookmark from the system"""
-    params = request.params
-    rdict = request.matchdict
-
-    username = rdict.get("username", None)
-    user = UserMgr.get(username=username)
-
-    with ApiAuthorize(user,
-                      params.get('api_key', None)):
-
-        if 'url' in params and params['url']:
-            try:
-                bmark = BmarkMgr.get_by_url(params['url'],
-                                            username=username)
-
-                session = DBSession()
-                session.delete(bmark)
-
-                return {
-                        'success': True,
-                        'message': "done",
-                        'payload': {}
-                }
-
-            except NoResultFound:
-                # if it's not found, then there's not a bookmark to delete
-                return {
-                    'success': False,
-                    'message': "Bad Request: bookmark not found",
-                    'payload': {}
-
-                }
-
-
 @view_config(route_name="user_api_bmark_export", renderer="json")
 def bmark_exportexport(request):
     """Export via the api call to json dump
@@ -457,7 +464,6 @@ def readable(request):
 
     if hashed:
         success = asbool(success)
-        LOG.debug(success)
         if success:
             # if we have content, stick it on the object here
             if 'content' in params:
