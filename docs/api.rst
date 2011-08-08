@@ -186,8 +186,6 @@ possibly other helpful information.
 
 Example
 '''''''
-
-
 ::
 
     requests.delete('http://127.0.0.1:6543/api/v1/bmark/admin/c605a21cf19560?api_key=12345...')
@@ -199,49 +197,76 @@ Example
 /:username/bmarks
 ~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/admin/bmarks`
+Usage
+''''''
+*GET* `/api/v1/admin/bmarks`
 
-    Return a list of the most recent bookmarks
+Return a list of the most recent bookmarks
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: with_content - do you wish the readable content of the urls if available
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: with_content - do you wish the readable content of the urls if available
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+''''''''
 
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/bmarks?api_key=12345...')
-    >>> {
-          "message": "",
-          "payload": {
-            "bmarks": [
-              {
-                "bid": 2,
-                "clicks": 1,
-                "description": "Bookie: Recent Bookmarks",
-                "extended": "",
-                "hash_id": "c605a21cf19560",
-                "inserted_by": null,
-                "stored": "2011-06-21 13:20:26",
-                "tag_str": "test bookmarks",
-                "tags": [
-                  {
-                    "name": "test",
-                    "tid": 3
-                  },
-                  {
-                    "name": "bookmarks",
-                    "tid": 2
-                  }
-                ],
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks?count=2&api_key=12345...')
+    >>>{
+        "count": 2,
+        "bmarks": [
+            {
+                "username": "admin",
                 "updated": "2011-07-29 22:23:42",
-                "username": "admin"
-              },
-              ...
-            ]
-          }
-          "success": true
-        }
+                "extended": "",
+                "description": "Bookie: Recent Bookmarks",
+                "tags": [
+                    {
+                        "tid": 3,
+                        "name": "test"
+                    },
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 2,
+                "stored": "2011-06-21 13:20:26",
+                "inserted_by": null,
+                "tag_str": "test bookmarks",
+                "clicks": 1,
+                "hash_id": "c605a21cf19560"
+            },
+            {
+                "username": "admin",
+                "updated": "2011-07-15 14:25:16",
+                "extended": "Bookie Documentation Home",
+                "description": "Bookie Website",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-06-20 11:42:47",
+                "inserted_by": null,
+                "tag_str": "bookmarks",
+                "clicks": 1,
+                "hash_id": "c5c21717c99797"
+            }
+        ],
+        "tag_filter": null,
+        "page": 0,
+        "max_count": 10
+    }
 
 
 /:username/bmarks/export
@@ -447,51 +472,78 @@ System wide calls
 -----------------
 
 /bmarks
-~~~~~~~
+~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/bmarks`
+Usage
+''''''
+*GET* `/api/v1/bmarks`
 
-    Return a list of the most recent bookmarks
+Return a list of the most recent bookmarks
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: with_content - do you wish the readable content of the urls if available
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: with_content - do you wish the readable content of the urls if available
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+''''''''
 
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/bmarks?api_key=12345...')
-    >>> {
-          "message": "",
-          "payload": {
-            "bmarks": [
-              {
-                "bid": 2,
-                "clicks": 1,
-                "description": "Bookie: Recent Bookmarks",
-                "extended": "",
-                "hash_id": "c605a21cf19560",
-                "inserted_by": null,
-                "stored": "2011-06-21 13:20:26",
-                "tag_str": "test bookmarks",
-                "tags": [
-                  {
-                    "name": "test",
-                    "tid": 3
-                  },
-                  {
-                    "name": "bookmarks",
-                    "tid": 2
-                  }
-                ],
+    requests.get('http://127.0.0.1:6543/api/v1/bmarks?count=2&api_key=12345...')
+    >>>{
+        "count": 2,
+        "bmarks": [
+            {
+                "username": "admin",
                 "updated": "2011-07-29 22:23:42",
-                "username": "admin"
-              },
-              ...
-            ]
-          }
-          "success": true
-        }
+                "extended": "",
+                "description": "Bookie: Recent Bookmarks",
+                "tags": [
+                    {
+                        "tid": 3,
+                        "name": "test"
+                    },
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 2,
+                "stored": "2011-06-21 13:20:26",
+                "inserted_by": null,
+                "tag_str": "test bookmarks",
+                "clicks": 1,
+                "hash_id": "c605a21cf19560"
+            },
+            {
+                "username": "admin",
+                "updated": "2011-07-15 14:25:16",
+                "extended": "Bookie Documentation Home",
+                "description": "Bookie Website",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-06-20 11:42:47",
+                "inserted_by": null,
+                "tag_str": "bookmarks",
+                "clicks": 1,
+                "hash_id": "c5c21717c99797"
+            }
+        ],
+        "tag_filter": null,
+        "page": 0,
+        "max_count": 10
+    }
 
 
 /bmarks/popular

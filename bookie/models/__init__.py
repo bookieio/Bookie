@@ -21,6 +21,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload_all
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -441,11 +442,22 @@ class BmarkMgr(object):
         return qry.order_by(Bmark.stored.desc()).first()
 
     @staticmethod
-    def find(limit=50, order_by=None, page=0, tags=None, with_tags=True,
-            username=None):
+    def find(limit=50, order_by=None, page=0, tags=None, username=None,
+             with_content=False, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
         offset = limit * page
+
+        hashed = aliased(Hashed)
+        readable = aliased(Readable)
+
+        # if we have with_content then make sure we join hashed with readble to
+        # get that content
+        if with_content:
+            qry = qry.join((hashed, Bmark.hashed)).\
+                  options(contains_eager(Bmark.hashed, alias=hashed))
+            qry = qry.outerjoin((readable, hashed.readable)).\
+                  options(contains_eager(Bmark.hashed, hashed.readable, alias=readable))
 
         if username:
             qry = qry.filter(Bmark.username == username)
@@ -491,7 +503,9 @@ class BmarkMgr(object):
                   options(contains_eager(Bmark.tags))
 
         # join to hashed so we always have the url
-        qry = qry.options(joinedload('hashed'))
+        # if we have with_content, this is already done
+        if not with_content:
+            qry = qry.options(joinedload('hashed'))
 
         return qry.all()
 

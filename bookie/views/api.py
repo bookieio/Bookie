@@ -214,8 +214,8 @@ def bmark_remove(request):
         }
 
 
-@view_config(route_name="api_bmark_recent", renderer="json")
-@view_config(route_name="user_api_bmark_recent", renderer="json")
+@view_config(route_name="api_bmarks", renderer="json")
+@view_config(route_name="api_bmarks_user", renderer="json")
 @api_auth('api_key', UserMgr.get)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
@@ -225,7 +225,9 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    username = rdict.get('username', None)
+    with_content = True if 'with_content' in params else False
+
+    username = request.user.username
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -245,32 +247,31 @@ def bmark_recent(request):
 
     recent_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.stored.desc(),
-                           tags=tags,
                            page=page,
+                           tags=tags,
+                           username=username,
+                           with_content=with_content,
                            with_tags=True,
-                           username=username)
+                           )
 
     result_set = []
 
     for res in recent_list:
         return_obj = dict(res)
         return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
+
+        if with_content:
+            return_obj['readable'] = dict(res.hashed.readable)
+
         result_set.append(return_obj)
 
-    ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-             'bmarks': result_set,
-             'max_count': RESULTS_MAX,
-             'count': len(recent_list),
-             'page': page,
-             'tags': tags,
-        }
-
+    return {
+         'bmarks': result_set,
+         'max_count': RESULTS_MAX,
+         'count': len(recent_list),
+         'page': page,
+         'tag_filter': tags,
     }
-
-    return ret
 
 
 @view_config(route_name="api_bmark_popular", renderer="json")
