@@ -131,7 +131,7 @@ class UserMgr(object):
         return user_query.all()
 
     @staticmethod
-    def get(user_id=None, username=None, email=None):
+    def get(user_id=None, username=None, email=None, api_key=None):
         """Get the user instance for this information
 
         :param user_id: integer id of the user in db
@@ -149,6 +149,9 @@ class UserMgr(object):
 
         if email is not None:
             return user_query.filter(User.email == email).first()
+
+        if api_key is not None:
+            return user_query.filter(User.api_key == api_key).first()
 
         return None
 

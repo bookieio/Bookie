@@ -68,6 +68,15 @@ def build_routes(config):
 
     # NEW API
 
+    # many bookmark api calls
+    config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
+
+    config.add_route('api_bmarks', 'api/v1/bmarks')
+    config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
+
+    config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
+    config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
+
     # user bookmark api calls
     config.add_route("api_bmark_add", "/api/v1/{username}/bmark", request_method="POST")
     config.add_route("api_bmark_update", "/api/v1/{username}/bmark/{hash_id}", request_method="POST")
@@ -78,14 +87,6 @@ def build_routes(config):
                      "/api/v1/{username}/bmark/{hash_id}",
                      request_method="DELETE")
 
-    # many bookmark api calls
-    config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
-
-    config.add_route('api_bmarks', 'api/v1/bmarks')
-    config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
-
-    config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
-    config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
 
 
     # API
