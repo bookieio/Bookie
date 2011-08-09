@@ -338,6 +338,7 @@ Example
           "date": "2011-08-08 20:11:43.648699"
         }
 
+
 /:username/bmarks/popular
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -417,59 +418,129 @@ Example
     }
 
 
+/:username/extension/sync
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usage
+''''''
+
+*GET* `/api/v1/admin/extension/sync`
+
+This is experimental and very likely to change, so use at your own risk.
+We're investigating syncing bookmarks with browsers via their extensions.
+This api call will be the trigger point to allow a browser to request all
+of the data it needs for loading knowledge of existing bookmarks into a new
+browser installation.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/extension/sync?api_key=12345...')
+
+    >>> {
+            "94a2b635d965bc",
+            "cf01b934863be8",
+            ...
+        }
+
 
 /:username/bmarks/search/:terms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/admin/bmarks/search/:terms`
+Usage
+''''''
 
-    Return a list of the user's bookmarks based on the fulltext search of the
-    given terms.  There can be one or more search terms. All search terms are
-    *OR*'d together. Fulltext search will find matches in the *description*,
-    *extended*, and tag string fields of a bookmark. You can also perform
-    fulltext search against the readable content of pages with the correct
-    query parameter from below.
+*GET* `/api/v1/admin/bmarks/search/:terms`
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
-    :query param: with_content - do you wish the readable content of the urls if available
+Return a list of the user's bookmarks based on the fulltext search of the
+given terms.  There can be one or more search terms. All search terms are
+*OR*'d together. Fulltext search will find matches in the *description*,
+*extended*, and *tag_string* fields of a bookmark. You can also perform
+fulltext search against the readable content of pages with the correct
+query parameter from below.
 
-    ::
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
 
-        requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/search/ubuntu/linux?api_key=12345...')
-        ...
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
+Example
+'''''''
+::
 
-/:username/extension/sync
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/search/ubuntu/linux?api_key=12345...')
+    >>>> {
+             "page": null,
+             "phrase": "ubuntu",
+             "result_count": 2,
+             "search_results": [
+               {
+                 "bid": 3,
+                 "clicks": 0,
+                 "description": "nickelanddime.png (PNG Image, 1200x1400 pixels) - Scaled (64%)",
+                 "extended": "This is the extended description",
+                 "hash_id": "adb017923e1f56",
+                 "inserted_by": "importer",
+                 "stored": "2011-02-25 15:13:00",
+                 "tag_str": "nickelanddime kerfuffle banshee amazon ubuntu ubuntu-one canonical",
+                 "tags": [
+                   {
+                     "name": "nickelanddime",
+                     "tid": 4
+                   },
+                   {
+                     "name": "canonical",
+                     "tid": 10
+                   }
+                 ],
+                 "total_clicks": 0,
+                 "updated": "",
+                 "url": "http://www.ndftz.com/nickelanddime.png",
+                 "username": "admin"
+               },
+               {
+                 "bid": 77,
+                 "clicks": 0,
+                 "description": "My title: ubuntu forum archive about echolinux",
+                 "extended": "",
+                 "hash_id": "3e9a37d4f7cd74",
+                 "inserted_by": "importer",
+                 "stored": "2010-07-08 19:30:18",
+                 "tag_str": "ham linux",
+                 "tags": [
+                   {
+                     "name": "ham",
+                     "tid": 89
+                   },
+                   {
+                     "name": "linux",
+                     "tid": 103
+                   }
+                 ],
+                 "total_clicks": 0,
+                 "updated": "",
+                 "url": "http://ubuntuforums.org/archive/index.php/t-973929.html",
+                 "username": "admin"
+               }
+             ],
+             "username": "admin",
+             "with_content": false
+         }
 
-GET `/api/v1/admin/extension/sync`
-
-    :query param: api_key *required* - the api key for your account to make the call with
-
-    This is experimental and very likely to change, so use at your own risk.
-    We're investigating syncing bookmarks with browsers via their extensions.
-    This api call will be the trigger point to allow a browser to request all
-    of the data it needs for loading knowledge of existing bookmarks into a new
-    browser installation.
-
-    ::
-
-        requests.get('http://127.0.0.1:6543/api/v1/admin/extension/sync?api_key=12345...')
-
-        >>> {
-              "message": "",
-              "payload": {
-                "hash_list": [
-                    "94a2b635d965bc",
-                    "cf01b934863be8",
-                    ...
-                ]
-              },
-              "success": true
-            }
 
 
 /:username/tags/complete
@@ -735,56 +806,102 @@ Example
         "max_count": 10
     }
 
-
 /bmarks/search/:terms
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/bmarks/search/:terms`
+Usage
+''''''
 
-    Return a list of bookmarks based on the fulltext search of the given terms.
-    There can be one or more search terms. All search terms are *OR*'d
-    together. Fulltext search will find matches in the *description*,
-    *extended*, and tag string fields of a bookmark. You can also perform
-    fulltext search against the readable content of pages with the correct
-    query parameter from below.
+*GET* `/api/v1/bmarks/search/:terms`
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
-    :query param: with_content - do you wish the readable content of the urls if available
+Return a list of the user's bookmarks based on the fulltext search of the
+given terms.  There can be one or more search terms. All search terms are
+*OR*'d together. Fulltext search will find matches in the *description*,
+*extended*, and *tag_string* fields of a bookmark. You can also perform
+fulltext search against the readable content of pages with the correct
+query parameter from below.
 
-    ::
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
+:query param: with_content - do you wish the readable content of the urls if available
 
-        requests.get('http://127.0.0.1:6543/api/v1/bmarks/search/ubuntu/linux?api_key=12345...')
-        >>> {
-              "success": true,
-              "message": "",
-              "payload": {
-                "message": "",
-                "payload": {
-                  "bmarks": [
-                    ...
-                  ]
-                },
-                "success": true
-              }
-            }
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
-        requests.get('http://127.0.0.1:6543/api/v1/bmarks/search/ubuntu/linux?api_key=12345...&content=true')
-        >>> {
-              "success": true,
-              "message": "",
-              "payload": {
-                "message": "",
-                "payload": {
-                  "bmarks": [
-                    ...
-                  ]
-                },
-                "success": true
-              }
-            }
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/bmarks/search/ubuntu?api_key=12345...')
+    >>>> {
+             "page": null,
+             "phrase": "ubuntu",
+             "result_count": 2,
+             "search_results": [
+               {
+                 "bid": 3,
+                 "clicks": 0,
+                 "description": "nickelanddime.png (PNG Image, 1200x1400 pixels) - Scaled (64%)",
+                 "extended": "This is the extended description",
+                 "hash_id": "adb017923e1f56",
+                 "inserted_by": "importer",
+                 "stored": "2011-02-25 15:13:00",
+                 "tag_str": "nickelanddime kerfuffle banshee amazon ubuntu ubuntu-one canonical",
+                 "tags": [
+                   {
+                     "name": "ubuntu",
+                     "tid": 4
+                   },
+                   {
+                     "name": "canonical",
+                     "tid": 10
+                   }
+                 ],
+                 "total_clicks": 0,
+                 "updated": "",
+                 "url": "http://www.ndftz.com/nickelanddime.png",
+                 "username": "admin"
+               },
+               {
+                 "bid": 77,
+                 "clicks": 0,
+                 "description": "My title: ubuntu forum archive about echolinux",
+                 "extended": "",
+                 "hash_id": "3e9a37d4f7cd74",
+                 "inserted_by": "importer",
+                 "stored": "2010-07-08 19:30:18",
+                 "tag_str": "ham linux",
+                 "tags": [
+                   {
+                     "name": "ham",
+                     "tid": 89
+                   },
+                   {
+                     "name": "linux",
+                     "tid": 103
+                   }
+                 ],
+                 "total_clicks": 0,
+                 "updated": "",
+                 "url": "http://ubuntuforums.org/archive/index.php/t-973929.html",
+                 "username": "admin"
+               }
+             ],
+             "username": "admin",
+             "with_content": false
+         }
+
+
+
+
+
+
+
+
 
 
 Admin only calls

@@ -368,35 +368,90 @@ def bmark_export(request):
     }
 
 
-@view_config(route_name="user_api_bmark_sync", renderer="json")
-def bmark_sync(request):
+@view_config(route_name="api_extension_sync", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def extension_sync(request):
     """Return a list of the bookmarks we know of in the system
 
     For right now, send down a list of hash_ids
 
     """
-    rdict = request.matchdict
-    params = request.params
+    username = request.user.username
 
-    username = rdict.get('username', None)
-    user = UserMgr.get(username=username)
+    hash_list = BmarkMgr.hash_list(username=username)
+    return [hash[0] for hash in hash_list]
 
-    with ApiAuthorize(user,
-                      params.get('api_key', None)):
+@view_config(route_name="api_bmark_search", renderer="json")
+@view_config(route_name="api_bmark_search_user", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def search_results(request):
+    """Search for the query terms in the matchdict/GET params
 
-        hash_list = BmarkMgr.hash_list(username=username)
+    The ones in the matchdict win in the case that they both exist
+    but we'll fall back to query string search=XXX
 
-        ret = {
-            'success': True,
-            'message': "",
-            'payload': {
-                 'hash_list': [hash[0] for hash in hash_list]
-            }
-        }
+    with_content
+        is always GET and specifies if we're searching the fulltext of pages
 
-        return ret
+    """
+    mdict = request.matchdict
+    rdict = request.GET
 
+    if 'terms' in mdict:
+        phrase = " ".join(mdict['terms'])
+    else:
+        phrase = rdict.get('search', '')
 
+    username = request.user.username
+
+    # with content is always in the get string
+    search_content = asbool(rdict.get('search_content', False))
+
+    conn_str = request.registry.settings.get('sqlalchemy.url', False)
+    searcher = get_fulltext_handler(conn_str)
+
+    # check if we have a page count submitted
+    page = rdict.get('page', None)
+    count = rdict.get('count', None)
+
+    if 'username' in mdict:
+        with_user = True
+    else:
+        with_user = False
+
+    res_list = searcher.search(phrase,
+                               content=search_content,
+                               username=username if with_user else None)
+
+    # we're going to fake this since we dont' have a good way to do this query
+    # side
+    if page is not None and count is not None:
+        page = int(page)
+        count = int(count)
+        start = count * page
+        end = start + count
+        res_list = res_list[start:end]
+
+    constructed_results = []
+    for res in res_list:
+        return_obj = dict(res)
+        return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
+
+        # the hashed object is there as well, we need to pull the url and
+        # clicks from it as total_clicks
+        return_obj['url'] = res.hashed.url
+        return_obj['total_clicks'] = res.hashed.clicks
+
+        constructed_results.append(return_obj)
+
+    return {
+        'search_results': constructed_results,
+        'result_count': len(constructed_results),
+        'phrase': phrase,
+        'page': page,
+        'with_content': search_content,
+        'username': username,
+    }
 
 
 

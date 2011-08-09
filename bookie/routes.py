@@ -77,9 +77,16 @@ def build_routes(config):
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
     config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
 
+    config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
+    config.add_route("api_bmark_search_user",
+                     "/api/v1/{username}/bmarks/search/*terms")
+
+
     # user bookmark api calls
     config.add_route("api_bmark_add", "/api/v1/{username}/bmark", request_method="POST")
     config.add_route("api_bmark_update", "/api/v1/{username}/bmark/{hash_id}", request_method="POST")
+    config.add_route("api_extension_sync", "/api/v1/{username}/extension/sync")
+
     config.add_route("api_bmark_hash",
                      "/api/v1/{username}/bmark/{hash_id}",
                      request_method="GET")
@@ -90,7 +97,6 @@ def build_routes(config):
 
 
     # API
-    # config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
     # config.add_route('api_bmark_get_readable', 'api/v1/bmarks/get_readable')
     # config.add_route('api_bmark_readable', 'api/v1/bmarks/readable')
 
@@ -98,9 +104,6 @@ def build_routes(config):
     #                  "{username}/api/v1/bmarks/recent")
     # config.add_route("user_api_bmark_popular",
     #                  "{username}/api/v1/bmarks/popular")
-    # config.add_route("user_api_bmark_search",
-    #                  "{username}/api/v1/bmarks/search/*terms")
-    # config.add_route("user_api_bmark_sync", "{username}/api/v1/bmarks/sync")
 
     # config.add_route("user_api_bmark_export",
     #                  "{username}/api/v1/bmarks/export")

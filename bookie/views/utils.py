@@ -79,10 +79,8 @@ def search(request):
              renderer="/utils/results_wrap.mako")
 @view_config(route_name="user_search_results",
              renderer="/utils/results_wrap.mako")
-@view_config(route_name="api_bmark_search", renderer="morjson")
-@view_config(route_name="user_api_bmark_search", renderer="morjson")
-@view_config(route_name="search_results_ajax", renderer="morjson")
-@view_config(route_name="user_search_results_ajax", renderer="morjson")
+@view_config(route_name="search_results_ajax", renderer="json")
+@view_config(route_name="user_search_results_ajax", renderer="json")
 @view_config(route_name="search_results_rest",
              renderer="/utils/results_wrap.mako")
 @view_config(route_name="user_search_results_rest",
@@ -95,11 +93,6 @@ def search_results(request):
 
     with_content
         is always GET and specifies if we're searching the fulltext of pages
-
-    Ajax Requests:
-        We also use this method to serve ajax requests
-        If we have _ajax in the name of the route it's an ajax match
-        Make sure we sent out the proper MorJSON response
 
     """
     route_name = request.matched_route.name

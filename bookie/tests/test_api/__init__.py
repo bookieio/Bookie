@@ -166,17 +166,17 @@ class BookieAPITest(unittest.TestCase):
         ok_('message": "done"' in res.body,
                 "Should have a message of done: " + res.body)
 
-        # # we're going to cheat like mad, use the sync call to get the hash_ids
-        # # of bookmarks in the system and verify that only the bmark.us hash_id
-        # # is in the response body
-        # res = self.testapp.get('/admin/api/v1/bmarks/sync',
-        #                        params={'api_key': API_KEY},
-        #                        status=200)
+        # we're going to cheat like mad, use the sync call to get the hash_ids
+        # of bookmarks in the system and verify that only the bmark.us hash_id
+        # is in the response body
+        res = self.testapp.get('/api/v1/admin/extension/sync',
+                               params={'api_key': API_KEY},
+                               status=200)
 
-        # ok_(GOOGLE_HASH not in res.body,
-        #         "Should not have the google hash: " + res.body)
-        # ok_(BMARKUS_HASH in res.body,
-        #         "Should have the bmark.us hash: " + res.body)
+        ok_(GOOGLE_HASH not in res.body,
+                "Should not have the google hash: " + res.body)
+        ok_(BMARKUS_HASH in res.body,
+                "Should have the bmark.us hash: " + res.body)
 
 
     def test_bookmark_recent_user(self):
@@ -297,6 +297,48 @@ class BookieAPITest(unittest.TestCase):
         eq_('chrome_ext', bmark2['inserted_by'],
             "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
 
+    def test_bookmark_sync(self):
+        """Test that we can get the sync list from the server"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        # test that we only get one resultback
+        res = self.testapp.get('/api/v1/admin/extension/sync',
+                               params={'api_key': API_KEY},
+                               status=200)
+
+        eq_(res.status, "200 OK",
+                msg='Get status is 200, ' + res.status)
+
+        ok_(GOOGLE_HASH in res.body,
+                "The google hash id should be in the json: " + res.body)
+        ok_(BMARKUS_HASH in res.body,
+                "The bmark.us hash id should be in the json: " + res.body)
+
+    def test_search_api(self):
+        """Test that we can get list of bookmarks ordered by clicks"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        res = self.testapp.get('/api/v1/bmarks/search/google?api_key=' + API_KEY,
+                               status=200)
+
+        # make sure we can decode the body
+        bmark_list = json.loads(res.body)
+        print bmark_list
+
+        results = bmark_list['search_results']
+        eq_(len(results), 1,
+                "We should have two results coming back: {0}".format(len(results)))
+
+        bmark = results[0]
+
+        eq_(GOOGLE_HASH, bmark[u'hash_id'],
+            "The hash_id {0} should match: {1} ".format(
+                str(GOOGLE_HASH),
+                str(bmark[u'hash_id'])))
+
+        ok_('clicks' in bmark,
+            "The clicks field should be in there")
+
 
     # def test_paging_results(self):
     #     """Test that we can page results"""
@@ -335,22 +377,7 @@ class BookieAPITest(unittest.TestCase):
     #     eq_(len(bmarks), 0,
     #         "We should not have any results for page 2")
 
-    # def test_bookmark_sync(self):
-    #     """Test that we can get the sync list from the server"""
-    #     self._get_good_request(content=True, second_bmark=True)
 
-    #     # test that we only get one resultback
-    #     res = self.testapp.get('/admin/api/v1/bmarks/sync',
-    #                            params={'api_key': API_KEY},
-    #                            status=200)
-
-    #     eq_(res.status, "200 OK",
-    #             msg='Get status is 200, ' + res.status)
-
-    #     ok_(GOOGLE_HASH in res.body,
-    #             "The google hash id should be in the json: " + res.body)
-    #     ok_(BMARKUS_HASH in res.body,
-    #             "The bmark.us hash id should be in the json: " + res.body)
 
     # def test_bookmark_add(self):
     #     """We should be able to add a new bookmark to the system"""
