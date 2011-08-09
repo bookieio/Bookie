@@ -204,41 +204,40 @@ class BookieAPITest(unittest.TestCase):
         ok_('here dude' in bmark[u'readable']['content'],
             "There should be content: " + str(bmark))
 
-    # def test_bookmark_popular(self):
-    #     """Test that we can get list of bookmarks with details"""
-    #     self._get_good_request(content=True, second_bmark=True)
+    def test_bookmark_popular(self):
+        """Test that we can get list of bookmarks ordered by clicks"""
+        self._get_good_request(content=True, second_bmark=True)
 
-    #     # we want to make sure the click count of 0 is greater than 1
-    #     res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
-    #     res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
+        # we want to make sure the click count of 0 is greater than 1
+        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
+        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
 
-    #     res = self.testapp.get('/admin/api/v1/bmarks/popular')
+        res = self.testapp.get('/api/v1/admin/bmarks/popular?api_key=' + API_KEY,
+                               status=200)
 
-    #     eq_(res.status, "200 OK",
-    #             msg='Get status is 200, ' + res.status)
+        # make sure we can decode the body
+        bmark_list = json.loads(res.body)['bmarks']
 
-    #     # make sure we can decode the body
-    #     bmark_list = json.loads(res.body)['payload']['bmarks']
+        eq_(len(bmark_list), 2,
+                "We should have two results coming back: {0}".format(len(bmark_list)))
 
-    #     eq_(len(bmark_list), 2,
-    #             "We should have two results coming back")
+        bmark1 = bmark_list[0]
+        bmark2 = bmark_list[1]
 
-    #     bmark1 = bmark_list[0]
-    #     bmark2 = bmark_list[1]
+        eq_(GOOGLE_HASH, bmark1[u'hash_id'],
+            "The hash_id {0} should match: {1} ".format(
+                str(GOOGLE_HASH),
+                str(bmark1[u'hash_id'])))
 
-    #     eq_(GOOGLE_HASH, bmark1[u'hash_id'],
-    #         "The hash_id {0} should match: {1} ".format(
-    #             str(GOOGLE_HASH),
-    #             str(bmark1[u'hash_id'])))
+        ok_('clicks' in bmark1,
+            "The clicks field should be in there")
+        eq_(2, bmark1['clicks'],
+            "The clicks should be 2: " + str(bmark1['clicks']))
+        eq_(0, bmark2['clicks'],
+            "The clicks should be 0: " + str(bmark2['clicks']))
+        eq_('chrome_ext', bmark2['inserted_by'],
+            "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
 
-    #     ok_('clicks' in bmark1,
-    #         "The clicks field should be in there")
-    #     eq_(2, bmark1['clicks'],
-    #         "The clicks should be 2: " + str(bmark1['clicks']))
-    #     eq_(0, bmark2['clicks'],
-    #         "The clicks should be 0: " + str(bmark2['clicks']))
-    #     eq_('chrome_ext', bmark2['inserted_by'],
-    #         "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
 
     # def test_paging_results(self):
     #     """Test that we can page results"""

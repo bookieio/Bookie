@@ -79,12 +79,16 @@ def build_routes(config):
                      request_method="DELETE")
 
     # many bookmark api calls
+    config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
+
     config.add_route('api_bmarks', 'api/v1/bmarks')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
-    config.add_route("api_bmark_export", "api/v1/{username}/bmarks/export")
+
+    config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
+    config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
+
 
     # API
-    # config.add_route('api_bmark_popular', 'api/v1/bmarks/popular')
     # config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
     # config.add_route('api_bmark_get_readable', 'api/v1/bmarks/get_readable')
     # config.add_route('api_bmark_readable', 'api/v1/bmarks/readable')

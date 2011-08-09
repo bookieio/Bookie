@@ -242,7 +242,9 @@ Example
                 "inserted_by": null,
                 "tag_str": "test bookmarks",
                 "clicks": 1,
-                "hash_id": "c605a21cf19560"
+                "hash_id": "c605a21cf19560",
+                "url": "https://bmark.us/recent",
+                "total_clicks": 5
             },
             {
                 "username": "admin",
@@ -260,7 +262,9 @@ Example
                 "inserted_by": null,
                 "tag_str": "bookmarks",
                 "clicks": 1,
-                "hash_id": "c5c21717c99797"
+                "hash_id": "c5c21717c99797",
+                "http://docs.bmark.us",
+                "total_clicks": 4
             }
         ],
         "tag_filter": null,
@@ -334,25 +338,84 @@ Example
           "date": "2011-08-08 20:11:43.648699"
         }
 
-
 /:username/bmarks/popular
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/admin/bmarks/popular`
+Usage
+''''''
+*GET* `/api/v1/admin/bmarks/popular`
 
-    Return a list of the user's bookmarks much as the default list, however
-    it'll be sorted descending by the number of *overall_clicks* that the
-    bookmark has gotten under that user's account.
+Return a list of the most clicked on bookmarks for the user.
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: with_content - do you wish the readable content of the urls if available
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: with_content - do you wish the readable content of the urls if available
 
-    ::
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
-        requests.get('http://127.0.0.1:6543/api/v1/bmarks/admin/popular?api_key=12345...')
-        ...
+Example
+''''''''
+
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/popular?count=2&api_key=12345...')
+    >>>{
+        "count": 2,
+        "bmarks": [
+            {
+                "username": "admin",
+                "updated": "2011-07-29 22:23:42",
+                "extended": "",
+                "description": "Bookie: Recent Bookmarks",
+                "tags": [
+                    {
+                        "tid": 3,
+                        "name": "test"
+                    },
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 2,
+                "stored": "2011-06-21 13:20:26",
+                "inserted_by": null,
+                "tag_str": "test bookmarks",
+                "clicks": 3,
+                "hash_id": "c605a21cf19560",
+                "url": "https://bmark.us/recent",
+                "total_clicks": 5
+            },
+            {
+                "username": "admin",
+                "updated": "2011-07-15 14:25:16",
+                "extended": "Bookie Documentation Home",
+                "description": "Bookie Website",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-06-20 11:42:47",
+                "inserted_by": null,
+                "tag_str": "bookmarks",
+                "clicks": 1,
+                "hash_id": "c5c21717c99797",
+                "http://docs.bmark.us",
+                "total_clicks": 4
+            }
+        ],
+        "tag_filter": null,
+        "page": 0,
+        "max_count": 10
+    }
+
 
 
 /:username/bmarks/search/:terms
@@ -594,26 +657,83 @@ Example
         "max_count": 10
     }
 
-
 /bmarks/popular
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET `/api/v1/bmarks/popular`
+Usage
+''''''
+*GET* `/api/v1/admin/bmarks/popular`
 
-    Return a list of bookmarks much as the default list, however it'll be
-    sorted descending by the number of *overall_clicks* that the bookmark has
-    gotten since it's been added to the system.
+Return a list of the most clicked on bookmarks for the user.
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: count - the number in the result you wish to return
-    :query param: page - the page number to get results for based off of the count specified
-    :query param: with_content - do you wish the readable content of the urls if available
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: count - the number in the result you wish to return
+:query param: page - the page number to get results for based off of the count specified
+:query param: with_content - do you wish the readable content of the urls if available
 
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
-    ::
+Example
+''''''''
 
-        requests.get('http://127.0.0.1:6543/api/v1/bmarks/popular?api_key=12345...')
-        ...
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/popular?count=2&api_key=12345...')
+    >>>{
+        "count": 2,
+        "bmarks": [
+            {
+                "username": "admin",
+                "updated": "2011-07-29 22:23:42",
+                "extended": "",
+                "description": "Bookie: Recent Bookmarks",
+                "tags": [
+                    {
+                        "tid": 3,
+                        "name": "test"
+                    },
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 2,
+                "stored": "2011-06-21 13:20:26",
+                "inserted_by": null,
+                "tag_str": "test bookmarks",
+                "clicks": 3,
+                "hash_id": "c605a21cf19560",
+                "url": "https://bmark.us/recent",
+                "total_clicks": 5
+            },
+            {
+                "username": "admin",
+                "updated": "2011-07-15 14:25:16",
+                "extended": "Bookie Documentation Home",
+                "description": "Bookie Website",
+                "tags": [
+                    {
+                        "tid": 2,
+                        "name": "bookmarks"
+                    }
+                ],
+                "bid": 1,
+                "stored": "2011-06-20 11:42:47",
+                "inserted_by": null,
+                "tag_str": "bookmarks",
+                "clicks": 1,
+                "hash_id": "c5c21717c99797",
+                "http://docs.bmark.us",
+                "total_clicks": 4
+            }
+        ],
+        "tag_filter": null,
+        "page": 0,
+        "max_count": 10
+    }
 
 
 /bmarks/search/:terms

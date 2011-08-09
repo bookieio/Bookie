@@ -260,6 +260,11 @@ def bmark_recent(request):
         return_obj = dict(res)
         return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
 
+        # we should have the hashed information, we need the url and clicks as
+        # total clicks to send back
+        return_obj['url'] = res.hashed.url
+        return_obj['total_clicks'] = res.hashed.clicks
+
         if with_content:
             return_obj['readable'] = dict(res.hashed.readable)
 
@@ -274,7 +279,72 @@ def bmark_recent(request):
     }
 
 
-@view_config(route_name="api_bmark_export", renderer="json")
+@view_config(route_name="api_bmarks_popular", renderer="json")
+@view_config(route_name="api_bmarks_popular_user", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def bmark_popular(request):
+    """Get a list of the most popular bmarks for the api call"""
+    rdict = request.matchdict
+    params = request.params
+
+    # check if we have a page count submitted
+    page = int(params.get('page', '0'))
+    count = int(params.get('count', RESULTS_MAX))
+    with_content = True if 'with_content' in params else False
+
+    username = request.user.username
+
+    # thou shalt not have more then the HARD MAX
+    # @todo move this to the .ini as a setting
+    if count > HARD_MAX:
+        count = HARD_MAX
+
+    # do we have any tags to filter upon
+    tags = rdict.get('tags', None)
+
+    if isinstance(tags, str):
+        tags = [tags]
+
+    # if we don't have tags, we might have them sent by a non-js browser as a
+    # string in a query string
+    if not tags and 'tag_filter' in params:
+        tags = params.get('tag_filter').split()
+
+    popular_list = BmarkMgr.find(limit=count,
+                           order_by=Bmark.clicks.desc(),
+                           page=page,
+                           tags=tags,
+                           username=username,
+                           with_content=with_content,
+                           with_tags=True,
+                           )
+
+    result_set = []
+
+    for res in popular_list:
+        return_obj = dict(res)
+        return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
+
+        # the hashed object is there as well, we need to pull the url and
+        # clicks from it as total_clicks
+        return_obj['url'] = res.hashed.url
+        return_obj['total_clicks'] = res.hashed.clicks
+
+        if with_content:
+            return_obj['readable'] = dict(res.hashed.readable)
+
+        result_set.append(return_obj)
+
+    return {
+         'bmarks': result_set,
+         'max_count': RESULTS_MAX,
+         'count': len(popular_list),
+         'page': page,
+         'tag_filter': tags,
+    }
+
+
+@view_config(route_name="api_bmarks_export", renderer="json")
 @api_auth('api_key', UserMgr.get)
 def bmark_export(request):
     """Export via the api call to json dump
@@ -296,62 +366,6 @@ def bmark_export(request):
         'count': len(bmark_list),
         'date': str(datetime.now())
     }
-
-
-@view_config(route_name="api_bmark_popular", renderer="json")
-@view_config(route_name="user_api_bmark_popular", renderer="json")
-def bmark_popular(request):
-    """Get a list of the bmarks for the api call"""
-    rdict = request.matchdict
-    params = request.params
-
-    # check if we have a page count submitted
-    page = int(params.get('page', '0'))
-    count = int(params.get('count', RESULTS_MAX))
-    username = rdict.get('username', None)
-
-    # thou shalt not have more then the HARD MAX
-    # @todo move this to the .ini as a setting
-    if count > HARD_MAX:
-        count = HARD_MAX
-
-    # do we have any tags to filter upon
-    tags = rdict.get('tags', None)
-
-    if isinstance(tags, str):
-        tags = [tags]
-
-    # if we don't have tags, we might have them sent by a non-js browser as a
-    # string in a query string
-    if not tags and 'tag_filter' in params:
-        tags = params.get('tag_filter').split()
-
-    popular_list = BmarkMgr.find(limit=count,
-                           order_by=Bmark.clicks.desc(),
-                           tags=tags,
-                           page=page,
-                           username=username)
-    result_set = []
-
-    for res in popular_list:
-        return_obj = dict(res)
-        return_obj['tags'] = [dict(tag[1]) for tag in res.tags.items()]
-        result_set.append(return_obj)
-
-    ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-             'bmarks': result_set,
-             'max_count': RESULTS_MAX,
-             'count': len(popular_list),
-             'page': page,
-             'tags': tags,
-        }
-
-    }
-
-    return ret
 
 
 @view_config(route_name="user_api_bmark_sync", renderer="json")
