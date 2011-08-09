@@ -59,9 +59,6 @@ def build_routes(config):
                      xhr=True)
     config.add_route("user_search_results_rest", "{username}/results*terms")
 
-    # removed the overall export. We're not going to have a link for exporting
-    # all in one swoop. It'll kill things
-    config.add_route("user_export", "{username}/export")
 
     config.add_route("redirect", "redirect/{hash_id}")
     config.add_route("user_redirect", "{username}/redirect/{hash_id}")
@@ -84,7 +81,7 @@ def build_routes(config):
     # many bookmark api calls
     config.add_route('api_bmarks', 'api/v1/bmarks')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
-
+    config.add_route("api_bmark_export", "api/v1/{username}/bmarks/export")
 
     # API
     # config.add_route('api_bmark_popular', 'api/v1/bmarks/popular')

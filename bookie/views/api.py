@@ -274,6 +274,30 @@ def bmark_recent(request):
     }
 
 
+@view_config(route_name="api_bmark_export", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def bmark_export(request):
+    """Export via the api call to json dump
+
+    """
+    username = request.user.username
+
+    bmark_list = BmarkMgr.user_dump(username)
+    # log that the user exported this
+    BmarkLog.export(username, username)
+
+    def build_bmark(bmark):
+        d = dict(bmark)
+        d['hashed'] = dict(bmark.hashed)
+        return d
+
+    return {
+        'bmarks': [build_bmark(bmark) for bmark in bmark_list],
+        'count': len(bmark_list),
+        'date': str(datetime.now())
+    }
+
+
 @view_config(route_name="api_bmark_popular", renderer="json")
 @view_config(route_name="user_api_bmark_popular", renderer="json")
 def bmark_popular(request):
@@ -362,34 +386,6 @@ def bmark_sync(request):
 
 
 
-@view_config(route_name="user_api_bmark_export", renderer="json")
-def bmark_exportexport(request):
-    """Export via the api call to json dump
-
-    """
-    params = request.params
-    rdict = request.matchdict
-
-    username = rdict.get("username", None)
-    user = UserMgr.get(username=username)
-
-    with ApiAuthorize(user,
-                      params.get('api_key', None)):
-
-        bmark_list = BmarkMgr.user_dump(username)
-        # log that the user exported this
-        BmarkLog.export(username, username)
-
-        def build_bmark(bmark):
-            d = dict(bmark)
-            d['hashed'] = dict(bmark.hashed)
-            return d
-
-        return {
-            'success': True,
-            'message': "",
-            'payload': [build_bmark(bmark) for bmark in bmark_list],
-        }
 
 
 @view_config(route_name="api_tag_complete", renderer="json")

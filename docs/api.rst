@@ -271,19 +271,68 @@ Example
 
 /:username/bmarks/export
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET `/api/v1/admin/bmarks/export`
 
-    Get a json dump of all of the bookmarks for a user's account. This will
-    include all content that we have available. It will take a while to build
-    and we will be limited this call to only a few times a day at some point.
+Usage
+''''''
+*GET* `/api/v1/admin/bmarks/export`
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: with_content - do you wish the readable content of the urls if available
+Get a json dump of all of the bookmarks for a user's account. This will
+include all content that we have available. It will take a while to build
+and we will be limited this call to only a few times a day at some point.
 
-    ::
+:query param: api_key *required* - the api key for your account to make the call with
 
-        requests.get('http://127.0.0.1:6543/api/v1/admin/export?api_key=12345...')
-        ...
+Status Codes
+'''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+'''''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/export?api_key=12345...')
+    >>> {
+          "bmarks": [
+            {
+              "bid": 1,
+              "clicks": 1,
+              "description": "Bookie Website",
+              "extended": "Bookie Documentation Home",
+              "hash_id": "c5c21717c99797",
+              "hashed": {
+                "clicks": 4,
+                "hash_id": "c5c21717c99797",
+                "url": "http://bmark.us"
+              },
+              "inserted_by": null,
+              "stored": "2011-06-20 11:42:47",
+              "tag_str": "bookmarks",
+              "updated": "2011-07-15 14:25:16",
+              "username": "admin"
+            },
+            {
+              "bid": 2,
+              "clicks": 1,
+              "description": "Bookie: Recent Bookmarks",
+              "extended": "",
+              "hash_id": "c605a21cf19560",
+              "hashed": {
+                "clicks": 1,
+                "hash_id": "c605a21cf19560",
+                "url": "https://bmark.us/recent"
+              },
+              "inserted_by": null,
+              "stored": "2011-06-21 13:20:26",
+              "tag_str": "test bookmarks",
+              "updated": "2011-07-29 22:23:42",
+              "username": "admin"
+            },
+            ...
+          ],
+          "count": 137,
+          "date": "2011-08-08 20:11:43.648699"
+        }
 
 
 /:username/bmarks/popular
