@@ -323,7 +323,6 @@ class BookieAPITest(unittest.TestCase):
 
         # make sure we can decode the body
         bmark_list = json.loads(res.body)
-        print bmark_list
 
         results = bmark_list['search_results']
         eq_(len(results), 1,
@@ -338,6 +337,35 @@ class BookieAPITest(unittest.TestCase):
 
         ok_('clicks' in bmark,
             "The clicks field should be in there")
+
+
+    def test_bookmark_tag_complete(self):
+        """Test we can complete tags in the system
+
+        By default we should have tags for python, search, bookmarks
+
+        """
+        self._get_good_request(second_bmark=True)
+
+        res = self.testapp.get('/api/v1/admin/tags/complete',
+                          params={'tag': 'py',
+                                  'api_key': API_KEY},
+                          status=200)
+
+        ok_('python' in res.body,
+                "Should have python as a tag completion: " + res.body)
+
+        # we shouldn't get python as an option if we supply bookmarks as the
+        # current tag. No bookmarks have both bookmarks & python as tags
+        res = self.testapp.get('/api/v1/admin/tags/complete',
+                               params={'tag': 'py',
+                                       'current': 'bookmarks',
+                                       'api_key': API_KEY
+                               },
+                               status=200)
+
+        ok_('python' not in res.body,
+                "Should not have python as a tag completion: " + res.body)
 
 
     # def test_paging_results(self):
@@ -457,26 +485,4 @@ class BookieAPITest(unittest.TestCase):
     #             "Should still have the bookmarks tag: " + res.body)
 
 
-    # def test_bookmark_tag_complete(self):
-    #     """Test we can complete tags in the system
 
-    #     By default we should have tags for python, search, bookmarks
-
-    #     """
-    #     self._get_good_request(second_bmark=True)
-
-    #     res = self.testapp.get('/admin/api/v1/tags/complete',
-    #                       params={'tag': 'py'},
-    #                       status=200)
-    #     ok_('python' in res.body,
-    #             "Should have python as a tag completion: " + res.body)
-
-    #     # we shouldn't get python as an option if we supply bookmarks as the
-    #     # current tag. No bookmarks have both bookmarks & python as tags
-    #     res = self.testapp.get('/admin/api/v1/tags/complete',
-    #                       params={'tag': 'py',
-    #                               'current': 'bookmarks'},
-    #                       status=200)
-
-    #     ok_('python' not in res.body,
-    #             "Should not have python as a tag completion: " + res.body)

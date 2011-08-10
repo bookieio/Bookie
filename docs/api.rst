@@ -545,28 +545,36 @@ Example
 
 /:username/tags/complete
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-GET `/api/v1/admin/tags/complete`
 
-    Return a list of potential tags to use for the given *tag*.
+Usage
+''''''
+*GET* `/api/v1/admin/tags/complete`
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :query param: tag *required* - the part of the word we want completions for
-    :query param: current - a space separated list of the current tags selected that we should take into account when selecting a potential completion option.
+Return a list of potential tags to use for the given *tag*.
 
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: tag *required* - the part of the word we want completions for
+:query param: current - a space separated list of the current tags selected that we should take into account when selecting a potential completion option.
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+''''''''
 ::
 
     requests.get('http://127.0.0.1:6543/api/v1/admin/tags/complete?api_key=12345...&tag=ubu')
     >>> {
-          "message": "",
-          "payload": {
             current: "",
             tags: [
               "ubuntu",
               "ubuntuone"
             ]
-          },
-          "success": true,
-        }
+        },
+
+
 
 
 /:username/account

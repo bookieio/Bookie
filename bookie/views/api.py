@@ -458,7 +458,7 @@ def search_results(request):
 
 
 @view_config(route_name="api_tag_complete", renderer="json")
-@view_config(route_name="user_api_tag_complete", renderer="json")
+@api_auth('api_key', UserMgr.get)
 def tag_complete(request):
     """Complete a tag based on the given text
 
@@ -467,6 +467,7 @@ def tag_complete(request):
 
     """
     params = request.GET
+    username = request.user.username
 
     if 'current' in params and params['current'] != "":
         current_tags = params['current'].split()
@@ -475,20 +476,19 @@ def tag_complete(request):
 
     if 'tag' in params and params['tag']:
         tag = params['tag']
-        tags = TagMgr.complete(tag, current=current_tags)
+
+        tags = TagMgr.complete(tag,
+                               current=current_tags,
+                               username=username)
+
         # reset this for the payload join operation
-        current_tags = []
+        if current_tags is None:
+            current_tags = []
 
-    ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-             'current': ",".join(current_tags),
-             'tags': [tag.name for tag in tags]
-        }
+    return {
+        'current': ",".join(current_tags),
+        'tags': [tag.name for tag in tags]
     }
-
-    return ret
 
 
 @view_config(route_name="api_bmark_get_readable", renderer="json")

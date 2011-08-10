@@ -176,7 +176,7 @@ class TagMgr(object):
         return qry.all()
 
     @staticmethod
-    def complete(prefix, current=None, limit=5):
+    def complete(prefix, current=None, limit=5, username=None):
         """Find all of the tags that begin with prefix
 
         :param current: a list of current tags to compare with
@@ -189,6 +189,11 @@ class TagMgr(object):
         """
         if current == None:
             qry = Tag.query.filter(Tag.name.startswith(prefix))
+
+            # if we have a username limit to only bookmarks of that user
+            if username is not None:
+                qry = qry.filter(Tag.bmark.any(username=username))
+
             qry = qry.order_by(Tag.name).limit(limit)
             return qry.all()
 
@@ -207,9 +212,14 @@ class TagMgr(object):
             """
             current_tags = DBSession.query(Tag.tid).\
                                            filter(Tag.name.in_(current)).group_by(Tag.tid)
+            good_bmarks = DBSession.query(Bmark.bid)
 
-            good_bmarks = select([bmarks_tags.c.bmark_id],
-                    bmarks_tags.c.tag_id.in_(current_tags)).group_by(bmarks_tags.c.bmark_id).having('COUNT(bmark_id) >= ' + str(len(current)))
+            if username is not None:
+                good_bmarks = good_bmarks.filter(Bmark.username == username)
+
+            good_bmarks = good_bmarks.filter(Bmark.tags.any(Tag.tid.in_(current_tags))).\
+                                     group_by(Bmark.bid).\
+                                     having('COUNT(bmark_id) >=' + str(len(current)))
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
                               join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))

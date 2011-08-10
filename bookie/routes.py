@@ -94,6 +94,8 @@ def build_routes(config):
                      "/api/v1/{username}/bmark/{hash_id}",
                      request_method="DELETE")
 
+    config.add_route("api_tag_complete",
+                     "/api/v1/{username}/tags/complete")
 
 
     # API
@@ -111,9 +113,6 @@ def build_routes(config):
 
 
     # # api calls for tag relation information
-    # config.add_route("api_tag_complete", "api/v1/tags/complete")
-    # config.add_route("user_api_tag_complete",
-    #                  "{username}/api/v1/tags/complete")
 
     # # auth related
     # config.add_route("api_user_reactivate", "api/v1/reactivate")
