@@ -223,8 +223,8 @@ class TagMgr(object):
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
                               join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
-            query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
             query = query.filter(Tag.name.startswith(prefix))
+            query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
 
             return DBSession.execute(query)
 
