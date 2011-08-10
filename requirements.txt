@@ -30,7 +30,7 @@ pep8==0.6.1
 py-bcrypt==0.2.0
 pycrypto==2.0.1
 pylint==0.23.0
-pyramid==1.0
+pyramid==1.1
 repoze.lru==0.3
 repoze.tm2==1.0b1
 rope==0.9.3
