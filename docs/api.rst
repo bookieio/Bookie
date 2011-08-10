@@ -736,6 +736,7 @@ Example
         "max_count": 10
     }
 
+
 /bmarks/popular
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -902,14 +903,6 @@ Example
              "username": "admin",
              "with_content": false
          }
-
-
-
-
-
-
-
-
 
 
 Admin only calls
