@@ -457,16 +457,6 @@ class BmarkMgr(object):
         qry = Bmark.query
         offset = limit * page
 
-        hashed = aliased(Hashed)
-        readable = aliased(Readable)
-
-        # if we have with_content then make sure we join hashed with readble to
-        # get that content
-        if with_content:
-            qry = qry.join((hashed, Bmark.hashed)).\
-                  options(contains_eager(Bmark.hashed, alias=hashed))
-            qry = qry.outerjoin((readable, hashed.readable)).\
-                  options(contains_eager(Bmark.hashed, hashed.readable, alias=readable))
 
         if username:
             qry = qry.filter(Bmark.username == username)
@@ -479,7 +469,6 @@ class BmarkMgr(object):
                       limit(limit).\
                       offset(offset).\
                       from_self()
-
 
         if tags:
             qry = qry.join(Bmark.tags).\
@@ -511,10 +500,16 @@ class BmarkMgr(object):
             qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
+
         # join to hashed so we always have the url
         # if we have with_content, this is already done
-        if not with_content:
-            qry = qry.options(joinedload('hashed'))
+        qry = qry.options(joinedload('hashed'))
+
+        hashed = aliased(Hashed)
+        readable = aliased(Readable)
+        if with_content:
+            qry = qry.outerjoin((readable, hashed.readable)).\
+                  options(contains_eager(Bmark.hashed, hashed.readable, alias=readable))
 
         return qry.all()
 

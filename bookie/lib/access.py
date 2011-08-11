@@ -236,16 +236,19 @@ class api_auth():
         api_key = request.params.get(self.api_field, None)
         request.user = self.user_fetcher(api_key=api_key)
 
-        # if there's a username in the url (rdict) then make sure the user the
-        # api belongs to is the same as the url. You can't currently use the
-        # api to get info for other users.
-        if username is not None and request.user.username == username:
-                return action_(*args, **kwargs)
+        if request.user is not None:
+            # then we have a user to try out with
 
-        # if there's not a username, then it's a public call, just make sure
-        # that the api key is valid
-        if username is None and request.user is not None:
-            return action_(*args, **kwargs)
+            # if there's a username in the url (rdict) then make sure the user the
+            # api belongs to is the same as the url. You can't currently use the
+            # api to get info for other users.
+            if username is not None and request.user.username == username:
+                    return action_(*args, **kwargs)
+
+            # if there's not a username, then it's a public call, just make sure
+            # that the api key is valid
+            if username is None:
+                return action_(*args, **kwargs)
 
         # otherwise, we're done, you're not allowed
         request.response.status_int = 403

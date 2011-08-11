@@ -193,7 +193,7 @@ class PgSqlFulltext(object):
 
         readable_res = []
         if content:
-            query = """SELECT readable.hash_id
+            query = """SELECT readable.hash_id, readable.content
             FROM readable, bmarks
             WHERE to_tsvector('english', content) @@ to_tsquery(:phrase)
                   AND readable.hash_id = bmarks.hash_id
@@ -202,7 +202,8 @@ class PgSqlFulltext(object):
 
             res = DBSession.execute(text(query), {'phrase': phrase})
 
-            ids = set([r.hash_id for r in res])
+            res_d = dict([(r.hash_id, r.content) for r in res])
+            ids = set(res_d.iterkeys())
 
             qry = Bmark.query.join(Bmark.tags).\
                       options(contains_eager(Bmark.tags)).\
@@ -211,7 +212,10 @@ class PgSqlFulltext(object):
             if username:
                 qry = qry.filter(Bmark.username == username)
 
-            readable_res = [bmark for bmark in qry.all()]
+            readable_res = []
+            for bmark in qry.all():
+                bmark['readable'] = dict(res_d[bmark.hash_id])
+                readable_res.append(bmark)
 
         results.update(set(readable_res))
         return sorted(list(results), key=lambda res: res.stored, reverse=True)
