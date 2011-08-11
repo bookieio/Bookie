@@ -219,18 +219,11 @@ class TagMgr(object):
                 good_bmarks = good_bmarks.filter(Bmark.username == username)
 
             good_bmarks = good_bmarks.filter(Bmark.tags.any(Tag.tid.in_(current_tags))).\
-                                     group_by(Bmark.bid).\
-                                     having('COUNT(bmark_id) >=' + str(len(current)))
+                                      group_by(Bmark.bid)
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
                               filter(Tag.name.startswith(prefix)).\
                               filter(Tag.bmark.any(Bmark.bid.in_(good_bmarks)))
-
-
-            # query = DBSession.query(Tag.name.distinct().label('name')).\
-            #                   join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
-            # query = query.filter(Tag.name.startswith(prefix))
-            # query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
 
             return DBSession.execute(query)
 
