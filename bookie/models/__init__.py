@@ -513,7 +513,6 @@ class BmarkMgr(object):
 
         return qry.all()
 
-
     @staticmethod
     def user_dump(username):
         """Get a list of all of the user's bookmarks for an export dump usually
