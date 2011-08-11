@@ -575,20 +575,30 @@ Example
         },
 
 
-
+Account Information Calls
+--------------------------
 
 /:username/account
 ~~~~~~~~~~~~~~~~~~
-GET `/api/v1/admin/account`
 
-    Return the name and email for the given user account.
+Usage
+''''''
+*GET* `/api/v1/admin/account`
 
-    :query param: api_key *required* - the api key for your account to make the call with
+Return the name and email for the given user account.
 
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+'''''''''''''
+
+Example
+'''''''
 ::
 
     requests.get('http://127.0.0.1:6543/api/v1/admin/accout?api_key=12345...')
     >>> ...
+
 
 
 POST `/api/v1/admin/account`

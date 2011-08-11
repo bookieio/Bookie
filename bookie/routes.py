@@ -63,10 +63,17 @@ def build_routes(config):
     config.add_route("redirect", "redirect/{hash_id}")
     config.add_route("user_redirect", "{username}/redirect/{hash_id}")
 
+    config.add_route("user_account", "{username}/account")
+
     # MOBILE routes
     config.add_route("user_mobile", "{username}/m")
 
     # NEW API
+
+    # auth related
+    config.add_route("api_user_account",
+                     "/api/v1/{username}/account",
+                     request_method="GET")
 
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
@@ -98,28 +105,11 @@ def build_routes(config):
                      "/api/v1/{username}/tags/complete")
 
 
-    # API
-    # config.add_route('api_bmark_get_readable', 'api/v1/bmarks/get_readable')
-    # config.add_route('api_bmark_readable', 'api/v1/bmarks/readable')
 
-    # config.add_route("user_api_bmark_recent",
-    #                  "{username}/api/v1/bmarks/recent")
-    # config.add_route("user_api_bmark_popular",
-    #                  "{username}/api/v1/bmarks/popular")
-
-    # config.add_route("user_api_bmark_export",
-    #                  "{username}/api/v1/bmarks/export")
-
-
-
-    # # api calls for tag relation information
-
-    # # auth related
     # config.add_route("api_user_reactivate", "api/v1/reactivate")
 
     # # calls/api for account related information
-    # config.add_route("user_account", "{username}/account")
-    # config.add_route("api_user_account", "{username}/api/v1/account")
+
     # config.add_route("api_user_account_reset_password",
     #                  "{username}/api/v1/account/password")
     # config.add_route("api_user_account_api_key",

@@ -491,7 +491,31 @@ def tag_complete(request):
     }
 
 
+# USER ACCOUNT INFORMATION CALLS
+@view_config(route_name="api_user_account", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def account_info(request):
+    """Return the details of the user account specifed
+
+    expecting username in matchdict
+    We only return a subset of data. We're not sharing keys such as api_key,
+    password hash, etc.
+
+    """
+    user = request.user
+
+    return {
+            'username': user.username,
+            'name': user.name,
+            'email': user.email,
+            'activated': user.activated,
+            'last_login': user.last_login,
+            'signup': user.signup,
+    }
+
+
 @view_config(route_name="api_bmark_get_readable", renderer="json")
+
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
     url_list = Hashed.query.outerjoin(Readable).\
@@ -508,80 +532,7 @@ def to_readable(request):
     return ret
 
 
-@view_config(route_name="api_bmark_readable", renderer="json")
-def readable(request):
-    """Take the html given and parse the content in there for readable
 
-    :@param hash_id: POST the hash_id of the bookmark we're readable'ing
-    :@param content: POST the html of the page in question
-
-    """
-    params = request.POST
-    success = params.get('success', None)
-
-    if success is None:
-        ret = {
-            'success': False,
-            'message': "Please submit success data",
-            'payload': {}
-        }
-
-    hashed = Hashed.query.get(params.get('hash_id', None))
-
-    if hashed:
-        success = asbool(success)
-        if success:
-            # if we have content, stick it on the object here
-            if 'content' in params:
-                content = StringIO(params['content'])
-                content.seek(0)
-                parsed = ReadContent.parse(content, content_type="text/html")
-
-                hashed.readable = Readable()
-                hashed.readable.content = parsed.content
-                hashed.readable.content_type = parsed.content_type
-                hashed.readable.status_code = 200
-                hashed.readable.status_message = "API Parsed"
-
-                ret = {
-                    'success': True,
-                    'message': "Parsed url: " + hashed.url,
-                    'payload': {}
-                }
-            else:
-                ret = {
-                    'success': False,
-                    'message': "Missing content for hash id",
-                    'payload': {
-                        'hash_id': params.get('hash_id')
-                    }
-                }
-
-        else:
-            # success was false for some reason
-            # could be an image, 404, error, bad domain...
-            # need info for content_type, status_code, status_message
-            hashed.readable = Readable()
-            hashed.readable.content_type = params.get('content_type',
-                                                      "Unknown")
-            hashed.readable.status_code = params.get('status_code', 999)
-            hashed.readable.status_message = params.get('status_message',
-                                                        "Missing message")
-
-            ret = {
-                'success': True,
-                'message': "Stored unsuccessful content fetching result",
-                'payload': dict(params)
-            }
-
-    else:
-        ret = {
-            'success': False,
-            'message': "Missing hash_id to parse",
-            'payload': {}
-        }
-
-    return ret
 
 
 @view_config(route_name="api_user_account_api_key", renderer="json")
