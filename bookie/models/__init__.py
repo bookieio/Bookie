@@ -212,6 +212,7 @@ class TagMgr(object):
             """
             current_tags = DBSession.query(Tag.tid).\
                                            filter(Tag.name.in_(current)).group_by(Tag.tid)
+
             good_bmarks = DBSession.query(Bmark.bid)
 
             if username is not None:
@@ -222,9 +223,14 @@ class TagMgr(object):
                                      having('COUNT(bmark_id) >=' + str(len(current)))
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
-                              join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
-            query = query.filter(Tag.name.startswith(prefix))
-            query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
+                              filter(Tag.name.startswith(prefix)).\
+                              filter(Tag.bmark.any(Bmark.bid.in_(good_bmarks)))
+
+
+            # query = DBSession.query(Tag.name.distinct().label('name')).\
+            #                   join((bmarks_tags, bmarks_tags.c.tag_id == Tag.tid))
+            # query = query.filter(Tag.name.startswith(prefix))
+            # query = query.filter(bmarks_tags.c.bmark_id.in_(good_bmarks))
 
             return DBSession.execute(query)
 
