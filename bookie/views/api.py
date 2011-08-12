@@ -530,6 +530,24 @@ def account_update(request):
     return user_acct.safe_data()
 
 
+@view_config(route_name="api_user_api_key", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def api_key(request):
+    """Return the currently logged in user's api key
+
+    This api call is available both on the website via a currently logged in
+    user and via a valid api key passed into the request. In this way we should
+    be able to add this to the mobile view with an ajax call as well as we do
+    into the account information on the main site.
+
+    """
+    user_acct = request.user
+    return {
+        'api_key': user_acct.api_key,
+        'username': user_acct.username
+    }
+
+
 @view_config(route_name="api_bmark_get_readable", renderer="json")
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
@@ -550,38 +568,6 @@ def to_readable(request):
 
 
 
-@view_config(route_name="api_user_account_api_key", renderer="json")
-def api_key(request):
-    """Return the currently logged in user's api key
-
-    This api call is available both on the website via a currently logged in
-    user and via a valid api key passed into the request. In this way we should
-    be able to add this to the mobile view with an ajax call as well as we do
-    into the account information on the main site.
-
-    """
-    params = request.params
-    rdict = request.matchdict
-    api_key = params.get('api_key', None)
-    username = rdict.get('username', None)
-
-    if request.user is None and api_key is not None:
-        # then see if we can find a user for this api key
-        user_acct = UserMgr.get(username=username)
-
-    if request.user is not None:
-        user_acct = request.user
-
-    with ReqOrApiAuthorize(request, api_key, user_acct):
-
-        return {
-            'success': True,
-            'message': None,
-            'payload': {
-                'api_key': user_acct.api_key,
-                'username': user_acct.username
-            }
-        }
 
 
 @view_config(route_name="api_user_account_reset_password", renderer="json")

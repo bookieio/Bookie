@@ -611,6 +611,7 @@ Example
 
 Usage
 '''''
+
 *POST* `/api/v1/admin/account`
 
 Update the user's name or email address
@@ -639,19 +640,36 @@ Usage
         }
 
 
-/:username/account/api_key
+/:username/api_key
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
 
-GET `/api/v1/admin/account/api_key`
+*GET* `/api/v1/admin/api_key`
 
-    Fetch the api key for the user from the system. We don't go waving the api
-    key around so we have to ask for it on its own. Keep this safe. If it's
-    exposed someone can get at about anything in the system for that user.
+Fetch the api key for the user from the system. We don't go waving the api
+key around so we have to ask for it on its own. Keep this safe. If it's
+exposed someone can get at about anything in the system for that user.
 
-    I know it's strange to require the api key to get the api key, but hey, you
-    tell me how to fix it.
+I know it's strange to require the api key to get the api key, but hey, you
+tell me how to fix it.
 
-    :query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+'''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Usage
+'''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/api_key?api_key=12345...')
+    >>> {
+            "username": "someuser",
+            "api_key": "12345..."
+        }
 
 
 /:username/account/password

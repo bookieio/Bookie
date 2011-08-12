@@ -390,7 +390,7 @@ class BookieAPITest(unittest.TestCase):
         params = {
             'name': u'Test Admin'
         }
-        res = self.testapp.post(str("/api/v1/admin/account?api_key=" + API_KEY),
+        res = self.testapp.post(str("/api/v1/admin/account?api_key=" + str(API_KEY)),
                                params=params,
                                status=200)
 
@@ -408,6 +408,22 @@ class BookieAPITest(unittest.TestCase):
                 "Should not have a field password {0}".format(user))
         ok_('api_key' not in user,
                 "Should not have a field password {0}".format(user))
+
+
+    def test_account_apikey(self):
+        """Fetching a user's api key"""
+        res = self.testapp.get("/api/v1/admin/api_key?api_key=" + str(API_KEY),
+                               status=200)
+
+        # make sure we can decode the body
+        user = json.loads(res.body)
+
+        eq_(user['username'], 'admin',
+                "Should have a username of admin {0}".format(user))
+        ok_('api_key' in user,
+                "Should have an api key in there: {0}".format(user))
+
+
 
     # def test_paging_results(self):
     #     """Test that we can page results"""

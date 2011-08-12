@@ -77,6 +77,9 @@ def build_routes(config):
     config.add_route("api_user_account_update",
                      "/api/v1/{username}/account",
                      request_method="POST")
+    config.add_route("api_user_api_key",
+                     "/api/v1/{username}/api_key")
+
 
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
@@ -115,8 +118,7 @@ def build_routes(config):
 
     # config.add_route("api_user_account_reset_password",
     #                  "{username}/api/v1/account/password")
-    # config.add_route("api_user_account_api_key",
-    #                  "{username}/api/v1/account/api_key")
+
     # config.add_route("api_user_account_activate",
     #                  "{username}/api/v1/account/activate")
 
