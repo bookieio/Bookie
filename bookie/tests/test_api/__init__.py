@@ -385,7 +385,29 @@ class BookieAPITest(unittest.TestCase):
         ok_('api_key' not in user,
                 "Should not have a field password {0}".format(user))
 
+    def test_account_update(self):
+        """Test updating a user's account information"""
+        params = {
+            'name': u'Test Admin'
+        }
+        res = self.testapp.post(str("/api/v1/admin/account?api_key=" + API_KEY),
+                               params=params,
+                               status=200)
 
+        # make sure we can decode the body
+        user = json.loads(res.body)
+
+        eq_(user['username'], 'admin',
+                "Should have a username of admin {0}".format(user))
+        eq_(user['name'], 'Test Admin',
+                "Should have a new name of Test Admin {0}".format(user))
+
+        ok_('password' not in user,
+                "Should not have a field password {0}".format(user))
+        ok_('_password' not in user,
+                "Should not have a field password {0}".format(user))
+        ok_('api_key' not in user,
+                "Should not have a field password {0}".format(user))
 
     # def test_paging_results(self):
     #     """Test that we can page results"""

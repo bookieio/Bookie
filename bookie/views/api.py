@@ -504,18 +504,33 @@ def account_info(request):
     """
     user = request.user
 
-    return {
-            'username': user.username,
-            'name': user.name,
-            'email': user.email,
-            'activated': user.activated,
-            'last_login': user.last_login,
-            'signup': user.signup,
-    }
+    return user.safe_data()
+
+
+@view_config(route_name="api_user_account_update", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def account_update(request):
+    """Update the account information for a user
+
+    :params name:
+    :params email:
+
+    Callable by either a logged in user or the api key for mobile apps/etc
+
+    """
+    params = request.params
+    user_acct = request.user
+
+    name = params.get('name', None)
+    email = params.get('email', None)
+
+    user_acct.name = name
+    user_acct.email = email
+
+    return user_acct.safe_data()
 
 
 @view_config(route_name="api_bmark_get_readable", renderer="json")
-
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
     url_list = Hashed.query.outerjoin(Readable).\
@@ -623,43 +638,6 @@ def reset_password(request):
             }
 
 
-@view_config(route_name="api_user_account_update", renderer="json")
-def account_update(request):
-    """Update the account information for a user
-
-    :params name:
-    :params email:
-
-    Callable by either a logged in user or the api key for mobile apps/etc
-
-    """
-    params = request.params
-    rdict = request.matchdict
-    api_key = params.get('api_key', None)
-    username = rdict.get('username', None)
-
-    # now also load the password info
-    name = params.get('name', None)
-    email = params.get('email', None)
-
-    # @todo boilerplate to find the user from the api key or from the name
-    # logged in status need to remove/clear up
-    if request.user is None and api_key is not None:
-        # then see if we can find a user for this api key
-        user_acct = UserMgr.get(username=username)
-
-    if request.user is not None:
-        user_acct = request.user
-
-    with ReqOrApiAuthorize(request, api_key, user_acct):
-        user_acct.name = name
-        user_acct.email = email
-
-        return {
-            'success': True,
-            'message': "Account updated",
-            'payload': {'user': dict(user_acct)}
-        }
 
 
 @view_config(route_name="api_user_reactivate", renderer="json")

@@ -591,28 +591,52 @@ Return the name and email for the given user account.
 
 Status Codes
 '''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
 Example
 '''''''
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/admin/accout?api_key=12345...')
-    >>> ...
+    requests.get('http://127.0.0.1:6543/api/v1/admin/account?api_key=12345...')
+    >>> {
+            "username": "admin",
+            "name": null,
+            "signup": null,
+            "activated": true,
+            "last_login": null,
+            "email": "testing@dummy.com"
+        }
 
 
+Usage
+'''''
+*POST* `/api/v1/admin/account`
 
-POST `/api/v1/admin/account`
+Update the user's name or email address
 
-    Update the user's name or email address
+:query param: api_key *required* - the api key for your account to make the call with
+:post param: name - a new name for the user account
+:post param: email - a new email for the user account
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :post param: name - a new name for the user account
-    :post param: email - a new email for the user account
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
 
+Usage
+'''''
 ::
 
-    requests.post('http://127.0.0.1:6543/api/v1/admin/accout?api_key=12345...')
-    >>> ...
+    requests.post('http://127.0.0.1:6543/api/v1/admin/account?api_key=12345...')
+    >>> {
+            "username": "admin",
+            "name": null,
+            "signup": null,
+            "activated": true,
+            "last_login": null,
+            "email": "testing@dummy.com"
+        }
 
 
 /:username/account/api_key

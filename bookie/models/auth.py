@@ -254,6 +254,11 @@ class User(Base):
         else:
             return False
 
+    def safe_data(self):
+        """Return safe data to be sharing around"""
+        hide = ['_password', 'password', 'is_admin', 'api_key']
+        return dict([(key, val) for key, val in dict(self).iteritems() if key not in hide])
+
     def deactivate(self):
         """In case we need to disable the login"""
         self.activated = False
