@@ -409,7 +409,6 @@ class BookieAPITest(unittest.TestCase):
         ok_('api_key' not in user,
                 "Should not have a field password {0}".format(user))
 
-
     def test_account_apikey(self):
         """Fetching a user's api key"""
         res = self.testapp.get("/api/v1/admin/api_key?api_key=" + str(API_KEY),
@@ -422,6 +421,47 @@ class BookieAPITest(unittest.TestCase):
                 "Should have a username of admin {0}".format(user))
         ok_('api_key' in user,
                 "Should have an api key in there: {0}".format(user))
+
+    def test_account_password_change(self):
+        """Change a user's password"""
+        params = {
+                'current_password': 'admin',
+                'new_password': 'not_testing'
+        }
+
+        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
+                                params=params,
+                                status=200)
+
+        # make sure we can decode the body
+        user = json.loads(res.body)
+
+        eq_(user['username'], 'admin',
+                "Should have a username of admin {0}".format(user))
+        ok_('message' in user,
+                "Should have a message key in there: {0}".format(user))
+
+    def test_account_password_failure(self):
+        """Change a user's password, in bad ways"""
+        params = {
+                'current_password': 'test',
+                'new_password': 'not_testing'
+        }
+
+        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
+                                params=params,
+                                status=403)
+
+        # make sure we can decode the body
+        user = json.loads(res.body)
+
+        eq_(user['username'], 'admin',
+                "Should have a username of admin {0}".format(user))
+        ok_('error' in user,
+                "Should have a error key in there: {0}".format(user))
+        ok_('typo' in user['error'],
+                "Should have a error key in there: {0}".format(user))
+
 
 
 

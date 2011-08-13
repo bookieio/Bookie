@@ -625,8 +625,8 @@ Status Codes
 :success 200: If successful a "200 OK" will be returned, with json body of message: done
 :error 403: if the api key is not valid or missing then this is an unauthorized request
 
-Usage
-'''''
+Example
+''''''''
 ::
 
     requests.post('http://127.0.0.1:6543/api/v1/admin/account?api_key=12345...')
@@ -661,8 +661,8 @@ Status Codes
 :success 200: If successful a "200 OK" will be returned, with json body of message: done
 :error 403: if the api key is not valid or missing then this is an unauthorized request
 
-Usage
-'''''
+Example
+''''''''
 ::
 
     requests.post('http://127.0.0.1:6543/api/v1/admin/api_key?api_key=12345...')
@@ -672,33 +672,60 @@ Usage
         }
 
 
-/:username/account/password
+/:username/password
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-POST `/api/v1/admin/account/password`
+Usage
+'''''
+*POST* `/api/v1/admin/account/password`
 
-    Change the user's password to the new value provided. Note that the current
-    password is required to perform the step.
+Change the user's password to the new value provided. Note that the current
+password is required to perform the step.
 
-    :query param: api_key *required* - the api key for your account to make the call with
-    :post param: current_password *required* - the current password string from the user
-    :post param: new_password *required* - the string to change the password to
+:query param: api_key *required* - the api key for your account to make the call with
+:post param: current_password *required* - the current password string from the user
+:post param: new_password *required* - the string to change the password to
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+:error 406: if the new password is not of acceptable strength. We're not letting 2 char passwords to be set, sorry.
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/password?api_key=12345...')
+    >>> {
+            "username": "someuser",
+            "api_key": "12345..."
+        }
 
 
 /:username/account/suspend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-POST `/api/v1/admin/account/suspend`
+Usage
+''''''
+*POST* `/api/v1/admin/account/suspend`
 
-    Creates a reset of the account. The user account is locked, an email is
-    fired to the user's email address on file, and an activation code is
-    contained within that is required to unlock the account.
+Creates a reset of the account. The user account is locked, an email is
+fired to the user's email address on file, and an activation code is
+contained within that is required to unlock the account.
 
-    :query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *required* - the api key for your account to make the call with
 
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+''''''''
 ::
 
-    requests.post('http://127.0.0.1:6543/api/v1/admin/account/suspend?api_key=12345...')
+    requests.post('http://127.0.0.1:6543/api/v1/admin/suspend?api_key=12345...')
     >>> ...
 
 
