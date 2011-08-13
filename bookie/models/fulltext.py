@@ -106,17 +106,6 @@ def _mysql_postgres_search(phrase, content=False, username=None):
         """need to perform searches against the three columns"""
         phrase = " | ".join(phrase.split())
 
-        results = set()
-
-        query = """select bid
-        from bmarks
-        where to_tsvector('english', description) @@ to_tsquery(:phrase) or
-              to_tsvector('english', extended) @@ to_tsquery(:phrase) or
-              to_tsvector('english', tag_str) @@ to_tsquery(:phrase)
-
-        order by stored desc;
-
-        """
         filters = [
             Bmark.description.match(phrase),
             Bmark.extended.match(phrase),
