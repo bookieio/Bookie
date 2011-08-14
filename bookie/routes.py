@@ -68,7 +68,9 @@ def build_routes(config):
     # MOBILE routes
     config.add_route("user_mobile", "{username}/m")
 
+    #
     # NEW API
+    #
 
     # auth related
     config.add_route("api_user_account",
@@ -82,8 +84,12 @@ def build_routes(config):
     config.add_route("api_user_reset_password",
                      "/api/v1/{username}/password",
                      request_method="POST")
-
-
+    config.add_route("api_user_suspend_remove",
+                     "api/v1/{username}/suspend",
+                     request_method="DELETE")
+    config.add_route("api_user_suspend",
+                     "api/v1/{username}/suspend",
+                     request_method="POST")
 
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
@@ -114,15 +120,6 @@ def build_routes(config):
     config.add_route("api_tag_complete",
                      "/api/v1/{username}/tags/complete")
 
-
-
-    # config.add_route("api_user_reactivate", "api/v1/reactivate")
-
-    # # calls/api for account related information
-
-
-    # config.add_route("api_user_account_activate",
-    #                  "{username}/api/v1/account/activate")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

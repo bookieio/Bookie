@@ -521,11 +521,13 @@ def account_update(request):
     params = request.params
     user_acct = request.user
 
-    name = params.get('name', None)
-    email = params.get('email', None)
+    if 'name' in params and params['name'] is not None:
+        name = params.get('name')
+        user_acct.name = name
 
-    user_acct.name = name
-    user_acct.email = email
+    if 'email' in params and params['email'] is not None:
+        email = params.get('email')
+        user_acct.email = email
 
     return user_acct.safe_data()
 
@@ -591,63 +593,39 @@ def reset_password(request):
 
 
 
-
-@view_config(route_name="api_bmark_get_readable", renderer="json")
-def to_readable(request):
-    """Get a list of urls, hash_ids we need to readable parse"""
-    url_list = Hashed.query.outerjoin(Readable).\
-                filter(Readable.imported == None).all()
-
-    ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-            'urls': [dict(h) for h in url_list]
-        }
-    }
-
-    return ret
-
-
-
-
-
-
-
-
-
-
-@view_config(route_name="api_user_reactivate", renderer="json")
-def reactivate(request):
+@view_config(route_name="api_user_suspend", renderer="json")
+def suspend_acct(request):
     """Reset a user account to enable them to change their password"""
     params = request.params
+    user = request.user
 
     # we need to get the user from the email
     email = params.get('email', None)
 
-    if email is None:
+    if user is None and email is None:
+        request.response.status_int = 406
         return {
-            'success': False,
-            'message':  "Please submit an email address",
-            'payload': {},
+            'error':  "Please submit an email address",
         }
 
-    user = UserMgr.get(email=email)
+    if user is None and email is not None:
+        user = UserMgr.get(email=email)
+
     if user is None:
+        request.response.status_int = 404
         return {
-            'success': False,
-            'message':  "Please submit a valid address",
-            'payload': {},
+            'error':  "Please submit a valid address",
+            'email': email
         }
 
     # check if we've already gotten an activation for this user
     if user.activation is not None:
+        request.response.status_int = 406
         return {
-            'success': False,
-            'message':  """You've already marked your account for reactivation.
+            'error':  """You've already marked your account for reactivation.
 Please check your email for the reactivation link. Make sure to
 check your spam folder.""",
-            'payload': {},
+            'username': user.username,
         }
 
     # mark them for reactivation
@@ -668,17 +646,15 @@ check your spam folder.""",
                          reset_key=user.activation.code))
 
     return {
-        'success': True,
         'message':  """Your account has been marked for reactivation. Please
                     check your email for instructions to reset your
                     password""",
-        'payload': {},
     }
 
 
-@view_config(route_name="api_user_account_activate", renderer="json")
+@view_config(route_name="api_user_suspend_remove", renderer="json")
 def account_activate(request):
-    """Reset a user after being deactivated
+    """Reset a user after being suspended
 
     :param username: required to know what user we're resetting
     :param activation: code needed to activate
@@ -693,10 +669,9 @@ def account_activate(request):
     password = params.get('password', None)
 
     if not UserMgr.acceptable_password(password):
+        request.response.status_int = 406
         return {
-            'success': False,
-            'message': "Come on, pick a real password please",
-            'payload': {}
+            'error': "Come on, pick a real password please",
         }
 
     res = ActivationMgr.activate_user(username, activation, password)
@@ -705,15 +680,29 @@ def account_activate(request):
         # success so respond nicely
         AuthLog.reactivate(username, success=True, code=activation)
         return {
-            'success': True,
             'message': "Account activated, please log in.",
-            'payload': {}
+            'username': username,
         }
     else:
-
         AuthLog.reactivate(username, success=False, code=activation)
+        request.respones.status_int = 500
         return {
-            'success': False,
-            'message': "There was an issue attempting to activate this account.",
-            'payload': {}
+            'error': "There was an issue attempting to activate this account.",
         }
+
+
+@view_config(route_name="api_bmark_get_readable", renderer="json")
+def to_readable(request):
+    """Get a list of urls, hash_ids we need to readable parse"""
+    url_list = Hashed.query.outerjoin(Readable).\
+                filter(Readable.imported == None).all()
+
+    ret = {
+        'success': True,
+        'message': "",
+        'payload': {
+            'urls': [dict(h) for h in url_list]
+        }
+    }
+
+    return ret

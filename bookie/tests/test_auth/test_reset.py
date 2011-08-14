@@ -25,122 +25,127 @@ from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models.auth import Activation
+from bookie.models.auth import User
 
 LOG = logging.getLogger(__name__)
 
-# class TestReactivateFunctional(TestCase):
-# 
-#     def _reset_admin(self):
-#         """Reset the admin account"""
-#         DBSession.execute("UPDATE users SET activated='1' WHERE username='admin';")
-#         Activation.query.delete()
-#         transaction.commit()
-# 
-#     def setUp(self):
-#         from pyramid.paster import get_app
-#         from bookie.tests import BOOKIE_TEST_INI
-#         app = get_app(BOOKIE_TEST_INI, 'main')
-#         from webtest import TestApp
-#         self.testapp = TestApp(app)
-#         testing.setUp()
-# 
-#     def tearDown(self):
-#         self._reset_admin()
-#         testing.tearDown()
-# 
-#     def test_activate_form_bad(self):
-#         """Test bad call to reset"""
-#         res = self.testapp.get('/api/v1/reactivate', status=200)
-#         success = json.loads(res.body)['success']
-#         ok_(not success, "Should not be successful with no email address")
-# 
-#         res = self.testapp.get('/api/v1/reactivate',
-#                                 params={'email': 'notexist@gmail.com'},
-#                                 status=200)
-#         success = json.loads(res.body)['success']
-#         ok_(not success, "Should not be successful with invalid email address")
-# 
-#     def test_activate_form(self):
-#         """ Functional test to see if we can submit to the api to reset an account
-# 
-#         Now by doing this we end up marking the account deactivated which
-#         causes other tests to 403 it up. Need to reinstate the admin account on
-#         tearDown
-# 
-#         """
-#         res = self.testapp.get('/api/v1/reactivate',
-#                                params={'email': 'testing@dummy.com'},
-#                                status=200)
-# 
-#         success = json.loads(res.body)['success']
-#         ok_(success, "Should be successful with admin email address: " + str(res))
-# 
-#     def test_activate_form_dual(self):
-#         """Test that we can't resubmit for reset, get prompted to email
-# 
-#         If we reset and then try to say "I've forgotten" a second time, we
-#         should get a nice message. And that message should allow us to get a
-#         second copy of the email sent.
-# 
-#         """
-#         res = self.testapp.get('/api/v1/reactivate',
-#                                params={'email': 'testing@dummy.com'},
-#                                status=200)
-# 
-#         success = json.loads(res.body)['success']
-#         ok_(success, "Should be successful with admin email address")
-# 
-# 
-#         res = self.testapp.get('/api/v1/reactivate',
-#                                params={'email': 'testing@dummy.com'},
-#                                status=200)
-# 
-#         success = json.loads(res.body)['success']
-#         ok_(not success, "Should not be successful on second try: " + str(res))
-# 
-#         ok_('already' in str(res),
-#                 "Should find 'already' in the response: " + str(res))
-# 
-#     def test_reactivate_process(self):
-#         """Walk through all of the steps at a time
-# 
-#         - First we mark that we've forgotten
-#         - Then use make sure we get a 403 accessing something
-#         - Then we go back through our activation using our code
-#         - Finally verify we can access the earlier item
-# 
-#         """
-#         res = self.testapp.get('/api/v1/reactivate',
-#                                params={'email': 'testing@dummy.com'},
-#                                status=200)
-# 
-#         success = json.loads(res.body)['success']
-#         ok_(success, "Should be successful with admin email address")
-# 
-#         # now let's try to login
-#         # the migrations add a default admin account
-#         user_data = {'login': 'admin',
-#                      'password': 'admin',
-#                      'form.submitted': 'true'}
-# 
-#         res = self.testapp.post('/login',
-#                                params=user_data,
-#                                status=200)
-# 
-#         ok_('account deactivated' in str(res),
-#                 "Login should have failed since we're not active: " + str(res))
-# 
-#         act = Activation.query.first()
-#         res = self.testapp.post('/admin/api/v1/account/activate',
-#                                 params={'code': act.code, 'password': 'admin'},
-#                                 status=200)
-#         ok_('activated' in str(res),
-#                 "Should be prompted to login now: " + str(res))
-# 
-#         user_data = {'login': 'admin',
-#                      'password': 'admin',
-#                      'form.submitted': 'true'}
-# 
-#         res = self.testapp.post('/login',
-#                                params=user_data,
-#                                status=302)
+class TestReactivateFunctional(TestCase):
+
+    def _reset_admin(self):
+        """Reset the admin account"""
+        DBSession.execute("UPDATE users SET activated='1' WHERE username='admin';")
+        Activation.query.delete()
+        transaction.commit()
+
+    def setUp(self):
+        from pyramid.paster import get_app
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'main')
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+        testing.setUp()
+
+    def tearDown(self):
+        self._reset_admin()
+        testing.tearDown()
+
+    def test_activate_form_bad(self):
+        """Test bad call to reset"""
+        res = self.testapp.post('/api/v1/admin/suspend', status=406)
+        success = json.loads(res.body)['error']
+        ok_(success is not None, "Should not be successful with no email address: " + str(res))
+
+        res = self.testapp.post('/api/v1/admin/suspend',
+                                params={'email': 'notexist@gmail.com'},
+                                status=404)
+        success = json.loads(res.body)
+        ok_('error' in success, "Should not be successful with invalid email address: " + str(res))
+
+    def test_activate_form(self):
+        """ Functional test to see if we can submit to the api to reset an account
+
+        Now by doing this we end up marking the account deactivated which
+        causes other tests to 403 it up. Need to reinstate the admin account on
+        tearDown
+
+        """
+        res = self.testapp.post('/api/v1/admin/suspend',
+                               params={'email': u'testing@dummy.com'},
+                               status=200)
+
+        success = json.loads(res.body)
+        ok_('message' in success, "Should be successful with admin email address: " + str(res))
+
+    def test_activate_form_dual(self):
+        """Test that we can't resubmit for reset, get prompted to email
+
+        If we reset and then try to say "I've forgotten" a second time, we
+        should get a nice message. And that message should allow us to get a
+        second copy of the email sent.
+
+        """
+        res = self.testapp.post('/api/v1/admin/suspend',
+                               params={'email': u'testing@dummy.com'},
+                               status=200)
+
+        success = json.loads(res.body)
+        ok_('message' in success, "Should be successful with admin email address")
+
+
+        res = self.testapp.post('/api/v1/admin/suspend',
+                               params={'email': u'testing@dummy.com'},
+                               status=406)
+
+        success = json.loads(res.body)
+        ok_('error' in success, "Should not be successful on second try: " + str(res))
+
+        ok_('already' in str(res),
+                "Should find 'already' in the response: " + str(res))
+
+    def test_reactivate_process(self):
+        """Walk through all of the steps at a time
+
+        - First we mark that we've forgotten
+        - Then use make sure we get a 403 accessing something
+        - Then we go back through our activation using our code
+        - Finally verify we can access the earlier item
+
+        """
+
+        LOG.debug([dict(u) for u in User.query.all()])
+        res = self.testapp.post('/api/v1/admin/suspend',
+                               params={'email': u'testing@dummy.com'},
+                               status=200)
+
+        success = json.loads(res.body)
+        ok_('message' in success, "Should be successful with admin email address")
+
+        # now let's try to login
+        # the migrations add a default admin account
+        user_data = {'login': 'admin',
+                     'password': 'admin',
+                     'form.submitted': 'true'}
+
+        res = self.testapp.post('/login',
+                               params=user_data,
+                               status=200)
+
+        ok_('account deactivated' in str(res),
+                "Login should have failed since we're not active: " + str(res))
+
+        act = Activation.query.first()
+        self.testapp.delete("/api/v1/admin/suspend?code={0}&password={1}".format(
+                                    act.code,
+                                    'admin'),
+                                status=200)
+
+        ok_('activated' in str(res),
+                "Should be prompted to login now: " + str(res))
+
+        user_data = {'login': 'admin',
+                     'password': 'admin',
+                     'form.submitted': 'true'}
+
+        res = self.testapp.post('/login',
+                               params=user_data,
+                               status=302)

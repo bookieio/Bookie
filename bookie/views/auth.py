@@ -68,7 +68,7 @@ def login(request):
 
         # log the right level of problem
         if auth and not auth.validate_password(password):
-            message = "Failed login"
+            message = "Your login attempt has failed."
             AuthLog.login(login, False, password=password)
 
         elif auth and not auth.activated:

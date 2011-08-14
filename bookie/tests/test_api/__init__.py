@@ -441,6 +441,14 @@ class BookieAPITest(unittest.TestCase):
         ok_('message' in user,
                 "Should have a message key in there: {0}".format(user))
 
+        params = {
+                'current_password': 'not_testing',
+                'new_password': 'admin'
+        }
+        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
+                                params=params,
+                                status=200)
+
     def test_account_password_failure(self):
         """Change a user's password, in bad ways"""
         params = {
