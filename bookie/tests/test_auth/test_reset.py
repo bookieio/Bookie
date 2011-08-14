@@ -25,7 +25,6 @@ from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models.auth import Activation
-from bookie.models.auth import User
 
 LOG = logging.getLogger(__name__)
 

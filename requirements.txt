@@ -15,8 +15,8 @@ SQLAlchemy<0.8
 Sphinx==1.0.7
 Tempita==0.5dev
 WebError==0.10.3
-WebOb==1.0.5
-WebTest==1.2.3
+WebOb==1.1beta1
+WebTest==1.2.4
 coverage==3.4
 decorator==3.3.1
 docutils==0.7
