@@ -1045,7 +1045,7 @@ GET `/api/v1/admin/readable/todo`
 
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/admin/readable/todo?api_key=12345...')
+    requests.get('http://127.0.0.1:6543/api/v1/a/readable/todo?api_key=12345...')
     >>> {
           message: ""
           payload: {

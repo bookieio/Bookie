@@ -192,7 +192,7 @@ class api_auth():
 
     """
 
-    def __init__(self, api_field, user_fetcher):
+    def __init__(self, api_field, user_fetcher, admin_only=False):
         """
         :param api_field: the name of the data in the request.params and the
                           User object we compare to make sure they match
@@ -204,10 +204,24 @@ class api_auth():
         """
         self.api_field = api_field
         self.user_fetcher = user_fetcher
+        self.admin_only = admin_only
 
     def __call__(self, action_):
         """ Return :meth:`wrap_action` as the decorator for ``action_``. """
         return decorator(self.wrap_action, action_)
+
+    def _check_admin_only(self, request):
+        """If admin only, verify current api belongs to an admin user"""
+        api_key = request.params.get(self.api_field, None)
+
+        if request.user is None:
+            user = self.user_fetcher(api_key=api_key)
+        else:
+            user = request.user
+
+        if user is not None and user.is_admin:
+            request.user = user
+            return True
 
     def wrap_action(self, action_, *args, **kwargs):
         """
@@ -225,6 +239,14 @@ class api_auth():
         # request should be the one and only arg to the view function
         request = args[0]
         username = request.matchdict.get('username', None)
+
+        # if this is admin only, you're either an admin or not
+        if self.admin_only:
+            if self._check_admin_only(request):
+                return action_(*args, **kwargs)
+            else:
+                request.response.status_int = 403
+                return { 'error': "Not authorized for request." }
 
         if request.user is not None:
             if AuthHelper.check_login(request, username):

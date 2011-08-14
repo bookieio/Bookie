@@ -690,18 +690,15 @@ def account_activate(request):
         }
 
 
-@view_config(route_name="api_bmark_get_readable", renderer="json")
+@view_config(route_name="api_admin_readable_todo", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
     url_list = Hashed.query.outerjoin(Readable).\
                 filter(Readable.imported == None).all()
 
     ret = {
-        'success': True,
-        'message': "",
-        'payload': {
-            'urls': [dict(h) for h in url_list]
-        }
+        'urls': [dict(h) for h in url_list]
     }
 
     return ret

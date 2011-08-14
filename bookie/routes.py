@@ -11,10 +11,10 @@ def build_routes(config):
     config.add_route("reset", "{username}/reset/{reset_key}")
 
     # DELAPI Routes
-    # config.add_route("del_post_add", "/{username}/delapi/posts/add")
-    # config.add_route("del_post_delete", "/{username}/delapi/posts/delete")
-    # config.add_route("del_post_get", "/{username}/delapi/posts/get")
-    # config.add_route("del_tag_complete", "/{username}/delapi/tags/complete")
+    config.add_route("del_post_add", "/{username}/delapi/posts/add")
+    config.add_route("del_post_delete", "/{username}/delapi/posts/delete")
+    config.add_route("del_post_get", "/{username}/delapi/posts/get")
+    config.add_route("del_tag_complete", "/{username}/delapi/tags/complete")
 
     # bmark routes
     config.add_route("bmark_recent", "recent")
@@ -121,6 +121,9 @@ def build_routes(config):
     config.add_route("api_tag_complete",
                      "/api/v1/{username}/tags/complete")
 
+    # admin api calls
+    config.add_route("api_admin_readable_todo",
+                     "/api/v1/a/readable/todo")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")
