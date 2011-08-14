@@ -662,9 +662,8 @@ def account_activate(request):
 
     """
     params = request.params
-    rdict = request.matchdict
 
-    username = rdict.get('username', None)
+    username = params.get('username', None)
     activation = params.get('code', None)
     password = params.get('password', None)
 
@@ -685,7 +684,7 @@ def account_activate(request):
         }
     else:
         AuthLog.reactivate(username, success=False, code=activation)
-        request.respones.status_int = 500
+        request.response.status_int = 500
         return {
             'error': "There was an issue attempting to activate this account.",
         }

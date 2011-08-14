@@ -50,11 +50,11 @@ class TestReactivateFunctional(TestCase):
 
     def test_activate_form_bad(self):
         """Test bad call to reset"""
-        res = self.testapp.post('/api/v1/admin/suspend', status=406)
+        res = self.testapp.post('/api/v1/suspend', status=406)
         success = json.loads(res.body)['error']
         ok_(success is not None, "Should not be successful with no email address: " + str(res))
 
-        res = self.testapp.post('/api/v1/admin/suspend',
+        res = self.testapp.post('/api/v1/suspend',
                                 params={'email': 'notexist@gmail.com'},
                                 status=404)
         success = json.loads(res.body)
@@ -68,7 +68,7 @@ class TestReactivateFunctional(TestCase):
         tearDown
 
         """
-        res = self.testapp.post('/api/v1/admin/suspend',
+        res = self.testapp.post('/api/v1/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=200)
 
@@ -83,7 +83,7 @@ class TestReactivateFunctional(TestCase):
         second copy of the email sent.
 
         """
-        res = self.testapp.post('/api/v1/admin/suspend',
+        res = self.testapp.post('/api/v1/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=200)
 
@@ -91,7 +91,7 @@ class TestReactivateFunctional(TestCase):
         ok_('message' in success, "Should be successful with admin email address")
 
 
-        res = self.testapp.post('/api/v1/admin/suspend',
+        res = self.testapp.post('/api/v1/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=406)
 
@@ -110,7 +110,7 @@ class TestReactivateFunctional(TestCase):
         - Finally verify we can access the earlier item
 
         """
-        res = self.testapp.post('/api/v1/admin/suspend',
+        res = self.testapp.post('/api/v1/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=200)
 
@@ -131,7 +131,8 @@ class TestReactivateFunctional(TestCase):
                 "Login should have failed since we're not active: " + str(res))
 
         act = Activation.query.first()
-        self.testapp.delete("/api/v1/admin/suspend?code={0}&password={1}".format(
+        self.testapp.delete("/api/v1/suspend?username={0}&code={1}&password={2}".format(
+                                    user_data['login'],
                                     act.code,
                                     'admin'),
                                 status=200)

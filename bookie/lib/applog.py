@@ -7,8 +7,10 @@ id, user, component, status, message, payload, tstamp
 
 """
 import json
+import logging
 from bookie.models.applog import AppLogMgr
 
+LOG = logging.getLogger(__name__)
 
 class Log(object):
     """Log handler"""
@@ -67,6 +69,7 @@ class AuthLog(Log):
         else:
             msg = "{0} was attempted to be reactivated with invalid credentials".format(username)
 
+        LOG.debug(msg)
         data = {
                 'user': username,
                 'component': AuthLog.component,

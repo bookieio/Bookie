@@ -84,11 +84,12 @@ def build_routes(config):
     config.add_route("api_user_reset_password",
                      "/api/v1/{username}/password",
                      request_method="POST")
+
     config.add_route("api_user_suspend_remove",
-                     "api/v1/{username}/suspend",
+                     "api/v1/suspend",
                      request_method="DELETE")
     config.add_route("api_user_suspend",
-                     "api/v1/{username}/suspend",
+                     "api/v1/suspend",
                      request_method="POST")
 
     # many bookmark api calls

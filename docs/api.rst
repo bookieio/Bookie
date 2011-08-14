@@ -703,39 +703,6 @@ Example
         }
 
 
-/:username/account/suspend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Usage
-''''''
-*POST* `/api/v1/admin/account/suspend`
-
-Creates a reset of the account. The user account is locked, an email is
-fired to the user's email address on file, and an activation code is
-contained within that is required to unlock the account.
-
-:query param: api_key *required* - the api key for your account to make the call with
-
-Status Codes
-''''''''''''
-:success 200: If successful a "200 OK" will be returned, with json body of message: done
-:error 403: if the api key is not valid or missing then this is an unauthorized request
-
-Example
-''''''''
-::
-
-    requests.post('http://127.0.0.1:6543/api/v1/admin/suspend?api_key=12345...')
-    >>> ...
-
-
-DELETE `/api/v1/admin/account/suspend`
-    Reactive the account. Basically we're "deleting the suspend" on the
-    account. This requires the reactivation key that was sent to the user in
-    the activation email.
-
-    :query_param: activation - string activation code returned emailed from the POST call
-    :query_param: password - a new password to reactivate this account to
 
 
 System wide calls
@@ -982,6 +949,82 @@ Example
              "username": "admin",
              "with_content": false
          }
+
+
+/suspend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usage
+''''''
+*POST* `/api/v1/suspend`
+
+Creates a reset of the account. The user account is locked, an email is
+fired to the user's email address on file, and an activation code is
+contained within that is required to unlock the account.
+
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: email *required* - the email address of the user we're wanting to reset
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 404: Could not find a user for this email address to suspend the account
+:error 406: No email address submitted in the request so we can't suspend anyone
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/suspend?api_key=12345...&email=testing@dummy.com')
+    >>> {
+        "message":  """Your account has been marked for reactivation. Please check your email for instructions to reset your password""",
+    }
+    
+    requests.post('http://127.0.0.1:6543/api/v1/suspend?api_key=12345...')
+    >>> {
+        "error":  "Please submit an email address",
+    }
+    
+    requests.post('http://127.0.0.1:6543/api/v1/suspend?api_key=12345...&email=testing@dummy.com')
+    >>> {
+        "error":  "You've already marked your account for reactivation.  Please check your email for the reactivation link. Make sure to check your spam folder.",
+        "username": admin
+    }
+
+
+Usage
+'''''
+*DELETE* `/api/v1/suspend`
+
+Reactive the account. Basically we're "deleting the suspend" on the
+account. This requires the reactivation key that was sent to the user in
+the activation email.
+
+:query_param: username - string username of the user we're activating
+:query_param: activation - string activation code returned emailed from the POST call
+:query_param: password - a new password to reactivate this account to
+
+Status Codes
+'''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 406: The password supplied doesn't satisfy complexity requirements.
+:error 500: There was some issue restoring the account. Send for help
+
+Example
+''''''''
+::
+
+    requests.delete('http://127.0.0.1:6543/api/v1/suspend?api_key=12345&activation=behehe&password=admin')
+    >>> {
+        "message": "Account activated, please log in",
+        "username": "admin"
+    }
+    
+    requests.delete('http://127.0.0.1:6543/api/v1/suspend?api_key=12345&activation=behehe&password=12')
+    >>> {
+        "error": "Come on, pick a real password please"
+    }
+
 
 
 Admin only calls
