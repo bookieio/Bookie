@@ -21,9 +21,6 @@
         <script type="text/javascript" charset="utf-8">
             <%
                 app_url = request.route_url('home').rstrip('/')
-                # if this is a request with a user then api call for that user
-                if request.user:
-                    app_url = app_url + "/" + request.user.username
             %>
             APP_URL = '${app_url}';
         </script>
@@ -84,6 +81,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>
+        <script type="text/javascript" src="https://raw.github.com/edtsech/underscore.string/master/lib/underscore.string.js"></script>
         <script type="text/javascript">
             // prepare for the great bookie js files
             var logger = {}
@@ -102,7 +100,13 @@
 
         <script type="text/javascript">
             $(document).ready(function() {
-                bookie.init();
+                % if request.user:
+                    bookie.api.init(APP_URL, '${request.user.username}');
+                % else:
+                    bookie.api.init(APP_URL);
+                % endif
+
+                bookie.init(bookie.api);
             });
         </script>
 

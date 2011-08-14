@@ -12,8 +12,11 @@ var bookie = (function (opts) {
 
     $b.log = opts.console_log.log;
     $b.api = {
-        'init': function(app_url) {
-            $b.api.app_url = app_url;
+        'init': function(app_url, username, api_key) {
+            $b.api.opt = {};
+            $b.api.opt.app_url = app_url;
+            $b.api.opt.username = (username ? username : '');
+            $b.api.opt.api_key = (api_key ? api_key : '');
         }
     };
 
@@ -51,11 +54,18 @@ var bookie = (function (opts) {
      *
      */
     $b.api._request = function (options) {
-        var defaults, opts;
+        var defaults, opts, default_data;
+
+        if ($b.api.opt.api_key !== undefined) {
+            default_data = $b.api.opt.api_key;
+        } else {
+            default_data = {};
+        }
 
         defaults = {
             type: "GET",
             dataType: "json",
+            data: default_data,
             context: $b,
             timeout: 30000,
             error: function(jqxhr, textStatus, errorThrown) {
@@ -63,10 +73,15 @@ var bookie = (function (opts) {
                 $b.log('Response Code: ' + jqxhr.status);
                 $b.log('Response Status: ' + textStatus);
                 $b.log(jqxhr);
+
+                // hand the callback the issue at hand
+                options.error(jqxhr, textStatus, errorThrown);
             }
         };
 
-        options.url = $b.api.app_url + options.url;
+        options.url = $b.api.opt.app_url + options.url;
+        // now fill in any username/etc params
+        options.url = _.sprintf(options.url, $b.api.opt);
 
         opts = $.extend({}, defaults, options);
         $.ajax(opts);
@@ -82,7 +97,7 @@ var bookie = (function (opts) {
      */
     $b.api.recent = function (pager, callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/bmarks/recent?" + pager.generate_url(),
+        var url = "/api/v1/bmarks/%(username)s/recent?" + pager.generate_url(),
             opts = {
                 url: url,
                 success: callbacks.success,
@@ -102,37 +117,12 @@ var bookie = (function (opts) {
      */
     $b.api.popular = function (pager, callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/bmarks/popular?" + pager.generate_url(),
+        var url = "/api/v1/bmarks/%(username)s/popular?" + pager.generate_url(),
             opts = {
                 url: url,
                 success: callbacks.success,
                 complete: callbacks.complete
             };
-
-        $b.api._request(opts);
-    };
-
-
-    /**
-     * Get a bookmark from the json api
-     *
-     * @param hash_id is hash from the bookmark url used to find and reference
-     *                it
-     * @param callbacks is an object of success, complete, error
-     *
-     */
-    $b.api.bookmark = function (hash_id, callbacks, get_last) {
-        // we need to get the list of recent from the api
-        var url = "/api/v1/bmarks/" + hash_id;
-            opts = {
-                url: url,
-                success: callbacks.success,
-                complete: callbacks.complete
-            };
-
-        if (get_last !== undefined) {
-            opts.data = {'last_bmark': true};
-        }
 
         $b.api._request(opts);
     };
@@ -147,7 +137,7 @@ var bookie = (function (opts) {
      *
      */
     $b.api.add = function (data, callbacks) {
-        var url = "/api/v1/bmarks/add",
+        var url = "/api/v1/%(username)/bmark",
             opts = {
                 type: 'post',
                 url: url,
@@ -159,15 +149,38 @@ var bookie = (function (opts) {
     };
 
 
-    $b.api.remove = function (bmark_url, api_key, callbacks) {
-        var url = "/api/v1/bmarks/remove",
+    /**
+     * Get a bookmark from the json api
+     *
+     * @param username to make the request as
+     * @param hash_id is hash from the bookmark url used to find and reference
+     *                it
+     * @param callbacks is an object of success, complete, error
+     *
+     */
+    $b.api.bookmark = function (username, hash_id, callbacks, get_last) {
+        // we need to get the list of recent from the api
+        var url = "/api/v1/%(username)s/bmark/" + hash_id,
             opts = {
                 url: url,
-                type: "post",
-                data: {
-                        'url': bmark_url,
-                        'api_key': api_key
-                },
+                data: data,
+                success: callbacks.success,
+                complete: callbacks.complete
+            };
+
+        if (get_last !== undefined) {
+            opts.data = {'last_bmark': true};
+        }
+
+        $b.api._request(opts);
+    };
+
+
+    $b.api.remove = function (hash_id, api_key, callbacks) {
+        var url = "/api/v1/%(username)s/bmark/" + hash_id,
+            opts = {
+                url: url,
+                type: "delete",
                 success: callbacks.success
             };
 
@@ -187,7 +200,7 @@ var bookie = (function (opts) {
         // we need to get the list of recent from the api
         var url_terms = terms.join("/"),
             build_url = function (terms, pager, with_content) {
-                var base = "/api/v1/bmarks/search/",
+                var base = "/api/v1/%(username)s/bmarks/search/",
                     terms_addon = terms.join("/"),
                     pager_addon = pager.generate_url();
 
@@ -226,7 +239,7 @@ var bookie = (function (opts) {
         }
 
         opts = {
-            url: "/api/v1/tags/complete",
+            url: "/api/v1/%(username)s/tags/complete",
             data: req_data,
             success: callbacks.success,
         };
@@ -244,10 +257,7 @@ var bookie = (function (opts) {
      */
     $b.api.sync = function (api_key, callbacks) {
         opts = {
-            url: "/api/v1/bmarks/sync",
-            data: {
-                    'api_key': api_key
-            },
+            url: "/api/v1/%(username)s/extension/sync",
             success: callbacks.success
         };
 
@@ -268,7 +278,7 @@ var bookie = (function (opts) {
      */
     $b.api.api_key = function (callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/account/api_key",
+        var url = "/api/v1/%(username)s/api_key",
             opts = {
                 url: url,
                 success: callbacks.success
@@ -286,7 +296,7 @@ var bookie = (function (opts) {
      *
      */
     $b.api.change_password = function (current_pass, new_pass, callbacks) {
-        var url = "/api/v1/account/password",
+        var url = "/api/v1/%(username)s/password",
             data = {'current_password': current_pass,
                     'new_password': new_pass
             },
@@ -309,11 +319,12 @@ var bookie = (function (opts) {
      *
      */
     $b.api.account_update = function (new_data, callbacks) {
-        var url = "/api/v1/account/update",
+        var url = "/api/v1/%(username)s/account",
             data = new_data,
             opts = {
                 url: url,
                 data: data,
+                type: "post",
                 success: callbacks.success
             };
 
@@ -328,16 +339,17 @@ var bookie = (function (opts) {
      *
      */
     $b.api.reactivate = function (email, callbacks) {
-        var url = "/api/v1/reactivate",
+        var url = "/api/v1/suspend",
             data = { 'email': email },
             opts = {
                 url: url,
+                type: 'post',
                 data: data,
                 success: callbacks.success
             };
 
         $b.api._request(opts);
-    }
+    };
 
     /**
      * Activate the account after being deactivated
@@ -348,19 +360,20 @@ var bookie = (function (opts) {
      *
      */
     $b.api.activate = function (username, code, new_password, callbacks) {
-        var url = "/" + username + "/api/v1/account/activate",
+        var url = "/api/v1/suspend",
             data = { 'code': code,
+                     'username': username,
                      'password': new_password
             },
             opts = {
                 url: url,
-                type: 'post',
+                type: 'delete',
                 data: data,
                 success: callbacks.success
             };
 
         $b.api._request(opts);
-    }
+    };
 
     return $b;
 })(bookie_opts);

@@ -64,6 +64,7 @@ def build_routes(config):
     config.add_route("user_redirect", "{username}/redirect/{hash_id}")
 
     config.add_route("user_account", "{username}/account")
+    config.add_route("user_export", "{username}/export")
 
     # MOBILE routes
     config.add_route("user_mobile", "{username}/m")

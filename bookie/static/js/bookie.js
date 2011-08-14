@@ -11,8 +11,7 @@ var bookie = (function ($b, $) {
     // dom hook for triggering/catching events fired
     $b.EVENTID = 'body';
 
-    // init the api since we'll be using calls to it
-    $b.api.init(APP_URL);
+    // we expect the api init for us
 
     /**
      * Define events supported
@@ -103,7 +102,10 @@ var bookie = (function ($b, $) {
 
 
     // only need to call init on the page read event
-    $b.init = function () {
+    $b.init = function (api_obj) {
+        // we need the bookie api stuff
+        $b.api = api_obj;
+
         // make sure we bind the page load event
         $($b.EVENTID).bind($b.events.LOAD, $b.load);
 
@@ -112,6 +114,7 @@ var bookie = (function ($b, $) {
 
         // now trigger the load since we're ready to go from here
         $($b.EVENTID).trigger($b.events.LOAD);
+
     };
 
     $b.login = {
@@ -158,13 +161,10 @@ var bookie = (function ($b, $) {
 
             $b.api.reactivate(email, {
                 'success': function (data)  {
-                    console.log(data);
-
                     $b.login.clear();
                     $b.login.message(data.message, data.success);
                 }
             });
-
         }
     };
 
@@ -190,13 +190,8 @@ var bookie = (function ($b, $) {
                 // show it in the container for it
                 $b.api.api_key({
                     'success': function (data) {
-                        if (data.success) {
-                            $key_div.html(data.payload.api_key);
-                            $key_container.show(400);
-                        } else {
-                            console.log('Some error, check out the request');
-                            console.log(data);
-                        }
+                        $key_div.html(data.api_key);
+                        $key_container.show(400);
                     }
                 });
             }
