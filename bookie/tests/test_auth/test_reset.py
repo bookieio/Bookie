@@ -111,8 +111,6 @@ class TestReactivateFunctional(TestCase):
         - Finally verify we can access the earlier item
 
         """
-
-        LOG.debug([dict(u) for u in User.query.all()])
         res = self.testapp.post('/api/v1/admin/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=200)
