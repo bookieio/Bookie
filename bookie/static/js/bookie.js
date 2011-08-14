@@ -162,7 +162,7 @@ var bookie = (function ($b, $) {
             $b.api.reactivate(email, {
                 'success': function (data)  {
                     $b.login.clear();
-                    $b.login.message(data.message, data.success);
+                    $b.login.message(data.message, true);
                 }
             });
         }
@@ -213,7 +213,7 @@ var bookie = (function ($b, $) {
                     },
                     {
                         'success': function (data) {
-                            $b.accounts.updateui.message(data.message, data.success);
+                            $b.accounts.updateui.message("Account updated", true);
                          }
                     });
             },
@@ -288,10 +288,8 @@ var bookie = (function ($b, $) {
                     $('#new_password').val(),
                     {
                         'success': function (data) {
-                            $b.accounts.passwordui.message(data.message, data.success);
-                            if (data.success) {
-                                $b.accounts.passwordui.reset();
-                            }
+                            $b.accounts.passwordui.message(data.message, true);
+                            $b.accounts.passwordui.reset();
                          }
                     }
                 );
@@ -331,8 +329,7 @@ var bookie = (function ($b, $) {
                 $('#new_password').val(),
                 {
                     'success': function (data) {
-                        console.log(data);
-                        $b.reset.message(data.message, data.success);
+                        $b.reset.message(data.message, true);
                      }
                 }
             );

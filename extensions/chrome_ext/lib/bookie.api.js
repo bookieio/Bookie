@@ -360,15 +360,13 @@ var bookie = (function (opts) {
      *
      */
     $b.api.activate = function (username, code, new_password, callbacks) {
-        var url = "/api/v1/suspend",
-            data = { 'code': code,
-                     'username': username,
-                     'password': new_password
-            },
+        var url = _.sprintf("/api/v1/suspend?code=%s&username=%s&password=%s",
+                            escape(code),
+                            escape(username),
+                            escape(new_password)),
             opts = {
                 url: url,
                 type: 'delete',
-                data: data,
                 success: callbacks.success
             };
 
