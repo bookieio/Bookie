@@ -119,10 +119,6 @@ def _mysql_postgres_search(phrase, content=False, username=None):
         if username:
             qry = qry.filter(Bmark.username == username)
 
-        bid_filter = DBSession.query(Bmark.bid.distinct()).\
-                               filter(or_(*filters))
-        qry = qry.filter(Bmark.bid.in_(bid_filter))
-
         if content:
             LOG.debug('searching with content')
             readable = aliased(Readable)
@@ -131,6 +127,11 @@ def _mysql_postgres_search(phrase, content=False, username=None):
                   options(contains_eager(Bmark.hashed, Hashed.readable, alias=readable))
 
             filters.append(readable.content.match(phrase))
+
+        bid_filter = DBSession.query(Bmark.bid.distinct()).\
+                               filter(or_(*filters))
+        qry = qry.filter(Bmark.bid.in_(bid_filter))
+
 
         qry = qry.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
