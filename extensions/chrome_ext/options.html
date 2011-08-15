@@ -140,12 +140,16 @@
         <form id="form">
             <fieldset>
                 <legend>Connection</legend>
-                <label for="api_url">Bookie User URL</label>
+                <label for="api_url">Bookie url</label>
                 <input type="url" id="api_url"/>
-                <div style="display: inline-block; margin: 5px;">[http[s]://someurl/{username}]</div>
+                <div style="display: inline-block; margin: 5px;">[http[s]://someurl]</div>
 
-                <label for="api_key">API Key</label>
+                <label for="api_username">Bookie account username</label>
+                <input type="text" id="api_username"/>
+
+                <label for="api_key">API key</label>
                 <input type="password" placeholder="api key" id="api_key"/>
+
                 <label for="cache_content">Cache Content</label>
                 <input type="checkbox" id="cache_content" />
             </fieldset>
@@ -172,6 +176,9 @@
                 bookmarks.</p>
         </div>
     </body>
+    <script type="text/javascript" src="lib/underscore.min.js"></script>
+    <script type="text/javascript" src="lib/underscore.string.min.js"></script>
+
     <script type="text/javascript">
         bookie.options.init();
     </script>

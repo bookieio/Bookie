@@ -25,7 +25,11 @@
         <script type="text/javascript" src="lib/bookie-core.js"></script>
         <script type="text/javascript" src="lib/bookie.api.js"></script>
         <script type="text/javascript" src="lib/bookie.utils.js"></script>
+        <script type="text/javascript" src="lib/underscore.min.js"></script>
+        <!-- <script type="text/javascript" src="lib/underscore.string.min.js"></script> -->
+        <script type="text/javascript" src="https://raw.github.com/edtsech/underscore.string/master/lib/underscore.string.js"></script>
         <script type="text/javascript" src="bookie.chrome.js"></script>
+
         <script type="text/javascript">
             var tags = [];
             $(function() {
@@ -39,9 +43,6 @@
                         'url': window.atob(parts[0]),
                         'title': window.atob(parts[1])
                     }
-
-
-
                 } else {
                     tab_data = undefined;
                 }
@@ -81,6 +82,8 @@
 
                     if(!localStorage['api_url'])
                         errors.push("Bookie URL has not been set");
+                    if(!localStorage['api_username'])
+                        errors.push("Bookie api username has not been set");
                     if(!localStorage['api_key'])
                         errors.push("API key has not been set");
 

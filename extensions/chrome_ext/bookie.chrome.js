@@ -243,7 +243,12 @@
 
         // add some right-click content menu love for a quick "read later"
         var read_later = function (info, tab) {
-            bookie.api.init(bookie.settings.get('api_url'));
+            bookie.api.init(
+                    bookie.settings.get('api_url'),
+                    bookie.settings.get('api_username'),
+                    bookie.settings.get('api_key')
+            );
+
             if (bookie.settings.get('cache_content') === 'true') {
                 inject_readable(function () {
                     // grab the html content of the page to send along for the ride
@@ -294,9 +299,12 @@
 
     $b.options = {
         'init': function () {
+
+
             // populate default field values
             $('#api_key').val(localStorage['api_key']);
             $('#api_url').val(localStorage['api_url']);
+            $('#api_username').val(localStorage['api_username']);
 
             if (localStorage['cache_content'] != 'false') {
                 $('#cache_content').attr('checked', 'checked');
@@ -311,6 +319,7 @@
             $("#form").submit(function(e) {
                 localStorage['api_key'] = $('#api_key').val();
                 localStorage['api_url'] = $('#api_url').val();
+                localStorage['api_username'] = $('#api_username').val();
 
                 // do you want us to store the cached content of the
                 // current page?
@@ -336,13 +345,18 @@
 
             // the user might have just added the api and hit save
             // so make sure we reload that info
-            $b.api.init($b.settings.get('api_url'));
-            $b.api.sync($b.settings.get('api_key'), {
+            $b.api.init(
+                    $b.settings.get('api_url'),
+                    $b.settings.get('api_username'),
+                    $b.settings.get('api_key')
+            );
+
+            $b.api.sync({
                 success: function (data) {
                     var bkg, hash_id;
                     bkg = chrome.extension.getBackgroundPage();
-                    for (idx in data.payload.hash_list) {
-                        hash_id = data.payload.hash_list[idx];
+                    for (idx in data.hash_list) {
+                        hash_id = data.hash_list[idx];
                         localStorage.setItem(hash_id, true);
                     }
 

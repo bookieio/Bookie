@@ -45,7 +45,7 @@ var bookie = (function (opts) { //module, $, logger) {
         'ondelete': function (ev) {
             var url = $('#url').attr('value'),
                 api_key = $('#api_key').attr('value');
-            $b.call.removeBookmark(url, api_key);
+            $b.call.removeBookmark($b.utils.hash_url(url));
             ev.preventDefault();
         },
 
@@ -121,11 +121,8 @@ var bookie = (function (opts) { //module, $, logger) {
         $b.log('populate form base');
         $b.call.getBookmark(url, function (data) {
             var result, code, found, tags, bmark;
-            $b.log('form base');
-            $b.log(url);
-
             tags = [];
-            bmark = data.payload.bmark;
+            bmark = data.bmark;
 
             for (tg in bmark.tags) {
                 tags.push(bmark.tags[tg].name);
@@ -143,12 +140,12 @@ var bookie = (function (opts) { //module, $, logger) {
             // now enable the delete button in case we want to delete it
             $b.ui.enable_delete();
 
-        }, function (data) {
+        }, function (data, status_string) {
             $b.log('Page is not currently bookmarked');
 
             // see if we have the last set of tags to add
-            if (data.payload.hasOwnProperty('last')) {
-                var tag_str = data.payload.last.tag_str,
+            if (data.hasOwnProperty('last')) {
+                var tag_str = data.last.tag_str,
                     tags = tag_str.split(' '),
                     tag_html;
 
@@ -170,11 +167,13 @@ var bookie = (function (opts) { //module, $, logger) {
     $b.init = function (callback, callback_data) {
         $b.settings.init();
 
-        if (!$b.settings.get('api_url')) {
-            $b.log('No API URL');
-            $b.ui.notify(new Notification('error', 0, 'No URL', 'Bookie URL has not been set'));
+        if (!$b.settings.get('api_url') || !$b.settings.get('api_username')) {
+            $b.log('No API url or Username.');
+            $b.ui.notify(new Notification('error', 0, 'No url or username', 'Bookie URL info has not been set'));
         } else {
-            $b.api.init($b.settings.get('api_url'));
+            $b.api.init($b.settings.get('api_url'),
+                        $b.settings.get('api_username'),
+                        $b.settings.get('api_key'));
 
             // allow for the browser specific plugins to do some custom init
             if (callback_data !== undefined) {
@@ -183,7 +182,6 @@ var bookie = (function (opts) { //module, $, logger) {
                 callback();
             }
         }
-
     };
 
 
@@ -202,9 +200,12 @@ var bookie = (function (opts) { //module, $, logger) {
     $b.store_changes = function (ev) {
         var data, ext_val;
 
+        if (ev !== undefined) {
+            ev.preventDefault();
+        }
+
         data = {
             'url': $('#url').attr('value'),
-            'api_key': $b.settings.get('api_key'),
             'description': $('#description').val(),
             'tags': $('#tags').val(),
             'extended': $('#extended').val(),
@@ -226,15 +227,14 @@ var bookie = (function (opts) { //module, $, logger) {
     $b.call.getBookmark = function (url, success_callback, fail_callback) {
         $b.api.bookmark($b.utils.hash_url(url), {
                     'success': function (data) {
-                        if (data.success === true) {
-                            if(success_callback) {
-                                success_callback(data);
-                            }
-                        } else {
-                            console.log('bookmark not found: ' + url);
-                            if (fail_callback) {
-                                fail_callback(data);
-                            }
+                        if(success_callback) {
+                            success_callback(data);
+                        }
+                    },
+                    'error': function (data, status_string) {
+                        console.log('bookmark not found: ' + url);
+                        if (fail_callback) {
+                            fail_callback(data);
                         }
                     }
                 }, true);
@@ -243,31 +243,22 @@ var bookie = (function (opts) { //module, $, logger) {
 
     $b.call.saveBookmark = function (params) {
         // we need to add the api key to the params
-        params.api_key = $b.settings.get('api_key');
-        $b.api.add(params,
-                   {'success': function (data) {
-                        if (data.success === true) {
-                            $b.ui.notify(new Notification(
-                                "info",
-                                200,
-                                $b.response_codes[data.message],
-                                "saved"));
-                        } else {
-                            // need to notify that it failed
-                            $b.ui.notify(new Notification(
-                                "error",
-                                400, //TODO: correctly determine http status code
-                                $b.response_codes[data.message],
-                                "Could not save bookmark"));
-                        }
-                    },
-                    'error': function (jqxhr, textStatus, errorThrown) {
+        console.log(params);
+        $b.api.add(params, {
+                   'success': function (data) {
+                        $b.ui.notify(new Notification(
+                            "info",
+                            200,
+                            $b.response_codes[data.message],
+                            "saved"));
+                   },
+                    'error': function (data, status_string) {
                         // if there's an error, say a 403 or something display
                         // an error
                         $b.ui.notify(new Notification(
                             "error",
-                            jqxhr.status, //TODO: correctly determine http status code
-                            $b.response_codes[jqxhr.status],
+                            status_string, //TODO: correctly determine http status code
+                            $b.response_codes[status_string],
                             "Could not save bookmark. Please check error code."));
                     }
                 });
@@ -324,28 +315,23 @@ var bookie = (function (opts) { //module, $, logger) {
      * see http://delicious.com/help/api#posts_delete
      *
     */
-    $b.call.removeBookmark = function (url, api_key) {
-        $b.api.remove(url, api_key, {
-             success: function (data) {
-                var result, code;
-
-                if (data.message === "done") {
-                    $b.ui.notify(new Notification(
-                        "info",
-                        200,
-                        $b.response_codes[data.message],
-                        "Deleted"));
-                } else {
-                    // need to notify http://www.semiww.org/forum/memberlist.php?mode=viewprofile&u=5834that it failed
+    $b.call.removeBookmark = function (hash_id) {
+        $b.api.remove(hash_id, {
+             'success': function (data) {
+                $b.ui.notify(new Notification(
+                    "info",
+                    200,
+                    $b.response_codes[data.message],
+                    "Deleted"));
+             },
+             'error': function (data, status_string) {
                     $b.ui.notify(new Notification(
                         "error",
                         400, //TODO: correctly determine http status code
-                        $b.response_codes[data.message],
+                        $b.response_codes[data.error],
                         "Could not delete bookmark"));
-                }
-            }
+             }
         });
-
     };
 
 
@@ -363,7 +349,7 @@ var bookie = (function (opts) { //module, $, logger) {
         $b.api.tag_complete(tag,
                 current,
                 { 'success': function (data) {
-                                   callback(data.payload.tags);
+                                   callback(data.tags);
                              }
                 }
         );

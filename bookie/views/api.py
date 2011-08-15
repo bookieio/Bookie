@@ -49,9 +49,18 @@ def bmark_get(request):
     bookmark = BmarkMgr.get_by_hash(hash_id,
                                     username=username)
 
+    if 'last_bmark' in request.params:
+        last = BmarkMgr.get_recent_bmark(username=username)
+        if last is not None:
+            last_bmark = {'last':  dict(last)}
+        else:
+            last_bmark = {}
+
     if bookmark is None:
         request.response.status_int = 404
-        return { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
+        ret = { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
+        ret.update(last_bmark)
+        return ret
     else:
         return_obj = dict(bookmark)
 
@@ -61,10 +70,9 @@ def bmark_get(request):
 
         return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
-        return {
-         'bmark': return_obj
-        }
-
+        ret = {'bmark': return_obj}
+        ret.update(last_bmark)
+        return ret
 
 def _update_mark(mark, params):
     """Update the bookmark found with settings passed in"""
@@ -379,7 +387,10 @@ def extension_sync(request):
     username = request.user.username
 
     hash_list = BmarkMgr.hash_list(username=username)
-    return [hash[0] for hash in hash_list]
+    return {
+            'hash_list': [hash[0] for hash in hash_list]
+    }
+
 
 @view_config(route_name="api_bmark_search", renderer="json")
 @view_config(route_name="api_bmark_search_user", renderer="json")

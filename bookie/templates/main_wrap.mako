@@ -81,7 +81,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>
-        <script type="text/javascript" src="https://raw.github.com/edtsech/underscore.string/master/lib/underscore.string.js"></script>
+        <script type="text/javascript" src="/static/js/lib/underscore.string.min.js"></script>
         <script type="text/javascript">
             // prepare for the great bookie js files
             var logger = {}

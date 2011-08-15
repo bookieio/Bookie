@@ -79,7 +79,7 @@ var bookie = (function ($b, $) {
                         tag,
                         current,
                         { 'success': function (data) {
-                                           callback(data.payload.tags);
+                                           callback(data.tags);
                                      }
                         }
                 );

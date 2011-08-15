@@ -9,8 +9,8 @@
                 % endif
                 ${bmark.bmark[0].description}</a></h1>
 <div id="readable_content">
-    % if bmark.readable:
-        ${bmark.readable.content}
+    % if bmark.readable and bmark.readable.content:
+        ${bmark.readable.content|n}
     % else:
         <p>No parsed content for this bookmark</p>
     % endif
