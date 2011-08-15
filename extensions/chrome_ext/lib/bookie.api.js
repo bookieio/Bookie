@@ -56,11 +56,6 @@ var bookie = (function (opts) {
     $b.api._request = function (options) {
         var defaults, opts, default_data;
 
-        if ($b.api.opt.api_key !== undefined) {
-            default_data = $b.api.opt.api_key;
-        } else {
-            default_data = {};
-        }
 
         // if we already have an error, move it so we can use it as a callback
         if (options.error) {
@@ -71,7 +66,7 @@ var bookie = (function (opts) {
         defaults = {
             type: "GET",
             dataType: "json",
-            data: default_data,
+            data: {},
             context: $b,
             timeout: 30000,
             error: function(jqxhr, textStatus, errorThrown) {
@@ -82,6 +77,13 @@ var bookie = (function (opts) {
                 options.error_callback(data, status_str);
             }
         };
+
+        if ($b.api.opt.api_key !== undefined) {
+            defaults.data.api_key = $b.api.opt.api_key;
+        } else {
+            default_data = {};
+        }
+
 
         options.url = $b.api.opt.app_url + options.url;
         // now fill in any %s/etc params
