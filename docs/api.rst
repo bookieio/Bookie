@@ -979,12 +979,12 @@ Example
     >>> {
         "message":  """Your account has been marked for reactivation. Please check your email for instructions to reset your password""",
     }
-    
+
     requests.post('http://127.0.0.1:6543/api/v1/suspend?api_key=12345...')
     >>> {
         "error":  "Please submit an email address",
     }
-    
+
     requests.post('http://127.0.0.1:6543/api/v1/suspend?api_key=12345...&email=testing@dummy.com')
     >>> {
         "error":  "You've already marked your account for reactivation.  Please check your email for the reactivation link. Make sure to check your spam folder.",
@@ -1019,7 +1019,7 @@ Example
         "message": "Account activated, please log in",
         "username": "admin"
     }
-    
+
     requests.delete('http://127.0.0.1:6543/api/v1/suspend?api_key=12345&activation=behehe&password=12')
     >>> {
         "error": "Come on, pick a real password please"
