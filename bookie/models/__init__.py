@@ -598,7 +598,12 @@ class BmarkMgr(object):
 
         # now index it into the fulltext db as well
         if fulltext:
-            DBSession.flush()
+            try:
+                DBSession.flush()
+            except IntegrityError:
+                # if this is already saved then we should have an id and don't
+                # need to flush, the commit should take place ok
+                pass
 
         return mark
 

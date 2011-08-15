@@ -336,23 +336,13 @@ var bookie = (function (opts) { //module, $, logger) {
 
 
     $b.call.getTagCompletions = function (tag, callback) {
-        var current_vals, current;
+        var success = function (data) {
+                        callback(data.tags);
+                      };
 
-        // we need to get the current list of tags from the input field itself
-        current_vals = $('#tags').val().split(" ");
-        if (current_vals.length === 0) {
-            current = [];
-        } else {
-            current = current_vals;
-        }
-
-        $b.api.tag_complete(tag,
-                current,
-                { 'success': function (data) {
-                                   callback(data.tags);
-                             }
-                }
-        );
+        $b.api.tag_complete(tag, undefined, {
+                                'success': success
+                            });
     };
 
 
