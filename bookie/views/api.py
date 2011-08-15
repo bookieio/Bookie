@@ -49,12 +49,11 @@ def bmark_get(request):
     bookmark = BmarkMgr.get_by_hash(hash_id,
                                     username=username)
 
+    last_bmark = {}
     if 'last_bmark' in request.params:
         last = BmarkMgr.get_recent_bmark(username=username)
         if last is not None:
             last_bmark = {'last':  dict(last)}
-        else:
-            last_bmark = {}
 
     if bookmark is None:
         request.response.status_int = 404
