@@ -48,7 +48,7 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   started
+   install
    hosting
    user
    extensions
