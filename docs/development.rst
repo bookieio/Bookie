@@ -22,7 +22,6 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   install
    fabric
    tests
    api
