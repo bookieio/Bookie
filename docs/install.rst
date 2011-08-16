@@ -143,22 +143,22 @@ yet, please supply us with the steps you used to get your environment working.)
   $ source bookie/bin/activate
 
   # get the bookie source
-  $ git clone git://github.com/mitechie/Bookie.git
-  $ cd Bookie
+  $ git clone git://github.com/mitechie/Bookie.git bookie
+  $ cd bookie
 
   # install deps
   $ pip install -r requirements.txt
   $ python setup.py develop
 
   # Create a new fabric configuration file.
-  # $myname is a name you're giving your installation. Just one word will do
-  # This will create a config file for you called $myname.ini
+  # [myname] is a name you're giving your installation. Just one word will do
+  # This will create a config file for you called [myname].ini
   # Feel free to edit this config for your needs (port, apikey, etc).
-  $ fab new_install:$myname (Ignore the error that recommends that you re-run this command)
-  $ fab $myname db_new_install
+  $ fab new_install:[myname] (Ignore the error that recommends that you re-run this command)
+  $ fab [myname] db_new_install
 
   # Startup the development web server with your configuration.
-  $ paster serve --reload $myname.ini
+  $ paster serve --reload [myname].ini
 
 You should now be able to pull up: http://127.0.0.1:6543
 
