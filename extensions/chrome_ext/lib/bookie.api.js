@@ -73,11 +73,6 @@ var bookie = (function (opts) {
                 var data = $.parseJSON(jqxhr.responseText),
                     status_str = textStatus;
 
-                console.log(jqxhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-                
-
                 // hand the callback the issue at hand
                 options.error_callback(data, status_str);
             }
@@ -93,8 +88,6 @@ var bookie = (function (opts) {
         options.url = $b.api.opt.app_url + options.url;
         // now fill in any %s/etc params
         options.url = _.sprintf(options.url, $b.api.opt.username);
-        console.log(options.url);
-        
 
         opts = $.extend({}, defaults, options);
         $.ajax(opts);
