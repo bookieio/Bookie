@@ -1,14 +1,15 @@
 // helper we'll use over and over in tests
 var TEST_HASH = 'd7148c0445ff22',
-    API_URL = '127.0.0.1:6543';
+    API_URL = '127.0.0.1:6543',
+    USERNAME = 'admin',
+    API_KEY = 'test';
 
 
+    console.log(_.sprintf("%s/api/v1/%s/bmark/%s", API_URL, USERNAME, TEST_HASH))
 $.mockjax({
-    url: API_URL + '/api/v1/bmarks/' + TEST_HASH,
+    url: _.sprintf("%s/api/v1/%s/bmark/%s", API_URL, USERNAME, TEST_HASH),
     responseTime: 0,
     responseText: {
-        "message": "",
-        "payload": {
             "bmark": {
                 "updated": "2011-06-04 21:21:40",
                 "extended": "",
@@ -21,14 +22,12 @@ $.mockjax({
                 "clicks": 3,
                 "hash_id": "d7148c0445ff22"
             }
-        },
-        "success": true
     }
 });
 
 
 $.mockjax({
-    url: API_URL + '/api/v1/bmarks/blah',
+    url: _.sprintf("%s/api/v1/%s/bmark/blah", API_URL, USERNAME),
     responseTime: 0,
     responseText: {
         "message": "Bookmark for hash id blah not found",
@@ -42,13 +41,18 @@ test('bookie.api.bookmark', function () {
     expect(1);
 
     stop();
-    bookie.api.init(API_URL);
+    bookie.api.init(API_URL, USERNAME, API_KEY);
     bookie.api.bookmark(TEST_HASH,
         {
             success: function (data) {
-                equal(data.payload.bmark.hash_id, TEST_HASH,
+                equal(data.bmark.hash_id, TEST_HASH,
                     "The test hash should equal the one from the server");
                 start();
+            },
+            error: function (data, status_string) {
+                console.log(data);
+                console.log(status_string);
+                ok(false, "The bookmark failed with error code " + status_string);
             }
         });
 });
@@ -62,10 +66,14 @@ test('bookie.api.bookmark_bad', function () {
     bookie.api.bookmark('blah',
         {
             success: function (data) {
-                equal(data.success, false,
-                    "The success should be false");
+
+            },
+            error: function (data, status_string) {
+                equal(status_string, 'error',
+                    "The bmark should be 404 error");
                 start();
-            }
+
+            },
         });
 });
 
