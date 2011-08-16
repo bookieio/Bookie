@@ -1,13 +1,12 @@
 // helper we'll use over and over in tests
 var TEST_HASH = 'd7148c0445ff22',
-    API_URL = '127.0.0.1:6543',
+    FAKE_URL = '127.0.0.1:6543',
     USERNAME = 'admin',
     API_KEY = 'test';
 
 
-    console.log(_.sprintf("%s/api/v1/%s/bmark/%s", API_URL, USERNAME, TEST_HASH))
 $.mockjax({
-    url: _.sprintf("%s/api/v1/%s/bmark/%s", API_URL, USERNAME, TEST_HASH),
+    url: _.sprintf("%s/api/v1/%s/bmark/%s", FAKE_URL, USERNAME, TEST_HASH),
     responseTime: 0,
     responseText: {
             "bmark": {
@@ -27,7 +26,7 @@ $.mockjax({
 
 
 $.mockjax({
-    url: _.sprintf("%s/api/v1/%s/bmark/blah", API_URL, USERNAME),
+    url: _.sprintf("%s/api/v1/%s/bmark/blah", FAKE_URL, USERNAME),
     responseTime: 0,
     responseText: {
         "message": "Bookmark for hash id blah not found",
@@ -41,7 +40,7 @@ test('bookie.api.bookmark', function () {
     expect(1);
 
     stop();
-    bookie.api.init(API_URL, USERNAME, API_KEY);
+    bookie.api.init(FAKE_URL, USERNAME, API_KEY);
     bookie.api.bookmark(TEST_HASH,
         {
             success: function (data) {
@@ -50,8 +49,6 @@ test('bookie.api.bookmark', function () {
                 start();
             },
             error: function (data, status_string) {
-                console.log(data);
-                console.log(status_string);
                 ok(false, "The bookmark failed with error code " + status_string);
             }
         });
@@ -62,7 +59,7 @@ test('bookie.api.bookmark_bad', function () {
     expect(1);
 
     stop();
-    bookie.api.init(API_URL);
+    bookie.api.init(FAKE_URL);
     bookie.api.bookmark('blah',
         {
             success: function (data) {
@@ -77,3 +74,41 @@ test('bookie.api.bookmark_bad', function () {
         });
 });
 
+
+// var API_URL = 'http://dev.bmark.us',
+//     USERNAME = 'admin',
+//     API_KEY = 'd05ed874d34b',
+//     HASH_ID = 'c5c21717c99797',
+//     FAILED = function (data, status_string) {
+//         // if we hit this the request failed in a bad way
+//         console.log(data);
+//         console.log(status_string);
+//         
+//         ok(false, "Shouldn't have a bad api requests here");
+//         start();
+//     };
+// 
+// 
+// /**
+//  * Verify we can fetch real bookmark data from the live dev testing urls
+//  *
+//  */
+// test('bookie.api.live_bookmark', function () {
+//     // we're going to test both with and without content so two calls
+//     expect(2);
+// 
+//     stop();
+//     bookie.api.init(API_URL, USERNAME, API_KEY);
+// 
+//     bookie.api.bookmark(HASH_ID, {
+//                         'success': function (data) {
+//                             ok(data.hash_id == HASH_ID,
+//                                 "The right bookmark came down by hash_id");
+//                             ok(!data.readable,
+//                                 "Should not have readable by default");
+//                             start();
+// 
+//                         },
+//                         'error': FAILED
+//     });
+// });
