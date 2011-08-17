@@ -14,4 +14,12 @@ def jstest():
 
     """
     cwd = os.path.dirname(os.path.dirname(__file__))
-    local('cd {0}/extensions/tests/ && phantomjs ptests.js index.html'.format(cwd), capture=False)
+    local('cd {0}/extensions/tests/ && phantomjs --local-access-remote=yes ptests.js index.html'.format(cwd), capture=False)
+
+def jsview():
+    """Run the tests, but save the test output to a test.pdf file we can
+    open/monitor
+
+    """
+    cwd = os.path.dirname(os.path.dirname(__file__))
+    local('cd {0}/extensions/tests/ && phantomjs --local-access-remote=yes prender.js index.html test.pdf && google-chrome test.pdf'.format(cwd), capture=False)
