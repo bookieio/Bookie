@@ -54,7 +54,7 @@ var bookie = (function (opts) {
      *
      */
     $b.api._request = function (options) {
-        var defaults, opts, default_data;
+        var defaults, opts;
 
 
         // if we already have an error, move it so we can use it as a callback
@@ -78,18 +78,15 @@ var bookie = (function (opts) {
             }
         };
 
-        if ($b.api.opt.api_key !== undefined) {
-            defaults.data.api_key = $b.api.opt.api_key;
-        } else {
-            default_data = {};
-        }
-
-
-        options.url = $b.api.opt.app_url + options.url;
         // now fill in any %s/etc params
         options.url = _.sprintf(options.url, $b.api.opt.username);
 
         opts = $.extend({}, defaults, options);
+
+        if ($b.api.opt.api_key !== undefined) {
+            opts.data.api_key = $b.api.opt.api_key;
+        }
+
         $.ajax(opts);
     };
 
