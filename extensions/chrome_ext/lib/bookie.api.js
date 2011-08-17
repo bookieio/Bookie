@@ -79,6 +79,7 @@ var bookie = (function (opts) {
         };
 
         // now fill in any %s/etc params
+        options.url = $b.api.opt.app_url + options.url;
         options.url = _.sprintf(options.url, $b.api.opt.username);
 
         opts = $.extend({}, defaults, options);

@@ -299,8 +299,6 @@
 
     $b.options = {
         'init': function () {
-
-
             // populate default field values
             $('#api_key').val(localStorage['api_key']);
             $('#api_url').val(localStorage['api_url']);
