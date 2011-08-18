@@ -21,5 +21,6 @@ def account(request):
         user = UserMgr.get(username=request.user.username)
 
         return {
-                    'user': user
+                    'user': user,
+                    'username': user.username,
                }

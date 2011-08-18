@@ -101,7 +101,7 @@ var bookie = (function (opts) {
      */
     $b.api.recent = function (pager, callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/bmarks/%s/recent?" + pager.generate_url(),
+        var url = "/api/v1/%s/bmarks?" + pager.generate_url(),
             opts = {
                 url: url,
                 success: callbacks.success,
@@ -162,7 +162,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.bookmark = function (hash_id, callbacks, get_last) {
+    $b.api.bookmark = function (hash_id, callbacks, get_last, with_content) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/bmark/" + hash_id,
             opts = {
@@ -173,6 +173,10 @@ var bookie = (function (opts) {
 
         if (get_last !== undefined) {
             opts.data = {'last_bmark': true};
+        }
+
+        if (with_content !== undefined) {
+            opts.data = {'with_content': true};
         }
 
         $b.api._request(opts);
