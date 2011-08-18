@@ -50,7 +50,7 @@
                 chrome.tabs.getSelected(null, $b.populateFormBase);
             }
 
-            var api_url = $b.settings.get('api_url');
+            var api_url = $b.settings.get('api_url') + '/' + $b.settings.get('api_username');
             $('#bookie_site').attr('href', api_url).attr('title', api_url);
 
         } else {
