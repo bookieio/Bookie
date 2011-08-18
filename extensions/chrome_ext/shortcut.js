@@ -5,8 +5,8 @@ window.addEventListener("keydown", function(event) {
   var modifier = event.ctrlKey || event.metaKey;
 
   // ctrl-alt-d since ctrl-d is bookmark in chrome
-  if (modifier && event.altKey && event.keyCode == 68) {
+  if (modifier && event.altKey && event.keyCode === 68) {
       // fire to popup the extension
       chrome.extension.sendRequest({'url' : true});
   }
-}, false)j
+}, false);
