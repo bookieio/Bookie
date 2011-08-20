@@ -22,34 +22,6 @@ var bookie = (function (opts) {
 
 
     /**
-     * pager object for api calls.
-     * Most api calls accept a page=X&count=Y
-     *
-     * Pass to api call function as the first parameter. If you want to use
-     * defaults you can just pass bookie.api.pager()
-     *
-     */
-    $b.api.pager = function(page, count) {
-        var that = {};
-
-        that.page = typeof(page) !== 'undefined' ? page : 0;
-        that.count = typeof(count) !== 'undefined' ? count : undefined;
-
-        that.generate_url = function () {
-            var url_str = ["page=" + that.page];
-
-            if (that.count !== undefined) {
-                url_str.push('count=' + that.count);
-            }
-
-            return url_str.join('&');
-        };
-
-        return that;
-    };
-
-
-    /**
      * Base request object that our custom ones will extend
      *
      */
@@ -99,11 +71,17 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.recent = function (pager, callbacks) {
+    $b.api.recent = function (options, pager, callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/bmarks?" + pager.generate_url(),
+            data = {
+                'count': 10,
+                'page': 1,
+                'with_content': false
+            },
             opts = {
                 url: url,
+                data: $.extend(data, options),
                 success: callbacks.success,
                 complete: callbacks.complete
             };
@@ -115,15 +93,21 @@ var bookie = (function (opts) {
     /**
      * Popular bookmarks json api call
      *
-     * @param pager is an api.pager object with a page, count parameter
+     * @param options is an object of the url parameters the api takes
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.popular = function (pager, callbacks) {
+    $b.api.popular = function (options, callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/bmarks/%s/popular?" + pager.generate_url(),
+            data = {
+                'count': 10,
+                'page': 1,
+                'with_content': false
+            },
             opts = {
                 url: url,
+                data: $.extend(data, options),
                 success: callbacks.success,
                 complete: callbacks.complete
             };
@@ -162,22 +146,19 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.bookmark = function (hash_id, callbacks, get_last, with_content) {
+    $b.api.bookmark = function (hash_id, options, callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/bmark/" + hash_id,
+            data = {
+                'get_last': false,
+                'with_content': false
+            },
             opts = {
                 url: url,
+                data: $.extend(data, options),
                 success: callbacks.success,
                 error: callbacks.error
             };
-
-        if (get_last !== undefined) {
-            opts.data = {'last_bmark': true};
-        }
-
-        if (with_content !== undefined) {
-            opts.data = {'with_content': true};
-        }
 
         $b.api._request(opts);
     };
@@ -194,6 +175,7 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+
     /**
      * Perform a search via the json api
      *
@@ -203,24 +185,18 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.search = function (terms, with_content, pager, callbacks) {
+    $b.api.search = function (terms, options, with_content, pager, callbacks) {
         // we need to get the list of recent from the api
         var url_terms = terms.join("/"),
-            build_url = function (terms, pager, with_content) {
-                var base = "/api/v1/%s/bmarks/search/",
-                    terms_addon = terms.join("/"),
-                    pager_addon = pager.generate_url();
-
-                base = base + terms_addon + "?" + pager_addon;
-                if (with_content !== undefined) {
-                    base = base + "&content=true";
-                }
-
-                return base;
+            url = "/api/v1/%s/bmarks/search/" + url_terms,
+            data = {
+                'search_content': false,
+                'count': 10,
+                'page': 0
             },
-            url = build_url(terms, pager, with_content),
             opts = {
                 url: url,
+                data: $.extend(data, options),
                 success: callbacks.success,
                 complete: callbacks.complete
             };
@@ -238,18 +214,16 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error callbacks
      *
      */
-    $b.api.tag_complete = function (tag, current, callbacks) {
-        var opts, req_data = {'tag': tag};
-
-        if (current !== undefined) {
-            req_data.current = current.join(" ");
-        }
-
-        opts = {
-            url: "/api/v1/%s/tags/complete",
-            data: req_data,
-            success: callbacks.success,
-        };
+    $b.api.tag_complete = function (options, callbacks) {
+        var data = {
+                'tag': "",
+                'current': ""
+            },
+            opts = {
+                url: "/api/v1/%s/tags/complete",
+                data: $.extend(data, options),
+                success: callbacks.success,
+            };
 
         $b.api._request(opts);
     };
@@ -294,23 +268,24 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+
     /**
      * Change the user's password
      *
-     * @param current password
-     * @param new password
+     * @param option - object of the url parameters pass
      * @param callbacks used with the api call
      *
      */
-    $b.api.change_password = function (current_pass, new_pass, callbacks) {
+    $b.api.change_password = function (options, callbacks) {
         var url = "/api/v1/%s/password",
-            data = {'current_password': current_pass,
-                    'new_password': new_pass
+            data = {
+                'current_password': "",
+                'new_password': ""
             },
             opts = {
                 url: url,
                 type: 'post',
-                data: data,
+                data: $.extend(data, options),
                 success: callbacks.success
             };
 
@@ -321,7 +296,7 @@ var bookie = (function (opts) {
     /**
      * Change the user's account details
      *
-     * @param data
+     * @param data posted new account params
      * @param callbacks used with the api call
      *
      */
@@ -338,42 +313,46 @@ var bookie = (function (opts) {
         $b.api._request(opts);
     };
 
+
     /**
      * Mark the user account to go through reactivation procedures
      *
-     * @param email of the user we want to reactivate (reset password)
+     * @param options post parameters passed to suspend the account
      * @param callbacks used with the api call
      *
      */
-    $b.api.reactivate = function (email, callbacks) {
+    $b.api.reactivate = function (options, callbacks) {
         var url = "/api/v1/suspend",
-            data = { 'email': email },
+            data = { 'email': "" },
             opts = {
                 url: url,
                 type: 'post',
-                data: data,
+                data: $.extend(data, options),
                 success: callbacks.success
             };
 
         $b.api._request(opts);
     };
 
+
     /**
      * Activate the account after being deactivated
      *
-     * @param uesrname
-     * @param code
-     * @param new_password
+     * @param options url parameters passed to the api see he api docs
+     * @param callbacks
      *
      */
-    $b.api.activate = function (username, code, new_password, callbacks) {
-        var url = _.sprintf("/api/v1/suspend?code=%s&username=%s&password=%s",
-                            escape(code),
-                            escape(username),
-                            escape(new_password)),
+    $b.api.activate = function (options, callbacks) {
+        var url = "/api/v1/suspend",
+            data = {
+                'code': "",
+                'username': "",
+                'password': ""
+            },
             opts = {
                 url: url,
                 type: 'delete',
+                data: $.extend(data, options),
                 success: callbacks.success
             };
 

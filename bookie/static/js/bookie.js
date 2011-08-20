@@ -75,9 +75,10 @@ var bookie = (function ($b, $) {
                     current = current_vals;
                 }
 
-                $b.api.tag_complete(
-                        tag,
-                        current,
+                $b.api.tag_complete({
+                        'tag': tag,
+                        'current': current,
+                        },
                         { 'success': function (data) {
                                            callback(data.tags);
                                      }
@@ -283,9 +284,10 @@ var bookie = (function ($b, $) {
                 // hide the current message window
                 $('#password_msg').hide('fast');
 
-                $b.api.change_password(
-                    $('#current_password').val(),
-                    $('#new_password').val(),
+                $b.api.change_password( {
+                        'current_password': $('#current_password').val(),
+                        'new_password': $('#new_password').val()
+                    },
                     {
                         'success': function (data) {
                             $b.accounts.passwordui.message(data.message, true);
@@ -323,10 +325,11 @@ var bookie = (function ($b, $) {
 
             console.log('calling activate');
 
-            $b.api.activate(
-                $('#username').val(),
-                $('#code').val(),
-                $('#new_password').val(),
+            $b.api.activate({
+                    'username': $('#username').val(),
+                    'code': $('#code').val(),
+                    'password': $('#new_password').val(),
+                },
                 {
                     'success': function (data) {
                         $b.reset.message(data.message, true);
@@ -334,7 +337,7 @@ var bookie = (function ($b, $) {
                 }
             );
         }
-    }
+    };
 
     return $b;
 })(bookie || {}, jQuery);
