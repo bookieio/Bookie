@@ -42,4 +42,5 @@ def build_ff_ext():
 @hosts(upload_host)
 def push_chrome_ext():
     """Upload the chrome extension to the server"""
+    build_chrome_ext()
     rsync_project(chrome_ext_server, chrome_ext_local)

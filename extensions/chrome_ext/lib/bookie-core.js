@@ -225,7 +225,7 @@ var bookie = (function (opts) { //module, $, logger) {
      *
      */
     $b.call.getBookmark = function (url, success_callback, fail_callback) {
-        $b.api.bookmark($b.utils.hash_url(url), {
+        $b.api.bookmark($b.utils.hash_url(url), {}, {
                     'success': function (data) {
                         if(success_callback) {
                             success_callback(data);
@@ -340,9 +340,11 @@ var bookie = (function (opts) { //module, $, logger) {
                         callback(data.tags);
                       };
 
-        $b.api.tag_complete(tag, undefined, {
-                                'success': success
-                            });
+        $b.api.tag_complete({
+                'tag': tag,
+                'current': ''
+            },
+            { 'success': success });
     };
 
 

@@ -41,6 +41,7 @@ def bmark_get(request):
             - readable
     """
     rdict = request.matchdict
+    params = request.params
 
     hash_id = rdict.get('hash_id', None)
     username = request.user.username
@@ -50,7 +51,7 @@ def bmark_get(request):
                                     username=username)
 
     last_bmark = {}
-    if 'last_bmark' in request.params:
+    if 'last_bmark' in params and params['last_bmark'] != "false":
         last = BmarkMgr.get_recent_bmark(username=username)
         if last is not None:
             last_bmark = {'last':  dict(last)}
@@ -63,7 +64,7 @@ def bmark_get(request):
     else:
         return_obj = dict(bookmark)
 
-        if 'with_content' in request.params:
+        if 'with_content' in params and params['with_content'] != 'false':
             if bookmark.hashed.readable:
                 return_obj['readable'] = dict(bookmark.hashed.readable)
 
@@ -232,7 +233,7 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = True if 'with_content' in params else False
+    with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
     username = request.user.username
 
@@ -297,7 +298,7 @@ def bmark_popular(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = True if 'with_content' in params else False
+    with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
     username = request.user.username
 
