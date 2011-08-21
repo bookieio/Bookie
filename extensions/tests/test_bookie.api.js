@@ -190,7 +190,7 @@ var TEST_BMARK = {
  *
  */
 test('live.add', function () {
-    expect(2)
+    expect(3)
 
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
@@ -199,7 +199,10 @@ test('live.add', function () {
         'success': function (data) {
             console.log(data);
             ok(data.bmark !== undefined,
+
                 "We should have a bookmark returned");
+            ok(data.bmark.hash_id == TEST_HASH,
+                "We should have the correct hash id: " + data.bmark.hash_id);
             ok(data.location == _.sprintf("%s/bmark/readable/%s",
                                     API_URL,
                                     TEST_HASH),

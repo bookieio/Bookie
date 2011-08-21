@@ -11,10 +11,10 @@ def build_routes(config):
     config.add_route("reset", "{username}/reset/{reset_key}")
 
     # DELAPI Routes
-    config.add_route("del_post_add", "/{username}/delapi/posts/add")
-    config.add_route("del_post_delete", "/{username}/delapi/posts/delete")
-    config.add_route("del_post_get", "/{username}/delapi/posts/get")
-    config.add_route("del_tag_complete", "/{username}/delapi/tags/complete")
+    config.add_route("del_post_add", "{username}/delapi/posts/add")
+    config.add_route("del_post_delete", "{username}/delapi/posts/delete")
+    config.add_route("del_post_get", "{username}/delapi/posts/get")
+    config.add_route("del_tag_complete", "{username}/delapi/tags/complete")
 
     # bmark routes
     config.add_route("bmark_recent", "recent")
@@ -22,7 +22,7 @@ def build_routes(config):
 
     config.add_route("bmark_popular", "popular")
     config.add_route("bmark_popular_tags", "popular/*tags")
-    config.add_route("bmark_readable", "/bmark/readable/{hash_id}")
+    config.add_route("bmark_readable", "bmark/readable/{hash_id}")
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
