@@ -99,7 +99,7 @@ var bookie = (function (opts) {
      */
     $b.api.popular = function (options, callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/bmarks/%s/popular?" + pager.generate_url(),
+        var url = "/api/v1/%s/bmarks/popular",
             data = {
                 'count': 10,
                 'page': 1,

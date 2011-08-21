@@ -36,44 +36,6 @@ $.mockjax({
 });
 
 
-test('bookie.api.bookmark', function () {
-    expect(1);
-
-    stop();
-    bookie.api.init(FAKE_URL, USERNAME, API_KEY);
-    bookie.api.bookmark(TEST_HASH, {},
-        {
-            success: function (data) {
-                equal(data.bmark.hash_id, TEST_HASH,
-                    "The test hash should equal the one from the server");
-                start();
-            },
-            error: function (data, status_string) {
-                ok(false, "The bookmark failed with error code " + status_string);
-            }
-        });
-});
-
-
-test('bookie.api.bookmark_bad', function () {
-    expect(1);
-
-    stop();
-    bookie.api.init(FAKE_URL);
-    bookie.api.bookmark('blah', {},
-        {
-            success: function (data) {
-
-            },
-            error: function (data, status_string) {
-                equal(status_string, 'error',
-                    "The bmark should be 404 error");
-                start();
-
-            },
-        });
-});
-
 
 var API_URL = 'http://dev.bmark.us',
     USERNAME = 'admin',
@@ -97,6 +59,7 @@ test('live.bookmark', function () {
     // we're going to test both with and without content so two calls
     expect(2);
 
+    console.log('bookmark');
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
 
@@ -124,6 +87,8 @@ test('live.bookmark_readable', function () {
 
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
+
+    console.log('readable');
 
     bookie.api.bookmark(HASH_ID, {
                         'get_last': false,
@@ -154,6 +119,8 @@ test('live.recent', function () {
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
 
+    console.log('recent');
+
     bookie.api.recent({
                 'count': 10,
                 'page': 0,
@@ -172,6 +139,109 @@ test('live.recent', function () {
                 },
                 'error': FAILED
             });
-
-
 });
+
+
+/**
+ * Popular url tets
+ *
+ */
+test('live.popular', function () {
+    expect(3)
+
+    stop();
+    bookie.api.init(API_URL, USERNAME, API_KEY);
+
+    console.log('popular');
+
+    bookie.api.popular({
+                'count': 5,
+                'page': 0,
+            },
+            {
+                'success': function (data) {
+                    ok(data.count == 5,
+                        "We need to get 5 bookmarks");
+                    ok(data.bmarks[0].hash_id !== undefined,
+                        "Should have readable content");
+                    ok(data.bmarks[0].readable === undefined,
+                        "Should not have content by default");
+
+                    start();
+
+                },
+                'error': FAILED
+            });
+});
+
+
+var TEST_BMARK = {
+        'url': 'https://github.com/mitechie/Bookie',
+        'tags': 'git github bookie',
+        'description': 'js api test',
+        'extended': 'longer js api test',
+        'fulltext': '<div class="main">Main body text for fulltext</div>'
+    },
+    TEST_HASH = '110e3adbf8110c';
+
+
+/**
+ * Add bookmark
+ *
+ */
+test('live.add', function () {
+    expect(2)
+
+    stop();
+    bookie.api.init(API_URL, USERNAME, API_KEY);
+
+    bookie.api.add(TEST_BMARK, {
+        'success': function (data) {
+            console.log(data);
+            ok(data.bmark !== undefined,
+                "We should have a bookmark returned");
+            ok(data.location == _.sprintf("%s/bmark/readable/%s",
+                                    API_URL,
+                                    TEST_HASH),
+                                    "We should have a location that's correct: " + data.location);
+            start();
+        },
+        'error': FAILED
+    });
+});
+
+
+
+
+/**
+ * Remove bookmark
+ *
+ * This is hackish I know, we're going to delete the bookmark we added in the
+ * test for add, if it fails, well it's probably because add failed.
+ *
+ */
+// test('live.popular', function () {
+//     expect(3)
+// 
+//     stop();
+//     bookie.api.init(API_URL, USERNAME, API_KEY);
+// 
+//     bookie.api.popular({
+//                 'count': 5,
+//                 'page': 0,
+//             },
+//             {
+//                 'success': function (data) {
+//                     ok(data.count == 5,
+//                         "We need to get 5 bookmarks");
+//                     ok(data.bmarks[0].hash_id !== undefined,
+//                         "Should have readable content");
+//                     ok(data.bmarks[0].readable === undefined,
+//                         "Should not have content by default");
+// 
+//                     start();
+// 
+//                 },
+//                 'error': FAILED
+//             });
+// });

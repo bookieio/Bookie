@@ -22,7 +22,7 @@ def build_routes(config):
 
     config.add_route("bmark_popular", "popular")
     config.add_route("bmark_popular_tags", "popular/*tags")
-    config.add_route("bmark_readable", "bmark/readable/{hash_id}")
+    config.add_route("bmark_readable", "/bmark/readable/{hash_id}")
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
