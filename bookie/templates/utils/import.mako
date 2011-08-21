@@ -1,41 +1,46 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="../bmark/func.mako" import="display_bmark_list, bmarknextprev"/>
 <%def name="title()">Import Bookmarks</%def>
+<%namespace file="../accounts/func.mako" import="account_nav"/>
 
-<h1>Import Bookmarks</h1>
+${account_nav()}
+
 
 <div class="yui3-g">
     <div class="yui3-u-3-4">
 
-    % if error:
-        <h3>
-        % for err in error:
-            ${err}
-        % endfor
-        </h3>
-    % endif
+
 
         <div class="block">
             <div class="head"></div>
             <div class="body">
-                <form class="" action="${request.route_url('import')}" method="POST" enctype=multipart/form-data>
-                    <fieldset>
-                        <ul>
-                            <li>
-                                <label for="import_file">Import File</label>
-                                <input type="file" name="import_file" id="import_file" />
-                            </li>
-                            <li>
-                                <label for="api_key">Api Key</label>
-                                <input type="password" name="api_key" id="api_key" />
-                            </li>
+                <div class="form">
 
-                            <li>
-                                <input type="submit" name="upload" value="Upload" id="upload" />
-                            </li>
-                        </ul>
-                    </fieldset>
-                </form>
+                    <div class="heading">Import Bookmarks</div>
+                    <form class="" action="${request.route_url('user_import',
+                                                                username=request.user.username)}"
+                        method="POST" enctype=multipart/form-data>
+                        <fieldset>
+                            <ul>
+                                <li>
+                                    <label for="import_file">Import File</label>
+                                    <input type="file" name="import_file" id="import_file" />
+                                </li>
+                                <li>
+                                    <label>&nbsp;</label>
+                                    <input type="submit" name="upload" value="Upload" id="upload" class="button" />
+                                </li>
+                            </ul>
+                        </fieldset>
+
+                        % if error:
+                            <div class="error">
+                                % for err in error:
+                                    ${err}
+                                % endfor
+                            </div>
+                        % endif
+                    </form>
+                </div>
             </div>
             <div class="head"></div>
         </div>
@@ -52,9 +57,6 @@
             <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>
             under the <em>Tools</em> heading on the sidebar.</p>
 
-            <h2>API Key</h2>
-            <p>"API Key" is the secret key specific to this Bookie installation. This setting is in the .ini file associated with this installation (usually found in the Bookie/ directory).
-            </p>
             <p>Note that the import process might take a bit of time on large sets of bookmarks.</p>
         </div>
     </div>

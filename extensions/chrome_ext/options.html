@@ -2,41 +2,24 @@
     <head>
         <script type="text/javascript" src="lib/jquery.min.js"></script>
         <script type="text/javascript">
-            $(function() {
-                // populate default field values
-                $('#api_key').val(localStorage['api_key']);
-                $('#api_url').val(localStorage['api_url']);
-
-                if (localStorage['cache_content'] != 'false') {
-                    $('#cache_content').attr('checked', 'checked');
-                } else {
-                    $('#cache_content').removeAttr('checked');
-                }
-
-                // close window on cancel
-                $("#cancelBtn").click(function() { window.close(); });
-
-                // save new values on submit
-                $("#form").submit(function(e) {
-                    localStorage['api_key'] = $('#api_key').val();
-                    localStorage['api_url'] = $('#api_url').val();
-
-                    // do you want us to store the cached content of the
-                    // current page?
-                    var cache = $("#cache_content:checked").length;
-                    if (cache == 1) {
-                        localStorage['cache_content'] = true;
-                    } else {
-                        localStorage['cache_content'] = false;
-                    };
-
-                    // notify of successful save
-                    $('#info').text("Saved").slideDown().delay(3000).slideUp();
-
-                    e.preventDefault();
-                });
-            });
+            // var jq_var = jQuery.noConflict(true);
+            // var $ = jq_var;
+            var logger = {}
+            logger.log = function(msg) {
+                console.log(msg);
+            };
+            logger.log('setting up fake logger');
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
         </script>
+        <script type="text/javascript" src="lib/bookie-core.js"></script>
+        <script type="text/javascript" src="lib/bookie.api.js"></script>
+        <script type="text/javascript" src="bookie.chrome.js"></script>
+
+
         <style>
             body {
                 font-family: sans-serif;
@@ -110,7 +93,46 @@
                 width:80px;
                 padding:2px 0px;
             }
+
+        #circle{
+            display: inline-block;
+        }
+
+        /** Stolen from: http://www.nikesh.me/demo/loading.html **/
+        .circle{
+            background-color:#CCC;
+            float:left;
+            height:15px;
+            margin-left:8px;
+            width:15px;
+            -webkit-animation-name: bounce_circle;
+            -webkit-border-radius:10px;
+            -webkit-animation-duration: 1.5s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: linear;
+            opacity:0.3;
+        }
+
+        #circle_1 {
+            -webkit-animation-delay: .3s;
+         }
+
+        #circle_2 {
+            -webkit-animation-delay: .7s;
+        }
+
+        #circle_3 {
+            -webkit-animation-delay: .9s;
+        }
+
+        @-webkit-keyframes bounce_circle {
+            0%{opacity:0.3;}
+            50%{opacity:1; background-color:#111}
+            100%{opacity:0.3;}
+        }
         </style>
+
+
     </head>
     <body>
         <h1>Bookie Settings</h1>
@@ -118,10 +140,16 @@
         <form id="form">
             <fieldset>
                 <legend>Connection</legend>
-                <label for="api_url">Bookie URL</label>
+                <label for="api_url">Bookie url</label>
                 <input type="url" id="api_url"/>
-                <label for="api_key">API Key</label>
+                <div style="display: inline-block; margin: 5px;">[http[s]://someurl]</div>
+
+                <label for="api_username">Bookie account username</label>
+                <input type="text" id="api_username"/>
+
+                <label for="api_key">API key</label>
                 <input type="password" placeholder="api key" id="api_key"/>
+
                 <label for="cache_content">Cache Content</label>
                 <input type="checkbox" id="cache_content" />
             </fieldset>
@@ -130,5 +158,28 @@
                 <button id="saveBtn" type="submit">Save</button>
             </div>
         </form>
+        <div id="sync">
+            <h3>Server Sync</h3>
+            <button id="syncBtn">Sync</button>
+            <div id="circle" class="marginLeft">
+                <div id="circle_1" class="circle"></div>
+                <div id="circle_2" class="circle"></div>
+                <div id="circle_3" class="circle"></div>
+                <div class="clearfix"></div>
+            </div>
+            <p><strong>Note:</strong> your Bookie url and api key settings must
+                be set and saved before using Sync</p>
+            <p>This will download information about your bookmarks from the
+                bookie server instance into your browser. This helps us notify you
+                when you're on a page you've already bookmarked. In the future,
+                this might be able to sync Chrome bookmarks with your Bookie
+                bookmarks.</p>
+        </div>
     </body>
+    <script type="text/javascript" src="lib/underscore.min.js"></script>
+    <script type="text/javascript" src="lib/underscore.string.min.js"></script>
+
+    <script type="text/javascript">
+        bookie.options.init();
+    </script>
 </html>

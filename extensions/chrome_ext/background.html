@@ -4,53 +4,43 @@
 	<meta charset="UTF-8">
 	<title></title>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/hash.js"></script>
     <script type="text/javascript">
-        var ui = (function() {
-            var module = {};
+        var logger = {}
+        logger.log = function(msg) {
+            console.log(msg);
+        };
+        logger.log('setting up fake logger');
+        var bookie_opts = {
+            'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+            'jquery': $,
+            'console_log': logger
+        }
+    </script>
+    <script type="text/javascript" src="lib/bookie-core.js"></script>
+    <script type="text/javascript" src="bookie.chrome.js"></script>
+    <script type="text/javascript" src="lib/bookie.api.js"></script>
+    <script type="text/javascript" src="lib/bookie.utils.js"></script>
+    <script type="text/javascript" src="lib/underscore.min.js"></script>
+    <script type="text/javascript" src="lib/underscore.string.min.js"></script>
 
+    <script type="text/javascript">
+        bookie.background_init();
 
-            module.badge = {
-                'clear': function(millis) {
-                    var ttl = millis || 0;
-                    window.setTimeout(function() {
-                        chrome.browserAction.setBadgeText({text: ''});
-                    }, ttl);
-                },
-            };
-
-            return module;
-        })();
-
-
-        // test out listening for a call from the content script
-        // readable.js for the content of the page to send along in a
-        // submission as the content
-        chrome.extension.onRequest.addListener(
-            function(request, sender, sendResponse) {
-                if (request.html) {
-                    $('#html_content').val(request.html);
-                    console.log('should have content stored');
-                } else {
-                    console.log('hit the else');
-                }
-            }
-        );
+        function inject_readable(callback) {
+            chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
+        };
 
         function get_html_content() {
-            console.log('get html content');
             return $('#html_content').val();
         };
 
-        function inject_readable(callback) {
-            console.log('injecting');
-            chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
-            console.log('injected');
-        };
 
+        // go ahead and inject the
     </script>
 </head>
 <body>
-	
     <textarea id="html_content"></textarea>
+    <input id="url_hash" />
 </body>
 </html>

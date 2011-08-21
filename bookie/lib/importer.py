@@ -1,15 +1,19 @@
 """Importers for bookmarks"""
+import time
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from bookie.models import BmarkMgr
+
+IMPORTED = "importer"
 
 
 class Importer(object):
     """The actual factory object we use for handling imports"""
 
-    def __init__(self, import_io):
+    def __init__(self, import_io, username=None):
         """work on getting an importer instance"""
         self.file_handle = import_io
+        self.username = username
 
     def __new__(cls, *args, **kwargs):
         """Overriding new we return a subclass based on the file content"""
@@ -41,7 +45,14 @@ class Importer(object):
         :param fulltext: Fulltext handler instance used to store that info
 
         """
-        BmarkMgr.store(url, desc, ext, tags, dt=dt, fulltext=fulltext)
+        BmarkMgr.store(url,
+                       self.username,
+                       desc,
+                       ext,
+                       tags,
+                       dt=dt,
+                       fulltext=fulltext,
+                       inserted_by=IMPORTED)
 
 
 class DelImporter(Importer):
@@ -164,32 +175,40 @@ class GBookmarkImporter(Importer):
         # we don't want to just import all the available urls, since each url
         # occurs once per tag. loop through and aggregate the tags for each url
         for tag in soup.findAll('h3'):
-            links = tag.findNextSibling('dl').findAll("a")
-            for link in links:
-                url = link["href"]
-                tag_text = tag.text.replace(" ", "-")
-                if url in urls:
-                    urls[url]['tags'].append(tag_text)
-                else:
-                    tags = [tag_text] if tag_text != 'Unlabeled' else []
+            links = tag.findNextSibling('dl')
 
-                    # get extended description
-                    has_extended = (link.parent.nextSibling and
-                            link.parent.nextSibling.name == 'dd')
-                    if has_extended:
-                        extended = link.parent.nextSibling.text
+            if links is not None:
+                links = links.findAll("a")
+
+                for link in links:
+                    url = link["href"]
+                    tag_text = tag.text.replace(" ", "-")
+                    if url in urls:
+                        urls[url]['tags'].append(tag_text)
                     else:
-                        extended = ""
+                        tags = [tag_text] if tag_text != 'Unlabeled' else []
 
-                    # date the site was bookmarked
-                    timestamp_added = float(link['add_date']) / 1e6
+                        # get extended description
+                        has_extended = (link.parent.nextSibling and
+                                link.parent.nextSibling.name == 'dd')
+                        if has_extended:
+                            extended = link.parent.nextSibling.text
+                        else:
+                            extended = ""
 
-                    urls[url] = {
-                        'description': link.text,
-                        'tags': tags,
-                        'extended': extended,
-                        'date_added': datetime.fromtimestamp(timestamp_added),
-                    }
+                        # date the site was bookmarked
+                        if 'add_date' not in link:
+                            link['add_date'] = time.time()
+
+                        timestamp_added = float(link['add_date']) / 1e6
+
+                        urls[url] = {
+                            'description': link.text,
+                            'tags': tags,
+                            'extended': extended,
+                            'date_added': datetime.fromtimestamp(
+                                            timestamp_added),
+                        }
 
         # save the bookmark
         for url, metadata in urls.items():

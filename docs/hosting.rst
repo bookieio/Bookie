@@ -35,7 +35,11 @@ Then to serve it behind Nginx you need to setup a new virtual host config.
     
         #set your default location
         location / {
-         proxy_pass         http://127.0.0.1:6543/;
+            proxy_pass              http://127.0.0.1:6543/;
+            proxy_set_header        Host $host;
+            proxy_set_header        X-Real-IP $remote_addr;
+            proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header        X-Forwarded-Proto $scheme;
         }
     }
 
@@ -141,6 +145,9 @@ application.
     
       root /home/$username/bookie/bookie/bookie/static;
       index index.html index.htm;
+
+      # Remove trailing slash by doing a 301 redirect
+      rewrite ^/(.*)/$ /$1 permanent;
     
       location ~*/(img|js|iepng|css)/ {
         root /home/$username/bookie/bookie/bookie;
@@ -153,7 +160,27 @@ application.
         include     uwsgi_params;
         uwsgi_pass  unix:///tmp/rick.bmark.sock;
         uwsgi_param SCRIPT_NAME /;
+        uwsgi_param UWSGI_SCHEME $scheme;
       }
+
+      ## Compression
+      # src: http://www.ruby-forum.com/topic/141251
+      # src: http://wiki.brightbox.co.uk/docs:nginx
+    
+      gzip on;
+      gzip_http_version 1.0;
+      gzip_comp_level 2;
+      gzip_proxied any;
+      gzip_min_length  1100;
+      gzip_buffers 16 8k;
+      gzip_types text/plain text/html text/css application/x-javascript application/xml application/xml+rss text/javascript;
+    
+      # Some version of IE 6 don't handle compression well on some mime-types, so just disable for them
+      gzip_disable "MSIE [1-6].(?!.*SV1)";
+    
+      # Set a vary header so downstream proxies don't send cached gzipped content to IE6
+      gzip_vary on;
+      ## /Compression
     
     }
 

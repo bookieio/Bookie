@@ -1,18 +1,30 @@
 {
   "name": "Bookie",
-  "version": "0.2.2",
+  "version": "0.3.16",
   "description": "Bookie Bookmarks",
   "permissions": [
     "tabs",
     "notifications",
+    "contextMenus",
     "https://*/*",
     "http://*/*"
   ],
+  "icons": {
+    "16": "logo.16.png",
+    "24": "logo.24.png",
+    "128": "logo.128.png"
+  },
   "options_page": "options.html",
   "background_page": "background.html",
   "browser_action": {
-    "default_icon": "logo.128.png",
+    "default_icon": "logo.24.png",
     "default_title": "Post Bookie Bookmark",
     "default_popup": "popup.html"
-  }
+  },
+  "content_scripts": [
+     {
+       "matches": ["http://*/*", "https://*/*"],
+       "js": ["shortcut.js"]
+     }
+  ]
 }

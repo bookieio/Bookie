@@ -5,9 +5,11 @@ and API as we did in the importer
 
 """
 import logging
+from sqlalchemy import or_
 from sqlalchemy import text
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
+from sqlalchemy.orm import joinedload
 
 from bookie.models import SqliteBmarkFT
 from bookie.models import SqliteContentFT
@@ -43,7 +45,7 @@ class SqliteFulltext(object):
     Storing is done automatically via the before_insert mapper hook on Bmark
     obj
     """
-    def search(self, phrase, content=False):
+    def search(self, phrase, content=False, username=None):
         """Perform the search on the index"""
         #we need to adjust the phrase to be a set of OR per word
         phrase = " OR ".join(phrase.split())
@@ -59,9 +61,14 @@ class SqliteFulltext(object):
         ext = SqliteBmarkFT.query.\
                     filter(SqliteBmarkFT.extended.match(phrase))
 
-        res = desc.union(tag_str, ext).join(SqliteBmarkFT.bmark).\
-                    options(contains_eager(SqliteBmarkFT.bmark)).\
-                    order_by('bmarks.stored').all()
+        bmark = aliased(Bmark)
+        qry = desc.union(tag_str, ext).join((bmark, SqliteBmarkFT.bmark)).\
+                    options(contains_eager(SqliteBmarkFT.bmark, alias=bmark))
+
+        if username:
+            qry = qry.filter(bmark.username == username)
+
+        res = qry.order_by(bmark.stored).all()
 
         # everyone else sends a list of bmarks, so need to get our bmarks
         # out of the result set
@@ -84,12 +91,53 @@ class SqliteFulltext(object):
                                              hashed.bmark,
                                              alias=bmarks))
 
+            if username:
+                qry = qry.filter(bmark.username == username)
+
             res = qry.order_by(bmarks.stored).all()
             for read in res:
                 readable_res.append(read.hashed.bmark[0])
 
         results.update(set(readable_res))
         return sorted(list(results), key=lambda res: res.stored, reverse=True)
+
+
+def _mysql_postgres_search(phrase, content=False, username=None):
+        """need to perform searches against the three columns"""
+        phrase = " | ".join(phrase.split())
+
+        filters = [
+            Bmark.description.match(phrase),
+            Bmark.extended.match(phrase),
+            Bmark.tag_str.match(phrase)
+        ]
+
+        qry = Bmark.query.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags)).\
+                  options(joinedload('hashed'))
+
+        if username:
+            qry = qry.filter(Bmark.username == username)
+
+        if content:
+            LOG.debug('searching with content')
+            readable = aliased(Readable)
+
+            qry = qry.outerjoin((readable, Hashed.readable)).\
+                  options(contains_eager(Bmark.hashed, Hashed.readable, alias=readable))
+
+            filters.append(readable.content.match(phrase))
+
+        bid_filter = DBSession.query(Bmark.bid.distinct()).\
+                               filter(or_(*filters))
+        qry = qry.filter(Bmark.bid.in_(bid_filter))
+
+
+        qry = qry.join(Bmark.tags).\
+                  options(contains_eager(Bmark.tags))
+
+        results = qry.order_by(Bmark.stored.desc()).all()
+        return results
 
 
 class MySqlFulltext(object):
@@ -98,45 +146,10 @@ class MySqlFulltext(object):
     Columns: bid, description, extended, tags
 
     """
-    def search(self, phrase, content=False):
-        """Perform the search on the index"""
-        #we need to adjust the phrase to be a set of OR per word
-        phrase = " OR ".join(phrase.split())
-
-        results = set()
-
-        desc = Bmark.query.\
-                    filter(Bmark.description.match(phrase))
-
-        tag_str = Bmark.query.\
-                    filter(Bmark.tag_str.match(phrase))
-
-        ext = Bmark.query.\
-                    filter(Bmark.extended.match(phrase))
-
-        results.update(set([bmark for bmark in desc.union(tag_str, ext).order_by(Bmark.stored).all()]))
-
-        readable_res = []
-        if content:
-            content = Readable.query.\
-                        filter(Readable.content.match(phrase))
-
-            hashed = aliased(Hashed)
-            qry = content.outerjoin((hashed, Readable.hashed)).\
-                      options(contains_eager(Readable.hashed, alias=hashed))
-
-            bmarks = aliased(Bmark)
-            qry = qry.outerjoin((bmarks, hashed.bmark)).\
-                      options(contains_eager(Readable.hashed,
-                                             hashed.bmark,
-                                             alias=bmarks))
-
-            res = qry.order_by(bmarks.stored).all()
-            for read in res:
-                readable_res.append(read.hashed.bmark[0])
-
-        results.update(set(readable_res))
-        return sorted(list(results), key=lambda res: res.stored, reverse=True)
+    def search(self, phrase, content=False, username=None):
+        return _mysql_postgres_search(phrase,
+                                      content=content,
+                                      username=username)
 
 
 class PgSqlFulltext(object):
@@ -147,44 +160,8 @@ class PgSqlFulltext(object):
 
     """
 
-    def search(self, phrase, content=False):
-        """Need to perform searches against the three columns"""
-        phrase = " | ".join(phrase.split())
-
-        results = set()
-        query = """SELECT bid
-        FROM bmarks
-        WHERE to_tsvector('english', description) @@ to_tsquery(:phrase) OR
-              to_tsvector('english', extended) @@ to_tsquery(:phrase) OR
-              to_tsvector('english', tag_str) @@ to_tsquery(:phrase)
-
-        ORDER BY stored DESC;
-        """
-
-        res = DBSession.execute(text(query), {'phrase': phrase})
-
-        ids = set([r.bid for r in res])
-
-        results.update(set([bmark for bmark in Bmark.query.join(Bmark.tags).\
-                                              options(contains_eager(Bmark.tags)).\
-                                              filter(Bmark.bid.in_(ids)).all()]))
-
-        readable_res = []
-        if content:
-            query = """SELECT readable.hash_id
-            FROM readable, bmarks
-            WHERE to_tsvector('english', content) @@ to_tsquery(:phrase)
-                  AND readable.hash_id = bmarks.hash_id
-            ORDER BY bmarks.stored DESC
-            """
-
-            res = DBSession.execute(text(query), {'phrase': phrase})
-
-            ids = set([r.hash_id for r in res])
-
-            readable_res = [bmark for bmark in Bmark.query.join(Bmark.tags).\
-                                  options(contains_eager(Bmark.tags)).\
-                                  filter(Bmark.hash_id.in_(ids)).all()]
-
-        results.update(set(readable_res))
-        return sorted(list(results), key=lambda res: res.stored, reverse=True)
+    def search(self, phrase, content=False, username=None):
+        """need to perform searches against the three columns"""
+        return _mysql_postgres_search(phrase,
+                                      content=content,
+                                      username=username)

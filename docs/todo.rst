@@ -1,29 +1,22 @@
 Things on the Todo list
 ========================
+See issues on github:
 
+http://github.com/mitechie/Bookie
 
 Still todo
 -----------
 - webui add
 - webui edit
 - mobile ui
-- our own json API, forget delicious compatible going forward
 - ui for db migrations, setup, some sort of /install /upgrade urls or something
-- fabfile, make a user one that defines the settings
 - add deployment examples to docs
-
-
-Long term todo
---------------
-- eventually support multiple users per install (auth, private, etc)
-
 
 Subprojects
 ~~~~~~~~~~~
 
 - ncurses client
 - firefox extension
-
 
 Completed
 ----------

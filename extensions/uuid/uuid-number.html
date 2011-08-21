@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript" src="md5.js"></script>
+        <script type="text/javascript" src="BigNumber.js"></script>
+        <script type="text/javascript">
+            window.addEventListener("load",function() {
+                // md5hash = md5(namespace.bytes + name).digest()
+                // md5hash = md5hash[:16]
+                var text = "agoogle";
+                var uu = hexToDecArr(hex_md5(text));
+                document.body.innerHTML += convertToString(uu) + "<br />";
+                var a = "11100001100110110111011110011001100101000101111011001111001111011110110010101100000000110110000001110111101101000010110010010101"
+
+                //uu &= ~(0xc000 << 48)
+                var mask = [2147483647, 2147483647, 2147483644, 2147483647, 2147483647]
+                uu = bitand(uu, mask);
+                document.body.innerHTML += convertToString(uu) + "<br />";
+                
+                //uu |= (0x8000 << 48)
+                mask = [0, 0, 2, 0, 0]
+                uu = bitor(uu, mask);
+                document.body.innerHTML += convertToString(uu) + "<br />";
+
+                //uu &= ~(0xf000 << 64)
+                mask = [2147483647, 2147483647, 2147237887, 2147483647, 2147483647]
+                uu = bitand(uu, mask);
+                document.body.innerHTML += convertToString(uu) + "<br />";
+
+                //uu |= 3 << 76L
+                mask = [0, 0, 49152, 0, 0]
+                uu = bitor(uu, mask);
+                document.body.innerHTML += convertToString(uu) + "<br />";
+
+                document.body.innerHTML += convertToString(uu);
+            });
+
+            function hexToBin(hex) {
+                var h2bmap = {"0":"0000","1":"0001","2":"0010", "3":"0011", "4":"0100", "5":"0101", "6":"0110", "7":"0111", "8":"1000", "9":"1001", "a":"1010", "b":"1011", "c":"1100", "d":"1101", "e":"1110", "f":"1111"};
+                return hex.split("").map(function(e) { return h2bmap[e]; }).join("");
+            }
+            function binToString(bin) {
+                var n = new BigNumber("0");
+                var size = bin.length;
+                for(var i = 0; i < size; i++) {
+                    if(bin[i] === "1") {
+                        var power = (new BigNumber(2)).pow(new BigNumber(size-i-1));
+                        n = n.add(power);
+                    }
+                }
+                return n.toString();
+            }
+
+            function hexToDecArr(hex) {
+                var bin = [];
+                for(var i = hex.length; i > 0; i-=7) {
+                    bin.unshift(parseInt(hex.slice((i-7 > 0 ? i-7 : 0),i), 16))
+                }
+                return bin;
+            }
+
+            function convertToString(binArr) {
+                var binStr = binArr.map(function(e) { return e.toString(2); }).join("")
+                var n = new BigNumber("0");
+                var size = binStr.length;
+                for(var i = 0; i < size; i++) {
+                    if(binStr[i] === "1") {
+                        var power = (new BigNumber(2)).pow(new BigNumber(size-i-1));
+                        n = n.add(power);
+                    }
+                }
+                return n.toString();
+            }
+
+            function bitand(aArr, bArr) {
+                return aArr.map(function(a, i) { return a & bArr[i] });
+            }
+
+            function bitor(aArr, bArr) {
+                return aArr.map(function(a, i) { return a | bArr[i] });
+            }
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

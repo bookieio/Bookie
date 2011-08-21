@@ -22,9 +22,10 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   install
+   changes
    fabric
    tests
+   api
    todo
    events
 

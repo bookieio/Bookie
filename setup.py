@@ -8,14 +8,13 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
-    'pyramid',
-    'SQLAlchemy',
+    'pyramid<=1.1',
+    'SQLAlchemy<0.8',
     'transaction',
     'repoze.tm2>=1.0b1', # default_commit_veto
     'zope.sqlalchemy',
     'WebError',
     'WebTest',
-    'Chameleon<1.9999',
     'BeautifulSoup==3.2.0',
     ]
 
@@ -23,7 +22,7 @@ if sys.version_info[:3] < (2,5,0):
     requires.append('pysqlite')
 
 setup(name='bookie',
-      version='0.2',
+      version='0.3',
       description='Bookie',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[

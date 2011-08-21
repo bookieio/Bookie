@@ -1,36 +1,67 @@
 <html>
     <head>
         <link type="text/css" href="lib/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
-        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" /> 
+        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" />
 
         <script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/hash.js"></script>
         <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script>
         <script type="text/javascript">
-            var jq_var = jQuery.noConflict(true);
-            var $ = jq_var;
+            // var jq_var = jQuery.noConflict(true);
+            // var $ = jq_var;
             var logger = {}
             logger.log = function(msg) {
                 console.log(msg);
             };
             logger.log('setting up fake logger');
+            var bookie_opts = {
+                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
+                'jquery': $,
+                'console_log': logger
+            }
         </script>
 
-        <script type="text/javascript" src="bookie-core.js"></script>
-        <script type="text/javascript" src="bookie-chrome.js"></script>
+        <script type="text/javascript" src="lib/bookie-core.js"></script>
+        <script type="text/javascript" src="lib/bookie.api.js"></script>
+        <script type="text/javascript" src="lib/bookie.utils.js"></script>
+        <script type="text/javascript" src="lib/underscore.min.js"></script>
+        <!-- <script type="text/javascript" src="lib/underscore.string.min.js"></script> -->
+        <script type="text/javascript" src="https://raw.github.com/edtsech/underscore.string/master/lib/underscore.string.js"></script>
+        <script type="text/javascript" src="bookie.chrome.js"></script>
+
         <script type="text/javascript">
             var tags = [];
             $(function() {
-                bookie.init(bookie.chrome_init);
+
+                // this could be fed tab info via the url
+                // usually in the case of a keyboard shortcut loading this in a
+                // new tab vs the icon popup
+                var parts = window.location.hash.substring(1).split('|');
+                if (parts.length === 2) {
+                    var tab_data = {
+                        'url': window.atob(parts[0]),
+                        'title': window.atob(parts[1])
+                    }
+                } else {
+                    tab_data = undefined;
+                }
+
+                bookie.init(bookie.chrome_init, tab_data);
+
                 var valid = validateSettings();
                 if(!valid)
                     return;
 
                 $("#tags").superblyTagField({
-                    complete:function(value, callback) {
-                        bookie.call.tagComplete(value, callback);
+                    complete: function(value, callback) {
+                        bookie.call.getTagCompletions(value, callback);
                     },
                 });
+
+                // we have to do focus manually since we're replacing our tags
+                // input with the tag plugin version
+                $('input.superblyTagInput').focus();
 
                 // don't worry about loading the content of the page if we
                 // don't have it set in our options
@@ -40,7 +71,6 @@
                 } else {
                     bkg = chrome.extension.getBackgroundPage();
 
-                    console.log('injecting readable.js content script');
                     bkg.inject_readable(function () {
                         $('#content').val(bkg.get_html_content());
                     });
@@ -52,6 +82,8 @@
 
                     if(!localStorage['api_url'])
                         errors.push("Bookie URL has not been set");
+                    if(!localStorage['api_username'])
+                        errors.push("Bookie api username has not been set");
                     if(!localStorage['api_key'])
                         errors.push("API key has not been set");
 
@@ -67,6 +99,7 @@
                 }
 
             });
+
         </script>
         <style>
             body {
@@ -89,6 +122,9 @@
             h1 {
                 font-size:12pt;
             }
+
+            #latest_tags { display: none; }
+
             #suggestions {
                 margin: 0;
                 padding: 0;
@@ -132,13 +168,15 @@
         <div>
             <span style="float: right;">
                 <a href="" title="" target="_blank" id="bookie_site"><img src="logo.16.png" /></a>
-            </span> 
+            </span>
             <h1>Post to Bookie</h1>
         </div>
         <form id="form" name="form">
             <input type="hidden" id="url" name="url" />
+            <input type="hidden" id="inserted_by" name="inserted_by" />
             <input type="text" id="description" placeholder="title" name="description" />
             <input type="text" placeholder="tags" name="tags" id="tags" />
+            <div id="latest_tags">Recent Tags: </div>
             <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
 

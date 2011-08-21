@@ -21,7 +21,7 @@ from bookie.models.fulltext import SqliteFulltext
 
 
 LOG = logging.getLogger(__file__)
-
+API_KEY = None
 
 class TestReadable(TestCase):
     """Test that our fulltext classes function"""
@@ -104,6 +104,10 @@ class TestReadableFulltext(TestCase):
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
+        global API_KEY
+        if API_KEY is None:
+            res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+            API_KEY = res['api_key']
 
     def tearDown(self):
         """Tear down each test"""
@@ -124,12 +128,13 @@ class TestReadableFulltext(TestCase):
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
                 'content': 'bmark content is the best kind of content man',
         }
 
         req_params = urllib.urlencode(prms)
-        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        res = self.testapp.post('/api/v1/admin/bmark',
+                               params=req_params)
         session.flush()
         transaction.commit()
         return res
@@ -148,7 +153,7 @@ class TestReadableFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/results?search=bmark&content=1')
+        search_res = self.testapp.get('/admin/results?search=bmark&content=1')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
@@ -161,7 +166,7 @@ class TestReadableFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/results/bmark?content=1')
+        search_res = self.testapp.get('/admin/results/bmark?content=1')
 
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)

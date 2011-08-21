@@ -14,8 +14,8 @@ from bookie.models import SqliteBmarkFT
 
 from bookie.tests import BOOKIE_TEST_INI
 
-GOOGLE_HASH = 'RnyvTD2qVZSJp6RVWv359C'
-
+GOOGLE_HASH = 'aa2239c17609b2'
+API_KEY = None
 
 class DelPostTest(unittest.TestCase):
     """Test post related calls"""
@@ -26,6 +26,10 @@ class DelPostTest(unittest.TestCase):
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
+
+        global API_KEY
+        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        API_KEY = res['api_key']
 
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
@@ -49,7 +53,7 @@ class DelPostTest(unittest.TestCase):
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
-                'api_key': u'testapi',
+                'api_key': API_KEY,
         }
 
         # if we want to test the readable fulltext side we want to make sure we
@@ -58,7 +62,7 @@ class DelPostTest(unittest.TestCase):
             prms['content'] = "<h1>There's some content in here dude</h1>"
 
         req_params = urllib.urlencode(prms)
-        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        res = self.testapp.get('/admin/delapi/posts/add?' + req_params)
         session.flush()
         transaction.commit()
         return res
@@ -79,12 +83,12 @@ class DelPostTest(unittest.TestCase):
                 'description': '',
                 'extended': '',
                 'tags': '',
-                'api_key': u'testapi',
+                'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
 
-        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        res = self.testapp.get('/admin/delapi/posts/add?' + req_params)
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
         eq_(res.body, failed, msg="Request should return failed msg: " + res.body)
 
@@ -151,11 +155,11 @@ class DelPostTest(unittest.TestCase):
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'dt': dt,
-                'api_key': u'testapi',
+                'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
-        res = self.testapp.get('/delapi/posts/add?' + req_params)
+        res = self.testapp.get('/admin/delapi/posts/add?' + req_params)
         session.flush()
 
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
@@ -203,7 +207,6 @@ class DelPostTest(unittest.TestCase):
         res.hash_id = u"Somethingnew.com"
         DBSession.flush()
 
-        print dict(res)
         # now hopefully have an updated value
         ok_(res.updated >= now,
                 "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))
@@ -221,12 +224,12 @@ class DelPostTest(unittest.TestCase):
         # now send in the delete squad
         prms = {
             'url': u'http://google.com',
-            'api_key': u'testapi',
+            'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
 
-        res = self.testapp.get('/delapi/posts/delete?' + req_params)
+        res = self.testapp.get('/admin/delapi/posts/delete?' + req_params)
         eq_(res.status, "200 OK", 'Post Delete status is 200, ' + res.status)
         ok_('done' in res.body, "Request should return done msg: " + res.body)
 
@@ -246,11 +249,13 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
         prms = {
                 'url': u'http://google.com',
+                'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
 
-        res = self.testapp.get('/delapi/posts/get?' + req_params)
+        res = self.testapp.get('/admin/delapi/posts/get?' + req_params,
+                               status=200)
 
         ok_('href' in res.body, "we have an href link in there")
         ok_('python' in res.body, "we have the python tag")
@@ -272,11 +277,11 @@ class DelPostTest(unittest.TestCase):
                 'description': u'This is my updated google desc',
                 'extended': 'updated extended notes about it in full form',
                 'tags': u'python search updated',
-                'api_key': u'testapi',
+                'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
-        self.testapp.get('/delapi/posts/add?' + req_params)
+        self.testapp.get('/admin/delapi/posts/add?' + req_params)
         session.flush()
 
         res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
@@ -303,11 +308,11 @@ class DelPostTest(unittest.TestCase):
                 'description': u'This is my updated google desc',
                 'extended': 'updated extended notes about it in full form',
                 'tags': u'python  search updated ',
-                'api_key': u'testapi',
+                'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
-        self.testapp.get('/delapi/posts/add?' + req_params)
+        self.testapp.get('/admin/delapi/posts/add?' + req_params)
         session.flush()
 
         res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
@@ -326,18 +331,19 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
 
         # now try to get completion suggestions
-        resp = self.testapp.get('/delapi/tags/complete?tag=py')
+        resp = self.testapp.get('/admin/delapi/tags/complete?api_key={0}&tag=py'.format(API_KEY))
 
         eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
         ok_('python' in resp.body, 
                 "The tag python should be in the response body: " + resp.body)
 
         # now try to get completion suggestions
-        resp = self.testapp.get('/delapi/tags/complete?tag=test')
+        resp = self.testapp.get('/admin/delapi/tags/complete?api_key={0}&tag=test'.format(API_KEY))
 
         eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
         ok_('python' not in resp.body, 
                 "The tag python should not be in the response body: " + resp.body)
+
 
 class DelImportTest(unittest.TestCase):
     """Test that we can successfully import data from delicious"""
