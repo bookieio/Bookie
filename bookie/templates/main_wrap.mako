@@ -13,7 +13,7 @@
 
 
         <link rel="stylesheet" type="text/css" href="/static/tagfield/superbly-tagfield.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bookie2.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
 
         % if hasattr(self, 'header'):
             ${self.header()}
