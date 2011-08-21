@@ -47,4 +47,4 @@ def push_chrome_ext():
 
 def start_css():
     """Start up the sass watch process so we can work on css files"""
-    local('sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &!')
+    local('sass --debug-info --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &!')

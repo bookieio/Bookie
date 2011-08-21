@@ -1,5 +1,5 @@
 <div class="yui3-g">
-    <div class="form yui3-u-1-2">
+    <div class="yui3-u-1-2">
        <form>
             <ul>
                 <li>
