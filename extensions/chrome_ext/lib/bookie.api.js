@@ -67,13 +67,13 @@ var bookie = (function (opts) {
     /**
      * Recent calls the json api for a list of recent bookmarks
      *
-     * @param pager is an api.pager object with a page, count parameter
+     * @param options is a set of paging information, with_content flag
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.recent = function (options, pager, callbacks) {
+    $b.api.recent = function (options, callbacks) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/%s/bmarks?" + pager.generate_url(),
+        var url = "/api/v1/%s/bmarks",
             data = {
                 'count': 10,
                 'page': 1,

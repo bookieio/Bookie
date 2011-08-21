@@ -41,7 +41,7 @@ test('bookie.api.bookmark', function () {
 
     stop();
     bookie.api.init(FAKE_URL, USERNAME, API_KEY);
-    bookie.api.bookmark(TEST_HASH,
+    bookie.api.bookmark(TEST_HASH, {},
         {
             success: function (data) {
                 equal(data.bmark.hash_id, TEST_HASH,
@@ -60,7 +60,7 @@ test('bookie.api.bookmark_bad', function () {
 
     stop();
     bookie.api.init(FAKE_URL);
-    bookie.api.bookmark('blah',
+    bookie.api.bookmark('blah', {},
         {
             success: function (data) {
 
@@ -100,7 +100,7 @@ test('live.bookmark', function () {
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
 
-    bookie.api.bookmark(HASH_ID, {
+    bookie.api.bookmark(HASH_ID, {}, {
                         'success': function (data) {
                             var bmark = data.bmark
                             ok(bmark.hash_id == HASH_ID,
@@ -126,18 +126,21 @@ test('live.bookmark_readable', function () {
     bookie.api.init(API_URL, USERNAME, API_KEY);
 
     bookie.api.bookmark(HASH_ID, {
-                            'success': function (data) {
-                                var bmark = data.bmark
-                                ok(bmark.hash_id == HASH_ID,
-                                    "The right bookmark came down by hash_id");
-                                ok(bmark.readable,
-                                    "Should have readable content");
-                                start();
+                        'get_last': false,
+                        'with_content': true,
+                    },
+                    {
+                        'success': function (data) {
+                            var bmark = data.bmark
+                            ok(bmark.hash_id == HASH_ID,
+                                "The right bookmark came down by hash_id");
+                            ok(bmark.readable,
+                                "Should have readable content");
+                            start();
 
-                            },
-                            'error': FAILED
                         },
-                        undefined, true);
+                        'error': FAILED
+                    });
 });
 
 
@@ -151,20 +154,24 @@ test('live.recent', function () {
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
 
-    bookie.api.recent(bookie.api.pager(), {
-                            'success': function (data) {
-                                ok(data.count == 10,
-                                    "We need to get 10 bookmarks");
-                                ok(data.bmarks[0].hash_id !== undefined,
-                                    "Should have readable content");
-                                ok(data.bmarks[0].readable === undefined,
-                                    "Should not have content by default");
+    bookie.api.recent({
+                'count': 10,
+                'page': 0,
+            },
+            {
+                'success': function (data) {
+                    ok(data.count == 10,
+                        "We need to get 10 bookmarks");
+                    ok(data.bmarks[0].hash_id !== undefined,
+                        "Should have readable content");
+                    ok(data.bmarks[0].readable === undefined,
+                        "Should not have content by default");
 
-                                start();
+                    start();
 
-                            },
-                            'error': FAILED
-                        });
+                },
+                'error': FAILED
+            });
 
 
 });
