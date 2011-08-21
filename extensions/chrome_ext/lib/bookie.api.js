@@ -164,12 +164,20 @@ var bookie = (function (opts) {
     };
 
 
+    /**
+     * By default a delete will have the data() passed into the POST, so we
+     * need to manually override the api_key into the url ourselves
+     *
+     */
     $b.api.remove = function (hash_id, callbacks) {
-        var url = "/api/v1/%s/bmark/" + hash_id,
+        var url = "/api/v1/%s/bmark/" + _.sprintf("%s?api_key=%s",
+                                                  hash_id,
+                                                  $b.api.opt.api_key),
             opts = {
                 url: url,
                 type: "delete",
-                success: callbacks.success
+                success: callbacks.success,
+                error: callbacks.error
             };
 
         $b.api._request(opts);
