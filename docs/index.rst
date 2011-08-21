@@ -17,21 +17,21 @@ Beyond that, there's some features I think that are long overdue.
 
 Latest
 --------
-:Stable: v0.2_
-:Development: v0.3_
+:Stable: v0.3_
+:Development: v0.4_
 
-.. _v0.2: https://github.com/mitechie/Bookie/tree/master
-.. _v0.3: https://github.com/mitechie/Bookie/tree/develop
+.. _v0.3: https://github.com/mitechie/Bookie/tree/master
+.. _v0.4: https://github.com/mitechie/Bookie/tree/develop
 
 
 Bookie Features
 ----------------
 - Open source!
 - Imports from Delicious.com and Google Bookmarks
-- Google Chrome and Firefox extensions
-- Mobile view powered by JQuery Mobile
+- Google Chrome extension
 - Store page content and fulltext search
 - Support for Sqlite, MySQL, and Postgresql
+- *Disabled* Mobile view powered by JQuery Mobile
 
 See the features_ page for full length details.
 

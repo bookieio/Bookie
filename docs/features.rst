@@ -22,21 +22,11 @@ installation's *.ini* file. That's the security measure that prevents others
 from importing into your Bookie installation. That key should be changed from
 the default.
 
-Google Chrome and Firefox extensions
+Google Chrome extension
 -------------------------------------
 Most of the details are available over in the extension_ docs. Make sure that
 after you install it, that you go into the options to configure it to talk to
 your specific Bookie installation.
-
-Mobile View
-------------
-Bookie supports a web based mobile view implementing using `JQuery Mobile`_.
-You can view your bookmarks, read the content from the page, if you've enabled
-the readable content features, and search your bookmarks from a number of
-devices. Just head to the `/m` url for your site. See http://rick.bmark.us/{user}/m
-for an example of how things look.
-
-.. _JQuery Mobile: http://jquerymobile.com/
 
 Fulltext indexing and seach
 ----------------------------
@@ -97,4 +87,25 @@ have a tool you're trying to do this with that doesn't work let us know.
 .. _Readability: http://readability.com
 .. _bit.ly: http://bit.ly
 
+
+Currently not available due to broken features
+----------------------------------------------
+These two features are not enabled in the latest release because they've fallen
+out of date and are in need of some serious love to catch up again. See the
+milestones in the Github issue tracker for when they're scheduled to get full
+attention again.
+
+Firefox Extension
+~~~~~~~~~~~~~~~~~
+Most of the details are available over in the extension_ docs.
+
+Mobile View
+~~~~~~~~~~~
+Bookie supports a web based mobile view implementing using `JQuery Mobile`_.
+You can view your bookmarks, read the content from the page, if you've enabled
+the readable content features, and search your bookmarks from a number of
+devices. Just head to the `/m` url for your site. See http://rick.bmark.us/{user}/m
+for an example of how things look.
+
+.. _JQuery Mobile: http://jquerymobile.com/
 

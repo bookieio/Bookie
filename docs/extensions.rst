@@ -37,7 +37,7 @@ up the options page right-click on the extension in the toolbar and select the
 
 API Url
     set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543/admin`. If you do not set the api url you should get
+    it's `127.0.0.1:6543`. If you do not set the api url you should get
     an error about not being able to find a bookie instance at that url.
 
 API Key
@@ -45,6 +45,10 @@ API Key
     to the *Account* page. There you will find a link for "View API Key" that
     will show you your key. The default login for a fresh install is a
     admin:admin.
+
+Username
+    This is the username for your account. This is used to help construct the
+    api urls. The default user account is *admin*.
 
 Cache Content
     If you check this, then the html of the page is sent to the Bookie
@@ -58,8 +62,9 @@ Cache Content
 Firefox Extension
 ==================
 
-Currently under active development. Check out the `feature branch`_ for keeping
-tabs on how it's progressing.
+Currently under stalled development. Check out the `feature branch`_ for keeping
+tabs on how it's progressing. It's currently woefully out of date and not using
+the latest API code.
 
 Features
 ----------

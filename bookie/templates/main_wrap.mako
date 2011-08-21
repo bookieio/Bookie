@@ -72,8 +72,8 @@
                 <div class="right body">
                     <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
-                    <a href="#changelog">Changes</a> |
-                    % if request.user:
+                    <a href="http://docs.bmark.us/changes.html">Changes</a> |
+                    % if False and request.user:
                         <a href="${request.route_url('user_mobile', username=request.user.username) }">Mobile</a>
                     % endif
                 </div>

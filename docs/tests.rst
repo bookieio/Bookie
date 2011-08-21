@@ -38,3 +38,24 @@ bootstrap the environment properly.
 * http://docs.pylonsproject.org/projects/pyramid/dev/narr/testing.html
 * https://bitbucket.org/sluggo/pyramid_sqla/src/d826ad458869/demos/SimpleDemo/simpledemo/tests.py
 * http://docs.pylonsproject.org/projects/pyramid/1.0/tutorials/wiki2/definingviews.html#adding-tests
+
+
+Testing Javascript
+~~~~~~~~~~~~~~~~~~
+There are *fabfile* commands for testing the Javascript we have so far. It's
+located in the *extensions* directory since that's where most of the JS lives.
+We symlink it to the main site and such.
+
+::
+
+    $ fab jstest
+    $ fab jsview
+
+Will run the tests. This runs them through phantom.js_. It's using Qunit_ to
+run the tests. There are a set of live api tests in there that will his
+http://dev.bmark.us to verify that the api is in fact working as expected. This
+loads up our JS implementation of the api *bookie.api.js*.
+
+
+.. _phantom.js: http://www.phantomjs.org/
+.. _Qunit: http://docs.jquery.com/Qunit
