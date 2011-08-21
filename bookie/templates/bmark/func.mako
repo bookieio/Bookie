@@ -53,7 +53,7 @@
             <div class="yui3-u-7-8">
                 <div class="yui3-g">
                     <div class="yui3-u-7-8">
-                            <a class="bmark"
+                            <a 
                                 % if username:
                                 href="${request.route_url('user_redirect',
                                                           hash_id=bmark.hash_id,
@@ -71,10 +71,6 @@
                                    title="Readable"
                                 class="button"> R </a>
                             </span>
-                        % if user:
-                            <span class="item"><a href="#" title="Edit" class="button"> E </a></span>
-                            <!--<span class="item"> <a href="" title="Delete" class="button"> X </a></span>-->
-                        % endif
                     </div>
 
                     <div class="yui3-u-3-8 url" title="${bmark.hashed.url}">

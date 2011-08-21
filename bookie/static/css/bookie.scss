@@ -1,0 +1,454 @@
+// main site colors
+$bluegrey: #363d52; // used in logo
+$lightgrey: #CCCCCC;
+$darkgrey: #333333;
+$hover_row: rgba(155, 175, 235, 0.2);
+
+// button colors
+$button_back: #e3e3e3;
+$button_border: #bbbbbb;
+$button_shadow: #f6f6f6;
+$text-shadow: #ffffff;
+
+// calendar colors
+$calendar_back: #FF0000;
+$calendar_grad: #FF4444;
+
+// bmark colors
+$links: #003366;
+
+
+@mixin cabin() {
+    font-family: 'Cabin', sans-serif;
+}
+
+@mixin cabin_sketch() {
+    font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
+}
+
+@mixin center() {
+    text-align: center;
+}
+
+@mixin right() {
+    text-align: right;
+}
+
+
+@mixin button_base {
+    color: $darkgrey;
+    background: $button_back;
+    border: 1px solid $button_border;
+    -moz-box-shadow: inset 0 0 1px 1px $button_shadow;
+    -webkit-box-shadow: inset 0 0 1px 1px $button_shadow;
+    box-shadow: inset 0 0 1px 1px $button_shadow;
+
+}
+
+@mixin button_base_hover {
+   background: darken($button_back, 5%);
+   -moz-box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
+   -webkit-box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
+   box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
+   color: darken($darkgrey, 5%);
+   cursor: pointer;
+}
+
+
+body {
+    @include cabin;
+}
+
+#body {
+    margin: 1em;
+}
+
+.center {
+    @include center;
+}
+
+.right {
+    @include right;
+}
+
+
+.navigation {
+    text-align: right;
+
+    a {
+        text-decoration: none;
+    }
+}
+
+
+.logo {
+    @include cabin_sketch;
+    padding-left: .1em;
+    font-size: 2em;
+    text-decoration: none;
+    color: $bluegrey;
+    text-shadow: 1px 1px 0 $lightgrey;
+
+    .alt_logo {
+        color: $darkgrey;
+        font-size: .6em;
+        text-shadow: 2px 2px 2px $lightgrey;
+        @include cabin;
+    }
+}
+
+
+.footer {
+    color: #666666;
+    margin-top: 5em;
+    font-size: .8em;
+    margin-bottom: 1em;
+
+    a {
+        color: #666666;
+        text-decoration: none;
+    }
+
+    .body {
+        padding-right: 1em;
+    }
+}
+
+.button {
+    @include center;
+    @include button_base;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    font: 12px arial,helvetica,clean,sans-serif;
+    font-weight: bold;
+    line-height: 1;
+    padding: 2px 4px 3px;
+    text-shadow: 0 1px 0 $text-shadow;
+    text-decoration: none;
+
+    &:hover {
+        @include button_base_hover;
+    }
+
+    &.nav_button {
+        padding: 8px 10px 9px;
+        width: 150px;
+        vertical-align: bottom;
+
+        &:active {
+            @include button_base_hover;
+            color: black;
+        }
+    }
+}
+
+.actions {
+    .item {
+        a.button {
+            line-height: inherit;
+            font: 12px arial,helvetica,clean,sans-serif;
+            text-decoration: none;
+            color: $darkgrey;
+        }
+    }
+}
+
+a.button_minimal {
+    text-decoration: none;
+}
+
+.actions {
+    .button {
+        padding: 0 2px;
+        line-height: inherit;
+    }
+}
+
+form {
+
+    div {
+        margin: .5em 0;
+    }
+
+    ul {
+        margin-left: 0px;
+    }
+
+    li {
+        list-style: none;
+        margin-left: 0px;
+        padding: .2em 0em;
+
+        label {
+            font-weight: bold;
+        }
+    }
+
+    .button {
+        font-weight: bold;
+        color: $darkgrey;
+    }
+
+}
+
+.form {
+    background-color: lighten($lightgrey, 10%);
+    border: 1px solid $lightgrey;
+    border-radius: 5px;
+    margin: 1em;
+    padding: .5em;
+
+    .error {
+        color: red;
+    }
+
+    .success {
+        color: green;
+    }
+
+    li {
+        padding: .5em;
+    }
+
+    label {
+        width: 8em;
+        text-align: right;
+        display: inline-block;
+        padding-right: 1em;
+        font-weight: normal;
+    }
+
+    .heading {
+        font-size: larger;
+        text-decoration: none;
+        margin-bottom: .3em;
+        color: black;
+
+        &:hover {
+            cursor: hand;
+        }
+    }
+}
+
+fieldset {
+    legend {
+        font-size: .9em;
+        font-weight: bold;
+        border-bottom: 1px solid $darkgrey;
+        margin-bottom: 2em;
+    }
+}
+
+.data_list {
+    .col_end {
+        font-weight: bold;
+        text-align: right;
+    }
+
+    .buttons {
+        padding: .6em 0;
+    }
+
+    .bmark {
+        padding: .2em;
+    }
+}
+
+
+.calendar {
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin: 0px .4em;
+    width: 4em;
+
+    h2 {
+        background-color: $calendar_back;
+        background-image: -webkit-gradient( radial, 50% 50%, 0, 50% 50%, 40, from($calendar_grad), to($calendar_back));
+        background-image:-moz-radial-gradient(circle, $calendar_grad, $calendar_back);
+        background-image:radial-gradient(circle, $calendar_grad, $calendar_back);
+        color: white;
+        font-size: .9em;
+        font-weight: bold;
+        text-align: left;
+        padding: .1em .2em;
+        border: 1px solid $darkgrey;
+        border-bottom-color: $darkgrey;
+        margin: 0px;
+        -webkit-border-top-right-radius: 2px;
+        -webkit-border-top-left-radius: 2px;
+        -moz-border-radius-topright: 2px;
+        -moz-border-radius-topleft: 2px;
+        border-top-right-radius: 2px;
+        border-top-left-radius: 2px;
+    }
+
+    div {
+        background-color: $lightgrey;
+        color: black;
+        font-size: 1.3em;
+        text-align: center;
+        padding: .1em .2em;
+        border: 1px solid $darkgrey;
+        border-top:none;
+        -webkit-border-bottom-right-radius: 2px;
+        -webkit-border-bottom-left-radius: 2px;
+        -moz-border-radius-bottomright: 2px;
+        -moz-border-radius-bottomleft: 2px;
+        border-bottom-right-radius: 2px;
+        border-bottom-left-radius: 2px;
+    }
+}
+
+
+
+.bmark {
+
+    a {
+        font-size: 1.1em;
+        text-decoration: none;
+        color: $links
+    }
+
+    &:hover {
+        background-color: $hover_row;
+    }
+
+    .url {
+        color: $lightgrey;
+        overflow: hidden;
+        white-space:nowrap;
+
+        &:hover {
+            color: darken($lightgrey, 25%);
+        }
+    }
+
+    .tags {
+        padding: .3em;
+        padding-left: 2em;
+        font-size: .8em;
+        text-align: right;
+
+        .tag {
+            padding: .2em .4em .2em .4em;
+            background: lighten($lightgrey, 10%);
+            color: lighten($darkgrey, 25%);
+            text-decoration: none;
+            margin-bottom: .2em;
+            display: inline-block;
+        }
+    }
+}
+
+
+.note {
+    border: 1px solid $darkgrey;
+    background: $lightgrey;
+    padding: .5em;
+    margin-top: .5em;
+}
+
+.search {
+    .body {
+        padding-left: 2em;
+    }
+
+    .title {
+        margin-left: 1.3em;
+        font-size: 1.5em;
+        border-bottom: 1px solid $darkgrey;
+        padding-bottom: .1em;
+        font-weight: normal;
+    }
+}
+
+.tag_filter {
+    margin: .5em;
+
+    div {
+        margin: 0;
+    }
+
+    input {
+        width: 25em;
+
+        &[type=submit] {
+            width: 5em;
+            min-height: 29px;
+        }
+
+        &[type=checkbox] {
+            width: 1em;
+        }
+    }
+
+    .item {
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 12px;
+        line-height: 1;
+        padding: 2px 4px 3px;
+        text-align: center;
+        text-shadow: 0 1px 0 white;
+
+        &:hover {
+            @include button_base_hover;
+        }
+
+        a {
+            color: $darkgrey;
+            text-decoration: none;
+        }
+    }
+
+    .superblyTagfieldDiv {
+        display: inline-block;
+        vertical-align: bottom;
+        width: 35em;
+    }
+}
+
+.fullpage {
+    @include center;
+}
+
+
+
+.tabs {
+    @include button_base;
+    position: relative;
+    margin: 10px 0 0 0;
+    padding: 10px 10px 0 10px;
+    border-radius: 5px;
+    height: 2em;
+
+    li {
+        position: relative;
+        list-style: none;
+        display: inline;
+        height: 1.5em;
+        padding: .3em 1.5em;
+        color: #333;
+        text-align: center;
+        text-shadow: 0 1px 0 white;
+
+        a {
+            text-decoration: none;
+            color: $darkgrey;
+        }
+
+        &.selected {
+            background-color: white;
+            border: 1px solid $lightgrey;
+        }
+
+        &:hover {
+            background-color: $lightgrey;
+            -webkit-transition-duration: .33s;
+            -webkit-transition-property: background-color;
+        }
+    }
+}

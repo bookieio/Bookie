@@ -292,7 +292,11 @@ var bookie = (function ($b, $) {
                         'success': function (data) {
                             $b.accounts.passwordui.message(data.message, true);
                             $b.accounts.passwordui.reset();
-                         }
+                         },
+                        'error': function (data, status_string) {
+                            $b.accounts.passwordui.message(data.error, false);
+                            $b.accounts.passwordui.reset();
+                        }
                     }
                 );
             }

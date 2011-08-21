@@ -212,8 +212,6 @@ test('live.add', function () {
 });
 
 
-
-
 /**
  * Remove bookmark
  *
@@ -221,7 +219,7 @@ test('live.add', function () {
  * test for add, if it fails, well it's probably because add failed.
  *
  */
-test('live.add', function () {
+test('live.remove', function () {
     expect(1)
 
     stop();

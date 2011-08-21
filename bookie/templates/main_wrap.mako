@@ -13,7 +13,7 @@
 
 
         <link rel="stylesheet" type="text/css" href="/static/tagfield/superbly-tagfield.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bookie2.css">
 
         % if hasattr(self, 'header'):
             ${self.header()}
@@ -41,13 +41,15 @@
                     else:
                         prefix = ""
                 %>
-                <span class="item"><a href="${prefix}/recent" class="nav_button">Recent</a></span>
-                <span class="item"><a href="${prefix}/popular" class="nav_button">Popular</a></span>
-                <span class="item"><a href="${prefix}/search" class="nav_button">Search</a></span>
+                <span class="item"><a href="${prefix}/recent" class="button nav_button">Recent</a></span>
+                <span class="item"><a href="${prefix}/popular" class="button nav_button">Popular</a></span>
+                <span class="item"><a href="${prefix}/search" class="button nav_button">Search</a></span>
                 % if request.user:
-                    <span class="item"><a href="${request.route_url('user_account', username=request.user.username)}" class="nav_button">Account</a></span>
+                    <span class="item"><a
+                    href="${request.route_url('user_account',
+                    username=request.user.username)}" class="button nav_button">Account</a></span>
                 % else:
-                    <span class="item"><a href="/login" class="nav_button">Login</a></span>
+                    <span class="item"><a href="/login" class="button nav_button">Login</a></span>
                 % endif
 
                 <!--<span class="item">-->

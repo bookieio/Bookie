@@ -22,7 +22,8 @@
         </form>
     </div>
 
-    <div class="notes">
+    <p>&nbsp;</p>
+    <div class="note">
         <p>Search will check for terms in your bookmark tags, descriptions, and
         extended descriptions</p>
         <p>You can also check the parsed and cached versions of the pages by

@@ -44,3 +44,7 @@ def push_chrome_ext():
     """Upload the chrome extension to the server"""
     build_chrome_ext()
     rsync_project(chrome_ext_server, chrome_ext_local)
+
+def start_css():
+    """Start up the sass watch process so we can work on css files"""
+    local('sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &!')
