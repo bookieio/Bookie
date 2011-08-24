@@ -97,7 +97,6 @@ body {
     }
 }
 
-
 .footer {
     color: #666666;
     margin-top: 5em;
@@ -256,7 +255,6 @@ fieldset {
     }
 }
 
-
 .calendar {
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -301,8 +299,6 @@ fieldset {
     }
 }
 
-
-
 .bmark {
 
     a {
@@ -341,7 +337,6 @@ fieldset {
         }
     }
 }
-
 
 .note {
     border: 1px solid $darkgrey;
@@ -414,8 +409,6 @@ fieldset {
 .fullpage {
     @include center;
 }
-
-
 
 .tabs {
     @include button_base;
