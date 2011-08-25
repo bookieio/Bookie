@@ -343,5 +343,35 @@ var bookie = (function ($b, $) {
         }
     };
 
+    $b.edit = {
+        'init': function () {
+            this.bind_tag_complete();
+        },
+
+        'bind_tag_complete': function () {
+            var $tag_filter = $('#tags');
+
+            $tag_filter.superblyTagField({
+                complete: function (tag, callback) {
+                    $b.api.tag_complete({
+                            'tag': tag
+                            },
+                            { 'success': function (data) {
+                                             callback(data.tags);
+                                         }
+                            }
+                    );
+                },
+            });
+
+            // fire off for existing tags
+            // but only if we have a tag to pretty up
+            if ($tag_filter.val()) {
+                $('#tags').change();
+            }
+        }
+
+    };
+
     return $b;
 })(bookie || {}, jQuery);

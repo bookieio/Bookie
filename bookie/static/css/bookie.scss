@@ -42,7 +42,6 @@ $links: #003366;
     -moz-box-shadow: inset 0 0 1px 1px $button_shadow;
     -webkit-box-shadow: inset 0 0 1px 1px $button_shadow;
     box-shadow: inset 0 0 1px 1px $button_shadow;
-
 }
 
 @mixin button_base_hover {
@@ -154,6 +153,12 @@ body {
     }
 }
 
+.superblytagitems {
+    li {
+        margin: 3px 3px 0px 3px;
+    }
+}
+
 a.button_minimal {
     text-decoration: none;
 }
@@ -188,6 +193,34 @@ form {
     .button {
         font-weight: bold;
         color: $darkgrey;
+    }
+
+    &.bmark {
+        input[type=text], &.bmark input[type="url"] {
+            width: 35em;
+            padding: 5px;
+            border: 1px solid $darkgrey;
+        }
+
+        input[type=submit] {
+            padding: 5px;
+        }
+
+        .superblyTagfieldDiv {
+            display: inline-block;
+            vertical-align: bottom;
+            width: 34.5em;
+
+            input[type=text] {
+                border: none;
+                padding: none;
+            }
+
+            li.superblyTagInputItem {
+                padding: 0;
+            }
+        }
+
     }
 
 }

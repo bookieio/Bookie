@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
+from bookie.lib.access import ReqAuthorize
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -138,6 +139,49 @@ def confirm_delete(request):
             'bid': bid,
             'bmark_description': found.description
            }
+
+
+@view_config(route_name="user_bmark_edit", renderer="/bmark/edit.mako")
+@view_config(route_name="user_bmark_new", renderer="/bmark/edit.mako")
+def edit(request):
+    """Manual add a bookmark to the user account
+
+    Can pass in params (say from a magic bookmarklet later)
+    url
+    description
+    extended
+    tags
+
+    """
+    rdict = request.matchdict
+    params = request.params
+
+    with ReqAuthorize(request, username=rdict['username']):
+
+        if 'hash_id' in rdict:
+            hash_id = rdict['hash_id']
+        elif 'hash_id' in params:
+            hash_id = params['hash_id']
+        else:
+            hash_id = None
+
+        if hash_id:
+            bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
+
+            if bmark is None:
+                return HTTPNotFound()
+        else:
+            bmark = Bmark()
+
+        return {
+                'bmark': bmark,
+                'user': request.user,
+        }
+
+
+@view_config(route_name="user_bmark_edit_error", renderer="/bmark/edit.mako")
+def edit_error(request):
+    pass
 
 
 @view_config(route_name="bmark_readable", renderer="/bmark/readable.mako")

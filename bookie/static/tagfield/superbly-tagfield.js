@@ -64,7 +64,6 @@
 
         // set presets
         for(i in preset){
-            console.log('preset');
             addItem(preset[i]);
         }
 
@@ -86,12 +85,10 @@
         });
 
         tagInput.focusout(function(e){
-            console.log('hoverSuggestItems');
             suggestList.css('display', 'none');
             if(allowNewTags){
                 var value = tagInput.val();
                 if(value != null && value != ''){
-                    console.log('focusout');
                     addItem(value, false);
                 }
             }
@@ -108,13 +105,11 @@
                 selectUp()
             }else if(e.keyCode == keyMap.enter || e.keyCode == keyMap.tab || e.keyCode == keyMap.space) {
                 if(currentItem != null){
-                    console.log('in if');
                     addItem(currentItem);
                     return false;
                 } else if(allowNewTags){
                     var value = tagInput.val();
                     if(value != null && value != ''){
-                        console.log('in else');
                         addItem(value);
                     }
                 }
