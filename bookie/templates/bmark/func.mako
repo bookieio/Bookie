@@ -69,8 +69,19 @@
                             <span class="item">
                                 <a href="${request.route_url('bmark_readable', hash_id=bmark.hash_id)}"
                                    title="Readable"
-                                class="button"> R </a>
+                                class="button">R</a>
                             </span>
+
+                            % if username is not None:
+                                <span class="item">
+                                    <a href="${request.route_url('user_bmark_edit',
+                                                                 username=username,
+                                                                 hash_id=bmark.hash_id)}"
+                                       title="Readable"
+                                    class="button">E</a>
+                                </span>
+                            % endif
+
                     </div>
 
                     <div class="yui3-u-3-8 url" title="${bmark.hashed.url}">

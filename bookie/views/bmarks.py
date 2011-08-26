@@ -181,7 +181,26 @@ def edit(request):
 
 @view_config(route_name="user_bmark_edit_error", renderer="/bmark/edit.mako")
 def edit_error(request):
-    pass
+    rdict = request.matchdict
+    params = request.params
+
+    with ReqAuthorize(request, username=rdict['username']):
+
+        if 'hash_id' in rdict:
+            hash_id = rdict['hash_id']
+        elif 'hash_id' in params:
+            hash_id = params['hash_id']
+
+        bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
+        if bmark is None:
+            return HTTPNotFound()
+
+        bmark.fromdict(request.POST)
+        bmark.update_tags(request.POST['tags'])
+
+        return HTTPFound(
+                location=request.route_url('user_bmark_recent',
+                                           username=request.user.username))
 
 
 @view_config(route_name="bmark_readable", renderer="/bmark/readable.mako")

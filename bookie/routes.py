@@ -32,8 +32,9 @@ def build_routes(config):
     config.add_route("user_bmark_popular_tags", "{username}/popular/*tags")
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
-    config.add_route("user_bmark_edit_error", "{username}/edit_error")
+    config.add_route("user_bmark_edit_error", "{username}/edit_error/{hash_id}")
     config.add_route("user_bmark_new", "{username}/new")
+    config.add_route("user_bmark_new_error", "{username}/new_error")
 
 
     # config.add_route("bmark_delete", "/bmark/delete")
