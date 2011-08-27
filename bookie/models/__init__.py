@@ -700,7 +700,10 @@ class Bmark(Base):
         self.extended = ext
 
         # tags are space separated
-        self.tags = TagMgr.from_string(tags)
+        if tags:
+            self.tags = TagMgr.from_string(tags)
+        else:
+            self.tags = {}
 
     def __str__(self):
         return "<Bmark: {0}:{1}>".format(self.bid, self.hashed.url)
