@@ -38,6 +38,18 @@
                        value="${bmark.extended if bmark.extended else ''}"
                        placeholder="extended description..."/>
             </li>
+
+            % if new and bmark.hashed.url != "":
+                <li>
+                    <label>Return after save</label>
+                    <input type="checkbox" name="go_back"
+                           checked="checked" />
+                    <a title="original url" href="${bmark.hashed.url}">${bmark.description}</a>
+                    <input type="hidden" name="comes_from"
+                           value="${bmark.hashed.url}"
+                           checked="checked" />
+                </li>
+            % endif
             <li>
                 <label></label>
                 <input type="submit" name="submit" value="Save" />

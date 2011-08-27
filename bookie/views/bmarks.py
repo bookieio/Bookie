@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
 from bookie.lib.access import ReqAuthorize
+from bookie.lib.urlhash import generate_hash
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -156,6 +157,7 @@ def edit(request):
     rdict = request.matchdict
     params = request.params
     new = False
+    comes_from = None
 
     with ReqAuthorize(request, username=rdict['username']):
 
@@ -172,10 +174,22 @@ def edit(request):
             if bmark is None:
                 return HTTPNotFound()
         else:
-            new = True
+            # hash the url and make sure that it doesn't exist
             url = params.get('url', "")
-            desc = params.get('description', None)
+            if url != "":
+                new_url_hash = generate_hash(url)
 
+                test_exists = BmarkMgr.get_by_hash(new_url_hash,
+                                                   request.user.username)
+
+                if test_exists:
+                    location=request.route_url('user_bmark_edit',
+                                               hash_id=new_url_hash,
+                                               username=request.user.username)
+                    return HTTPFound(location)
+
+            new = True
+            desc = params.get('description', None)
             bmark = Bmark(url, request.user.username, desc=desc)
 
         return {
@@ -213,7 +227,12 @@ def edit_error(request):
             bmark.fromdict(post)
             bmark.update_tags(post['tags'])
 
-        return HTTPFound(
+        # if this is a new bookmark from a url, offer to go back to that url
+        # for the user. 
+        if 'go_back' in params and params['comes_from'] != "":
+            return HTTPFound(location=params['comes_from'])
+        else:
+            return HTTPFound(
                 location=request.route_url('user_bmark_recent',
                                            username=request.user.username))
 
