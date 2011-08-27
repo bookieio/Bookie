@@ -231,6 +231,7 @@ Next you need to add a virtualhost to your Apache config. You can either put thi
     </Directory>
 
 A couple of things you need to check:
+
 - The python-path line matches the path to your virtualenv's site-packages.
 - The WSGIScriptAlias in the example serves your Bookie install at the server's root. You can change that if you wish.
 - The WSGIScriptAlias path to pyramid.wsgi is correct for your system.
