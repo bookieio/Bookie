@@ -26,12 +26,24 @@
                        value="${bmark.description if bmark.description else ''}"
                        placeholder="description..."/>
             </li>
-            <li>
-                <label>Tags</label>
+            <li class="form_tags">
+                <label style="height: 27px;">Tags</label>
                 <input type="text" id="tags" name="tags"
                        value="${bmark.tag_str if bmark.tag_str else ''}"
                        placeholder="add tags..."/>
             </li>
+
+            % if tag_suggest and len(tag_suggest) > 0:
+                <li>
+                    <label>&nbsp;</label>
+                    <span id="tag_suggest">Suggested Tags:
+                    % for tag in tag_suggest:
+                        <a href="" class="prev_tag">${tag}</a>&nbsp;
+                    % endfor
+                    </span>
+                </li>
+            % endif
+
             <li>
                 <label>Extended</label>
                 <input type="text" name="extended"

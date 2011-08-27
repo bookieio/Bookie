@@ -11,6 +11,7 @@ from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import Hashed
+from bookie.models import TagMgr
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
@@ -157,7 +158,6 @@ def edit(request):
     rdict = request.matchdict
     params = request.params
     new = False
-    comes_from = None
 
     with ReqAuthorize(request, username=rdict['username']):
 
@@ -192,10 +192,13 @@ def edit(request):
             desc = params.get('description', None)
             bmark = Bmark(url, request.user.username, desc=desc)
 
+        tag_suggest = TagMgr.suggestions(url=bmark.hashed.url)
+
         return {
                 'new': new,
                 'bmark': bmark,
                 'user': request.user,
+                'tag_suggest': tag_suggest,
         }
 
 

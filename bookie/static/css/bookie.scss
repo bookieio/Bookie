@@ -222,7 +222,6 @@ form {
         }
 
     }
-
 }
 
 .form {
@@ -231,6 +230,15 @@ form {
     border-radius: 5px;
     margin: 1em;
     padding: .5em;
+
+    label {
+        width: 8em;
+        text-align: right;
+        display: inline-block;
+        padding-right: 1em;
+        font-weight: normal;
+        vertical-align: middle;
+    }
 
     .error {
         color: red;
@@ -242,14 +250,6 @@ form {
 
     li {
         padding: .5em;
-    }
-
-    label {
-        width: 8em;
-        text-align: right;
-        display: inline-block;
-        padding-right: 1em;
-        font-weight: normal;
     }
 
     .heading {

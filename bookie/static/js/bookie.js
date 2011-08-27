@@ -346,6 +346,35 @@ var bookie = (function ($b, $) {
     $b.edit = {
         'init': function () {
             this.bind_tag_complete();
+            this.bind_tag_suggest();
+        },
+
+        'bind_tag_suggest': function () {
+            $('#tag_suggest').delegate('a', 'click', function (ev) {
+                ev.preventDefault();
+                $b.edit.dupe_tags($(this));
+            });
+        },
+
+        /**
+         * Copy any tags we have from the last run into our tags ui
+         *
+         */
+        'dupe_tags': function (node) {
+            var current = $('#tags').val().trim();
+            if (current.length > 0) {
+                current = current + " ";
+            }
+
+            $('#tags').val(current + node.html().trim());
+            $('#tags').change();
+            node.remove();
+
+            // if we've added all the tags and there are none left, then just hide
+            // that div
+            if ($("#tag_suggest a").length === 0) {
+                $('#tag_suggest').parent().hide();
+            }
         },
 
         'bind_tag_complete': function () {

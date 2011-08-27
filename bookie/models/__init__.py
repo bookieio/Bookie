@@ -39,6 +39,7 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 LOG = logging.getLogger(__name__)
+RECENT = 8  # number of hours to consider a bookmark as recent
 
 
 def initialize_sql(engine):
@@ -226,6 +227,33 @@ class TagMgr(object):
                               filter(Tag.bmark.any(Bmark.bid.in_(good_bmarks)))
 
             return DBSession.execute(query)
+
+    @staticmethod
+    def suggestions(bmark=None, recent=True, url=None, username=None):
+        """Find suggestions for tags for a bookmark
+
+        The plan:
+            Suggest recent tags if there's a recent bookmark to pull tags from
+            Suggest related tags if there are other tags in bookmarks related
+            somehow (tbd)
+            Suggested other tags based on other people bookmarking this url
+
+        """
+        tag_suggest = []
+
+        if recent:
+            # find the tags from the most recent bookmark if available
+            recent = BmarkMgr.get_recent_bmark(username=username)
+            LOG.debug("RECENT")
+            LOG.debug(recent)
+            LOG.debug("END RECENT")
+
+            if recent:
+                tag_suggest.extend(recent.tag_str.split(" "))
+
+        tag_list = list(set(tag_suggest))
+        LOG.debug(tag_list)
+        return tag_list
 
 
 class Tag(Base):
@@ -442,7 +470,7 @@ class BmarkMgr(object):
         Only check for a recent one, last 3 hours
 
         """
-        last_hours = datetime.now() - timedelta(hours=3)
+        last_hours = datetime.now() - timedelta(hours=RECENT)
         qry = Bmark.query.filter(Bmark.stored > last_hours)
 
         if username:

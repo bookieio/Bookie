@@ -150,29 +150,30 @@ form.bmark .superblyTagfieldDiv {
   form.bmark .superblyTagfieldDiv li.superblyTagInputItem {
     padding: 0; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003228}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003227}}
 .form {
   background-color: #e6e6e6;
   border: 1px solid #cccccc;
   border-radius: 5px;
   margin: 1em;
   padding: .5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003235}}
-  .form .error {
-    color: red; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003239}}
-  .form .success {
-    color: green; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003243}}
-  .form li {
-    padding: .5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003247}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003234}}
   .form label {
     width: 8em;
     text-align: right;
     display: inline-block;
     padding-right: 1em;
-    font-weight: normal; }
+    font-weight: normal;
+    vertical-align: middle; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003243}}
+  .form .error {
+    color: red; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003247}}
+  .form .success {
+    color: green; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003251}}
+  .form li {
+    padding: .5em; }
 @media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003255}}
   .form .heading {
     font-size: larger;
