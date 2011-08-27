@@ -65,6 +65,19 @@ ${account_nav()}
 
 ${password_reset(reset=False)}
 
+<div class="form">
+    <div class="heading">Bookmarklet</div>
+
+    <p>Copy the link below to your address bar to be able to save bookmarks
+    from other browsers.
+
+     <div><a title="Bookmark with Bookie" href="javascript:(function() {
+        location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())">Bookmark to Bookie</a></div>
+
+    </p>
+
+
+</div>
 <%def name="add_js()">
     <script type="text/javascript">
         $(document).ready(function() {

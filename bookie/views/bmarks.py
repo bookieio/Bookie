@@ -171,7 +171,10 @@ def edit(request):
             if bmark is None:
                 return HTTPNotFound()
         else:
-            bmark = Bmark("", request.user.username)
+            url = params.get('url', "")
+            desc = params.get('description', None)
+
+            bmark = Bmark(url, request.user.username, desc=desc)
 
         return {
                 'bmark': bmark,
