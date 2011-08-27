@@ -5,7 +5,7 @@ Right now, we're in full developer mode so hosting is up to you. We help you
 get started by running it with the built-in `paste` webserver locally.
 
 However Bookie is a WSGI_ application and can be hosted with web servers such
-as Apache, Nginx, and Cherokee. As Bookie matures we'll try to get cookbook
+as Apache_, Nginx_, and Cherokee_. As Bookie matures we'll try to get cookbook
 docs for using each. For now, it's up to you to figure out, but feel free to
 drop by the *#bookie#* irc channel on Freenode for assistance..
 
@@ -192,7 +192,7 @@ From there we just need to check Nginx for any issues and reload it.
     sudo service nginx reload
 
 Hosting with Apache and mod_wsgi
----------------------------
+--------------------------------
 Apache and the mod_wsgi Apache module is the tried-and-true standard for WSGI serving. It also happens to be really easy to get your Bookie app working with it.
 
 First you need to install Apache and mod_wsgi:
@@ -243,5 +243,9 @@ Finally, all you have to do is restart Apache and off you go!
 - On other Linuxes: ?
 - On OSX: ?
 - On Windows: ?
+
+For more help running Bookie under mod_wsgi on Apache, check out the modwsgi_ Pyramid Docs.
+
+.. _modwsgi: https://docs.pylonsproject.org/projects/pyramid/1.2/tutorials/modwsgi/index.html#modwsgi-tutorial
 
 
