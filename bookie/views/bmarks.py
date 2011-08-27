@@ -171,7 +171,10 @@ def edit(request):
             if bmark is None:
                 return HTTPNotFound()
         else:
-            bmark = Bmark()
+            url = params.get('url', "")
+            desc = params.get('description', None)
+
+            bmark = Bmark(url, request.user.username, desc=desc)
 
         return {
                 'bmark': bmark,
@@ -180,23 +183,32 @@ def edit(request):
 
 
 @view_config(route_name="user_bmark_edit_error", renderer="/bmark/edit.mako")
+@view_config(route_name="user_bmark_new_error", renderer="/bmark/edit.mako")
 def edit_error(request):
     rdict = request.matchdict
     params = request.params
+    post = request.POST
 
     with ReqAuthorize(request, username=rdict['username']):
+        if 'new' in request.url:
+            BmarkMgr.store(post['url'],
+                           request.user.username,
+                           post['description'],
+                           post['extended'],
+                           post['tags'])
 
-        if 'hash_id' in rdict:
-            hash_id = rdict['hash_id']
-        elif 'hash_id' in params:
-            hash_id = params['hash_id']
+        else:
+            if 'hash_id' in rdict:
+                hash_id = rdict['hash_id']
+            elif 'hash_id' in params:
+                hash_id = params['hash_id']
 
-        bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
-        if bmark is None:
-            return HTTPNotFound()
+            bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
+            if bmark is None:
+                return HTTPNotFound()
 
-        bmark.fromdict(request.POST)
-        bmark.update_tags(request.POST['tags'])
+            bmark.fromdict(post)
+            bmark.update_tags(post['tags'])
 
         return HTTPFound(
                 location=request.route_url('user_bmark_recent',
