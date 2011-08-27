@@ -155,6 +155,7 @@ def edit(request):
     """
     rdict = request.matchdict
     params = request.params
+    new = False
 
     with ReqAuthorize(request, username=rdict['username']):
 
@@ -171,12 +172,14 @@ def edit(request):
             if bmark is None:
                 return HTTPNotFound()
         else:
+            new = True
             url = params.get('url', "")
             desc = params.get('description', None)
 
             bmark = Bmark(url, request.user.username, desc=desc)
 
         return {
+                'new': new,
                 'bmark': bmark,
                 'user': request.user,
         }

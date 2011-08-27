@@ -4,7 +4,7 @@
 <div class="yui3-g data_list">
     <div class="yui3-u-1">
     <form
-        % if bmark.hashed.url == "":
+        % if new:
             action="${request.route_url('user_bmark_new_error', username=request.user.username)}"
         % else:
             action="${request.route_url('user_bmark_edit_error', username=request.user.username, hash_id=bmark.hash_id)}"
