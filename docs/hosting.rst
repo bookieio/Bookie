@@ -191,4 +191,56 @@ From there we just need to check Nginx for any issues and reload it.
     sudo nginx -t
     sudo service nginx reload
 
+Hosting with Apache and mod_wsgi
+---------------------------
+Apache and the mod_wsgi Apache module is the tried-and-true standard for WSGI serving. It also happens to be really easy to get your Bookie app working with it.
+
+First you need to install Apache and mod_wsgi:
+
+-On a Debian-based Linux (Ubuntu): apt-get install libapache2-mod-wsgi
+-On other Linuxes: ?
+-On OSX: ?
+-On Windows: ?
+
+Then you need to create a pyramid.wsgi file in the root of your Bookie virtualenv. Something like
+
+::
+
+    from pyramid.paster import get_app
+    application = get_app('/home/user/bookie/bookie/mybookie.ini', 'main')
+
+A couple of things to check:
+
+-The get_app path is correct for your system.
+-If you're using SQLite, make sure you use the full path to it in your bookie/bookie/mybookie.ini
+
+Next you need to add a virtualhost to your Apache config. You can either put this right in your httpd.conf or create a virtualhost for it.
+
+::
+
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    WSGIDaemonProcess pyramid user=ben group=ben threads=4 \
+        python-path=/home/user/bookie/lib/python2.6/site-packages
+    WSGIScriptAlias / /home/user/bookie/pyramid.wsgi
+
+    <Directory /home/user/bookie>
+        WSGIProcessGroup pyramid
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+A couple of things you need to check:
+-The python-path line matches the path to your virtualenv's site-packages.
+-The WSGIScriptAlias in the example serves your Bookie install at the server's root. You can change that if you wish.
+-The WSGIScriptAlias path to pyramid.wsgi is correct for your system.
+-The Directory path is correct for your system. It should point to your virtualenv's root.
+
+Finally, all you have to do is restart Apache and off you go!
+
+-On a Debian-based Linux (Ubuntu): /etc/init.d/apache2 restart
+-On other Linuxes: ?
+-On OSX: ?
+-On Windows: ?
+
 
