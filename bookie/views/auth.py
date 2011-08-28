@@ -53,7 +53,7 @@ def login(request):
             # We use the Primary Key as our identifier once someone has
             # authenticated rather than the username.  You can change what is
             # returned as the userid by altering what is passed to remember.
-            headers = remember(request, auth.id, max_age='86400')
+            headers = remember(request, auth.id, max_age=60*60*24*30)
             auth.last_login = datetime.now()
 
             # log the successful login
