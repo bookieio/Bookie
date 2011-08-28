@@ -74,6 +74,13 @@ ${password_reset(reset=False)}
      <div><a title="Bookmark with Bookie" href="javascript:(function() {
         location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())">Bookmark to Bookie</a></div>
 
+    <div style="padding-top: 1em;">
+        <a href="" id="show_bookmarklet" title="show bookmarklet code">Show
+        Bookmarklet code</a> <div>(Handy for Android and other browsers that can't
+                save a link direct to bookmark.)</div>
+        <br />
+        <textarea style="display: none; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea> 
+    </div>
     </p>
 
 

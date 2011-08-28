@@ -173,6 +173,7 @@ var bookie = (function ($b, $) {
         'init': function () {
             // we need to bind the api key show click
             $('#show_key').bind('click', $b.accounts.show_api_key);
+            $('#show_bookmarklet').bind('click', $b.accounts.show_bookmarklet);
             $b.accounts.passwordui.init();
             $b.accounts.updateui.init();
         },
@@ -195,6 +196,18 @@ var bookie = (function ($b, $) {
                         $key_container.show(400);
                     }
                 });
+            }
+        },
+
+        'show_bookmarklet': function (ev) {
+            var $b = $('#bookmarklet_text');
+            ev.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if($b.is(':visible')) {
+                $b.hide('fast');
+            } else {
+                $b.show(400);
             }
         },
 
