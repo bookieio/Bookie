@@ -46,12 +46,11 @@ Example cron jobs
     # retry error'd parsing at 1am on the 1st of each month
     0 1 1 * * /path/to/bookie/env/bin/python /path/to/Bookie/scripts/readability/existing.py --ini=myconfig.ini --retry-errors
 
-
 Backup your Bookie bookmarks
 -----------------------------
 There's a quick/dirty `sample script`_ you can use to backup your bookmarks. It
 just calls the `/export` url on your installation and creates a `.gz` backup
-file. 
+file.
 
 This obviously doesn't store things like the fulltext indexes and such. So if
 you are using the Readable versions you might want to keep a backup of your
@@ -65,3 +64,16 @@ A sample of cron'ing this to run at 6am every day would be:
 
 .. _Chrome Plugin: extensions.html
 .. _sample script: https://github.com/mitechie/Bookie/blob/develop/scripts/misc/backup.py
+
+Bookmarklet
+-----------
+To use the bookmarklet, log into your account page and drag the link at the
+bottom to your bookmark bar. In the Android browser, you can long-press on the
+link and bookmark it.
+
+After that, you can bookmark any page you're currently viewing by clicking on
+the bookmark in your browser. It will load the current url and page title into
+an add form on the website.
+
+Once you stored the bookmark with tags and description, you'll be redirected
+back to the page you were originally viewing.

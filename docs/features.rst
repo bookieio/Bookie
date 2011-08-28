@@ -28,6 +28,11 @@ Most of the details are available over in the extension_ docs. Make sure that
 after you install it, that you go into the options to configure it to talk to
 your specific Bookie installation.
 
+Bookmarklet
+-----------
+You can use a bookmarklet to save bookmarks from any other browser, including
+mobile browsers
+
 Fulltext indexing and seach
 ----------------------------
 When you load bookmarks into the system they are put into a fulltext index that

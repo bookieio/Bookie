@@ -29,6 +29,7 @@ Bookie Features
 - Open source!
 - Imports from Delicious.com and Google Bookmarks
 - Google Chrome extension
+- Bookmarklet for other browsers
 - Store page content and fulltext search
 - Support for Sqlite, MySQL, and Postgresql
 - *Disabled* Mobile view powered by JQuery Mobile
