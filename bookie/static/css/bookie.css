@@ -24,7 +24,7 @@ a {
   #readable_content h1 {
     border-bottom: 1px solid #333333; }
 @media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000384}}
-  #readable_content code {
+  #readable_content code, #readable_content pre {
     font-family: Courier New, Courier, monospaced; }
 @media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000388}}
   #readable_content a {
