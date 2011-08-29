@@ -58,8 +58,37 @@ body {
     @include cabin;
 }
 
+a {
+    color: $links;
+    text-decoration: none;
+}
+
 #body {
     margin: 1em;
+}
+
+#readable_content {
+    font-family: Garamond, serif;
+    font-size: 1.5em;
+    padding: 1em;
+    max-width: 40em;
+
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+    -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+
+    h1 {
+        border-bottom: 1px solid $darkgrey;
+    }
+
+    code {
+        font-family: Courier New, Courier, monospaced;
+    }
+
+    a {
+        color: lighten($links, 20%);
+        text-decoration: none;
+    }
 }
 
 .center {
@@ -478,3 +507,5 @@ fieldset {
         }
     }
 }
+
+
