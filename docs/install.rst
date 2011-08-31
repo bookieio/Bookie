@@ -56,7 +56,7 @@ Go to where you want the bookie source to live and install dependencies
 ::
 
     $ cd to/some/directory/
-    $ wget http://docs.bmark.us/bootstrap.py
+    $ wget http://files.bmark.us/bootstrap.py
     $ python bootstrap.py bookie
 
 

@@ -28,7 +28,8 @@ Installation
 - Chrome users can get it from the Gallery: http://goo.gl/NYinc
   *Hint* good reviews would be appreciated!
 - To get the development version of the extension (to use with the develop
-  branch) use the url: http://docs.bmark.us/bookie_chrome.crx
+  branch) use the url: http://files.bmark.us/chrome_ext.crx
+
 - Updates currently need to be done manually
 
 Setting up
