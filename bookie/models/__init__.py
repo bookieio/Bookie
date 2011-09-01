@@ -538,27 +538,6 @@ class BmarkMgr(object):
             qry = qry.outerjoin((readable, hashed.readable)).\
                 options(contains_eager(Bmark.hashed, hashed.readable, alias=readable))
 
-
-        # @todo remove this, we're just populating some test data
-        from bookie.models.fulltext import get_writer
-
-        NUM = 0
-
-        writer = get_writer()
-        for b in qry.all():
-            LOG.debug('WHOOSH')
-            r = b.hashed.readable
-            writer.add_document(
-                bid=unicode(b.bid),
-                description=b.description,
-                extended=b.extended,
-                tags=b.tag_str,
-                readable=r.content if r else u"")
-            NUM = NUM + 1
-            LOG.debug(NUM)
-        writer.commit()
-
-
         return qry.all()
 
     @staticmethod
