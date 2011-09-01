@@ -64,7 +64,7 @@ def run_whoosh_index(engine):
     meta = MetaData(engine)
 
     class BmarkSchema(SchemaClass):
-        bid = ID(stored=True)
+        bid = ID(stored=True, unique=True)
         description = TEXT
         extended = TEXT
         tags = KEYWORD
@@ -85,6 +85,10 @@ def run_whoosh_index(engine):
 
     bmarks = Table('bmarks', meta, autoload=True)
     readable = Table('readable', meta, autoload=True)
+
+    fulltext = Column('fulltext', UnicodeText())
+    create_column(fulltext, bmarks)
+
     b = select([bmarks])
     r = select([readable])
 
@@ -93,15 +97,21 @@ def run_whoosh_index(engine):
 
     ordered_r = dict([(r.hash_id, r) for r in all_r])
 
-    for b in all_b:
-        r = u' '.join(BeautifulSoup(ordered_r[b['hash_id']]['content']).findAll(text=True)) if (b['hash_id'] in ordered_r and ordered_r[b['hash_id']]['content'] is not None) else u''
+    def clean(content):
+        return u' '.join(BeautifulSoup(content).findAll(text=True))
 
-        writer.add_document(
+    for b in all_b:
+        if b['hash_id'] in ordered_r and ordered_r[b['hash_id']]['content'] is not None:
+            b['fulltext'] = clean(ordered_r[b['hash_id']]['content'])
+        else:
+            b['fulltext'] = u""
+
+        writer.update_document(
             bid=unicode(b['bid']),
             description=b['description'] if b['description'] else u"",
             extended=b['extended'] if b['extended'] else u"",
             tags=b['tag_str'] if b['tag_str'] else u"",
-            readable=r
+            readable=b['fulltext']
         )
     writer.commit()
 
@@ -117,6 +127,7 @@ def upgrade(migrate_engine):
 
     elif 'pg' in migrate_engine.dialect.driver.lower():
         drop_pgsql(migrate_engine)
+
 
     run_whoosh_index(migrate_engine)
 

@@ -26,7 +26,7 @@ INDEX_NAME = 'bookie_index'
 
 
 class BmarkSchema(SchemaClass):
-    bid = ID(stored=True)
+    bid = ID(stored=True, unique=True)
     description = TEXT
     extended = TEXT
     tags = KEYWORD

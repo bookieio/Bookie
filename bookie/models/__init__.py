@@ -1,6 +1,7 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
 
+from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 
 from datetime import datetime
@@ -33,6 +34,8 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
 
+from fulltext import get_writer
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -46,36 +49,6 @@ def initialize_sql(engine):
     """Called by the app on startup to setup bindings to the DB"""
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-
-    # only if we are on sqlite do we have this relation
-    if 'sqlite' in str(DBSession.bind):
-
-        if not hasattr(SqliteBmarkFT, 'bmark'):
-            Bmark.fulltext = relation(SqliteBmarkFT,
-                         backref='bmark',
-                         uselist=False,
-                         cascade="all, delete, delete-orphan",
-                         )
-
-        if not hasattr(SqliteContentFT, 'readable'):
-            Readable.fulltext = relation(SqliteContentFT,
-                         backref='readable',
-                         uselist=False,
-                         cascade="all, delete, delete-orphan",
-                         )
-
-        # this is purely to make queries easier. If I've searched the content,
-        # I want to get back to the hashed->bmark as quickly as possible. Since
-        # there's only one fulltext result for each hashed anyway, it's ok to
-        # join it directly without going through the Readable table object
-        if not hasattr(SqliteContentFT, 'hashed'):
-            Hashed.fulltext = relation(SqliteContentFT,
-                         backref='hashed',
-                         uselist=False,
-                         primaryjoin=Hashed.hash_id == SqliteContentFT.hash_id,
-                         foreign_keys=[SqliteContentFT.hash_id],
-                         cascade="all, delete, delete-orphan",
-                         )
 
 
 def todict(self):
@@ -267,50 +240,6 @@ class Tag(Base):
         self.name = tag_name
 
 
-class SqliteBmarkFT(Base):
-    """An SA model for the fulltext table used in sqlite"""
-    __tablename__ = "fulltext"
-
-    bid = Column(Integer,
-                    ForeignKey('bmarks.bid'),
-                    primary_key=True,)
-    description = Column(UnicodeText())
-    extended = Column(UnicodeText())
-    tag_string = Column(UnicodeText())
-
-    def __init__(self, bid, description, extended, tag_string):
-        """Expecting the properties to come from a Bmark instance
-
-        tag_string is expected to be a concat list of strings from
-        Bmark.tag_string()
-
-        """
-        self.bid = bid
-        self.description = description
-        self.extended = extended
-        self.tag_string = tag_string
-
-
-class SqliteContentFT(Base):
-    """An SA model for the fulltext readable content table"""
-    __tablename__ = "readable_fts"
-
-    hash_id = Column(Unicode(22),
-                    ForeignKey('readable.hash_id'),
-                    primary_key=True,)
-    content = Column(UnicodeText())
-
-    def __init__(self, hash_id, content):
-        """Expecting the properties to come from a Bmark instance
-
-        tag_string is expected to be a concat list of strings from
-        Bmark.tag_string()
-
-        """
-        self.hash_id = hash_id
-        self.content = content
-
-
 class BmarkFTSExtension(MapperExtension):
     """This is a mapper to handle inserting into fulltext index
 
@@ -320,34 +249,46 @@ class BmarkFTSExtension(MapperExtension):
     Other dbs need to have the concat tag_str populated to search against
 
     """
+    @classmethod
+    def _clean_content(cls, content):
+        return u' '.join(BeautifulSoup(content).findAll(text=True))
+
     def before_insert(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass
-        if 'sqlite' in str(DBSession.bind):
-            LOG.error('called before insert')
-            LOG.error(instance.__repr__())
-            instance.fulltext = SqliteBmarkFT(instance.bid,
-                                  instance.description,
-                                  instance.extended,
-                                  instance.tag_string())
-            instance.tag_str = instance.tag_string()
-        else:
-            instance.tag_str = instance.tag_string()
+        b = instance
+        b.tag_str = instance.tag_string()
+        b.fulltext = u""
+        writer = get_writer()
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=b.fulltext,
+        )
 
     def before_update(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass
-        if 'sqlite' in str(DBSession.bind):
-            LOG.error('called before update')
-            LOG.error(instance.__repr__())
+        instance.tag_str = instance.tag_string()
+        b = instance
 
-            instance.fulltext.bid = instance.bid
-            instance.fulltext.description = instance.description
-            instance.fulltext.extended = instance.extended
-            instance.fulltext.tag_str = instance.tag_string()
-            instance.tag_str = instance.tag_string()
+        fulltext = b.readable
+
+        if fulltext is not None and fulltext.content is not None:
+            b.fulltext = self._clean_content(b.fulltext.content)
         else:
-            instance.tag_str = instance.tag_string()
+            b.fulltext = u""
+
+        writer = get_writer()
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=b.fulltext,
+        )
 
 
 class ReadableFTSExtension(MapperExtension):
@@ -357,23 +298,39 @@ class ReadableFTSExtension(MapperExtension):
     into that fulltext index whenever we add/change a bookmark
 
     """
+    @classmethod
+    def _clean_content(cls, content):
+        return u' '.join(BeautifulSoup(content).findAll(text=True))
+
     def before_insert(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass
-        if 'sqlite' in str(DBSession.bind):
-            LOG.error('called before readable insert')
-            LOG.error(instance.__repr__())
-            instance.fulltext = SqliteContentFT(instance.hash_id,
-                                  instance.content,)
+        b = instance.bmark
+        b.fulltext = self._clean_content(instance.content)
+
+        writer = get_writer()
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=b.fulltext,
+        )
 
     def before_update(self, mapper, connection, instance):
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass
-        if 'sqlite' in str(DBSession.bind):
-            LOG.error('called before readable update')
-            LOG.error(instance.__repr__())
-            instance.fulltext.hash_id = instance.hash_id
-            instance.fulltext.content = instance.content
+        b = instance.bmark
+        b.fulltext = self._clean_content(instance.content)
+
+        writer = get_writer()
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=b.fulltext,
+        )
 
 
 class ReadableMgr(object):
@@ -418,12 +375,7 @@ class Hashed(Base):
     url = Column(UnicodeText)
     clicks = Column(Integer, default=0)
 
-    # we only store the readable content once so it's part of the hashed
-    # relation
-    readable = relation(Readable,
-                        backref="hashed",
-                        cascade="all, delete, delete-orphan",
-                        uselist=False)
+
 
     def __init__(self, url):
         """We'll auto hash the id for them and set this up"""
@@ -700,6 +652,11 @@ class Bmark(Base):
                       cascade="all, delete, delete-orphan",
                       single_parent=True,
                       )
+
+    readable = relation(Readable,
+                        backref="bmark",
+                        cascade="all, delete, delete-orphan",
+                        uselist=False)
 
     user = relation("User",
                     backref="bmark")
