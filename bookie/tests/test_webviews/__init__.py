@@ -26,9 +26,9 @@ class BookieViewsTest(unittest.TestCase):
         log.error('called to add bmark')
         bmark_us = Bmark('http://bmark.us',
                          username="admin",
-                         desc="Bookie Website",
-                         ext= "Bookie Documentation Home",
-                         tags = "bookmarks")
+                         desc=u"Bookie Website",
+                         ext=u"Bookie Documentation Home",
+                         tags = u"bookmarks")
 
         bmark_us.stored = datetime.now()
         bmark_us.updated = datetime.now()

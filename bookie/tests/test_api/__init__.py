@@ -323,10 +323,9 @@ class BookieAPITest(unittest.TestCase):
 
         # make sure we can decode the body
         bmark_list = json.loads(res.body)
-
         results = bmark_list['search_results']
         eq_(len(results), 1,
-                "We should have two results coming back: {0}".format(len(results)))
+                "We should have one result coming back: {0}".format(len(results)))
 
         bmark = results[0]
 

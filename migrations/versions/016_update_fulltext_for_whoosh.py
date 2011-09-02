@@ -1,5 +1,6 @@
 import os
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 from sqlalchemy import *
 from sqlalchemy.exc import ProgrammingError
 from migrate import *
@@ -86,8 +87,18 @@ def run_whoosh_index(engine):
     bmarks = Table('bmarks', meta, autoload=True)
     readable = Table('readable', meta, autoload=True)
 
-    fulltext = Column('fulltext', UnicodeText())
-    create_column(fulltext, bmarks)
+    bmark_readable = Table('bmark_readable', meta,
+        Column('bid', Integer, unique=True, index=True),
+        Column('hash_id', Unicode(22), index=True),
+        Column('content', UnicodeText),
+        Column('clean_content', UnicodeText),
+        Column('imported', DateTime, default=datetime.now),
+        Column('content_type', Unicode(255)),
+        Column('status_code', Integer),
+        Column('status_message', Unicode(255)),
+    )
+
+    bmark_readable.create()
 
     b = select([bmarks])
     r = select([readable])
@@ -95,25 +106,45 @@ def run_whoosh_index(engine):
     all_b = engine.execute(b)
     all_r = engine.execute(r)
 
-    ordered_r = dict([(r.hash_id, r) for r in all_r])
+    ord_r = dict([(r['hash_id'], r) for r in all_r])
+
+    ins = bmark_readable.insert()
 
     def clean(content):
         return u' '.join(BeautifulSoup(content).findAll(text=True))
 
     for b in all_b:
-        if b['hash_id'] in ordered_r and ordered_r[b['hash_id']]['content'] is not None:
-            b['fulltext'] = clean(ordered_r[b['hash_id']]['content'])
+        if b['hash_id'] in ord_r and ord_r[b['hash_id']]['content'] is not None:
+            fulltext = clean(ord_r[b['hash_id']]['content'])
         else:
-            b['fulltext'] = u""
+            fulltext = u""
+
+        if b['hash_id'] in ord_r:
+            r = ord_r[b['hash_id']]
+
+            bmark_r_data = {
+                    'bid': b['bid'],
+                    'hash_id': b['hash_id'],
+                    'content': r['content'],
+                    'clean_content': fulltext,
+                    'imported': r['imported'],
+                    'content_type': r['content_type'],
+                    'status_code': r['status_code'],
+                    'status_message': r['status_message']
+            }
+
+            engine.execute(ins, [bmark_r_data])
 
         writer.update_document(
             bid=unicode(b['bid']),
             description=b['description'] if b['description'] else u"",
             extended=b['extended'] if b['extended'] else u"",
             tags=b['tag_str'] if b['tag_str'] else u"",
-            readable=b['fulltext']
+            readable=fulltext,
         )
+
     writer.commit()
+    readable.drop()
 
 
 def upgrade(migrate_engine):

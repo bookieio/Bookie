@@ -65,8 +65,8 @@ def bmark_get(request):
         return_obj = dict(bookmark)
 
         if 'with_content' in params and params['with_content'] != 'false':
-            if bookmark.hashed.readable:
-                return_obj['readable'] = dict(bookmark.hashed.readable)
+            if bookmark.readable:
+                return_obj['readable'] = dict(bookmark.readable)
 
         return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
@@ -147,12 +147,6 @@ def bmark_add(request):
             else:
                 stored_time = None
 
-            # we want to store fulltext info so send that along to the
-            # import processor
-            conn_str = request.registry.settings.get('sqlalchemy.url',
-                                                     False)
-            fulltext = get_fulltext_handler(conn_str)
-
             # check to see if we know where this is coming from
             inserted_by = params.get('inserted_by', 'unknown_api')
 
@@ -162,7 +156,6 @@ def bmark_add(request):
                          params.get('extended', ''),
                          params.get('tags', ''),
                          dt=stored_time,
-                         fulltext=fulltext,
                          inserted_by=inserted_by,
                    )
 
@@ -176,11 +169,11 @@ def bmark_add(request):
             content.seek(0)
             parsed = ReadContent.parse(content, content_type="text/html")
 
-            mark.hashed.readable = Readable()
-            mark.hashed.readable.content = parsed.content
-            mark.hashed.readable.content_type = parsed.content_type
-            mark.hashed.readable.status_code = parsed.status
-            mark.hashed.readable.status_message = parsed.status_message
+            mark.readable = Readable()
+            mark.readable.content = parsed.content
+            mark.readable.content_type = parsed.content_type
+            mark.readable.status_code = parsed.status
+            mark.readable.status_message = parsed.status_message
 
         # we need to flush here for new tag ids, etc
         DBSession.flush()
@@ -273,7 +266,7 @@ def bmark_recent(request):
         return_obj['total_clicks'] = res.hashed.clicks
 
         if with_content:
-            return_obj['readable'] = dict(res.hashed.readable)
+            return_obj['readable'] = dict(res.readable)
 
         result_set.append(return_obj)
 

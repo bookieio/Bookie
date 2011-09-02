@@ -1,7 +1,6 @@
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
-from sqlalchemy import engine_from_config
 
 from bookie.lib.access import RequestWithUserAttribute
 from bookie.models import initialize_sql
@@ -24,8 +23,7 @@ class RootFactory(object):
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    initialize_sql(engine)
+    initialize_sql(settings)
 
     authn_policy = AuthTktAuthenticationPolicy(
                        settings.get('auth.secret'),

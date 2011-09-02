@@ -9,10 +9,11 @@ from unittest import TestCase
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Hashed
+from bookie.models import Readable
 from bookie.models import Tag
 from bookie.models import bmarks_tags
+from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
-from bookie.models.fulltext import SqliteFulltext
 
 API_KEY = None
 
@@ -40,6 +41,7 @@ class TestFulltext(TestCase):
         Bmark.query.delete()
         Tag.query.delete()
         Hashed.query.delete()
+        Readable.query.delete()
         session.execute(bmarks_tags.delete())
         session.flush()
         transaction.commit()
@@ -67,12 +69,10 @@ class TestFulltext(TestCase):
 
     def test_get_handler(self):
         """Verify we get the right type of full text store object"""
-        sqlite_str = "sqlite:///somedb.db"
+        handler = get_fulltext_handler("")
 
-        handler = get_fulltext_handler(sqlite_str)
-
-        ok_(isinstance(handler, SqliteFulltext),
-                "Should get a sqlite fulltext handler")
+        ok_(isinstance(handler, WhooshFulltext),
+                "Should get a whoosh fulltext by default")
 
     def test_sqlite_save(self):
         """Verify that if we store a bookmark we get the fulltext storage"""

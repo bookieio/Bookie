@@ -9,9 +9,8 @@ from pyramid import testing
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
 from bookie.models import Hashed
+from bookie.models import Readable
 from bookie.models import Tag, bmarks_tags
-from bookie.models import SqliteBmarkFT
-
 from bookie.tests import BOOKIE_TEST_INI
 
 GOOGLE_HASH = 'aa2239c17609b2'
@@ -35,9 +34,8 @@ class DelPostTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
 
-        if BOOKIE_TEST_INI == 'test.ini':
-            SqliteBmarkFT.query.delete()
         Bmark.query.delete()
+        Readable.query.delete()
         Tag.query.delete()
         Hashed.query.delete()
 

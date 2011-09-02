@@ -60,19 +60,12 @@ def posts_add(request):
             else:
                 stored_time = None
 
-            # we want to store fulltext info so send that along to the
-            # import processor
-            conn_str = request.registry.settings.get('sqlalchemy.url',
-                                                     False)
-            fulltext = get_fulltext_handler(conn_str)
-
             mark = BmarkMgr.store(params['url'],
                          request.user.username,
                          params.get('description', ''),
                          params.get('extended', ''),
                          params.get('tags', ''),
                          dt=stored_time,
-                         fulltext=fulltext,
                          inserted_by="DELICIOUS_API"
                    )
 
@@ -82,11 +75,11 @@ def posts_add(request):
             content.seek(0)
             parsed = ReadContent.parse(content, content_type="text/html")
 
-            mark.hashed.readable = Readable()
-            mark.hashed.readable.content = parsed.content
-            mark.hashed.readable.content_type = parsed.content_type
-            mark.hashed.readable.status_code = parsed.status
-            mark.hashed.readable.status_message = parsed.status_message
+            mark.readable = Readable()
+            mark.readable.content = parsed.content
+            mark.readable.content_type = parsed.content_type
+            mark.readable.status_code = parsed.status
+            mark.readable.status_message = parsed.status_message
 
         return '<result code="done" />'
     else:

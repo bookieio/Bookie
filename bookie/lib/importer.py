@@ -34,7 +34,7 @@ class Importer(object):
         """Meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
-    def save_bookmark(self, url, desc, ext, tags, dt=None, fulltext=None):
+    def save_bookmark(self, url, desc, ext, tags, dt=None):
         """Save the bookmark to the db
 
         :param url: bookmark url
@@ -42,7 +42,6 @@ class Importer(object):
         :param ext: extended description/notes
         :param tags: The string of tags to store with this bmark
         :param mark: Instance of Bmark that we're storing to db
-        :param fulltext: Fulltext handler instance used to store that info
 
         """
         BmarkMgr.store(url,
@@ -51,7 +50,6 @@ class Importer(object):
                        ext,
                        tags,
                        dt=dt,
-                       fulltext=fulltext,
                        inserted_by=IMPORTED)
 
 
@@ -97,7 +95,7 @@ class DelImporter(Importer):
         file_io.seek(0)
         return can_handle
 
-    def process(self, fulltext=None):
+    def process(self):
         """Given a file, process it"""
         soup = BeautifulSoup(self.file_handle)
 
@@ -115,8 +113,7 @@ class DelImporter(Importer):
                                link.text,
                                extended,
                                " ".join(link['tags'].split(',')),
-                               dt=add_date,
-                               fulltext=fulltext)
+                               dt=add_date)
 
 
 class GBookmarkImporter(Importer):
@@ -160,7 +157,7 @@ class GBookmarkImporter(Importer):
         file_io.seek(0)
         return can_handle
 
-    def process(self, fulltext=None):
+    def process(self):
         """Process an html google bookmarks export and import them into bookie
         The export format is a tag as a heading, with urls that have that tag
         under that heading. If a url has N tags, it will appear N times, once
@@ -216,5 +213,4 @@ class GBookmarkImporter(Importer):
                                metadata['description'],
                                metadata['extended'],
                                " ".join(metadata['tags']),
-                               dt=metadata['date_added'],
-                               fulltext=fulltext)
+                               dt=metadata['date_added'])

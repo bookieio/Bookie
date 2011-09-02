@@ -6,6 +6,8 @@ and API as we did in the importer
 """
 import logging
 import os
+import pyramid
+
 from sqlalchemy import or_
 from sqlalchemy import text
 from sqlalchemy.orm import aliased
@@ -22,7 +24,23 @@ from bookie.models import Bmark
 
 
 LOG = logging.getLogger(__name__)
-INDEX_NAME = 'bookie_index'
+INDEX_NAME = None
+INDEX_TYPE = None
+WIX = None
+
+
+def set_index(index_type, index_path):
+    global INDEX_NAME
+    global INDEX_TYPE
+    global WIX
+
+    INDEX_TYPE = index_type
+    INDEX_NAME = index_path
+    if not os.path.exists(INDEX_NAME):
+        os.mkdir(INDEX_NAME)
+        WIX = create_in(INDEX_NAME, BmarkSchema)
+    else:
+        WIX = open_dir(INDEX_NAME)
 
 
 class BmarkSchema(SchemaClass):
@@ -32,19 +50,15 @@ class BmarkSchema(SchemaClass):
     tags = KEYWORD
     readable = TEXT(analyzer=StemmingAnalyzer())
 
-if not os.path.exists(INDEX_NAME):
-    os.mkdir(INDEX_NAME)
-    WIX = create_in(INDEX_NAME, BmarkSchema)
-else:
-    WIX = open_dir(INDEX_NAME)
-
-
 def get_fulltext_handler(engine):
     """Based on the engine, figure out the type of fulltext interface"""
-    return WhooshFulltext()
+    global INDEX_TYPE
+    if INDEX_TYPE == 'whoosh':
+        return WhooshFulltext()
 
 
 def get_writer():
+    global WIX
     writer = WIX.writer()
     return writer
 
@@ -53,11 +67,13 @@ class WhooshFulltext(object):
     """Implement the fulltext api using whoosh as a storage backend
 
     """
+    global WIX
 
     def search(self, phrase, content=False, username=None, ct=10, offset=0):
         """Implement the search, returning a list of bookmarks"""
         with WIX.searcher() as search:
             fields = ['description', 'extended', 'tags']
+
             if content:
                 fields.append('readable')
 
@@ -68,13 +84,7 @@ class WhooshFulltext(object):
                                            group=qparser.OrGroup)
 
             qry = parser.parse(phrase)
-            LOG.debug(qry)
-
             res = search.search(qry, limit=None)
-            LOG.debug(res)
-            ids = [r['bid'] for r in res]
-            LOG.debug('ids')
-            LOG.debug(ids)
             qry = Bmark.query.filter(Bmark.bid.in_([r['bid'] for r in res]))
             qry = qry.options(joinedload('hashed'))
 
