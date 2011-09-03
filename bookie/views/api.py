@@ -414,8 +414,8 @@ def search_results(request):
     searcher = get_fulltext_handler(conn_str)
 
     # check if we have a page count submitted
-    page = rdict.get('page', None)
-    count = rdict.get('count', None)
+    page = rdict.get('page', 0)
+    count = rdict.get('count', 10)
 
     if 'username' in mdict:
         with_user = True
@@ -424,16 +424,9 @@ def search_results(request):
 
     res_list = searcher.search(phrase,
                                content=search_content,
-                               username=username if with_user else None)
-
-    # we're going to fake this since we dont' have a good way to do this query
-    # side
-    if page is not None and count is not None:
-        page = int(page)
-        count = int(count)
-        start = count * page
-        end = start + count
-        res_list = res_list[start:end]
+                               username=username if with_user else None,
+                               ct=count,
+                               page=page)
 
     constructed_results = []
     for res in res_list:
@@ -455,9 +448,6 @@ def search_results(request):
         'with_content': search_content,
         'username': username,
     }
-
-
-
 
 
 @view_config(route_name="api_tag_complete", renderer="json")

@@ -69,8 +69,10 @@ class WhooshFulltext(object):
     """
     global WIX
 
-    def search(self, phrase, content=False, username=None, ct=10, offset=0):
+    def search(self, phrase, content=False, username=None, ct=10, page=0):
         """Implement the search, returning a list of bookmarks"""
+        page = int(page) + 1
+
         with WIX.searcher() as search:
             fields = ['description', 'extended', 'tags']
 
@@ -80,11 +82,14 @@ class WhooshFulltext(object):
             LOG.debug(fields)
 
             parser = qparser.MultifieldParser(fields,
-                                           schema=WIX.schema,
-                                           group=qparser.OrGroup)
-
+                                               schema=WIX.schema,
+                                               group=qparser.OrGroup)
             qry = parser.parse(phrase)
-            res = search.search(qry, limit=None)
+
+            try:
+                res = search.search_page(qry, page, pagelen=int(ct))
+            except ValueError, exc:
+                raise(exc)
 
             qry = Bmark.query.filter(
                         Bmark.bid.in_([r['bid'] for r in res])

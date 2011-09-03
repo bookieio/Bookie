@@ -145,12 +145,12 @@
         else:
             show_next = False
 
-
         if url_params is None:
             url_params = {}
 
-        prev = page - 1
-        next = page + 1
+        page = int(page)
+        prev = int(page) - 1
+        next = int(page) + 1
     %>
 
     % if page != 0:

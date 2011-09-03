@@ -111,24 +111,15 @@ def search_results(request):
 
     # check if we have a page count submitted
     params = request.params
-    page = params.get('page', None)
-    count = params.get('count', None)
+    page = params.get('page', 0)
+    count = params.get('count', 50)
 
-    res_list = searcher.search(phrase, content=with_content, username=username)
-    print "RESLIST"
-    print res_list
-
-    # we're going to fake this since we dont' have a good way to do this query
-    # side
-    if page is not None and count is not None:
-        page = int(page)
-        count = int(count)
-        start = count * page
-        end = start + count
-        LOG.debug('counts')
-        LOG.debug(start)
-        LOG.debug(end)
-        res_list = res_list[start:end]
+    res_list = searcher.search(phrase,
+                               content=with_content,
+                               username=username,
+                               ct=count,
+                               page=page,
+                               )
 
     # if the route name is search_ajax we want a json response
     # else we just want to return the payload data to the mako template
@@ -148,7 +139,8 @@ def search_results(request):
     else:
         return {
             'search_results': res_list,
-            'result_count': len(res_list),
+            'count': len(res_list),
+            'max_count': 50,
             'phrase': phrase,
             'page': page,
             'with_content': with_content,
