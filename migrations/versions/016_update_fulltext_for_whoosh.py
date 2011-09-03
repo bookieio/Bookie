@@ -65,7 +65,7 @@ def run_whoosh_index(engine):
     meta = MetaData(engine)
 
     class BmarkSchema(SchemaClass):
-        bid = ID(stored=True, unique=True)
+        bid = ID(unique=True, stored=True)
         description = TEXT
         extended = TEXT
         tags = KEYWORD

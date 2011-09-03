@@ -62,7 +62,8 @@ class TestFulltext(TestCase):
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.post('/api/v1/admin/bmark',
-                               params=req_params)
+                                params=req_params)
+
         session.flush()
         transaction.commit()
         return res

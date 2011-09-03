@@ -115,6 +115,8 @@ def search_results(request):
     count = params.get('count', None)
 
     res_list = searcher.search(phrase, content=with_content, username=username)
+    print "RESLIST"
+    print res_list
 
     # we're going to fake this since we dont' have a good way to do this query
     # side

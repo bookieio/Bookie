@@ -255,8 +255,9 @@ class BmarkFTSExtension(MapperExtension):
     def _clean_content(cls, content):
         return u' '.join(BeautifulSoup(content).findAll(text=True))
 
-    def before_insert(self, mapper, connection, instance):
+    def after_insert(self, mapper, connection, instance):
         from fulltext import get_writer
+
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass
         b = instance
@@ -272,7 +273,8 @@ class BmarkFTSExtension(MapperExtension):
         )
         writer.commit()
 
-    def before_update(self, mapper, connection, instance):
+
+    def after_update(self, mapper, connection, instance):
         from fulltext import get_writer
         # we need to update the fulltext instance for this bmark instance
         # we only do this for sqlite connections, else just pass

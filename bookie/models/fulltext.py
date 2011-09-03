@@ -44,7 +44,7 @@ def set_index(index_type, index_path):
 
 
 class BmarkSchema(SchemaClass):
-    bid = ID(stored=True, unique=True)
+    bid = ID(unique=True, stored=True)
     description = TEXT
     extended = TEXT
     tags = KEYWORD
@@ -85,7 +85,10 @@ class WhooshFulltext(object):
 
             qry = parser.parse(phrase)
             res = search.search(qry, limit=None)
-            qry = Bmark.query.filter(Bmark.bid.in_([r['bid'] for r in res]))
+
+            qry = Bmark.query.filter(
+                        Bmark.bid.in_([r['bid'] for r in res])
+                  )
             qry = qry.options(joinedload('hashed'))
 
             return qry.all()

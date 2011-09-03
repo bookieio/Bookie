@@ -1,5 +1,6 @@
 import ConfigParser
 import os
+import shutil
 import transaction
 import unittest
 
@@ -85,6 +86,14 @@ def setup_db(settings):
 
     mig.version_control(sa_url, migrate_repository)
     mig.upgrade(sa_url, migrate_repository)
+
+    whoosh_idx = settings['fulltext.index']
+
+    try:
+        # if this is a sqlite db then try to take care of the db file
+        shutil.rmtree(whoosh_idx)
+    except:
+        pass
 
 
 setup_db(settings)
