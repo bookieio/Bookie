@@ -36,6 +36,10 @@ def set_index(index_type, index_path):
 
     INDEX_TYPE = index_type
     INDEX_NAME = index_path
+
+    cur_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    INDEX_NAME = os.path.join(cur_path, INDEX_NAME)
+
     if not os.path.exists(INDEX_NAME):
         os.mkdir(INDEX_NAME)
         WIX = create_in(INDEX_NAME, BmarkSchema)
