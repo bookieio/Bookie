@@ -248,7 +248,7 @@ def readable(request):
     username = rdict.get('username', None)
 
     if bid:
-        found = Hashed.query.get(bid)
+        found = BmarkMgr.get_by_hash(bid, username=username)
         if found:
             return {
                     'bmark': found,
