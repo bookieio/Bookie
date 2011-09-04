@@ -17,6 +17,15 @@ LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
 
+@view_config(route_name="bmark_recent_js", renderer="/bmark/jsui.mako")
+def recent_js(request):
+    """Testing a JS driven ui with backbone/etc"""
+    ret = {
+    }
+
+    return ret
+
+
 @view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
 @view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
 @view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")

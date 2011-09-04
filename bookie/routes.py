@@ -18,6 +18,7 @@ def build_routes(config):
 
     # bmark routes
     config.add_route("bmark_recent", "recent")
+    config.add_route("bmark_recent_js", "recent_js")
     config.add_route("bmark_recent_tags", "recent/*tags")
 
     config.add_route("bmark_popular", "popular")
