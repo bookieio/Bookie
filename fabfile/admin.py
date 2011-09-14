@@ -19,10 +19,7 @@ def new_user(username, email):
 
     import transaction
     from bookie.models import initialize_sql
-    from sqlalchemy import create_engine
-
-    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
-    initialize_sql(engine)
+    initialize_sql(dict(env.ini.items('app:bookie')))
 
     from bookie.models import DBSession
     from bookie.models.auth import get_random_word, User
@@ -54,10 +51,7 @@ def reset_password(username, password):
 
     import transaction
     from bookie.models import initialize_sql
-    from sqlalchemy import create_engine
-
-    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
-    initialize_sql(engine)
+    initialize_sql(dict(env.ini.items('app:bookie')))
 
     from bookie.models import DBSession
     from bookie.models.auth import UserMgr
