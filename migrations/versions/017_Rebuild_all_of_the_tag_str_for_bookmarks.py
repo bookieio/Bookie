@@ -17,10 +17,13 @@ def upgrade(migrate_engine):
 
     summary = defaultdict(list)
     for b in all_b:
+        print dict(b)
+        print "\n"
         summary[b['bid']].append(b['name'])
 
     for key, tags in summary.items():
-        engine.execute(bmarks.update().values(tag_str=" ".join(tags)))
+        print key, tags
+        engine.execute(bmarks.update().values(tag_str=" ".join(tags)).where(bmarks.c.bid==key))
 
 
 def downgrade(migrate_engine):
