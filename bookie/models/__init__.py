@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from sqlalchemy import engine_from_config
+from sqlalchemy import event
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
@@ -56,6 +57,12 @@ def initialize_sql(settings):
     ft.set_index(settings.get('fulltext.engine'),
                  settings.get('fulltext.index'))
 
+
+    # setup the User relation, we've got import race conditions, ugh
+    from bookie.models.auth import User
+    if not hasattr(Bmark, 'user'):
+        Bmark.user = relation(User,
+                              backref="bmark")
 
 def todict(self):
     """Method to turn an SA instance into a dict so we can output to json"""
@@ -242,59 +249,51 @@ class Tag(Base):
         self.name = tag_name
 
 
-class BmarkFTSExtension(MapperExtension):
-    """This is a mapper to handle inserting into fulltext index
+class ReadableMgr(object):
+    """Handle non-instance model issues for readable"""
+    pass
 
-    Since the sqlite fulltext is a separate table, we need to insert/update
-    into that fulltext index whenever we add/change a bookmark
 
-    Other dbs need to have the concat tag_str populated to search against
+class Readable(Base):
+    """Handle the storing of the readable version of the page content"""
+    __tablename__ = 'bmark_readable'
 
-    """
-    @classmethod
-    def _clean_content(cls, content):
+    bid = Column(Integer,
+                     ForeignKey('bmarks.bid'),
+                     primary_key=True)
+    hash_id = Column(Unicode(22),
+                     ForeignKey('bmarks.hash_id'),
+                     index=True)
+    content = Column(UnicodeText)
+    clean_content = Column(UnicodeText)
+    imported = Column(DateTime, default=datetime.now)
+    content_type = Column(Unicode(255))
+    status_code = Column(Integer)
+    status_message = Column(Unicode(255))
+
+
+def sync_readable_content(mapper, connection, target):
+    def _clean_content(content):
         return u' '.join(BeautifulSoup(content).findAll(text=True))
 
-    def after_insert(self, mapper, connection, instance):
-        from fulltext import get_writer
+    from fulltext import get_writer
+    # we need to update the fulltext instance for this bmark instance
+    # we only do this for sqlite connections, else just pass
+    target.clean_content = _clean_content(target.content)
+    b = target.bmark
 
-        # we need to update the fulltext instance for this bmark instance
-        # we only do this for sqlite connections, else just pass
-        b = instance
-        b.tag_str = instance.tag_string()
+    writer = get_writer()
+    writer.update_document(
+        bid=unicode(b.bid),
+        description=b.description if b.description else u"",
+        extended=b.extended if b.extended else u"",
+        tags=b.tag_str if b.tag_str else u"",
+        readable=target.clean_content,
+    )
+    writer.commit()
 
-        writer = get_writer()
-        writer.update_document(
-            bid=unicode(b.bid),
-            description=b.description if b.description else u"",
-            extended=b.extended if b.extended else u"",
-            tags=b.tag_str if b.tag_str else u"",
-            readable=u"",
-        )
-        writer.commit()
-
-
-    def after_update(self, mapper, connection, instance):
-        from fulltext import get_writer
-        # we need to update the fulltext instance for this bmark instance
-        # we only do this for sqlite connections, else just pass
-        instance.tag_str = instance.tag_string()
-        b = instance
-
-        if b.readable:
-            fulltext = b.readable.clean_content
-        else:
-            fulltext = u""
-
-        writer = get_writer()
-        writer.update_document(
-            bid=unicode(b.bid),
-            description=b.description if b.description else u"",
-            extended=b.extended if b.extended else u"",
-            tags=b.tag_str if b.tag_str else u"",
-            readable=fulltext,
-        )
-        writer.commit()
+event.listen(Readable, 'after_insert', sync_readable_content)
+event.listen(Readable, 'after_update', sync_readable_content)
 
 
 class ReadableFTSExtension(MapperExtension):
@@ -343,32 +342,6 @@ class ReadableFTSExtension(MapperExtension):
         writer.commit()
 
 
-class ReadableMgr(object):
-    """Handle non-instance model issues for readable"""
-    pass
-
-
-class Readable(Base):
-    """Handle the storing of the readable version of the page content"""
-    __tablename__ = 'bmark_readable'
-    __mapper_args__ = {
-        'extension': ReadableFTSExtension()
-    }
-
-    bid = Column(Integer,
-                     ForeignKey('bmarks.bid'),
-                     primary_key=True)
-    hash_id = Column(Unicode(22),
-                     ForeignKey('bmarks.hash_id'),
-                     index=True)
-    content = Column(UnicodeText)
-    clean_content = Column(UnicodeText)
-    imported = Column(DateTime, default=datetime.now)
-    content_type = Column(Unicode(255))
-    status_code = Column(Integer)
-    status_message = Column(Unicode(255))
-
-
 class HashedMgr(object):
     """Manage non-instance methods of Hashed objects"""
     @staticmethod
@@ -388,8 +361,6 @@ class Hashed(Base):
     hash_id = Column(Unicode(22), primary_key=True)
     url = Column(UnicodeText)
     clicks = Column(Integer, default=0)
-
-
 
     def __init__(self, url):
         """We'll auto hash the id for them and set this up"""
@@ -620,9 +591,6 @@ class BmarkTools(object):
 class Bmark(Base):
     """Basic bookmark table object"""
     __tablename__ = "bmarks"
-    __mapper_args__ = {
-        'extension': BmarkFTSExtension()
-    }
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
     hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
@@ -662,9 +630,6 @@ class Bmark(Base):
                         primaryjoin="Readable.bid == Bmark.bid",
                         uselist=False)
 
-    user = relation("User",
-                    backref="bmark")
-
     def __init__(self, url, username, desc=None, ext=None, tags=None):
         """Create a new bmark instance
 
@@ -703,3 +668,33 @@ class Bmark(Base):
     def update_tags(self, tag_string):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
+
+
+def bmark_fulltext_tag_str_update(mapper, connection, target):
+    """Update things before insert/update for fulltext needs"""
+    target.tag_str = target.tag_string()
+
+event.listen(Bmark, 'before_insert', bmark_fulltext_tag_str_update)
+event.listen(Bmark, 'before_update', bmark_fulltext_tag_str_update)
+
+
+def bmark_fulltext_insert_update(mapper, connection, target):
+    """Update things before insert/update for the fulltext needs
+
+    """
+    from fulltext import get_writer
+
+    b = target
+
+    writer = get_writer()
+    writer.update_document(
+        bid=unicode(b.bid),
+        description=b.description if b.description else u"",
+        extended=b.extended if b.extended else u"",
+        tags=b.tag_str if b.tag_str else u"",
+        readable=u"",
+    )
+    writer.commit()
+
+event.listen(Bmark, 'after_insert', bmark_fulltext_insert_update)
+event.listen(Bmark, 'after_update', bmark_fulltext_insert_update)

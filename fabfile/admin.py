@@ -19,7 +19,7 @@ def new_user(username, email):
 
     import transaction
     from bookie.models import initialize_sql
-    initialize_sql(dict(env.ini.items('app:bookie')))
+    initialize_sql(dict(env.ini.items('app:main')))
 
     from bookie.models import DBSession
     from bookie.models.auth import get_random_word, User
@@ -51,7 +51,7 @@ def reset_password(username, password):
 
     import transaction
     from bookie.models import initialize_sql
-    initialize_sql(dict(env.ini.items('app:bookie')))
+    initialize_sql(dict(env.ini.items('app:main')))
 
     from bookie.models import DBSession
     from bookie.models.auth import UserMgr

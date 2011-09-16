@@ -30,7 +30,7 @@ def db_init():
     parse_ini(env["ini_file"])
 
     local("migrate version_control --url={0} --repository={1}".format(
-        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        env.ini.get('app:main', 'sqlalchemy.url'),
         'migrations'))
 
 
@@ -51,7 +51,7 @@ def db_add(desc):
     parse_ini(env["ini_file"])
 
     local('migrate script --url={0} --repository={1} "{2}"'.format(
-        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        env.ini.get('app:main', 'sqlalchemy.url'),
         'migrations',
         desc,))
 
@@ -76,7 +76,7 @@ def db_test():
     parse_ini(env["ini_file"])
 
     local('migrate test --url={0} --repository={1} '.format(
-        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        env.ini.get('app:main', 'sqlalchemy.url'),
         'migrations',))
 
 
@@ -98,7 +98,7 @@ def db_upgrade():
     parse_ini(env["ini_file"])
 
     local('migrate upgrade --url={0} --repository={1} '.format(
-        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        env.ini.get('app:main', 'sqlalchemy.url'),
         'migrations',))
 
 
@@ -122,7 +122,7 @@ def db_downgrade(db_version):
     parse_ini(env["ini_file"])
 
     local('migrate downgrade --url={0} --repository={1} {2} '.format(
-        env.ini.get('app:bookie', 'sqlalchemy.url'),
+        env.ini.get('app:main', 'sqlalchemy.url'),
         'migrations',
         db_version,))
 
@@ -140,7 +140,7 @@ def db_driver():
     }
 
     parse_ini(env["ini_file"])
-    selected_db = env.ini.get('app:bookie', 'sqlalchemy.url')
+    selected_db = env.ini.get('app:main', 'sqlalchemy.url')
 
     for key, package in drivers.iteritems():
         if key in selected_db and package is not False:
@@ -176,7 +176,8 @@ def db_init_bookmark():
     from bookie.models import initialize_sql
     from sqlalchemy import create_engine
 
-    engine = create_engine(env.ini.get('app:bookie', 'sqlalchemy.url'))
+
+    engine = create_engine(env.ini.get('app:main', 'sqlalchemy.url'))
     initialize_sql(engine)
 
     from bookie.models import DBSession

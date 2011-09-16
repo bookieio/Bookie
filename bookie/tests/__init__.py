@@ -25,7 +25,7 @@ if not test_ini:
     test_ini = 'test.ini'
 
 ini.read(test_ini)
-settings = dict(ini.items('app:bookie'))
+settings = dict(ini.items('app:main'))
 
 BOOKIE_TEST_INI = test_ini
 
