@@ -160,7 +160,7 @@ var bookie = (function ($b, $) {
 
             email = $('#email').val();
 
-            $b.api.reactivate(email, {
+            $b.api.reactivate({'email': email}, {
                 'success': function (data)  {
                     $b.login.clear();
                     $b.login.message(data.message, true);
