@@ -336,7 +336,8 @@ var bookie = (function (opts) {
                 url: url,
                 type: 'post',
                 data: $.extend(data, options),
-                success: callbacks.success
+                success: callbacks.success,
+                error: callbacks.error
             };
 
         $b.api._request(opts);
