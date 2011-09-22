@@ -361,7 +361,8 @@ var bookie = (function (opts) {
                 url: url,
                 type: 'delete',
                 data: $.extend(data, options),
-                success: callbacks.success
+                success: callbacks.success,
+                error: callbacks.error
             };
 
         $b.api._request(opts);
