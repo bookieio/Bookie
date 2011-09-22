@@ -360,7 +360,7 @@ var bookie = (function (opts) {
             },
             opts = {
                 url: url,
-                type: 'delete',
+                type: 'get',
                 data: $.extend(data, options),
                 success: callbacks.success,
                 error: callbacks.error
