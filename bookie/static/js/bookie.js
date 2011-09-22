@@ -350,7 +350,11 @@ var bookie = (function ($b, $) {
                 {
                     'success': function (data) {
                         $b.reset.message(data.message, true);
-                     }
+                     },
+                    'error': function (data, error_msg) {
+                        console.log(data);
+                        console.log(error_msg);
+                    }
                 }
             );
         }

@@ -188,12 +188,11 @@ var bookie = (function (opts) {
      * Perform a search via the json api
      *
      * @param terms is an array of search terms
-     * @param with_content is a flag if we want to search fulltext content
-     * @param pager is a pager instances with the page/count params
+     * @param options do you want to search content, count/page info
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.search = function (terms, options, with_content, pager, callbacks) {
+    $b.api.search = function (terms, options, callbacks) {
         // we need to get the list of recent from the api
         var url_terms = terms.join("/"),
             url = "/api/v1/%s/bmarks/search/" + url_terms,
