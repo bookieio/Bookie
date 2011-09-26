@@ -94,7 +94,7 @@ def build_routes(config):
 
     config.add_route("api_user_suspend_remove",
                      "api/v1/suspend",
-                     request_method="GET")
+                     request_method="DELETE")
     config.add_route("api_user_suspend",
                      "api/v1/suspend",
                      request_method="POST")
