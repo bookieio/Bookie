@@ -361,7 +361,7 @@ var bookie = (function (opts) {
             params =  $.param($.extend(data, options)),
             opts = {
                 url: url + "?" + params,
-                type: 'get',
+                type: 'delete',
                 success: callbacks.success,
                 error: callbacks.error
             };
