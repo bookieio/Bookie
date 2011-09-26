@@ -358,10 +358,10 @@ var bookie = (function (opts) {
                 'username': "",
                 'password': ""
             },
+            params =  $.param($.extend(data, options)),
             opts = {
-                url: url,
+                url: url + "?" + params,
                 type: 'get',
-                data: $.extend(data, options),
                 success: callbacks.success,
                 error: callbacks.error
             };
