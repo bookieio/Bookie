@@ -660,6 +660,11 @@ def account_activate(request):
     activation = params.get('code', None)
     password = params.get('password', None)
 
+    LOG.debug("PARAMS")
+    LOG.debug(dict(params))
+    LOG.debug(dict(request.params))
+    LOG.debug(password)
+
     if not UserMgr.acceptable_password(password):
         request.response.status_int = 406
         return {

@@ -116,41 +116,41 @@ def popular(request):
            }
 
 
-@view_config(route_name="bmark_delete")
-def delete(request):
-    """Remove the bookmark in question"""
-    rdict = request.POST
+# @view_config(route_name="bmark_delete")
+# def delete(request):
+#     """Remove the bookmark in question"""
+#     rdict = request.POST
+# 
+#     # make sure we have an id value
+#     bid = int(rdict.get('bid', 0))
+# 
+#     if bid:
+#         found = Bmark.query.get(bid)
+# 
+#         if found:
+#             DBSession.delete(found)
+#             return HTTPFound(location=request.route_url('bmark_recent'))
+# 
+#     return HTTPNotFound()
+# 
 
-    # make sure we have an id value
-    bid = int(rdict.get('bid', 0))
-
-    if bid:
-        found = Bmark.query.get(bid)
-
-        if found:
-            DBSession.delete(found)
-            return HTTPFound(location=request.route_url('bmark_recent'))
-
-    return HTTPNotFound()
-
-
-@view_config(route_name="bmark_confirm_delete",
-             renderer="/bmark/confirm_delete.mako")
-def confirm_delete(request):
-    """Confirm deletion of bookmark"""
-    rdict = request.matchdict
-    bid = int(rdict.get('bid', 0))
-    if bid:
-        found = Bmark.query.get(bid)
-
-    if not found:
-        return HTTPNotFound()
-
-    return {
-            'bid': bid,
-            'bmark_description': found.description
-           }
-
+# @view_config(route_name="bmark_confirm_delete",
+#              renderer="/bmark/confirm_delete.mako")
+# def confirm_delete(request):
+#     """Confirm deletion of bookmark"""
+#     rdict = request.matchdict
+#     bid = int(rdict.get('bid', 0))
+#     if bid:
+#         found = Bmark.query.get(bid)
+# 
+#     if not found:
+#         return HTTPNotFound()
+# 
+#     return {
+#             'bid': bid,
+#             'bmark_description': found.description
+#            }
+# 
 
 @view_config(route_name="user_bmark_edit", renderer="/bmark/edit.mako")
 @view_config(route_name="user_bmark_new", renderer="/bmark/edit.mako")
@@ -257,7 +257,7 @@ def readable(request):
     username = rdict.get('username', None)
 
     if bid:
-        found = Hashed.query.get(bid)
+        found = BmarkMgr.get_by_hash(bid, username=username)
         if found:
             return {
                     'bmark': found,

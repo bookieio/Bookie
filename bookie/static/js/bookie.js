@@ -160,10 +160,14 @@ var bookie = (function ($b, $) {
 
             email = $('#email').val();
 
-            $b.api.reactivate(email, {
+            $b.api.reactivate({'email': email}, {
                 'success': function (data)  {
                     $b.login.clear();
                     $b.login.message(data.message, true);
+                }, 
+                'error': function (data, error_string) {
+                    console.log(data);
+                    console.log(error_string);
                 }
             });
         }
@@ -228,7 +232,11 @@ var bookie = (function ($b, $) {
                     {
                         'success': function (data) {
                             $b.accounts.updateui.message("Account updated", true);
-                         }
+                         },
+                        'error': function (data, data_msg) {
+                            console.log(data);
+                            console.log(data_msg);
+                        }
                     });
             },
 
@@ -350,7 +358,11 @@ var bookie = (function ($b, $) {
                 {
                     'success': function (data) {
                         $b.reset.message(data.message, true);
-                     }
+                     },
+                    'error': function (data, error_msg) {
+                        console.log(data);
+                        console.log(error_msg);
+                    }
                 }
             );
         }

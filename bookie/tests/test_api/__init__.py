@@ -128,6 +128,9 @@ class BookieAPITest(unittest.TestCase):
         ok_(u'readable' not in bmark,
             "We should not have readable content")
 
+        eq_(u'python search', bmark[u'tag_str'],
+                "tag_str should be populated: " + str(dict(bmark)))
+
         # to get readble content we need to pass the flash with_content
         res = self.testapp.get('/api/v1/admin/bmark/{0}?api_key={1}&with_content=true'.format(
                                GOOGLE_HASH,

@@ -178,6 +178,9 @@ class UserMgr(object):
         Basically not empty, has more than 3 chars...
 
         """
+        LOG.debug("PASS")
+        LOG.debug(password)
+        LOG.debug(len(password))
         if password is None:
             return False
 

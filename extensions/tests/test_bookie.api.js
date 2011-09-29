@@ -1,42 +1,4 @@
 // helper we'll use over and over in tests
-var TEST_HASH = 'd7148c0445ff22',
-    FAKE_URL = '127.0.0.1:6543',
-    USERNAME = 'admin',
-    API_KEY = 'test';
-
-
-$.mockjax({
-    url: _.sprintf("%s/api/v1/%s/bmark/%s", FAKE_URL, USERNAME, TEST_HASH),
-    responseTime: 0,
-    responseText: {
-            "bmark": {
-                "updated": "2011-06-04 21:21:40",
-                "extended": "",
-                "description": "s3cp.py \u2014 Gist",
-                "tags": [{"tid": 7289, "name": "!toread"}],
-                "bid": 16715,
-                "readable": {"content": "content"},
-                "stored": "2011-06-01 21:49:57",
-                "tag_str": null,
-                "clicks": 3,
-                "hash_id": "d7148c0445ff22"
-            }
-    }
-});
-
-
-$.mockjax({
-    url: _.sprintf("%s/api/v1/%s/bmark/blah", FAKE_URL, USERNAME),
-    responseTime: 0,
-    responseText: {
-        "message": "Bookmark for hash id blah not found",
-        "payload": {},
-        "success": false
-    }
-});
-
-
-
 var API_URL = 'http://dev.bmark.us',
     USERNAME = 'admin',
     API_KEY = 'd05ed874d34b',
@@ -51,6 +13,12 @@ var API_URL = 'http://dev.bmark.us',
         start();
     };
 
+
+var dump = function (obj) {
+    _.map(obj, function(val, key) {
+                    console.log(key + ": " + val);
+    });
+};
 
 /**
  * Verify we can fetch real bookmark data from the live dev testing urls
@@ -76,6 +44,7 @@ test('live.bookmark', function () {
                         'error': FAILED
     });
 });
+
 
 /**
  * Test we get readable content
@@ -220,7 +189,7 @@ test('live.add', function () {
  *
  */
 test('live.remove', function () {
-    expect(1)
+    expect(1);
 
     stop();
     bookie.api.init(API_URL, USERNAME, API_KEY);
@@ -233,4 +202,33 @@ test('live.remove', function () {
         },
         'error': FAILED
     });
+});
+
+/**
+ * Search bookmarks
+ *
+ */
+test('live.search', function () {
+    expect(1);
+    stop();
+    bookie.api.init(API_URL, USERNAME, API_KEY);
+
+    bookie.api.search(["linux"], {}, {
+        'success': function (data) {
+            console.log('live.search success');
+            dump(data);
+
+            console.log(_.isEqual(data.count, 10));
+
+            ok(_.isEqual(data.count, 10),
+                "Should have 10 results: " + data.count);
+            start();
+        },
+        'complete': function (data) {
+            // nothing to see here
+            console.log('live.search complete');
+        },
+        'error': FAILED
+    });
+
 });

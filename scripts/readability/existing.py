@@ -82,7 +82,7 @@ if __name__ == "__main__":
         ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)
         ini.readfp(open(ini_path))
 
-        db_url = ini.get('app:bookie', 'sqlalchemy.url')
+        db_url = ini.get('app:main', 'sqlalchemy.url')
         engine = create_engine(db_url, echo=False)
         initialize_sql(engine)
 
