@@ -10,11 +10,28 @@
 var Bmark = Backbone.Model.extend({
 
     initialize: function() {
-
+        this.set({'dateinfo': this._dateinfo()});
+        this.set({'prettystored': this._prettystored()});
     },
 
     allowedToEdit: function(account) {
         return true;
+    },
+
+    _dateinfo: function() {
+        var t = new Date(this.get('stored'));
+        return t.getMonth() + "/" + t.getDate();
+    },
+
+    /**
+     * Builda date string of a pretty format
+     * %m/%d/%Y %H:%M
+     *
+     */
+    _prettystored: function () {
+        var t = new Date(this.get('stored'));
+        return t.getMonth() + "/" + t.getDate() + "/" + t.getFullYear() + " " +
+               t.getHours() + ":" + t.getMinutes();
     }
 
 });
@@ -33,13 +50,11 @@ var BmarkList = Backbone.Collection.extend({
  */
 var BmarkRow = Backbone.View.extend({
 
-    el: '.data_list',
+    tagName: 'div',
+    className: 'bmark',
+    parent: '.data_list',
 
     initialize: function(model) {
-        console.log('created row');
-
-        this.model = model;
-        console.log(this.model);
         this.render();
     },
 
@@ -50,20 +65,16 @@ var BmarkRow = Backbone.View.extend({
     },
 
     render: function() {
-        console.log("render");
-
         // Compile the template using underscore
-        console.log(this.model.toJSON());
-   		var template = _.template($("#bmark_row").html(), this.model.toJSON());
+        var template = _.template($("#bmark_row").html(), this.model.toJSON());
 
-   		// Load the compiled HTML into the Backbone "el"
-        $(this.el).append(template);
-
+        // Load the compiled HTML into the Backbone "el"
+        //     var template = $("#category_tpl").tmpl(this.model.toJSON());
+        $(this.el).html(template).attr('id', this.model.get('hash_id'));
+        $(this.parent).append(this.el);
     }
 
 });
-
-
 
 
 init = function () {
@@ -72,10 +83,9 @@ init = function () {
         'success': function (data) {
             model_list = [];
             _.each(data.bmarks, function (d) {
-                var m = new Bmark();
-                model_list.push(m.set(d));
-
-                var view = new BmarkRow(m);
+                var m = new Bmark(d);
+                model_list.push(m);
+                var view = new BmarkRow({'model': m});
             });
 
             console.log(model_list);

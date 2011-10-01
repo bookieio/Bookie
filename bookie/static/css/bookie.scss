@@ -313,7 +313,26 @@ fieldset {
     }
 
     .bmark {
-        padding: .2em;
+        border-top: 1px solid #CCC;
+        padding: .2em .2em 1em .2em;
+
+        .tags {
+            float: right;
+        }
+
+        .dateinfo {
+            clear: right;
+            float: right;
+
+        }
+
+        .actions {
+            margin: .2em 0;
+
+            .button {
+                font-size: smaller;
+            }
+        }
     }
 }
 
@@ -398,6 +417,11 @@ fieldset {
             display: inline-block;
         }
     }
+}
+
+.dateinfo {
+    color: lighten($darkgrey, 25%);
+    font-size: .8em;
 }
 
 .note {
