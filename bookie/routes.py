@@ -27,6 +27,7 @@ def build_routes(config):
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
+    config.add_route("user_bmark_recent_js", "{username}/recent_js")
     config.add_route("user_bmark_recent_tags", "{username}/recent/*tags")
 
     config.add_route("user_bmark_popular", "{username}/popular")

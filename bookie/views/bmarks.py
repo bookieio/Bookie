@@ -18,9 +18,24 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="bmark_recent_js", renderer="/bmark/jsui.mako")
+@view_config(route_name="user_bmark_recent_js", renderer="/bmark/jsui.mako")
 def recent_js(request):
     """Testing a JS driven ui with backbone/etc"""
+    rdict = request.matchdict
+
+    # check for auth related stuff
+    # are we looking for a specific user
+    username = rdict.get('username', None)
+
+    # do we have any tags to filter upon
+    tags = rdict.get('tags', None)
+
+    if isinstance(tags, str):
+        tags = [tags]
+
     ret = {
+         'username': username,
+         'tags': tags,
     }
 
     return ret
@@ -120,19 +135,19 @@ def popular(request):
 # def delete(request):
 #     """Remove the bookmark in question"""
 #     rdict = request.POST
-# 
+#
 #     # make sure we have an id value
 #     bid = int(rdict.get('bid', 0))
-# 
+#
 #     if bid:
 #         found = Bmark.query.get(bid)
-# 
+#
 #         if found:
 #             DBSession.delete(found)
 #             return HTTPFound(location=request.route_url('bmark_recent'))
-# 
+#
 #     return HTTPNotFound()
-# 
+#
 
 # @view_config(route_name="bmark_confirm_delete",
 #              renderer="/bmark/confirm_delete.mako")
@@ -142,15 +157,15 @@ def popular(request):
 #     bid = int(rdict.get('bid', 0))
 #     if bid:
 #         found = Bmark.query.get(bid)
-# 
+#
 #     if not found:
 #         return HTTPNotFound()
-# 
+#
 #     return {
 #             'bid': bid,
 #             'bmark_description': found.description
 #            }
-# 
+#
 
 @view_config(route_name="user_bmark_edit", renderer="/bmark/edit.mako")
 @view_config(route_name="user_bmark_new", renderer="/bmark/edit.mako")
@@ -240,7 +255,7 @@ def edit_error(request):
             bmark.update_tags(post['tags'])
 
         # if this is a new bookmark from a url, offer to go back to that url
-        # for the user. 
+        # for the user.
         if 'go_back' in params and params['comes_from'] != "":
             return HTTPFound(location=params['comes_from'])
         else:

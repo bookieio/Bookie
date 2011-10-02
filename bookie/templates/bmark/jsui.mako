@@ -1,7 +1,7 @@
 <%inherit file="/main_wrap.mako" />
+<%namespace file="func.mako" import="bmarknextprev, tag_filter"/>
 <%def name="title()">Recent JS Bookmarks</%def>
 
-<h1></h1>
 
 <!-- Show the tag filter ui -->
 <%
@@ -14,6 +14,18 @@
         url = 'user_' + url
 
 %>
+<div class="page_info">Showing <span class="count"></span> bookmarks</div>
+${tag_filter(url, tags=tags, username=username)}
+
+<div class="buttons" style="float: right;">
+    ${bmarknextprev(0, 10, 10, url, tags=tags, username=username)}
+</div>
+<div class="buttons">
+    % if username is not None:
+       <a href="${request.route_url('user_bmark_new', username=username)}" class="button">+ Add</a>
+    % endif
+</div>
+
 <div class="data_list">
 </div>
 
@@ -30,6 +42,21 @@
         ${'<% }); %>'|n}
     </div>
 
+    <div class="actions" style="width: 2em; float: left;">
+        <span class="item">
+            <a href="/bmark/readable/${'<%= hash_id %>'|n}"
+               title="Readable"
+            class="button">R</a>
+        </span>
+        % if username is not None:
+            <span class="item">
+                <a href="/${username}/edit/${'<%= hash_id %>'|n}"
+                   title="Edit"
+                class="button">E</a>
+            </span>
+        % endif
+    </div>
+
     <div class="description">
             <a href="/redirect/${'<%= hash_id %>'|n}"
                title="${'<%= extended %>'|n}">${'<%= description %>'|n}</a>
@@ -38,12 +65,5 @@
 
     <div class="url" title="${'<%= url %>'|n}">
         ${'<%= url %>'|n}
-    </div>
-    <div class="actions">
-        <span class="item">
-            <a href="/bmark/readable/${'<%= hash_id %>'|n}"
-               title="Readable"
-            class="button">R</a>
-        </span>
     </div>
 </script>

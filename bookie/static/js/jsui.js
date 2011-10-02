@@ -79,13 +79,22 @@ var BmarkRow = Backbone.View.extend({
 
 init = function () {
     // do the api call to get the most recent bookmarks
-    bookie.api.recent({}, {
+    bookie.api.recent({'page': 10}, {
         'success': function (data) {
             model_list = [];
             _.each(data.bmarks, function (d) {
                 var m = new Bmark(d);
                 model_list.push(m);
                 var view = new BmarkRow({'model': m});
+            });
+
+            // @todo update this to a proper view for controlling/updating the
+            // count with the pagination info we want to display
+            $('.count').html(data.max_count);
+            $('.bmark').bind('mouseover', function (ev) {
+                $(this).find('.item').css('display', 'block');
+            }).bind('mouseout', function (ev) {
+                $(this).find('.item').css('display', 'none');
             });
 
             console.log(model_list);

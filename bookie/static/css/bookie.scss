@@ -150,7 +150,7 @@ a {
     border-radius: 3px;
     font: 12px arial,helvetica,clean,sans-serif;
     font-weight: bold;
-    line-height: 1;
+    line-height: 2.0;
     padding: 2px 4px 3px;
     text-shadow: 0 1px 0 $text-shadow;
     text-decoration: none;
@@ -172,7 +172,11 @@ a {
 }
 
 .actions {
+    height: 2em;
     .item {
+        display: none;
+        margin-bottom: .3em;
+
         a.button {
             line-height: inherit;
             font: 12px arial,helvetica,clean,sans-serif;
@@ -321,13 +325,14 @@ fieldset {
         }
 
         .dateinfo {
+            padding-left: 2em;
             clear: right;
             float: right;
 
         }
 
         .actions {
-            margin: .2em 0;
+            margin: .2em;
 
             .button {
                 font-size: smaller;
@@ -490,6 +495,10 @@ fieldset {
         vertical-align: bottom;
         width: 35em;
     }
+}
+
+.page_info {
+    float: right;
 }
 
 .fullpage {

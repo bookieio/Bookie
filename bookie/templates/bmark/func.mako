@@ -77,7 +77,7 @@
                                     <a href="${request.route_url('user_bmark_edit',
                                                                  username=username,
                                                                  hash_id=bmark.hash_id)}"
-                                       title="Readable"
+                                       title="Edit"
                                     class="button">E</a>
                                 </span>
                             % endif
