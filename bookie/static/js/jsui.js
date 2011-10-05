@@ -36,6 +36,34 @@ var Bmark = Backbone.Model.extend({
 
 });
 
+
+/**
+ * Handle keeping tabs on where we are as far as paging, results, etc
+ *
+ */
+var Paging = Backbone.Model.extend({
+
+    // we'll set some defaults for the fields, 50 per page and starting on page
+    // 0
+    defaults: {
+        "count":  50,
+        "page":   0,
+        "tags":   []
+    },
+
+    /**
+     * Read in the values for the default page/counts/tags from the url in case
+     * someone sends/bookmarks a url. Should tie into our use of history.js
+     * somehow
+     *
+     */
+    url_load: function() {
+
+    }
+
+});
+
+
 /**
  * COLLECTIONS
  *
@@ -77,9 +105,19 @@ var BmarkRow = Backbone.View.extend({
 });
 
 
+/**
+ * Control the events and updates from paging and such
+ *
+ */
+var PagingView = Backbone.View.extend({
+
+
+});
+
+
 init = function () {
     // do the api call to get the most recent bookmarks
-    bookie.api.recent({'page': 10}, {
+    bookie.api.recent({'page': 0, 'count': 50}, {
         'success': function (data) {
             model_list = [];
             _.each(data.bmarks, function (d) {
@@ -90,14 +128,12 @@ init = function () {
 
             // @todo update this to a proper view for controlling/updating the
             // count with the pagination info we want to display
-            $('.count').html(data.max_count);
+            $('.count').html(data.count);
             $('.bmark').bind('mouseover', function (ev) {
                 $(this).find('.item').css('display', 'block');
             }).bind('mouseout', function (ev) {
                 $(this).find('.item').css('display', 'none');
             });
-
-            console.log(model_list);
         },
         'error': function (data, error_str) {
             alert('error');

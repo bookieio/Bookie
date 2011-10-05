@@ -23,6 +23,7 @@
                 app_url = request.route_url('home').rstrip('/')
             %>
             APP_URL = '${app_url}';
+
         </script>
     </head>
 
@@ -101,6 +102,11 @@
         <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
 
         <script type="text/javascript">
+            // History.js jquery adapter, I'm not taking up another http
+            // request for this much code
+            (function(a,b){var c=a.History=a.History||{},d=a.jQuery;if(typeof c.Adapter!="undefined")throw new Error("History.js Adapter has already been loaded...");c.Adapter={bind:function(a,b,c){d(a).bind(b,c)},trigger:function(a,b){d(a).trigger(b)},onDomLoad:function(a){d(a)}},typeof c.init!="undefined"&&c.init()})(window)
+
+
             $(document).ready(function() {
                 % if request.user:
                     bookie.api.init(APP_URL, '${request.user.username}');

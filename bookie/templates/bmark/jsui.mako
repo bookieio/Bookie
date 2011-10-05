@@ -14,16 +14,23 @@
         url = 'user_' + url
 
 %>
-<div class="page_info">Showing <span class="count"></span> bookmarks</div>
-${tag_filter(url, tags=tags, username=username)}
 
-<div class="buttons" style="float: right;">
-    ${bmarknextprev(0, 10, 10, url, tags=tags, username=username)}
-</div>
-<div class="buttons">
-    % if username is not None:
-       <a href="${request.route_url('user_bmark_new', username=username)}" class="button">+ Add</a>
-    % endif
+<div class="controls">
+    <div>
+        <div class="page_info">Showing <span class="count"></span> bookmarks</div>
+        <div class="buttons" style="clear: right; float: right;">
+            ${bmarknextprev(0, 10, 10, url, tags=tags, username=username)}
+        </div>
+        <div class="buttons">
+            % if username is not None:
+               <a href="${request.route_url('user_bmark_new', username=username)}" class="button">+ Add</a>
+            % endif
+        </div>
+
+    </div>
+
+
+
 </div>
 
 <div class="data_list">
@@ -42,7 +49,7 @@ ${tag_filter(url, tags=tags, username=username)}
         ${'<% }); %>'|n}
     </div>
 
-    <div class="actions" style="width: 2em; float: left;">
+    <div class="actions">
         <span class="item">
             <a href="/bmark/readable/${'<%= hash_id %>'|n}"
                title="Readable"
