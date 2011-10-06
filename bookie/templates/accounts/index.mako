@@ -19,7 +19,13 @@ ${account_nav()}
                 </span>
         </div>
         <div>
-            Last Seen: <span>${user.last_login.strftime(date_fmt)}</span>
+            Last Seen: <span>
+                % if user.last_login:
+                    ${user.last_login.strftime(date_fmt)}
+                % else:
+                    Not logged in
+                % endif</span>
+
         </div>
     </div>
     <div class="yui3-u-3-4">

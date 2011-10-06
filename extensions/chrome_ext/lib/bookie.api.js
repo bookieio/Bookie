@@ -71,10 +71,17 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.recent = function (options, callbacks) {
+    $b.api.recent = function (options, callbacks, system) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/%s/bmarks",
-            data = {
+        var url;
+
+        if (system) {
+            url = "/api/v1/bmarks"
+        } else {
+            url = "/api/v1/%s/bmarks"
+        }
+
+        var data = {
                 'count': 10,
                 'page': 1,
                 'with_content': false

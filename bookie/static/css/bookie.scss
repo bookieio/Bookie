@@ -6,9 +6,9 @@ $darkgrey: #333333;
 $hover_row: rgba(155, 175, 235, 0.2);
 
 // button colors
-$button_back: #e3e3e3;
+$button_back: #EEEEEE;
 $button_border: #bbbbbb;
-$button_shadow: #f6f6f6;
+$button_shadow: #535353;
 $text-shadow: #ffffff;
 
 // calendar colors
@@ -18,6 +18,24 @@ $calendar_grad: #FF4444;
 // bmark colors
 $links: #003366;
 
+
+@font-face {
+    font-family: 'PictosRegular';
+    src: url('http://uploads.mitechie.com/webfonts/Pictos-webfont.eot');
+    src: url('http://uploads.mitechie.com/webfonts/Pictos-webfont.eot?#iefix') format('embedded-opentype'),
+         url('http://uploads.mitechie.com/webfonts/Pictos-webfont.woff') format('woff'),
+         url('http://uploads.mitechie.com/webfonts/Pictos-webfont.ttf') format('truetype'),
+         url('http://uploads.mitechie.com/webfonts/Pictos-webfont.svg#PictosRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.icon {
+    font-family: "PictosRegular";
+    color: $altcolor;
+    vertical-align: top;
+    cursor: pointer;
+}
 
 @mixin cabin() {
     font-family: 'Cabin', sans-serif;
@@ -44,16 +62,14 @@ $links: #003366;
     color: $darkgrey;
     background: $button_back;
     border: 1px solid $button_border;
-    -moz-box-shadow: inset 0 0 1px 1px $button_shadow;
-    -webkit-box-shadow: inset 0 0 1px 1px $button_shadow;
-    box-shadow: inset 0 0 1px 1px $button_shadow;
+    box-shadow: 1px 1px 0 0 $button_shadow;
 }
 
 @mixin button_base_hover {
    background: darken($button_back, 5%);
-   -moz-box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
-   -webkit-box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
-   box-shadow: inset 0 0 1px 1px darken($button_shadow, 5%);
+   -moz-box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
+   -webkit-box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
+   box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
    color: darken($darkgrey, 5%);
    cursor: pointer;
 }
@@ -104,9 +120,19 @@ a {
     @include right;
 }
 
+.heading {
+    width: 100%;
+
+}
+
+.logo {
+    width: auto;
+    display: inline;
+}
 
 .navigation {
-    text-align: right;
+    display: inline;
+    float: right;
 
     a {
         text-decoration: none;
@@ -174,22 +200,20 @@ a {
             color: black;
         }
     }
+
+    .icon {
+        color: $darkgrey;
+        vertical-align: middle;
+    }
 }
 
 .actions {
-    height: 3em;
+    clear: right;
+    float: right;
+    padding-right: .3em;
 
-    .item {
-        @include monospace;
-        display: none;
-        font-size: .6em;
-        margin-bottom: .4em;
-
-        a.button {
-            line-height: inherit;
-            text-decoration: none;
-            color: $darkgrey;
-        }
+    * {
+        padding-left: .3em;
     }
 }
 
@@ -203,12 +227,7 @@ a.button_minimal {
     text-decoration: none;
 }
 
-.actions {
-    .button {
-        padding: 0 2px;
-        line-height: inherit;
-    }
-}
+
 
 form {
 
@@ -315,27 +334,13 @@ fieldset {
 
 
 .controls {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-
-    background-color: $altcolor;
-    border: 1px solid #000;
     margin: .5em 0;
-    padding: .3em;;
-    color: white;
-    box-shadow: 1px 1px 0px 0px darken($button_shadow, 40%);
+    padding: .3em;
+    min-height: 2em;
 
-    .button {
-        border: 1px solid $lightgrey;
-        background: white;
-        box-shadow: none;
-        font-size: .8em;
+    .icon {
 
-        &:hover {
-            border-color: #FFFFFF;
-            color: $links;
-        }
+
     }
 }
 
@@ -348,6 +353,7 @@ fieldset {
 
     .buttons {
         padding: .6em 0;
+        vertical-align: top;
     }
 
     .bmark {
@@ -368,12 +374,6 @@ fieldset {
             clear: right;
             float: right;
 
-        }
-
-        .actions {
-            float: left;
-            margin: .2em;
-            width: 1.5em;
         }
     }
 }
@@ -427,21 +427,33 @@ fieldset {
     a {
         font-size: 1.1em;
         text-decoration: none;
-        color: $links
+        color: $links;
     }
 
     &:hover {
         background-color: $hover_row;
 
-        .url {
+        .url, .url * {
+            opacity: 1;
+        }
+
+        .icon {
             opacity: 1;
         }
     }
 
+    .icon {
+        opacity: .7;
+    }
+
     .url {
+        padding: .3em 0 0 1em;
+    }
+
+    .url, .url * {
         color: $altcolor;
         line-height: 1.3;
-        opacity: .5;
+        opacity: .7;
         overflow: hidden;
         white-space:nowrap;
     }
@@ -451,14 +463,20 @@ fieldset {
         padding-left: 2em;
         font-size: .8em;
         text-align: right;
+        max-width: 50%;
 
         .tag {
             padding: .2em .4em .2em .4em;
             background: lighten($lightgrey, 10%);
             color: $altcolor;
+            opacity: .7;
             text-decoration: none;
             margin-bottom: .2em;
             display: inline-block;
+
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 }
@@ -537,7 +555,7 @@ fieldset {
 }
 
 .page_info {
-    @include right;
+    margin-right: 1.5em;
 }
 
 .fullpage {

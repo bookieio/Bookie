@@ -28,23 +28,20 @@
     </head>
 
     <body>
-        <div id="navigation" class="yui3-g">
-            <div class="yui3-u-2-3">
-                <div class="logo">
-                    <a href="${app_url}" class="logo">Bookie</a>
-                    <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
-                </div>
+        <div id="heading" class="">
+            <div class="logo">
+                <a href="${app_url}" class="logo">Bookie</a>
+                <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
             </div>
-            <div class="yui3-u-1-3 navigation">
-                <%
-                    if username:
-                        prefix = "/" + username
-                    else:
-                        prefix = ""
-                %>
-                <span class="item"><a href="${prefix}/recent" class="button nav_button">Recent</a></span>
-                <span class="item"><a href="${prefix}/popular" class="button nav_button">Popular</a></span>
-                <span class="item"><a href="${prefix}/search" class="button nav_button">Search</a></span>
+            <div class="navigation">
+                <span class="item"><a href="/recent_js" class="button nav_button">All Bookmarks</a></span>
+
+                % if request.user:
+                    <span class="item"><a href="/${username}/recent_js" class="button nav_button">My Bookmarks</a></span>
+                % endif
+
+                <span class="item"><a href="/search" class="button nav_button">Search</a></span>
+
                 % if request.user:
                     <span class="item"><a
                     href="${request.route_url('user_account',
@@ -102,11 +99,6 @@
         <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
 
         <script type="text/javascript">
-            // History.js jquery adapter, I'm not taking up another http
-            // request for this much code
-            (function(a,b){var c=a.History=a.History||{},d=a.jQuery;if(typeof c.Adapter!="undefined")throw new Error("History.js Adapter has already been loaded...");c.Adapter={bind:function(a,b,c){d(a).bind(b,c)},trigger:function(a,b){d(a).trigger(b)},onDomLoad:function(a){d(a)}},typeof c.init!="undefined"&&c.init()})(window)
-
-
             $(document).ready(function() {
                 % if request.user:
                     bookie.api.init(APP_URL, '${request.user.username}');
@@ -121,5 +113,11 @@
         % if hasattr(self, 'add_js'):
             ${self.add_js()}
         % endif
+
+        <script type="text/javascript">
+            // History.js jquery adapter, I'm not taking up another http
+            // request for this much code
+            (function(a,b){var c=a.History=a.History||{},d=a.jQuery;if(typeof c.Adapter!="undefined")throw new Error("History.js Adapter has already been loaded...");c.Adapter={bind:function(a,b,c){d(a).bind(b,c)},trigger:function(a,b){d(a).trigger(b)},onDomLoad:function(a){d(a)}},typeof c.init!="undefined"&&c.init()})(window)
+        </script>
     </body>
 </html>

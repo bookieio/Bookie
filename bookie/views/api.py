@@ -216,7 +216,7 @@ def bmark_remove(request):
 
 @view_config(route_name="api_bmarks", renderer="json")
 @view_config(route_name="api_bmarks_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
@@ -227,7 +227,7 @@ def bmark_recent(request):
     count = int(params.get('count', RESULTS_MAX))
     with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
-    username = request.user.username
+    username = request.user.username if request.user else None
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting

@@ -192,7 +192,7 @@ class api_auth():
 
     """
 
-    def __init__(self, api_field, user_fetcher, admin_only=False):
+    def __init__(self, api_field, user_fetcher, admin_only=False, anon=False):
         """
         :param api_field: the name of the data in the request.params and the
                           User object we compare to make sure they match
@@ -205,6 +205,7 @@ class api_auth():
         self.api_field = api_field
         self.user_fetcher = user_fetcher
         self.admin_only = admin_only
+        self.anon = anon
 
     def __call__(self, action_):
         """ Return :meth:`wrap_action` as the decorator for ``action_``. """
@@ -267,10 +268,10 @@ class api_auth():
             if username is not None and request.user.username == username:
                     return action_(*args, **kwargs)
 
-            # if there's not a username, then it's a public call, just make sure
-            # that the api key is valid
-            if username is None:
-                return action_(*args, **kwargs)
+        # if there is no username in the url, it's a public call, allow it
+        # through if the route supports anon request
+        if username is None and self.anon:
+            return action_(*args, **kwargs)
 
         # otherwise, we're done, you're not allowed
         request.response.status_int = 403

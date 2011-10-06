@@ -155,12 +155,12 @@
 
     % if page != 0:
         <a href="${request.route_url(next_url, tags=tags, username=username, **url_params)}?page=${prev}"
-           class="button">< Prev</a>
+           class="button previous"><span class="icon">[</span> Prev</a>
     % endif
 
     % if show_next:
         <a href="${request.route_url(next_url, tags=tags, username=username, **url_params)}?page=${next}"
-           class="button">Next ></a>
+           class="button next">Next <span class="icon">]</span></a>
     % endif
 
 </%def>
