@@ -37,15 +37,15 @@
                 <span class="item"><a href="/recent_js" class="button nav_button">All Bookmarks</a></span>
 
                 % if request.user:
-                    <span class="item"><a href="/${username}/recent_js" class="button nav_button">My Bookmarks</a></span>
+                    <span class="item"><a href="/${request.user.username}/recent_js" class="button nav_button">My Bookmarks</a></span>
                 % endif
 
                 <span class="item"><a href="/search" class="button nav_button">Search</a></span>
 
                 % if request.user:
-                    <span class="item"><a
-                    href="${request.route_url('user_account',
-                    username=request.user.username)}" class="button nav_button">Account</a></span>
+                    <span class="item">
+                        <a href="${request.route_url('user_account', username=request.user.username)}" class="button nav_button">Account
+                    </a></span>
                 % else:
                     <span class="item"><a href="/login" class="button nav_button">Login</a></span>
                 % endif
