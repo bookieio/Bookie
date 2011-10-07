@@ -75,6 +75,18 @@ var bookie = (function ($b, $) {
          */
         url_load: function() {
 
+        },
+
+        /**
+         * Given the current config/url info stringify for html5 history
+         *
+         * url path should be current url + /tags/tags/?count=&page=
+         * @todo need to bring in the underscore.string module for sprintf fun
+         *
+         *
+         */
+        to_url: function () {
+            return "?count=" + this.get('count') + "&page=" + this.get('page');
         }
     });
 
@@ -232,7 +244,7 @@ var bookie = (function ($b, $) {
                 if (prev_state.data['page'] === undefined) {
                     if (that.init) {
                         // push the current data set
-                        History.pushState(that.model.toJSON());
+                        History.pushState(that.model.toJSON(), "", that.model.to_url());
                     } else {
                         History.back();
                     }
@@ -260,7 +272,9 @@ var bookie = (function ($b, $) {
             this.model.set({'page': cur + 1});
 
             var current_model = this.model.toJSON();
-            History.pushState(current_model, "Bookmarks Page: " + (this.model.get('page') + 1));
+            History.pushState(current_model,
+                              "Bookmarks Page: " + (this.model.get('page') + 1),
+                              this.model.to_url());
         },
 
         previous_page: function (ev) {
@@ -269,7 +283,9 @@ var bookie = (function ($b, $) {
             this.model.set({'page': cur - 1});
 
             var current_model = this.model.toJSON();
-            History.pushState(current_model, "Bookmarks Page: " + (this.model.get('page') + 1));
+            History.pushState(current_model,
+                              "Bookmarks Page: " + (this.model.get('page') + 1),
+                              this.model.to_url());
 
         },
 

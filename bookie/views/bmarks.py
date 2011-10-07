@@ -18,10 +18,13 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="bmark_recent_js", renderer="/bmark/jsui.mako")
+@view_config(route_name="bmark_recent_js/", renderer="/bmark/jsui.mako")
 @view_config(route_name="user_bmark_recent_js", renderer="/bmark/jsui.mako")
+@view_config(route_name="user_bmark_recent_js/", renderer="/bmark/jsui.mako")
 def recent_js(request):
     """Testing a JS driven ui with backbone/etc"""
     rdict = request.matchdict
+    params = request.params
 
     # check for auth related stuff
     # are we looking for a specific user
@@ -37,6 +40,12 @@ def recent_js(request):
          'username': username,
          'tags': tags,
     }
+
+    # if we've got url parameters for the page/count then use those to help
+    # feed the init of the ajax script
+
+    ret['count'] = params.get('count') if 'count' in params else RESULTS_MAX
+    ret['page'] = params.get('page') if 'page' in params else 0
 
     return ret
 

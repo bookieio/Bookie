@@ -115,7 +115,8 @@
             % endif
 
             // do the api call to get the most recent bookmarks
-            var page_control = new bookie.bb.Control(),
+            var page_control = new bookie.bb.Control({'page': ${page},
+                                                      'count': ${count}}),
                 cview = new bookie.bb.ControlView({
                                 'el': $('.controls'),
                                 'model': page_control,
