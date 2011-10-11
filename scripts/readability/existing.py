@@ -8,11 +8,11 @@ import transaction
 
 from ConfigParser import ConfigParser
 from os import path
-from sqlalchemy import create_engine
 
 from bookie.lib.readable import ReadUrl
 
 from bookie.models import initialize_sql
+from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
 
@@ -82,9 +82,7 @@ if __name__ == "__main__":
         ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)
         ini.readfp(open(ini_path))
 
-        db_url = ini.get('app:main', 'sqlalchemy.url')
-        engine = create_engine(db_url, echo=False)
-        initialize_sql(engine)
+        initialize_sql(dict(ini.items("app:main")))
 
         ct = 0
 
@@ -95,7 +93,7 @@ if __name__ == "__main__":
                 # we take off the offset because each time we run, we should have
                 # new ones to process. The query should return the 10 next
                 # non-imported urls
-                url_list = Hashed.query.outerjoin(Readable).\
+                url_list = Bmark.query.outerjoin(Readable, Bmark.readable).\
                             filter(Readable.imported == None).\
                             limit(PER_TRANS).all()
 
@@ -103,36 +101,37 @@ if __name__ == "__main__":
                 # we need a way to handle this query. If we offset and we clear
                 # errors along the way, we'll skip potential retries
                 # but if we don't we'll just keep getting errors and never end
-                url_list = Hashed.query.outerjoin(Readable).\
+                url_list = Bmark.query.outerjoin(Readable).\
                             filter(Readable.status_code != 200).all()
 
             else:
-                url_list = Hashed.query.limit(PER_TRANS).offset(ct).all()
+                url_list = Bmark.query.limit(PER_TRANS).offset(ct).all()
 
             if len(url_list) < PER_TRANS:
                 all = True
 
             ct = ct + len(url_list)
 
-            for hashed in url_list:
+            for bmark in url_list:
+                hashed = bmark.hashed
                 print hashed.url
 
                 read = ReadUrl.parse(hashed.url)
                 if not read.is_image():
-                    if not hashed.readable:
-                        hashed.readable = Readable()
+                    if not bmark.readable:
+                        bmark.readable = Readable()
 
-                    hashed.readable.content = read.content
+                    bmark.readable.content = read.content
                 else:
-                    if not hashed.readable:
-                        hashed.readable = Readable()
+                    if not bmark.readable:
+                        bmark.readable = Readable()
 
-                    hashed.readable.content = None
+                    bmark.readable.content = None
 
                 # set some of the extra metadata
-                hashed.readable.content_type = read.content_type
-                hashed.readable.status_code = read.status
-                hashed.readable.status_message = read.status_message
+                bmark.readable.content_type = read.content_type
+                bmark.readable.status_code = read.status
+                bmark.readable.status_message = read.status_message
 
             # let's do some count/transaction maint
             transaction.commit()
