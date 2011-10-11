@@ -16,24 +16,38 @@
 %>
 
 <div class="controls">
-    <div class="yui3-g">
-        <div class="yui3-u-1-2">
-            <div class="buttons">
-                % if username is not None:
-                   <a href="${request.route_url('user_bmark_new', username=username)}"
-                       class="button">
-                       <span class="icon">&</span> Add Bookmark
-                   </a>
-                % endif
-            </div>
-
-        </div>
-
-        <div class="yui3-u-1-2" style="text-align: right;">
+    <div class="">
+        <div class="" style="float: right;">
 
             <span class="page_info">Showing <span class="count"></span> bookmarks</span>
             <span class="buttons paging">
             </span>
+        </div>
+
+        <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
+            % if username is not None:
+               <a href="${request.route_url('user_bmark_new', username=username)}"
+                   class="button">
+                   <span class="icon">&</span> Add Bookmark
+               </a>
+            % endif
+        </div>
+        <div class="tag_filter_container" style="">
+            <select data-placeholder="Filter results by tag..."
+                    style="width: 500px;"
+                    multiple=""
+                    class="chzn-select"
+                    tabindex="-1" id="tag_filter">
+                    <option value=""></option>
+                    <option>American Black Bear</option>
+                    <option>Asiatic Black Bear</option>
+                    <option>Brown Bear</option>
+                    <option>Giant Panda</option>
+                    <option selected="">Sloth Bear</option>
+                    <option disabled="">Sun Bear</option>
+                    <option selected="">Polar Bear</option>
+                    <option disabled="">Spectacled Bear</option>
+            </select>
         </div>
     </div>
 </div>
@@ -98,29 +112,32 @@
 </script>
 
 <%def name="add_js()">
+    <script data-main="/static/js/" src="/static/js/lib/require.js"></script>
     <script type="text/javascript" src="/static/js/lib/backbone-min.js"></script>
     <script type="text/javascript" src="/static/js/lib/history.js"></script>
-    <script type="text/javascript" src="/static/js/jsui.js"></script>
+    <script type="text/javascript" src="/static/js/lib/chosen.jquery.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        require(["bookie/ui", "bookie/api"], function(ui, api) {
             // update the api to say hey, we should use a username/not in our
             // calls
             var username = undefined;
             % if username:
                 username = '${username}';
-                bookie.api.init(APP_URL, username);
+                api.init(APP_URL, username);
             % else:
-                bookie.api.init(APP_URL);
+                api.init(APP_URL);
             % endif
 
             // do the api call to get the most recent bookmarks
-            var page_control = new bookie.bb.Control({'page': ${page},
+            var page_control = new ui.Control({'page': ${page},
                                                       'count': ${count}}),
-                cview = new bookie.bb.ControlView({
+                cview = new ui.ControlView({
                                 'el': $('.controls'),
                                 'model': page_control,
                                 'username': username});
+            ui.filterui.init();
         });
+
     </script>
 </%def>

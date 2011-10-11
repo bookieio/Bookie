@@ -507,8 +507,14 @@ fieldset {
     }
 }
 
+.tag_filter_container {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .tag_filter {
     margin: .5em;
+
 
     div {
         margin: 0;

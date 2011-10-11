@@ -94,21 +94,19 @@
                 'console_log': logger
             }
         </script>
-        <script type="text/javascript" src="/static/js/bookie.api.js"></script>
-        <script type="text/javascript" src="/static/js/bookie.js"></script>
         <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
 
-        <script type="text/javascript">
-            $(document).ready(function() {
-                % if request.user:
-                    bookie.api.init(APP_URL, '${request.user.username}');
-                % else:
-                    bookie.api.init(APP_URL);
-                % endif
+        <!--<script type="text/javascript">-->
+        <!--    $(document).ready(function() {-->
+        <!--        % if request.user:-->
+        <!--            bookie.api.init(APP_URL, '${request.user.username}');-->
+        <!--        % else:-->
+        <!--            bookie.api.init(APP_URL);-->
+        <!--        % endif-->
 
-                bookie.init(bookie.api);
-            });
-        </script>
+        <!--        bookie.init(bookie.api);-->
+        <!--    });-->
+        <!--</script>-->
 
         % if hasattr(self, 'add_js'):
             ${self.add_js()}

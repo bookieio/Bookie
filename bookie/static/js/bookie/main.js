@@ -1,15 +1,12 @@
 /*jslint eqeqeq: false, browser: true, debug: true, onevar: true, plusplus: false, newcap: false, */
 /*global $: false, window: false, self: false, escape: false, mor: false, sprintf: false, chrome: false, localStorage: false, */
-
-var bookie = (function ($b, $) {
-
-    // bootstrap some custom things that the extensions will jump in on
-    $b.ui = {};
-    $b.call = {};
+define([], function () {
+    var main = {};
+    main.ui = {};
 
     // some constants we'll use throughout
     // dom hook for triggering/catching events fired
-    $b.EVENTID = 'body';
+    main.EVENTID = 'body';
 
     // we expect the api init for us
 
@@ -17,7 +14,7 @@ var bookie = (function ($b, $) {
      * Define events supported
      *
      */
-    $b.events = {
+    main.events = {
         'LOAD': 'load',
         'TAG_FILTER': 'tag_filter',
     };
@@ -27,9 +24,9 @@ var bookie = (function ($b, $) {
      * Once the page is loaded, perform some nice basics we need
      *
      */
-    $b.load = function (ev) {
+    main.load = function (ev) {
         // init the tag filter ui completion code
-        $($b.EVENTID).trigger($b.events.TAG_FILTER);
+        $(main.EVENTID).trigger(main.events.TAG_FILTER);
 
         // if we're on the readable page, make sure we catch all links and
         // check if we should follow or not
@@ -61,7 +58,7 @@ var bookie = (function ($b, $) {
      * Control the tag filter ui on the main pages
      *
      */
-    $b.ui.init_tag_filter = function (ev) {
+    main.ui.init_tag_filter = function (ev) {
         var $tag_filter = $('#tag_filter');
 
         $tag_filter.superblyTagField({
@@ -75,7 +72,7 @@ var bookie = (function ($b, $) {
                     current = current_vals;
                 }
 
-                $b.api.tag_complete({
+                main.api.tag_complete({
                         'tag': tag,
                         'current': current,
                         },
@@ -103,26 +100,26 @@ var bookie = (function ($b, $) {
 
 
     // only need to call init on the page read event
-    $b.init = function (api_obj) {
+    main.init = function (api_obj) {
         // we need the bookie api stuff
-        $b.api = api_obj;
+        main.api = api_obj;
 
         // make sure we bind the page load event
-        $($b.EVENTID).bind($b.events.LOAD, $b.load);
+        $(main.EVENTID).bind(main.events.LOAD, main.load);
 
         // bind some other events we might want read to go out of the gates
-        $($b.EVENTID).bind($b.events.TAG_FILTER, $b.ui.init_tag_filter);
+        $(main.EVENTID).bind(main.events.TAG_FILTER, main.ui.init_tag_filter);
 
         // now trigger the load since we're ready to go from here
-        $($b.EVENTID).trigger($b.events.LOAD);
+        $(main.EVENTID).trigger(main.events.LOAD);
 
     };
 
-    $b.login = {
+    main.login = {
         'init': function () {
             // we need to bind the api key show click
-            $('#show_forgotten').bind('click', $b.login.show_forgotten);
-            $('#submit_forgotten').bind('click', $b.login.submit_forgotten);
+            $('#show_forgotten').bind('click', main.login.show_forgotten);
+            $('#submit_forgotten').bind('click', main.login.submit_forgotten);
         },
 
         'show_forgotten': function (ev) {
@@ -160,10 +157,10 @@ var bookie = (function ($b, $) {
 
             email = $('#email').val();
 
-            $b.api.reactivate({'email': email}, {
+            main.api.reactivate({'email': email}, {
                 'success': function (data)  {
-                    $b.login.clear();
-                    $b.login.message(data.message, true);
+                    main.login.clear();
+                    main.login.message(data.message, true);
                 }, 
                 'error': function (data, error_string) {
                     console.log(data);
@@ -173,13 +170,13 @@ var bookie = (function ($b, $) {
         }
     };
 
-    $b.accounts = {
+    main.accounts = {
         'init': function () {
             // we need to bind the api key show click
-            $('#show_key').bind('click', $b.accounts.show_api_key);
-            $('#show_bookmarklet').bind('click', $b.accounts.show_bookmarklet);
-            $b.accounts.passwordui.init();
-            $b.accounts.updateui.init();
+            $('#show_key').bind('click', main.accounts.show_api_key);
+            $('#show_bookmarklet').bind('click', main.accounts.show_bookmarklet);
+            main.accounts.passwordui.init();
+            main.accounts.updateui.init();
         },
 
         'show_api_key': function (ev) {
@@ -194,7 +191,7 @@ var bookie = (function ($b, $) {
             } else {
                 // make an ajax request to get the api key for this user and then
                 // show it in the container for it
-                $b.api.api_key({
+                main.api.api_key({
                     'success': function (data) {
                         $key_div.html(data.api_key);
                         $key_container.show(400);
@@ -204,34 +201,34 @@ var bookie = (function ($b, $) {
         },
 
         'show_bookmarklet': function (ev) {
-            var $b = $('#bookmarklet_text');
+            var main = $('#bookmarklet_text');
             ev.preventDefault();
 
             // if the api key is showing and they click this, hide it
-            if($b.is(':visible')) {
-                $b.hide('fast');
+            if(main.is(':visible')) {
+                main.hide('fast');
             } else {
-                $b.show(400);
+                main.show(400);
             }
         },
 
         'updateui': {
             'init': function () {
-                $('#submit_account_change').bind('click', $b.accounts.updateui.change);
+                $('#submit_account_change').bind('click', main.accounts.updateui.change);
             },
 
             'change': function (ev) {
                 ev.preventDefault();
-                $b.accounts.updateui.clear();
+                main.accounts.updateui.clear();
 
-                $b.api.account_update(
+                main.api.account_update(
                     {
                         'name': $('#name').val(),
                         'email': $('#email').val()
                     },
                     {
                         'success': function (data) {
-                            $b.accounts.updateui.message("Account updated", true);
+                            main.accounts.updateui.message("Account updated", true);
                          },
                         'error': function (data, data_msg) {
                             console.log(data);
@@ -260,9 +257,9 @@ var bookie = (function ($b, $) {
 
         'passwordui': {
             'init': function () {
-                $('#show_password').bind('click', $b.accounts.passwordui.show);
-                $('form#password_reset').bind('submit', $b.accounts.passwordui.change);
-                $('#submit_password_change').bind('click', $b.accounts.passwordui.change);
+                $('#show_password').bind('click', main.accounts.passwordui.show);
+                $('form#password_reset').bind('submit', main.accounts.passwordui.change);
+                $('#submit_password_change').bind('click', main.accounts.passwordui.change);
             },
 
             'show': function (ev) {
@@ -305,18 +302,18 @@ var bookie = (function ($b, $) {
                 // hide the current message window
                 $('#password_msg').hide('fast');
 
-                $b.api.change_password( {
+                main.api.change_password( {
                         'current_password': $('#current_password').val(),
                         'new_password': $('#new_password').val()
                     },
                     {
                         'success': function (data) {
-                            $b.accounts.passwordui.message(data.message, true);
-                            $b.accounts.passwordui.reset();
+                            main.accounts.passwordui.message(data.message, true);
+                            main.accounts.passwordui.reset();
                          },
                         'error': function (data, status_string) {
-                            $b.accounts.passwordui.message(data.error, false);
-                            $b.accounts.passwordui.reset();
+                            main.accounts.passwordui.message(data.error, false);
+                            main.accounts.passwordui.reset();
                         }
                     }
                 );
@@ -324,10 +321,10 @@ var bookie = (function ($b, $) {
         }
     };
 
-    $b.reset = {
+    main.reset = {
         'init': function () {
-            $('#submit_password_change').bind('click', $b.reset.change);
-            $('form#password_reset').bind('submit', $b.reset.change);
+            $('#submit_password_change').bind('click', main.reset.change);
+            $('form#password_reset').bind('submit', main.reset.change);
         },
 
         'message': function (msg, is_success) {
@@ -350,14 +347,14 @@ var bookie = (function ($b, $) {
 
             console.log('calling activate');
 
-            $b.api.activate({
+            main.api.activate({
                     'username': $('#username').val(),
                     'code': $('#code').val(),
                     'password': $('#new_password').val(),
                 },
                 {
                     'success': function (data) {
-                        $b.reset.message(data.message, true);
+                        main.reset.message(data.message, true);
                      },
                     'error': function (data, error_msg) {
                         console.log(data);
@@ -368,7 +365,7 @@ var bookie = (function ($b, $) {
         }
     };
 
-    $b.edit = {
+    main.edit = {
         'init': function () {
             this.bind_tag_complete();
             this.bind_tag_suggest();
@@ -377,7 +374,7 @@ var bookie = (function ($b, $) {
         'bind_tag_suggest': function () {
             $('#tag_suggest').delegate('a', 'click', function (ev) {
                 ev.preventDefault();
-                $b.edit.dupe_tags($(this));
+                main.edit.dupe_tags($(this));
             });
         },
 
@@ -407,7 +404,7 @@ var bookie = (function ($b, $) {
 
             $tag_filter.superblyTagField({
                 complete: function (tag, callback) {
-                    $b.api.tag_complete({
+                    main.api.tag_complete({
                             'tag': tag
                             },
                             { 'success': function (data) {
@@ -427,5 +424,5 @@ var bookie = (function ($b, $) {
 
     };
 
-    return $b;
-})(bookie || {}, jQuery);
+    return main;
+});

@@ -1,17 +1,43 @@
 /**
  * Provide tools to do a backbone driven ui
  *
+ * :require: main and model files since our ui is bound do model and using
+ * events/etc from main
+ *
  */
-var bookie = (function ($b, $) {
+define(["bookie/main", "bookie/models", "bookie/api"], function(main, model, api) {
 
-    // bookie.backbone
-    $b.bb = {};
+
+
+    var ui = {};
+
+
+    /**
+     * We'll use this to load extra CSS files we must have for things in the UI
+     *
+     */
+    ui.loadcss = function loadCss(url) {
+        var link = document.createElement("link");
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = url;
+        document.getElementsByTagName("head")[0].appendChild(link);
+    };
+
+
+    ui.filterui = {
+        id: '',
+        init: function () {
+            ui.loadcss('/static/css/chosen.css');
+            $(".chzn-select").chosen();
+        }
+    }
 
     /**
      * MODELS
      *
      */
-    $b.bb.Bmark = Backbone.Model.extend({
+    ui.Bmark = Backbone.Model.extend({
 
         initialize: function() {
             this.set({'dateinfo': this._dateinfo()});
@@ -48,7 +74,7 @@ var bookie = (function ($b, $) {
                 'error': error
             };
 
-            bookie.api.remove(this.get('hash_id'), callbacks);
+            api.remove(this.get('hash_id'), callbacks);
         }
 
     });
@@ -58,7 +84,7 @@ var bookie = (function ($b, $) {
      * Handle keeping tabs on where we are as far as paging, results, etc
      *
      */
-    $b.bb.Control = Backbone.Model.extend({
+    ui.Control = Backbone.Model.extend({
         // we'll set some defaults for the fields, 50 per page and starting on page
         // 0
         defaults: {
@@ -95,8 +121,8 @@ var bookie = (function ($b, $) {
      * COLLECTIONS
      *
      */
-    $b.bb.BmarkList = Backbone.Collection.extend({
-        model: $b.bb.Bmark,
+    ui.BmarkList = Backbone.Collection.extend({
+        model: ui.Bmark,
         cont: '.data_list',
         bmark_views: [],
         systemwide: false,
@@ -115,16 +141,16 @@ var bookie = (function ($b, $) {
         fetch: function (page_control, callback) {
                 var that = this;
 
-                bookie.api.recent(page_control.toJSON(), {
+                api.recent(page_control.toJSON(), {
                     'success': function (data) {
                         // remove the existing rows from the table
                         that.empty();
 
                         model_list = [];
                         _.each(data.bmarks, function (d) {
-                            var m = new $b.bb.Bmark(d);
+                            var m = new ui.Bmark(d);
                             model_list.push(m);
-                            that.bmark_views.push(new $b.bb.BmarkRow({'model': m}));
+                            that.bmark_views.push(new ui.BmarkRow({'model': m}));
                         });
 
                         // @todo update this to a proper view for controlling/updating the
@@ -153,7 +179,7 @@ var bookie = (function ($b, $) {
      * VIEW
      *
      */
-    $b.bb.BmarkRow = Backbone.View.extend({
+    ui.BmarkRow = Backbone.View.extend({
 
         tagName: 'div',
         className: 'bmark',
@@ -197,9 +223,9 @@ var bookie = (function ($b, $) {
                 this.model.remove(success);
             } else {
                 // then leave it alone
+                return false;
             }
         }
-
     });
 
 
@@ -207,7 +233,7 @@ var bookie = (function ($b, $) {
      * Control the events and updates from paging and such
      *
      */
-    $b.bb.ControlView = Backbone.View.extend({
+    ui.ControlView = Backbone.View.extend({
         cont: '.controls',
         init: true,
         username: undefined,
@@ -216,7 +242,7 @@ var bookie = (function ($b, $) {
             var that = this;
             this.$el = $(this.cont);
 
-            this.bmark_list = new $b.bb.BmarkList();
+            this.bmark_list = new ui.BmarkList();
 
             // if we don't provide a username, it's systemwide scope
             // else we're in the user scope which is the default
@@ -346,5 +372,5 @@ var bookie = (function ($b, $) {
 
     });
 
-    return $b;
-})(bookie || {}, jQuery);
+    return ui;
+});
