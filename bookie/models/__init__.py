@@ -274,7 +274,10 @@ class Readable(Base):
 
 def sync_readable_content(mapper, connection, target):
     def _clean_content(content):
-        return u' '.join(BeautifulSoup(content).findAll(text=True))
+        if content:
+            return u' '.join(BeautifulSoup(content).findAll(text=True))
+        else:
+            return u""
 
     from fulltext import get_writer
     # we need to update the fulltext instance for this bmark instance
