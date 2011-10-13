@@ -7,7 +7,6 @@
         <title>Bookie: ${self.title()}</title>
         <link type="text/css" href="/static/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
         <link rel="stylesheet" type="text/css" href="/static/css/yui_reset_layout_grids_3.3.0.css">
-
         <link href='https://fonts.googleapis.com/css?family=Cabin&v2' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Cabin+Sketch:bold&text=Bookie' rel='stylesheet' type='text/css'>
 
@@ -82,7 +81,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/underscore.string.min.js"></script>
-        <script type="text/javascript">
+<!--        <script type="text/javascript">
             // prepare for the great bookie js files
             var logger = {}
             logger.log = function(msg) {
@@ -93,8 +92,7 @@
                 'jquery': $,
                 'console_log': logger
             }
-        </script>
-        <script type="text/javascript" src="/static/tagfield/superbly-tagfield.js"></script>
+        </script> -->
 
         <!--<script type="text/javascript">-->
         <!--    $(document).ready(function() {-->

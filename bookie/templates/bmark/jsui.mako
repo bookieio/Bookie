@@ -24,14 +24,14 @@
             </span>
         </div>
 
-        <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
-            % if username is not None:
-               <a href="${request.route_url('user_bmark_new', username=username)}"
-                   class="button">
-                   <span class="icon">&</span> Add Bookmark
-               </a>
-            % endif
-        </div>
+        % if username is not None:
+            <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
+                   <a href="${request.route_url('user_bmark_new', username=username)}"
+                       class="button">
+                       <span class="icon">&</span> Add Bookmark
+                   </a>
+            </div>
+        % endif
         <div class="tag_filter_container" style="">
             <select data-placeholder="Filter results by tag..."
                     style="width: 500px;"
@@ -118,7 +118,7 @@
     <script type="text/javascript" src="/static/js/lib/chosen.jquery.min.js"></script>
 
     <script type="text/javascript">
-        require(["bookie/ui", "bookie/api"], function(ui, api) {
+        require(["bookie/ui", "bookie/api", "bookie/models"], function(ui, api, models) {
             // update the api to say hey, we should use a username/not in our
             // calls
             var username = undefined;
@@ -130,8 +130,8 @@
             % endif
 
             // do the api call to get the most recent bookmarks
-            var page_control = new ui.Control({'page': ${page},
-                                                      'count': ${count}}),
+            var page_control = new models.PageControl({'page': ${page},
+                                                       'count': ${count}}),
                 cview = new ui.ControlView({
                                 'el': $('.controls'),
                                 'model': page_control,

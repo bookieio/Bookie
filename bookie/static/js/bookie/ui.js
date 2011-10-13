@@ -5,12 +5,8 @@
  * events/etc from main
  *
  */
-define(["bookie/main", "bookie/models", "bookie/api"], function(main, model, api) {
-
-
-
+define(["bookie/main", "bookie/models", "bookie/api"], function(main, models, api) {
     var ui = {};
-
 
     /**
      * We'll use this to load extra CSS files we must have for things in the UI
@@ -28,157 +24,55 @@ define(["bookie/main", "bookie/models", "bookie/api"], function(main, model, api
     ui.filterui = {
         id: '',
         init: function () {
+            var that = this;
             ui.loadcss('/static/css/chosen.css');
-            $(".chzn-select").chosen();
-        }
-    }
+            // $(".chzn-select").chosen();
+            // $(".chzn-select").parent().delegate('input', 'keyup', function(ev) {
+            //     console.log($(this).val());
+            //     that.update_completion($(this).val());
+            // });
 
-    /**
-     * MODELS
-     *
-     */
-    ui.Bmark = Backbone.Model.extend({
+            $(".chzn-select").ajaxChosen({
+                        method: 'GET',
+                        url: '/api/v1/admin/tags/complete',
+                        dataType: 'json'
+                    }, function (data) {
+                        var terms = {};
 
-        initialize: function() {
-            this.set({'dateinfo': this._dateinfo()});
-            this.set({'prettystored': this._prettystored()});
+                        $.each(data.tags, function (i, val) {
+                            terms[i] = val;
+                        });
+
+                        return terms;
+            });
         },
-
-        allowedToEdit: function(account) {
-            return true;
-        },
-
-        _dateinfo: function() {
-            var t = new Date(this.get('stored'));
-            return t.getMonth() + "/" + t.getDate();
-        },
-
-        /**
-         * Builda date string of a pretty format
-         * %m/%d/%Y %H:%M
-         *
-         */
-        _prettystored: function () {
-            var t = new Date(this.get('stored'));
-            return t.getMonth() + "/" + t.getDate() + "/" + t.getFullYear() + " " +
-                   t.getHours() + ":" + t.getMinutes();
-        },
-
-        /**
-         * remove the bookmark using our api
-         *
-         */
-        remove: function (success, error) {
-            var callbacks = {
-                'success': success,
-                'error': error
-            };
-
-            api.remove(this.get('hash_id'), callbacks);
-        }
-
-    });
-
-
-    /**
-     * Handle keeping tabs on where we are as far as paging, results, etc
-     *
-     */
-    ui.Control = Backbone.Model.extend({
-        // we'll set some defaults for the fields, 50 per page and starting on page
-        // 0
-        defaults: {
-            "count":  50,
-            "page":   0,
-            "tags":   []
-        },
-
-        /**
-         * Read in the values for the default page/counts/tags from the url in case
-         * someone sends/bookmarks a url. Should tie into our use of history.js
-         * somehow
-         *
-         */
-        url_load: function() {
-
-        },
-
-        /**
-         * Given the current config/url info stringify for html5 history
-         *
-         * url path should be current url + /tags/tags/?count=&page=
-         * @todo need to bring in the underscore.string module for sprintf fun
-         *
-         *
-         */
-        to_url: function () {
-            return "?count=" + this.get('count') + "&page=" + this.get('page');
-        }
-    });
-
-
-    /**
-     * COLLECTIONS
-     *
-     */
-    ui.BmarkList = Backbone.Collection.extend({
-        model: ui.Bmark,
-        cont: '.data_list',
-        bmark_views: [],
-        systemwide: false,
-
-        /**
-         * Empty the current bookmark list when required
-         *
-         * e.g. a page of new results coming
-         *
-         */
-        empty: function () {
-            _.invoke(this.bmark_views, 'remove');
-            this.bmark_views = [];
-        },
-
-        fetch: function (page_control, callback) {
-                var that = this;
-
-                api.recent(page_control.toJSON(), {
+        update_completion: function (val) {
+            if (val.length < 3) {
+                return;
+            }
+            var options = {'tag': val, 'current': []},
+                callbacks = {
                     'success': function (data) {
-                        // remove the existing rows from the table
-                        that.empty();
+                        console.log(data.tags);
+                        var options = _.reduce(data.tags, function (memo, tag) {
+                            console.log(memo);
+                            return memo += _.sprintf('<option value="%s">%s</option>', tag, tag);
+                        }, "");
 
-                        model_list = [];
-                        _.each(data.bmarks, function (d) {
-                            var m = new ui.Bmark(d);
-                            model_list.push(m);
-                            that.bmark_views.push(new ui.BmarkRow({'model': m}));
-                        });
+                        $(".chzn-select").find('option').each(function (node) {
+                            if (!$(this).is(":selected")) {
+                                $(this).remove()
+                            }
+                        }).append(options).trigger("liszt:updated");
 
-                        // @todo update this to a proper view for controlling/updating the
-                        // count with the pagination info we want to display
-                        $('.count').html(data.count);
-                        $('.bmark').bind('mouseover', function (ev) {
-                            $(this).find('.item').css('display', 'block');
-                        }).bind('mouseout', function (ev) {
-                            $(this).find('.item').css('display', 'none');
-                        });
-
-                        // handle the callback we're told to run once we've update
-                        // the listings
-                        if (callback !== undefined) {
-                            callback();
-                        }
-                    },
-                    'error': function (data, error_str) {
-                        alert('error');
+                        $(this).parent().find('input').attr('value', val);
                     }
-                }, this.systemwide);
-        }
-    });
+                };
 
-    /**
-     * VIEW
-     *
-     */
+            api.tag_complete(options, callbacks);
+        }
+    };
+
     ui.BmarkRow = Backbone.View.extend({
 
         tagName: 'div',
@@ -242,7 +136,7 @@ define(["bookie/main", "bookie/models", "bookie/api"], function(main, model, api
             var that = this;
             this.$el = $(this.cont);
 
-            this.bmark_list = new ui.BmarkList();
+            this.bmark_list = new models.BmarkList();
 
             // if we don't provide a username, it's systemwide scope
             // else we're in the user scope which is the default

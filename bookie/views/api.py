@@ -474,9 +474,9 @@ def tag_complete(request):
                                current=current_tags,
                                username=username)
 
-        # reset this for the payload join operation
-        if current_tags is None:
-            current_tags = []
+    # reset this for the payload join operation
+    if current_tags is None:
+        current_tags = []
 
     return {
         'current': ",".join(current_tags),
