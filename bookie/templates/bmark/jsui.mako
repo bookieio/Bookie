@@ -112,32 +112,37 @@
 </script>
 
 <%def name="add_js()">
-    <script data-main="/static/js/" src="/static/js/lib/require.js"></script>
-    <script type="text/javascript" src="/static/js/lib/backbone-min.js"></script>
-    <script type="text/javascript" src="/static/js/lib/history.js"></script>
-    <script type="text/javascript" src="/static/js/lib/chosen.jquery.min.js"></script>
-
     <script type="text/javascript">
-        require(["bookie/ui", "bookie/api", "bookie/models"], function(ui, api, models) {
-            // update the api to say hey, we should use a username/not in our
-            // calls
-            var username = undefined;
-            % if username:
-                username = '${username}';
-                api.init(APP_URL, username);
-            % else:
-                api.init(APP_URL);
-            % endif
+        // Create a new YUI instance and populate it with the required modules.
+        YUI().use('node', 'console', function (Y) {
+            // Node is available and ready for use. Add implementation
+            // code here.
 
-            // do the api call to get the most recent bookmarks
-            var page_control = new models.PageControl({'page': ${page},
-                                                       'count': ${count}}),
-                cview = new ui.ControlView({
-                                'el': $('.controls'),
-                                'model': page_control,
-                                'username': username});
-            ui.filterui.init();
+            Y.log('Got YUI running');
         });
-
     </script>
+
+    <!--<script type="text/javascript">-->
+    <!--    require(["bookie/ui", "bookie/api", "bookie/models"], function(ui, api, models) {-->
+    <!--        // update the api to say hey, we should use a username/not in our-->
+    <!--        // calls-->
+    <!--        var username = undefined;-->
+    <!--        % if username:-->
+    <!--            username = '${username}';-->
+    <!--            api.init(APP_URL, username);-->
+    <!--        % else:-->
+    <!--            api.init(APP_URL);-->
+    <!--        % endif-->
+
+    <!--        // do the api call to get the most recent bookmarks-->
+    <!--        var page_control = new models.PageControl({'page': ${page},-->
+    <!--                                                   'count': ${count}}),-->
+    <!--            cview = new ui.ControlView({-->
+    <!--                            'el': $('.controls'),-->
+    <!--                            'model': page_control,-->
+    <!--                            'username': username});-->
+    <!--        ui.filterui.init();-->
+    <!--    });-->
+
+    <!--</script>-->
 </%def>
