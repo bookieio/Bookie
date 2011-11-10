@@ -1,6 +1,10 @@
 YUI.add('bookie-api', function(Y) {
 
+    // build sprintf onto the Y object?
+
     Y.namespace('bookie');
+
+    var _ = Y.Lang.substitute;
 
     /**
      * We want to wrap our ajax calls through the IO module.
@@ -66,23 +70,61 @@ YUI.add('bookie-api', function(Y) {
 
     Y.bookie.Api.NAME = 'bookie-api';
     Y.bookie.Api.ATTRS = {
-        url: {
+        api_key: {
             value: ""
+        },
+
+        options: {
+            value: {}
+        },
+
+        route: {
+            value: "",
+
+            // the route must exist to be set
+            validator: function (route) {
+                return Y.Object.hasKey(this.routes, route);
+            }
+        },
+
+        url: {
+            value: "",
+            writeOnce: true
         },
 
         username: {
-            value: ""
-        },
-
-        api_key: {
             value: ""
         }
     }
 
     Y.extend(Y.bookie.Api, Y.Base, {
+
+        /**
+         * Available routes in the API
+         *
+         */
+        routes: {
+            'bmarks_all': {
+                'url': '/bmarks',
+                'data': {
+                    'count': 10,
+                    'page': 1,
+                    'with_content': false
+                },
+            },
+            'bmarks_user': {
+                'url': '/{username}/bmarks',
+                'data': {
+                    'count': 10,
+                    'page': 1,
+                    'with_content': false
+                 }
+            },
+        },
+
         base_cfg: {
             method: "GET",
-            data: '',
+            data: {},
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -94,33 +136,39 @@ YUI.add('bookie-api', function(Y) {
             arguments: {}
         },
 
-        build_url: function (add) {
-            return this.get('url') + add;
+        initializer : function(cfg) {
+            // first make sure the route we want is valid
+            if (!Y.Object.hasKey(this.routes, cfg.route)) {
+                throw(_('Selected route is not valid: {route}', cfg));
+            }
         },
 
-        build_cfg: function (options) {
-            return Y.mix(this.base_cfg, options, true);
+        /**
+         * Generate a full api url to call
+         *
+         * If user_username is true then perform a replace on the given url
+         * with the api instance's username parameter
+         *
+         */
+        build_url: function () {
+            return this.get('url') + _(this.routes[this.get('route')].url,
+                                       {'username': this.get('username')});
         },
 
-        recent: function (options, callbacks) {
-            var api_url = '/api/v1/bmarks',
-                data = {
-                'count': 10,
-                'page': 1,
-                'with_content': false
-            };
+        build_cfg: function () {
+            var base_data = this.routes[this.get('route')].data;
+            Y.mix(base_data, this.get('options').data);
+            this.set('options.data', base_data);
+            return this.get('options');
+        },
 
-            // combine/overwrite data with anything the caller passes in
-            Y.mix(data, options.data, true);
-            options.data = data;
-
-            request_handler(this.build_url(api_url),
-                            this.build_cfg(options),
+        call: function (callbacks) {
+            request_handler(this.build_url(),
+                            this.build_cfg(),
                             callbacks);
         }
     });
 
-
 }, '0.1.0' /* module version */, {
-    requires: ['base', 'io', 'json']
+    requires: ['base', 'io', 'querystring-stringify-simple', 'json']
 });
