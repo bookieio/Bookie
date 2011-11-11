@@ -1,7 +1,5 @@
 YUI.add('bookie-api', function(Y) {
 
-    // build sprintf onto the Y object?
-
     Y.namespace('bookie');
 
     var _ = Y.Lang.substitute;
@@ -155,6 +153,11 @@ YUI.add('bookie-api', function(Y) {
                                        {'username': this.get('username')});
         },
 
+        /**
+         * The cfg passed to the IO module needs to be combined with the
+         * default data set and then any options passed in from the caller
+         *
+         */
         build_cfg: function () {
             var base_data = this.routes[this.get('route')].data;
             Y.mix(base_data, this.get('options').data);
@@ -162,6 +165,13 @@ YUI.add('bookie-api', function(Y) {
             return this.get('options');
         },
 
+        /**
+         * Actually make the ajax call with the given cfg we've setup for use.
+         *
+         * @param callbacks an object of success/error/complete callbacks we'll
+         * hand json decoded data of the response
+         *
+         */
         call: function (callbacks) {
             request_handler(this.build_url(),
                             this.build_cfg(),

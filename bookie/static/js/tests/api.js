@@ -61,7 +61,7 @@ YUI({
                     'success': function (data, request) {
                                 that.resume(function () {
                                     Y.Assert.areEqual('200', request.status);
-                                    Y.Assert.areEqual(1, data.count);
+                                    Y.Assert.areEqual(10, data.count);
                                 });
                            }
                 },
@@ -82,7 +82,7 @@ YUI({
                     'success': function (data, request) {
                                 that.resume(function () {
                                     Y.Assert.areEqual('200', request.status);
-                                    Y.Assert.areEqual(1, data.count);
+                                    Y.Assert.areEqual(10, data.count);
                                     Y.Assert.areEqual('admin', data.bmarks[0].username);
                                 });
                            }
