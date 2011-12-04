@@ -80,8 +80,30 @@ YUI({
                     "Stored should be converted from string to Date object");
             },
 
+        }),
+
+        modellist_test = new Y.Test.Case({
+            name: "Model Tests",
+            test_init: function () {
+                var json_bmarks = [
+                    model_test.test_model(),
+                    model_test.test_model(),
+                    model_test.test_model(),
+                ]
+
+                var bmarks = new Y.bookie.BmarkList();
+                bmarks.add(json_bmarks);
+
+                A.areEqual(3, bmarks.size(),
+                    "The model list should be 3 long");
+
+                Y.ObjectAssert.areEqual([1, 1, 1], bmarks.get('bid'),
+                    "We should get a list of ids from the models");
+
+            },
         });
 
     Y.Test.Runner.add(model_test);
+    Y.Test.Runner.add(modellist_test);
     Y.Test.Runner.run();
 });
