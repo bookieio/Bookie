@@ -206,6 +206,7 @@ class api_auth():
         self.user_fetcher = user_fetcher
         self.admin_only = admin_only
         self.anon = anon
+        LOG.debug('API AUTH INIT')
 
     def __call__(self, action_):
         """ Return :meth:`wrap_action` as the decorator for ``action_``. """

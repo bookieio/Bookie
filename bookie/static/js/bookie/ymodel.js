@@ -1,3 +1,6 @@
+/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
+         plusplus: false, newcap: false, */
+/*global _: false, window: false, self: false, escape: false, */
 YUI.add('bookie-model', function (Y) {
     var _ = Y.Lang.substitute;
 
@@ -6,12 +9,7 @@ YUI.add('bookie-model', function (Y) {
     Y.bookie.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
         [],
-        {
-
-
-
-
-        },
+        {},
         {
             ATTRS: {
                 'bid': {},
@@ -36,7 +34,11 @@ YUI.add('bookie-model', function (Y) {
                     // we want to return a formatted version of stored
                     getter: function (val) {
                         var val = this.get('stored');
-                        return (val.getMonth() + 1) + "/" + val.getDate();
+                        if (val) {
+                            return (val.getMonth() + 1) + "/" + val.getDate();
+                        } else {
+                            return val;
+                        }
                     }
                 },
 
@@ -45,13 +47,17 @@ YUI.add('bookie-model', function (Y) {
                     // we want to return a formatted version of stored
                     getter: function (val) {
                         var val = this.get('stored');
-                        return _("{month}/{date}/{year} {hours}:{minutes}", {
-                                 'month': val.getMonth() + 1,
-                                 'date': val.getDate(),
-                                 'year': val.getFullYear(),
-                                 'hours': val.getHours(),
-                                 'minutes': val.getMinutes()
-                        });
+                        if (val) {
+                            return _("{month}/{date}/{year} {hours}:{minutes}", {
+                                     'month': val.getMonth() + 1,
+                                     'date': val.getDate(),
+                                     'year': val.getFullYear(),
+                                     'hours': val.getHours(),
+                                     'minutes': val.getMinutes()
+                            });
+                        } else {
+                            return val;
+                        }
                     }
                 },
            }
@@ -59,5 +65,5 @@ YUI.add('bookie-model', function (Y) {
 
 
 }, '0.1.0' /* module version */, {
-    requires: ['base', 'model']
+    requires: ['base', 'model', '']
 });

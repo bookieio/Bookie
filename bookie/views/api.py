@@ -219,6 +219,7 @@ def bmark_remove(request):
 @api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
+    LOG.debug('BMARK RECENT')
     rdict = request.matchdict
     params = request.params
 
@@ -473,6 +474,8 @@ def tag_complete(request):
         tags = TagMgr.complete(tag,
                                current=current_tags,
                                username=username)
+    else:
+        tags = []
 
     # reset this for the payload join operation
     if current_tags is None:

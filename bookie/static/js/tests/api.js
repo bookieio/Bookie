@@ -3,6 +3,12 @@ YUI({
     logInclude: { TestRunner: true},
     filter: 'raw'
 }).use('console', 'test', 'bookie-api', function (Y) {
+    //initialize the console
+    var yconsole = new Y.Console({
+        newestOnTop: false
+    });
+    yconsole.render('#log');
+
     var api_test = new Y.Test.Case({
         name: "API Tests",
 
@@ -11,11 +17,11 @@ YUI({
          *
          */
         get_api: function () {
-            return api = new Y.bookie.Api({
-                       'url': 'http://127.0.0.1:6543',
-                       'username': 'admin',
-                       'api_key': '2dcf75460cb5'
-                   });
+            return new Y.bookie.Api({
+                'url': 'http://127.0.0.1:6543',
+                'username': 'admin',
+                'api_key': '2dcf75460cb5'
+            });
         },
 
         testApiExists: function () {
@@ -24,11 +30,12 @@ YUI({
         },
 
         testMissingRoute: function () {
-            var hit = false;
+            var hit = false,
+                api;
             try {
-                var api = new Y.bookie.Api();
-            } catch(err) {
-                hit = true
+                api = new Y.bookie.Api();
+            } catch (err) {
+                hit = true;
             }
 
             Y.Assert.isTrue(hit);
@@ -59,17 +66,17 @@ YUI({
             var that = this,
                 callbacks = {
                     'success': function (data, request) {
-                                that.resume(function () {
-                                    Y.Assert.areEqual('200', request.status);
-                                    Y.Assert.areEqual(10, data.count);
-                                });
-                           }
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.count);
+                        });
+                    }
                 },
                 api = new Y.bookie.Api({
-                      'route': 'bmarks_all',
-                      'url': 'http://192.168.0.246:6543/api/v1',
-                      'username': 'admin',
-                      'api_key': '2dcf75460cb5'
+                    'route': 'bmarks_all',
+                    'url': 'http://127.0.0.1:6543/api/v1',
+                    'username': 'admin',
+                    'api_key': '2dcf75460cb5'
                 });
 
             api.call(callbacks);
@@ -80,37 +87,59 @@ YUI({
             var that = this,
                 callbacks = {
                     'success': function (data, request) {
-                                that.resume(function () {
-                                    Y.Assert.areEqual('200', request.status);
-                                    Y.Assert.areEqual(10, data.count);
-                                    Y.Assert.areEqual('admin', data.bmarks[0].username);
-                                });
-                           }
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.count);
+                            Y.Assert.areEqual(
+                                'admin',
+                                data.bmarks[0].username
+                            );
+                        });
+                    }
                 },
                 api = new Y.bookie.Api({
-                      'route': 'bmarks_user',
-                      'url': 'http://192.168.0.246:6543/api/v1',
-                      'username': 'admin',
-                      'options': {
-                          'data': {
-                              'api_key': '2dcf75460cb5'
-                          }
-                      }
+                    'route': 'bmarks_user',
+                    'url': 'http://127.0.0.1:6543/api/v1',
+                    'username': 'admin',
+                    'options': {
+                        'data': {
+                            'api_key': '2dcf75460cb5'
+                        }
+                    }
                 });
 
             api.call(callbacks);
             this.wait(1000);
         },
 
+        testTagComplete: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(5, data.tags.length);
+                        });
+                    }
+                },
+                api = new Y.bookie.Api({
+                    route: 'tag_complete',
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    options: {
+                        data: {
+                            api_key: '2dcf75460cb5',
+                            tag: "boo",
+                            current: ""
+                        }
+                    }
+                });
+
+            api.call(callbacks);
+            this.wait(1000);
+        }
     });
 
     Y.Test.Runner.add(api_test);
-
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
-
     Y.Test.Runner.run();
 });
