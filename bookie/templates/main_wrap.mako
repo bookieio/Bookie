@@ -75,6 +75,11 @@
 
         <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
 
+        <script src="/static/js/lib/handlebars-1.0b4.js"></script>
+        <script src="/static/js/bookie/yapi.js"></script>
+        <script src="/static/js/bookie/ymodel.js"></script>
+        <script src="/static/js/bookie/yview.js"></script>
+
         <!--<script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>-->
         <!--<script type="text/javascript" src="/static/js/lib/underscore.string.min.js"></script>-->
 

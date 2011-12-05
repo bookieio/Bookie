@@ -69,20 +69,19 @@
 
 <script type="text/template" id="bmark_row">
     <div class="tags">
-        ${'<% _.each(tags, function (tag) { %>'|n}
+        {{#each tags}}
             <a class="tag"
-                href="/tags/${'<%= tag.name %>'|n}">${'<%= tag.name %>'|n}</a>
-        ${'<% }); %>'|n}
+                href="/tags/{{name}}">{{name}}</a>
+        {{/each}}
     </div>
 
     <div class="description">
-            <a href="/redirect/${'<%= hash_id %>'|n}"
-               title="${'<%= extended %>'|n}">${'<%= description %>'|n}</a>
+        <a href="/redirect/{{hash_id}}"
+            title="{{extended}}">{{description}}</a>
     </div>
     <div class="actions">
-       <span class="icon" title="${'<%= prettystored %>'|n}">\</span>
-        % if username is not None:
-            <a href="/${username}/edit/${'<%= hash_id %>'|n}"
+        <span class="icon" title="{{prettystored}}">\</span>
+        <a href="/{username}/edit/{{hash_id}}"
                title="Edit the bookmark" alt="Edit the bookmark"
                class="edit">
                <span class="icon">p</span>
@@ -92,16 +91,16 @@
                class="delete">
                <span class="icon">*</span>
            </a>
-        % endif
     </div>
 
-    <div class="url" title="${'<%= url %>'|n}">
-        <a href="/bmark/readable/${'<%= hash_id %>'|n}"
+    <div class="url" title="{{url}}">
+        <a href="/bmark/readable/{{hash_id}}"
            title="View readable content" alt="View readable content">
             <span class="icon">E</span>
-        </a> ${'<%= url %>'|n}
+        </a> {{url}}
     </div>
 </script>
+
 
 <script type="text/template" id="previous_control">
     <a href="#" class="button previous"><span class="icon">[</span> Prev</a>
@@ -114,35 +113,42 @@
 <%def name="add_js()">
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('node', 'console', function (Y) {
-            // Node is available and ready for use. Add implementation
-            // code here.
+        YUI().use('node', 'console', 'bookie-model', 'bookie-api',
+            'bookie-view',  function (Y) {
 
-            Y.log('Got YUI running');
+            var username = undefined,
+                api_cfg = {
+                    url: '/api/v1'
+                };
+            % if username:
+                username = '${username}';
+                api_cfg.route = 'bmarks_all';
+            % else:
+                api_cfg.route = 'bmarks_all';
+                api_cfg.username = username;
+            % endif
+
+            var api = new Y.bookie.Api(api_cfg);
+
+            api.call({
+                'success': function (data, request) {
+                    // build models out of our data
+                    var models = new Y.bookie.BmarkList();
+                    models.add(Y.Array.map(
+                        data.bmarks, function (bmark){
+                            return new Y.bookie.Bmark(bmark);
+                        })
+                    );
+
+                    models.each(function (m, i) {
+                        var testview = new Y.bookie.BmarkView({model: m});
+                        Y.one('.data_list').appendChild(testview.render());
+                    });
+                }
+            });
+
+
         });
     </script>
 
-    <!--<script type="text/javascript">-->
-    <!--    require(["bookie/ui", "bookie/api", "bookie/models"], function(ui, api, models) {-->
-    <!--        // update the api to say hey, we should use a username/not in our-->
-    <!--        // calls-->
-    <!--        var username = undefined;-->
-    <!--        % if username:-->
-    <!--            username = '${username}';-->
-    <!--            api.init(APP_URL, username);-->
-    <!--        % else:-->
-    <!--            api.init(APP_URL);-->
-    <!--        % endif-->
-
-    <!--        // do the api call to get the most recent bookmarks-->
-    <!--        var page_control = new models.PageControl({'page': ${page},-->
-    <!--                                                   'count': ${count}}),-->
-    <!--            cview = new ui.ControlView({-->
-    <!--                            'el': $('.controls'),-->
-    <!--                            'model': page_control,-->
-    <!--                            'username': username});-->
-    <!--        ui.filterui.init();-->
-    <!--    });-->
-
-    <!--</script>-->
 </%def>

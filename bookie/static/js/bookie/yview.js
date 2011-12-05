@@ -7,7 +7,8 @@ YUI.add('bookie-view', function (Y) {
     Y.namespace('bookie');
 
     Y.bookie.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
-        template: "{{id}}",
+        container: '<div class="bmark"/>',
+        template: Y.one('#bmark_row').get('text'),
 
         events: {
             '.remove': {
@@ -17,16 +18,18 @@ YUI.add('bookie-view', function (Y) {
 
         initializer: function (cfg) {
             this.cTemplate = Handlebars.compile(this.template)
+
+            // set the data-bid for our later use
+            this.container.setAttribute('data-bid', this.model.get('bid'));
+
             // hold onto the idea that we only take Bmark objects for the
             // moment...
             // console.log(cfg.model instanceof Y.bookie.Bmark);
         },
 
-        render: function (parent) {
+        render: function () {
             // Render this view's HTML into the container element.
-            parent.setContent(
-                this.cTemplate(this.model.getAttrs())
-            );
+            return this.container.set('innerHTML', this.cTemplate(this.model.getAttrs()));
         }
     });
 
