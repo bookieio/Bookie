@@ -222,7 +222,13 @@ YUI.add('bookie-api', function (Y) {
 
             // if we have an api key, then we need to pass that along as well
             if (this.get('api_key').length > 2) {
-                base_cfg.data.api_key = this.get('api_key');
+                if (base_cfg.data) {
+                    base_cfg.data.api_key = this.get('api_key');
+                } else {
+                    base_cfg.data = {
+                        api_key: this.get('api_key')
+                    }
+                }
             }
 
             return base_cfg;

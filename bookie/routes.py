@@ -5,6 +5,9 @@ def build_routes(config):
 
     config.add_route("home", "/")
 
+    # test routes for JS tests
+    config.add_route("tests", "tests/{file}")
+
     # auth routes
     config.add_route("login", "login")
     config.add_route("logout", "logout")
