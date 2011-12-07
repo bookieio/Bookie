@@ -2,7 +2,7 @@
 YUI({
     logInclude: { TestRunner: true},
     filter: 'raw'
-}).use('console', 'test', 'bookie-view', 'bookie-model', function (Y) {
+}).use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
     //initialize the console
     var yconsole = new Y.Console({
         newestOnTop: false
@@ -110,6 +110,31 @@ YUI({
                 Y.one('.view').get('innerHTML').search("c70694d2c53494") !== -1,
                 'We should find the hash id of a middle bmark in the html'
             );
+        },
+
+        test_remove_event: function () {
+            var model = new Y.bookie.Bmark(),
+                hit = false,
+                test = this;
+
+            model.remove = function () {
+                hit = true;
+            }
+
+            var testview = new Y.bookie.BmarkView({model: model});
+            Y.one('.view').appendChild(testview.render());
+            var click_points = Y.all('.delete');
+            Y.Assert.areEqual(click_points.size(), 1,
+                "We should have one rendered remove button");
+
+            var button = click_points.pop();
+            button.simulate('click');
+            Y.Assert.isTrue(hit);
+
+            // and verify that our node is now gone
+            var click_points = Y.all('.bmark');
+            Y.Assert.areEqual(0, click_points.size(),
+                "We shouldn't have any html elements left after deleting");
         }
     });
 

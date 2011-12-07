@@ -11,7 +11,7 @@ YUI.add('bookie-view', function (Y) {
         template: Y.one('#bmark_row').get('text'),
 
         events: {
-            '.remove': {
+            '.delete': {
                 click: 'remove'
             }
         },
@@ -27,10 +27,24 @@ YUI.add('bookie-view', function (Y) {
             // console.log(cfg.model instanceof Y.bookie.Bmark);
         },
 
+        /**
+         * Handle the remove event on this bookmark
+         *
+         */
+        remove: function (e) {
+            console.log('view remove');
+            console.log(this.model);
+            this.model.remove();
+            this.destroy();
+        },
+
         render: function () {
             // Render this view's HTML into the container element.
-            return this.container.set('innerHTML', this.cTemplate(this.model.getAttrs()));
+            return this.container.set(
+                'innerHTML',
+                this.cTemplate(this.model.getAttrs())
+            );
         }
     });
 
-}, '0.1.0', { requires: ['base', 'view', 'bookie-model'] });
+}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'node-event-simulate'] });

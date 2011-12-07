@@ -32,3 +32,13 @@
     </div>
 </script>
 
+
+<script type="text/template" id="previous_control">
+    <a href="#" class="button previous"><span class="icon">[</span> Prev</a>
+</script>
+
+
+<script type="text/template" id="next_control">
+    <a href="#" class="button next">Next <span class="icon">]</span></a>
+</script>
+
