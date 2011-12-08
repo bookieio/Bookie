@@ -11,8 +11,9 @@
             title="{{extended}}">{{description}}</a>
     </div>
     <div class="actions">
+        {{#if username}}
         <span class="icon" title="{{prettystored}}">\</span>
-        <a href="/{username}/edit/{{hash_id}}"
+        <a href="/{{username}}/edit/{{hash_id}}"
                title="Edit the bookmark" alt="Edit the bookmark"
                class="edit">
                <span class="icon">p</span>
@@ -22,6 +23,7 @@
                class="delete">
                <span class="icon">*</span>
            </a>
+       {{/if}}
     </div>
 
     <div class="url" title="{{url}}">

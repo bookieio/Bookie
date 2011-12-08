@@ -10,8 +10,12 @@
     else:
         url = 'bmark_recent'
 
-    if username:
+    api_key = None
+
+    if request.user.username:
+        username = request.user.username
         url = 'user_' + url
+        api_key = request.user.api_key
 
 %>
 
@@ -82,9 +86,10 @@
             % if username:
                 username = '${username}';
                 api_cfg.route = 'bmarks_all';
+                api_cfg.api_key = ${request.user.api_key};
             % else:
                 api_cfg.route = 'bmarks_all';
-                api_cfg.username = username;
+                api_cfg.username = null;
             % endif
 
             var api = new Y.bookie.Api(api_cfg);
@@ -100,7 +105,10 @@
                     );
 
                     models.each(function (m, i) {
-                        var testview = new Y.bookie.BmarkView({model: m});
+                        var testview = new Y.bookie.BmarkView({
+                            model: m,
+                            current_user: username
+                            });
                         Y.one('.data_list').appendChild(testview.render());
                     });
                 }

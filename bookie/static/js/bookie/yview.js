@@ -32,18 +32,26 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         remove: function (e) {
-            console.log('view remove');
-            console.log(this.model);
             this.model.remove();
             this.destroy();
         },
 
         render: function () {
             // Render this view's HTML into the container element.
+            var tpl_data = Y.mix(
+                {username: this.get('current_user')},
+                this.model.getAttrs()
+            );
+
             return this.container.set(
                 'innerHTML',
-                this.cTemplate(this.model.getAttrs())
+                this.cTemplate(tpl_data)
             );
+        }
+    }, {
+        ATTRS: {
+            'current_user': {
+            }
         }
     });
 

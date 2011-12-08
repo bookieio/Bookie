@@ -119,10 +119,15 @@ YUI({
 
             model.remove = function () {
                 hit = true;
-            }
+            };
 
-            var testview = new Y.bookie.BmarkView({model: model});
+            var testview = new Y.bookie.BmarkView({
+                model: model,
+                current_user: 'admin'
+            });
+
             Y.one('.view').appendChild(testview.render());
+            debugger;
             var click_points = Y.all('.delete');
             Y.Assert.areEqual(click_points.size(), 1,
                 "We should have one rendered remove button");
@@ -135,6 +140,25 @@ YUI({
             var click_points = Y.all('.bmark');
             Y.Assert.areEqual(0, click_points.size(),
                 "We shouldn't have any html elements left after deleting");
+        },
+
+        test_missing_edit_when_not_logged_in: function () {
+            var model = new Y.bookie.Bmark(),
+                username = null;
+
+            var testview = new Y.bookie.BmarkView({
+                model: model,
+                current_user: username
+            });
+
+            Y.one('.view').appendChild(testview.render());
+            var edit_points = Y.all('.edit');
+
+            // there should be no edit points because we're a non logged in
+            // user
+            Y.Assert.areEqual(0, edit_points.size(),
+                "There shouldn't be any edit points for anon users");
+
         }
     });
 

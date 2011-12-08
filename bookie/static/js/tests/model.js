@@ -22,7 +22,8 @@ YUI({
                     'stored': "2011-11-10 20:57:40.273044",
                     'updated': "2011-11-11 20:57:40.273044",
                     'dateinfo': "",
-                    'prettystored': ""
+                    'prettystored': "",
+                    'uesrname': ""
                 });
             },
 
