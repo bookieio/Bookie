@@ -12,7 +12,7 @@
 
     api_key = None
 
-    if request.user.username:
+    if request.user:
         username = request.user.username
         url = 'user_' + url
         api_key = request.user.api_key
@@ -28,7 +28,7 @@
             </span>
         </div>
 
-        % if username is not None:
+        % if request.user:
             <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
                    <a href="${request.route_url('user_bmark_new', username=username)}"
                        class="button">
@@ -83,10 +83,10 @@
                 api_cfg = {
                     url: '/api/v1'
                 };
-            % if username:
+            % if request.user:
                 username = '${username}';
                 api_cfg.route = 'bmarks_all';
-                api_cfg.api_key = ${request.user.api_key};
+                api_cfg.api_key = '${request.user.api_key}';
             % else:
                 api_cfg.route = 'bmarks_all';
                 api_cfg.username = null;
