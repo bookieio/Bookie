@@ -40,14 +40,14 @@ YUI({
                 });
             },
 
-            testBmarkExists: function () {
+            "Bmark model should exist": function () {
                 A.isObject(
                     Y.bookie.Bmark,
                     "Should find an objcet for Bmark model"
                 );
             },
 
-            testBmarkProperties: function () {
+            "Bmark model should take a bunch of properties": function () {
                 var prop_list = ['bid', 'hash_id', 'description', 'extended'],
                     prop_dates = {
                         stored: String(
@@ -74,12 +74,41 @@ YUI({
                 A.areEqual(undefined, bmark.get('not_exist'));
             },
 
-            testDateGetters: function () {
+            "model date getters should format correctly": function () {
                 var bmark = this.test_model();
 
                 A.isInstanceOf(Date, bmark.get('stored'),
                     "Stored should be converted from string to Date object");
             },
+
+            "calling remove should run destroy": function () {
+                var bmark = this.test_model();
+
+                // override the destroy method to make sure it gets called
+                // right
+                bmark.destroy = function (opts, callback) {
+                    hit = true;
+                    A.isTrue(opts.delete, "Delete should be true in the options");
+                }
+
+                bmark.remove();
+
+                A.isTrue(hit, "We should have hit the destroy function");
+            },
+
+            "calling remove should fire sync with delete action": function () {
+                var bmark = this.test_model();
+
+                // override the sync method to make sure it gets called
+                // right
+                bmark.sync = function (action, opts, callback) {
+                    hit = true;
+                    A.areEqual(action, 'delete', 'Delete should be true in the options');
+                }
+
+                bmark.remove();
+                A.isTrue(hit, "We should have hit the sync with delete");
+            }
 
         }),
 

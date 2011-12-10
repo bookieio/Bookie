@@ -9,7 +9,15 @@ YUI.add('bookie-model', function (Y) {
     Y.bookie.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
         [],
-        {},
+        {
+            /**
+             * Maps to destroy with delete: true
+             *
+             */
+            remove: function (callback) {
+                this.destroy({delete: true}, callback);
+            },
+        },
         {
             ATTRS: {
                 'bid': {},
@@ -67,13 +75,15 @@ YUI.add('bookie-model', function (Y) {
                         }
                     }
                 },
-           }
+           },
+
         });
 
     Y.bookie.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
         // Add prototype properties and methods for your List here if desired. These
         // will be available to all instances of your List.
         model: Y.bookie.Bmark,
+
 
     });
 

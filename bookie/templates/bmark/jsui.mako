@@ -83,6 +83,7 @@
                 api_cfg = {
                     url: '/api/v1'
                 };
+
             % if request.user:
                 username = '${username}';
                 api_cfg.route = 'bmarks_all';
