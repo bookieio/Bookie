@@ -22,8 +22,7 @@ YUI.add('bookie-api', function (Y) {
      * back to provide to the caller's callback as data
      *
      */
-    var request_handler = function (url, cfg, callbacks) {
-
+    var request_handler = function (url, cfg, arguments) {
         // extend with the base handlers for each event we want to use
         // should have cases for complete, success, failure
         // Note: complete fires before both success and failure, not usually
@@ -32,8 +31,8 @@ YUI.add('bookie-api', function (Y) {
             default_complete = function (id, response, arguments) {
                 var data = Y.JSON.parse(response.responseText);
 
-                if (arguments.complete !== undefined) {
-                    arguments.complete(data, response);
+                if (arguments.callbacks.complete !== undefined) {
+                    arguments.callbacks.complete(data, response, arguments);
                 } else {
 
                 }
@@ -41,10 +40,11 @@ YUI.add('bookie-api', function (Y) {
             default_success = function (id, response, arguments) {
                 var data = Y.JSON.parse(response.responseText);
 
+                debugger;
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback
-                if (arguments.success !== undefined) {
-                    arguments.success(data, response);
+                if (arguments.callbacks.success !== undefined) {
+                    arguments.callbacks.success(data, response, arguments);
                 } else {
 
                 }
@@ -54,8 +54,12 @@ YUI.add('bookie-api', function (Y) {
                     status_str = response.statusText;
 
                 // hand the callback the issue at hand
-                if (arguments.error !== undefined) {
-                    arguments.error_callback(data, status_str, response);
+                if (arguments.callbacks.error !== undefined) {
+                    arguments.callbacks.error(
+                        data,
+                        status_str,
+                        response,
+                        arguments);
                 } else {
 
                 }
@@ -63,100 +67,18 @@ YUI.add('bookie-api', function (Y) {
 
         // bind the callbacks the caller sent us to be used as the callbacks
         // but keep any other arguments we've already assigned
-        cfg.arguments = callbacks;
         cfg.on = {
             complete: default_complete,
             success: default_success,
             failure: default_failure
         };
 
+        cfg.arguments = arguments;
+
         request = Y.io(url, cfg);
     };
 
-    Y.bookie.Api = function () {
-        // Invoke Base constructor, passing through arguments
-        Y.bookie.Api.superclass.constructor.apply(this, arguments);
-    };
-
-    Y.bookie.Api.NAME = 'bookie-api';
-    Y.bookie.Api.ATTRS = {
-        api_key: {
-            value: ""
-        },
-
-        options: {
-            value: {}
-        },
-
-        route: {
-            value: "",
-
-            // the route must exist to be set
-            validator: function (route) {
-                return Y.Object.hasKey(this.routes, route);
-            }
-        },
-
-        url: {
-            value: "",
-            writeOnce: true
-        },
-
-        username: {
-            value: ""
-        }
-    };
-
-    Y.extend(Y.bookie.Api, Y.Base, {
-
-        /**
-         * Available routes in the API
-         *
-         */
-        routes: {
-            bmarks_all: {
-                url: '/bmarks',
-                data: {
-                    count: 10,
-                    page: 1,
-                    with_content: false
-                },
-            },
-
-            bmarks_user: {
-                url: '/{username}/bmarks',
-                data: {
-                    count: 10,
-                    page: 1,
-                    with_content: false
-                }
-            },
-
-            bookmark: {
-                url: '/bmark/{hash_id}',
-                data: {}
-            },
-
-            bookmark_user: {
-                url: '/{username}/bmark/{hash_id}',
-                data: {}
-            },
-
-            bookmark_remove: {
-                method: "DELETE",
-                url: '/{username}/bmark/{hash_id}/',
-                data: {}
-            },
-
-            tag_complete: {
-                url: '/{username}/tags/complete',
-                data: {
-                    tag: "",
-                    current: ""
-                }
-            }
-        },
-
+    Y.bookie.Api = Y.Base.create('bookie-api', Y.Base, [], {
         base_cfg: {
             method: "GET",
             data: {},
@@ -173,11 +95,6 @@ YUI.add('bookie-api', function (Y) {
         },
 
         initializer : function (cfg) {
-            // first make sure the route we want is valid
-            if (!Y.Object.hasKey(this.routes, cfg.route)) {
-                throw (_('Selected route is not valid: {route}', cfg));
-            }
-
             Y.mix(this.base_cfg, cfg);
         },
 
@@ -189,7 +106,7 @@ YUI.add('bookie-api', function (Y) {
          *
          */
         build_url: function () {
-            return this.get('url') + _(this.routes[this.get('route')].url,
+            return this.get('app_url') + _(this.url,
                                        {'username': this.get('username')});
         },
 
@@ -197,28 +114,26 @@ YUI.add('bookie-api', function (Y) {
          * The cfg passed to the IO module needs to be combined with the
          * default data set and then any options passed in from the caller
          *
-         * Order is passed in options -> routes defaults -> base_cfg
+         * Order is passed in options -> base_cfg
          *
          */
         build_cfg: function () {
             // first build the base config with the routes config
             // this updates things like GET vs POST and such
             var call_cfg = this.get('options'),
-                route = this.get('route'),
                 base_cfg = this.base_cfg,
-                route_cfg = this.routes[route],
-                base_data = this.routes[this.get('route')].data;
+                base_data = this.data;
 
             // mix them over each other, not sure this works for nested bits
             // though, for instance base_cfg might have cfg.data.query_param
             // that needs to be kept as we overlay it with the other settings
             // same with the callbacks and such
-            Y.mix(base_cfg, route_cfg, call_cfg);
+            base_cfg = Y.merge(base_cfg, call_cfg);
 
             // next update with the routes info and other hard coded request
             // data
-            Y.mix(call_cfg.data, base_data);
-            base_cfg.data = call_cfg.data;
+            base_cfg.data = Y.merge(base_cfg.data, base_data, call_cfg.data);
+            debugger;
 
             // if we have an api key, then we need to pass that along as well
             if (this.get('api_key').length > 2) {
@@ -242,11 +157,114 @@ YUI.add('bookie-api', function (Y) {
          *
          */
         call: function (callbacks) {
+            // make sure we stick the callbacks on arguments in the base cfg
+            // before we build the rest of it
+            var args = this.base_cfg.arguments;
+            args.callbacks = callbacks;
+
             request_handler(this.build_url(),
                             this.build_cfg(),
-                            callbacks);
+                            args);
         }
-    });
+    }, {
+           ATTRS: {
+               api_key: {
+                   value: ""
+               },
+
+               options: {
+                   value: {}
+               },
+
+               app_url: {
+                   value: "",
+                   writeOnce: true
+               },
+
+               username: {
+                   value: ""
+               }
+            }
+        }
+    );
+
+
+    Y.bookie.Api.route = Y.Base.create(
+        'bookie-api-route',
+        Y.bookie.Api,
+        [],
+        {
+            url: '',
+            data: {}
+        },
+        {}
+    );
+
+
+    Y.bookie.Api.route.BmarksAll = Y.Base.create(
+        'bookie-api-route-bmarksall',
+        Y.bookie.Api.route,
+        [], {
+            url: '/bmarks',
+            data: {
+                count: 10,
+                page: 1,
+                with_content: false
+            },
+
+            initializer: function (cfg) {}
+        },
+        {}
+    );
+
+        // /**
+        //  * Available routes in the API
+        //  *
+        //  */
+        // routes: {
+        //     bmarks_all: {
+        //         url: '/bmarks',
+        //         data: {
+        //             count: 10,
+        //             page: 1,
+        //             with_content: false
+        //         },
+        //     },
+
+        //     bmarks_user: {
+        //         url: '/{username}/bmarks',
+        //         data: {
+        //             count: 10,
+        //             page: 1,
+        //             with_content: false
+        //         }
+        //     },
+
+        //     bookmark: {
+        //         url: '/bmark/{hash_id}',
+        //         data: {}
+        //     },
+
+        //     bookmark_user: {
+        //         url: '/{username}/bmark/{hash_id}',
+        //         data: {}
+        //     },
+
+        //     bookmark_remove: {
+        //         method: "DELETE",
+        //         url: '/{username}/bmark/{hash_id}/',
+        //         data: {}
+        //     },
+
+        //     tag_complete: {
+        //         url: '/{username}/tags/complete',
+        //         data: {
+        //             tag: "",
+        //             current: ""
+        //         }
+        //     }
+        // },
+
 
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json']
