@@ -40,7 +40,6 @@ YUI.add('bookie-api', function (Y) {
             default_success = function (id, response, arguments) {
                 var data = Y.JSON.parse(response.responseText);
 
-                debugger;
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback
                 if (arguments.callbacks.success !== undefined) {
@@ -133,7 +132,6 @@ YUI.add('bookie-api', function (Y) {
             // next update with the routes info and other hard coded request
             // data
             base_cfg.data = Y.merge(base_cfg.data, base_data, call_cfg.data);
-            debugger;
 
             // if we have an api key, then we need to pass that along as well
             if (this.get('api_key').length > 2) {
@@ -217,6 +215,41 @@ YUI.add('bookie-api', function (Y) {
         {}
     );
 
+
+    Y.bookie.Api.route.TagComplete = Y.Base.create(
+        'bookie-api-route-tagcomplete',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/tags/complete',
+            call: function (callbacks, tag_stub, current_tags) {
+                this.set('options', {
+                    data: {
+                        tag: tag_stub,
+                        current: current_tags
+                    }
+                });
+                Y.bookie.Api.route.TagComplete.superclass.call.apply(this, arguments);
+            }
+        },
+        {}
+    );
+
+
+    Y.bookie.Api.route.UserBmarksAll = Y.Base.create(
+        'bookie-api-route-user-bmarksall',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/bmarks',
+            data: {
+                count: 10,
+                page: 1,
+                with_content: false
+            },
+
+            initializer: function (cfg) {}
+        },
+        {}
+    );
         // /**
         //  * Available routes in the API
         //  *
