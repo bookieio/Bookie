@@ -80,11 +80,7 @@ YUI.add('bookie-model', function (Y) {
         });
 
     Y.bookie.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
-        // Add prototype properties and methods for your List here if desired. These
-        // will be available to all instances of your List.
         model: Y.bookie.Bmark,
-
-
     });
 
 

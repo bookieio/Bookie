@@ -94,6 +94,8 @@ YUI.add('bookie-api', function (Y) {
         },
 
         initializer : function (cfg) {
+            console.log(cfg);
+            
             Y.mix(this.base_cfg, cfg);
         },
 
@@ -105,7 +107,7 @@ YUI.add('bookie-api', function (Y) {
          *
          */
         build_url: function () {
-            return this.get('app_url') + _(this.url,
+            return this.get('url') + _(this.url,
                                        {'username': this.get('username')});
         },
 
@@ -134,6 +136,7 @@ YUI.add('bookie-api', function (Y) {
             base_cfg.data = Y.merge(base_cfg.data, base_data, call_cfg.data);
 
             // if we have an api key, then we need to pass that along as well
+            console.log('api key', this.get('api_key'));
             if (this.get('api_key').length > 2) {
                 if (base_cfg.data) {
                     base_cfg.data.api_key = this.get('api_key');
@@ -174,7 +177,7 @@ YUI.add('bookie-api', function (Y) {
                    value: {}
                },
 
-               app_url: {
+               url: {
                    value: "",
                    writeOnce: true
                },

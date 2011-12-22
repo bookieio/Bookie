@@ -7,7 +7,7 @@ YUI.add('bookie-view', function (Y) {
     Y.namespace('bookie');
 
     Y.bookie.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
-        container: '<div class="bmark"/>',
+        container_html: '<div class="bmark"/>',
         template: Y.one('#bmark_row').get('text'),
 
         events: {
@@ -17,10 +17,7 @@ YUI.add('bookie-view', function (Y) {
         },
 
         initializer: function (cfg) {
-            this.cTemplate = Handlebars.compile(this.template)
-
-            // set the data-bid for our later use
-            this.container.setAttribute('data-bid', this.model.get('bid'));
+            this.cTemplate = Y.Handlebars.compile(this.template);
 
             // hold onto the idea that we only take Bmark objects for the
             // moment...
@@ -40,19 +37,31 @@ YUI.add('bookie-view', function (Y) {
             // Render this view's HTML into the container element.
             var tpl_data = Y.mix(
                 {username: this.get('current_user')},
-                this.model.getAttrs()
+                this.get('model').getAttrs()
             );
 
-            return this.container.set(
+            return this.get('container').set(
                 'innerHTML',
                 this.cTemplate(tpl_data)
             );
         }
     }, {
         ATTRS: {
-            'current_user': {
+            current_user: {
+            },
+
+            container: {
+                valueFn: function() {
+                    var container = Y.Node.create(this.container_html);
+                    container.set(
+                        'data-bid',
+                         this.get('model').get('bid')
+                    );
+                    return container;
+                }
+
             }
         }
     });
 
-}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'node-event-simulate'] });
+}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'node-event-simulate', 'handlebars'] });

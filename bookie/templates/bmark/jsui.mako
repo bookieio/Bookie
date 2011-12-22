@@ -81,10 +81,10 @@
 
             var username = undefined,
                 api_cfg = {
-                    url: '/api/v1'
+                    url: APP_URL + '/api/v1'
                 };
 
-            % if request.user:
+            % if request.user and request.user.username:
                 username = '${username}';
                 api_cfg.route = 'bmarks_all';
                 api_cfg.api_key = '${request.user.api_key}';
@@ -93,7 +93,7 @@
                 api_cfg.username = null;
             % endif
 
-            var api = new Y.bookie.Api(api_cfg);
+            var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
 
             api.call({
                 'success': function (data, request) {
@@ -104,6 +104,8 @@
                             return new Y.bookie.Bmark(bmark);
                         })
                     );
+
+                    debugger;
 
                     models.each(function (m, i) {
                         var testview = new Y.bookie.BmarkView({
