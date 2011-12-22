@@ -14,7 +14,6 @@
 
     if request.user:
         username = request.user.username
-        url = 'user_' + url
         api_key = request.user.api_key
 
 %>
@@ -86,7 +85,8 @@
 
             % if request.user and request.user.username:
                 api_cfg.api_key = '${request.user.api_key}';
-                api_cfg.username = '${request.user.username}';
+                username = '${request.user.username}';
+                api_cfg.username = username;
                 var api = new Y.bookie.Api.route.UserBmarksAll(api_cfg);
             % else:
                 var api = new Y.bookie.Api.route.BmarksAll(api_cfg);

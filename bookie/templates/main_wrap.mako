@@ -37,7 +37,7 @@
 
                 <span class="item"><a href="/search" class="button nav_button">Search</a></span>
 
-                % if request.user:
+                % if request.user and request.user.username:
                     <span class="item">
                         <a href="${request.route_url('user_account', username=request.user.username)}" class="button nav_button">Account
                     </a></span>
