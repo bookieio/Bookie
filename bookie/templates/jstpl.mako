@@ -10,16 +10,17 @@
         <a href="/redirect/{{hash_id}}"
             title="{{extended}}">{{description}}</a>
     </div>
+
     <div class="actions">
-        {{#if username}}
         <span class="icon" title="{{prettystored}}">\</span>
-        <a href="/{{username}}/edit/{{hash_id}}"
+        {{#if username}}
+           <a href="/{{username}}/edit/{{hash_id}}"
                title="Edit the bookmark" alt="Edit the bookmark"
                class="edit">
                <span class="icon">p</span>
            </a>
 
-            <a href="#" title="Delete the bookmark" alt="Delete the bookmark"
+           <a href="#" title="Delete the bookmark" alt="Delete the bookmark"
                class="delete">
                <span class="icon">*</span>
            </a>

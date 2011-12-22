@@ -85,15 +85,13 @@
                 };
 
             % if request.user and request.user.username:
-                username = '${username}';
-                api_cfg.route = 'bmarks_all';
                 api_cfg.api_key = '${request.user.api_key}';
+                api_cfg.username = '${request.user.username}';
+                var api = new Y.bookie.Api.route.UserBmarksAll(api_cfg);
             % else:
-                api_cfg.route = 'bmarks_all';
-                api_cfg.username = null;
+                var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
             % endif
 
-            var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
 
             api.call({
                 'success': function (data, request) {
@@ -105,8 +103,6 @@
                         })
                     );
 
-                    debugger;
-
                     models.each(function (m, i) {
                         var testview = new Y.bookie.BmarkView({
                             model: m,
@@ -116,8 +112,6 @@
                     });
                 }
             });
-
-
         });
     </script>
 
