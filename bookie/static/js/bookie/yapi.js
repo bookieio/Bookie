@@ -139,7 +139,6 @@ YUI.add('bookie-api', function (Y) {
             base_cfg.data = Y.merge(base_cfg.data, base_data, call_cfg.data);
 
             // if we have an api key, then we need to pass that along as well
-            console.log('api key', this.get('api_key'));
             if (this.get('api_key').length > 2) {
                 if (base_cfg.data) {
                     base_cfg.data.api_key = this.get('api_key');
@@ -259,19 +258,33 @@ YUI.add('bookie-api', function (Y) {
         {}
     );
 
-    Y.bookie.Api.route.UserBmark = Y.Base.create(
-        'bookie-api-route-user-bmark',
+    /**
+     * API call to fetch a bookmark object.
+     *
+     * Since it must have been bookmarked by someone, and the hash belongs to
+     * them, you need the user and the hash_id of the bookmark to load it.
+     *
+     * This is NOT the username of a logged in/api user. It's the username of
+     * the person that bookmarked the url.
+     *
+     */
+    Y.bookie.Api.route.Bmark = Y.Base.create(
+        'bookie-api-route-bmark',
         Y.bookie.Api.route,
         [], {
             url: '/{username}/bmark/{hash_id}',
             initializer: function (cfg) {
                 this.data = {
-                    hash_id: this.get('hash_id')
+                    hash_id: this.get('hash_id'),
+                    username: this.get('username')
                 }
             }
         }, {
             ATTRS: {
                 hash_id: {
+                    required: true
+                },
+                username: {
                     required: true
                 }
             }

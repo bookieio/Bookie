@@ -96,11 +96,10 @@ YUI({
                 },
                 API_CFG = {
                     url: 'http://127.0.0.1:6543/api/v1',
-                    username: 'admin',
-                    api_key: '2dcf75460cb5',
-                    hash_id: hash_id
+                    hash_id: hash_id,
+                    username: 'admin'
                 },
-                api = new Y.bookie.Api.route.UserBmark(API_CFG);
+                api = new Y.bookie.Api.route.Bmark(API_CFG);
 
             api.call(callbacks, 'boo', '');
             this.wait(1000);
