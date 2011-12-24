@@ -87,11 +87,10 @@
                 api_cfg.api_key = '${request.user.api_key}';
                 username = '${request.user.username}';
                 api_cfg.username = username;
-                var api = new Y.bookie.Api.route.UserBmarksAll(api_cfg);
-            % else:
-                var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
             % endif
 
+            // we want to call the all url route for this view
+            var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
 
             api.call({
                 'success': function (data, request) {

@@ -40,8 +40,8 @@ YUI({
                     }
                 },
                 API_CFG = {
-                    app_url: 'http://127.0.0.1:6543/api/v1'
-                };
+                    url: 'http://127.0.0.1:6543/api/v1'
+                },
                 api = new Y.bookie.Api.route.BmarksAll(API_CFG);
 
             api.call(callbacks);
@@ -63,9 +63,9 @@ YUI({
                     }
                 },
                 API_CFG = {
-                    'app_url': 'http://127.0.0.1:6543/api/v1',
-                    'username': 'admin',
-                    'api_key': '2dcf75460cb5'
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    api_key: '2dcf75460cb5'
                 },
                 api = new Y.bookie.Api.route.UserBmarksAll(API_CFG);
 
@@ -84,11 +84,35 @@ YUI({
                     }
                 },
                 API_CFG = {
-                    app_url: 'http://127.0.0.1:6543/api/v1',
+                    url: 'http://127.0.0.1:6543/api/v1',
                     username: 'admin',
                     api_key: '2dcf75460cb5',
                 },
                 api = new Y.bookie.Api.route.TagComplete(API_CFG);
+
+            api.call(callbacks, 'boo', '');
+            this.wait(1000);
+        },
+
+        testGetBmark: function () {
+            var that = this,
+                hash_id = 'b1210b874f52a1',
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.isTrue(Y.Lang.isObject(data.bmark));
+                            Y.Assert.areEqual(12, data.bmark.bid);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    api_key: '2dcf75460cb5',
+                    hash_id: hash_id
+                },
+                api = new Y.bookie.Api.route.Bmark(API_CFG);
 
             api.call(callbacks, 'boo', '');
             this.wait(1000);

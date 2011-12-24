@@ -94,8 +94,6 @@ YUI.add('bookie-api', function (Y) {
         },
 
         initializer : function (cfg) {
-            console.log(cfg);
-            
             Y.mix(this.base_cfg, cfg);
         },
 
@@ -106,9 +104,16 @@ YUI.add('bookie-api', function (Y) {
          * with the api instance's username parameter
          *
          */
-        build_url: function () {
-            return this.get('url') + _(this.url,
-                                       {'username': this.get('username')});
+        build_url: function (data) {
+            // make sure the username is in the config as well
+            if (Y.Lang.isObject(data)) {
+                data.username = this.get('username');
+            } else {
+                data = {
+                    username: this.get('username')
+                }
+            }
+            return this.get('url') + _(this.url, data);
         },
 
         /**
@@ -160,11 +165,13 @@ YUI.add('bookie-api', function (Y) {
         call: function (callbacks) {
             // make sure we stick the callbacks on arguments in the base cfg
             // before we build the rest of it
-            var args = this.base_cfg.arguments;
+            var args = this.base_cfg.arguments,
+                cfg = this.build_cfg();
+
             args.callbacks = callbacks;
 
-            request_handler(this.build_url(),
-                            this.build_cfg(),
+            request_handler(this.build_url(cfg.data),
+                            cfg,
                             args);
         }
     }, {
@@ -253,28 +260,26 @@ YUI.add('bookie-api', function (Y) {
         },
         {}
     );
-        // /**
-        //  * Available routes in the API
-        //  *
-        //  */
-        // routes: {
-        //     bmarks_all: {
-        //         url: '/bmarks',
-        //         data: {
-        //             count: 10,
-        //             page: 1,
-        //             with_content: false
-        //         },
-        //     },
 
-        //     bmarks_user: {
-        //         url: '/{username}/bmarks',
-        //         data: {
-        //             count: 10,
-        //             page: 1,
-        //             with_content: false
-        //         }
-        //     },
+    Y.bookie.Api.route.Bmark = Y.Base.create(
+        'bookie-api-route-bmarks',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/bmark/{hash_id}',
+            initializer: function (cfg) {
+                this.data = {
+                    hash_id: this.get('hash_id')
+                }
+            }
+        }, {
+            ATTRS: {
+                hash_id: {
+                    required: true
+                }
+            }
+        }
+    );
+
 
         //     bookmark: {
         //         url: '/bmark/{hash_id}',
@@ -291,16 +296,6 @@ YUI.add('bookie-api', function (Y) {
         //         url: '/{username}/bmark/{hash_id}/',
         //         data: {}
         //     },
-
-        //     tag_complete: {
-        //         url: '/{username}/tags/complete',
-        //         data: {
-        //             tag: "",
-        //             current: ""
-        //         }
-        //     }
-        // },
-
 
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json']
