@@ -12,18 +12,6 @@ YUI({
     var api_test = new Y.Test.Case({
         name: "API Tests",
 
-        /**
-         * Just provide a default test api instance
-         *
-         */
-        get_api: function () {
-            return new Y.bookie.Api({
-                'url': 'http://127.0.0.1:6543',
-                'username': 'admin',
-                'api_key': '2dcf75460cb5'
-            });
-        },
-
         testApiExists: function () {
             Y.Assert.isObject(Y.bookie.Api,
                               "Should find an objcet for Api module");
@@ -94,7 +82,7 @@ YUI({
             this.wait(1000);
         },
 
-        testGetBmark: function () {
+        testGetUserBmark: function () {
             var that = this,
                 hash_id = 'b1210b874f52a1',
                 callbacks = {
@@ -112,7 +100,7 @@ YUI({
                     api_key: '2dcf75460cb5',
                     hash_id: hash_id
                 },
-                api = new Y.bookie.Api.route.Bmark(API_CFG);
+                api = new Y.bookie.Api.route.UserBmark(API_CFG);
 
             api.call(callbacks, 'boo', '');
             this.wait(1000);

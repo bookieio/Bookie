@@ -73,7 +73,6 @@ YUI.add('bookie-api', function (Y) {
         };
 
         cfg.arguments = arguments;
-
         request = Y.io(url, cfg);
     };
 
@@ -93,9 +92,7 @@ YUI.add('bookie-api', function (Y) {
             arguments: {}
         },
 
-        initializer : function (cfg) {
-            Y.mix(this.base_cfg, cfg);
-        },
+        initializer : function (cfg) {},
 
         /**
          * Generate a full api url to call
@@ -113,6 +110,7 @@ YUI.add('bookie-api', function (Y) {
                     username: this.get('username')
                 }
             }
+
             return this.get('url') + _(this.url, data);
         },
 
@@ -261,8 +259,8 @@ YUI.add('bookie-api', function (Y) {
         {}
     );
 
-    Y.bookie.Api.route.Bmark = Y.Base.create(
-        'bookie-api-route-bmarks',
+    Y.bookie.Api.route.UserBmark = Y.Base.create(
+        'bookie-api-route-user-bmark',
         Y.bookie.Api.route,
         [], {
             url: '/{username}/bmark/{hash_id}',
@@ -279,12 +277,6 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
-
-
-        //     bookmark: {
-        //         url: '/bmark/{hash_id}',
-        //         data: {}
-        //     },
 
         //     bookmark_user: {
         //         url: '/{username}/bmark/{hash_id}',
