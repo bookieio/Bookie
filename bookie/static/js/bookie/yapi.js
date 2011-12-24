@@ -258,6 +258,7 @@ YUI.add('bookie-api', function (Y) {
         {}
     );
 
+
     /**
      * API call to fetch a bookmark object.
      *
@@ -290,6 +291,7 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
+
 
     Y.bookie.Api.route.UserBmarkDelete = Y.Base.create(
         'bookie-api-route-user-bmark-delete',
