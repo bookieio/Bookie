@@ -103,7 +103,31 @@ YUI({
 
             api.call(callbacks, 'boo', '');
             this.wait(1000);
-        }
+        },
+
+// need a good way to test this out...*sigh*
+// it's been tested ok by hand
+//         testDeleteBmark: function () {
+//             var that = this,
+//                 hash_id = '6c4370829d7ebc',
+//                 callbacks = {
+//                     success: function (data, request) {
+//                         that.resume(function () {
+//                             Y.Assert.areEqual('200', request.status);
+//                         });
+//                     }
+//                 },
+//                 API_CFG = {
+//                     url: 'http://127.0.0.1:6543/api/v1',
+//                     username: 'admin',
+//                     api_key: '2dcf75460cb5',
+//                     hash_id: hash_id,
+//                 },
+//                 api = new Y.bookie.Api.route.UserBmarkDelete(API_CFG);
+// 
+//             api.call(callbacks, 'boo', '');
+//             this.wait(1000);
+//         },
     });
 
     Y.Test.Runner.add(api_test);

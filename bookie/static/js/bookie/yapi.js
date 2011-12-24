@@ -291,16 +291,29 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
-        //     bookmark_user: {
-        //         url: '/{username}/bmark/{hash_id}',
-        //         data: {}
-        //     },
+    Y.bookie.Api.route.UserBmarkDelete = Y.Base.create(
+        'bookie-api-route-user-bmark-delete',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/bmark/{hash_id}',
+            initializer: function (cfg) {
+                // force this to a DELETE request by overriding our base_cfg
+                // we extend.
+                this.base_cfg.method = 'DELETE',
 
-        //     bookmark_remove: {
-        //         method: "DELETE",
-        //         url: '/{username}/bmark/{hash_id}/',
-        //         data: {}
-        //     },
+                // we have to have a hash_id for our url to be built from
+                this.data = {
+                    hash_id: this.get('hash_id'),
+                }
+            }
+        }, {
+            ATTRS: {
+                hash_id: {
+                    required: true
+                }
+            }
+        }
+    );
 
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json']
