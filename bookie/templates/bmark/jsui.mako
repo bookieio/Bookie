@@ -95,7 +95,9 @@
                     var models = new Y.bookie.BmarkList();
                     models.add(Y.Array.map(
                         data.bmarks, function (bmark){
-                            return new Y.bookie.Bmark(bmark);
+                            var b = new Y.bookie.Bmark(bmark);
+                            b.api_cfg = api_cfg;
+                            return b;
                         })
                     );
                     models.each(function (m, i) {

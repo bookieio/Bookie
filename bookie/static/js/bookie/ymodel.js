@@ -17,6 +17,24 @@ YUI.add('bookie-model', function (Y) {
             remove: function (callback) {
                 this.destroy({delete: true}, callback);
             },
+
+            /**
+             * Handle remote updates to the server for the model instance
+             *
+             */
+            sync: function (action, options, callback) {
+                switch (action) {
+
+                    case 'delete':
+                        // perform a delete api request to the server
+                        var delete_cfg = this.api_cfg;
+                        delete_cfg.hash_id = this.get('hash_id');
+                        var api = new Y.bookie.Api.route.UserBmarkDelete(delete_cfg);
+                        api.call({
+                            success: callback
+                        });
+                };
+            }
         },
         {
             ATTRS: {

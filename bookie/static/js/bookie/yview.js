@@ -28,15 +28,23 @@ YUI.add('bookie-view', function (Y) {
          * Handle the remove event on this bookmark
          *
          */
-        remove: function (e) {
-            this.model.remove();
-            this.destroy();
+        remove: function () {
+            var that = this;
+            this.get('model').remove();
+
+            this.get('container').transition({
+                easing: 'ease-out',
+                duration: .4,
+                display: 'none'
+            }, function() {
+                that.destroy();
+            });
         },
 
         render: function () {
             // Render this view's HTML into the container element.
             var tpl_data = Y.mix(
-                {username: this.get('current_user')},
+                {username: this.get('resource_user')},
                 this.get('model').getAttrs()
             );
 
@@ -78,4 +86,4 @@ YUI.add('bookie-view', function (Y) {
         }
     });
 
-}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'node-event-simulate', 'handlebars'] });
+}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'node-event-simulate', 'handlebars', 'transition'] });

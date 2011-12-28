@@ -101,7 +101,7 @@ YUI({
                 },
                 api = new Y.bookie.Api.route.Bmark(API_CFG);
 
-            api.call(callbacks, 'boo', '');
+            api.call(callbacks);
             this.wait(1000);
         },
 
@@ -125,7 +125,7 @@ YUI({
 //                 },
 //                 api = new Y.bookie.Api.route.UserBmarkDelete(API_CFG);
 // 
-//             api.call(callbacks, 'boo', '');
+//             api.call(callbacks);
 //             this.wait(1000);
 //         },
     });
