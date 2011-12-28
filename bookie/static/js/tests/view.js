@@ -1,13 +1,10 @@
 // Create a new YUI instance and populate it with the required modules.
-YUI({
-    logInclude: { TestRunner: true},
-    filter: 'raw'
-}).use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
+YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
     //initialize the console
     var yconsole = new Y.Console({
         newestOnTop: false
     });
-    yconsole.render('#log'),
+    yconsole.render('#log');
     bookmark = {
 
     },
@@ -83,7 +80,11 @@ YUI({
 
         test_render_view: function () {
             var model = new Y.bookie.Bmark(bmarklist[0]),
-                testview = new Y.bookie.BmarkView({model: model});
+                testview = new Y.bookie.BmarkView({
+                    model: model,
+                    current_user: 'admin',
+                    resource_user: 'admin'
+                });
 
             Y.one('.view').appendChild(testview.render());
 
@@ -123,11 +124,11 @@ YUI({
 
             var testview = new Y.bookie.BmarkView({
                 model: model,
-                current_user: 'admin'
+                current_user: 'admin',
+                resource_user: 'admin'
             });
 
             Y.one('.view').appendChild(testview.render());
-            debugger;
             var click_points = Y.all('.delete');
             Y.Assert.areEqual(click_points.size(), 1,
                 "We should have one rendered remove button");
@@ -148,7 +149,8 @@ YUI({
 
             var testview = new Y.bookie.BmarkView({
                 model: model,
-                current_user: username
+                current_user: username,
+                request_user: 'admin'
             });
 
             Y.one('.view').appendChild(testview.render());

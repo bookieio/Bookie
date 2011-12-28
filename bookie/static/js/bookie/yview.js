@@ -43,10 +43,8 @@ YUI.add('bookie-view', function (Y) {
 
         render: function () {
             // Render this view's HTML into the container element.
-            var tpl_data = Y.mix(
-                {username: this.get('resource_user')},
-                this.get('model').getAttrs()
-            );
+            var tpl_data = this.get('model').getAttrs()
+            tpl_data.owner = this.get('current_user') == this.get('model').get('username');
 
             return this.get('container').set(
                 'innerHTML',

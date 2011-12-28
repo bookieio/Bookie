@@ -13,7 +13,7 @@
 
     <div class="actions">
         <span class="icon" title="{{prettystored}}">\</span>
-        {{#if username}}
+        {{#if owner}}
            <a href="/{{username}}/edit/{{hash_id}}"
                title="Edit the bookmark" alt="Edit the bookmark"
                class="edit">
