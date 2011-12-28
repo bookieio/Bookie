@@ -2,22 +2,19 @@
 <%namespace file="func.mako" import="bmarknextprev, tag_filter"/>
 <%def name="title()">Recent JS Bookmarks</%def>
 
-
-<!-- Show the tag filter ui -->
 <%
-    if tags:
-        url = 'bmark_recent_tags'
-    else:
-        url = 'bmark_recent'
-
     api_key = None
 
-    if request.user:
-        username = request.user.username
+    # we might have a user from the resource path that we want to keep tabs on
+    resource_username = username
+
+    if request.user and request.user.username:
+        auth_username = request.user.username
         api_key = request.user.api_key
-
+    else:
+        auth_username = None
+        api_key = None
 %>
-
 <div class="controls">
     <div class="">
         <div class="" style="float: right;">
@@ -29,7 +26,7 @@
 
         % if request.user:
             <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
-                   <a href="${request.route_url('user_bmark_new', username=username)}"
+                   <a href="${request.route_url('user_bmark_new', username=resource_username)}"
                        class="button">
                        <span class="icon">&</span> Add Bookmark
                    </a>
@@ -101,11 +98,11 @@
                             return new Y.bookie.Bmark(bmark);
                         })
                     );
-
                     models.each(function (m, i) {
                         var testview = new Y.bookie.BmarkView({
                             model: m,
-                            current_user: username
+                            current_user: username,
+                            resource_user: '${username}'
                             });
                         Y.one('.data_list').appendChild(testview.render());
                     });
@@ -113,5 +110,4 @@
             });
         });
     </script>
-
 </%def>

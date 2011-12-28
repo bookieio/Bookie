@@ -47,6 +47,20 @@ YUI.add('bookie-view', function (Y) {
         }
     }, {
         ATTRS: {
+            /**
+             * The view is for a url of a specific user
+             *
+             * Say /admin/bmarks for the admin bookmarks, does not mean I'm
+             * the admin
+             *
+             */
+            resource_user: {
+            },
+
+            /**
+             * The currently authorized user
+             *
+             */
             current_user: {
             },
 
