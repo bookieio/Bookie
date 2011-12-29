@@ -40,8 +40,42 @@
     <a href="#" class="button previous"><span class="icon">[</span> Prev</a>
 </script>
 
-
 <script type="text/template" id="next_control">
     <a href="#" class="button next">Next <span class="icon">]</span></a>
 </script>
 
+<script type="text/template" id="bmark_list">
+    <div class="controls">
+        <div class="" style="float: right;">
+            <span class="page_info">Showing <span class="count"></span> bookmarks</span>
+            <span class="buttons paging"></span>
+        </div>
+
+        {{#if current_user}}
+            <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
+                <a href="/{{current_user}}/add}}"
+                    class="button">
+                    <span class="icon">&</span> Add Bookmark
+                </a>
+            </div>
+        {{/if}}
+
+        <div class="tag_filter_container" style="">
+            <select data-placeholder="Filter results by tag..."
+                    style="width: 500px;"
+                    tabindex="-1" id="tag_filter">
+                    <option value=""></option>
+                    <option>American Black Bear</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="data_list"></div>
+
+    <div class="controls">
+        <div class="" style="float: right;">
+            <span class="page_info">Showing <span class="count"></span> bookmarks</span>
+            <span class="buttons paging"></span>
+        </div>
+    </div>
+</script>

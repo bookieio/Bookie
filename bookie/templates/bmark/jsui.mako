@@ -6,7 +6,7 @@
     api_key = None
 
     # we might have a user from the resource path that we want to keep tabs on
-    resource_username = username
+    resource_username = username if username else False
 
     if request.user and request.user.username:
         auth_username = request.user.username
@@ -15,57 +15,8 @@
         auth_username = None
         api_key = None
 %>
-<div class="controls">
-    <div class="">
-        <div class="" style="float: right;">
 
-            <span class="page_info">Showing <span class="count"></span> bookmarks</span>
-            <span class="buttons paging">
-            </span>
-        </div>
-
-        % if request.user:
-            <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
-                   <a href="${request.route_url('user_bmark_new', username=resource_username)}"
-                       class="button">
-                       <span class="icon">&</span> Add Bookmark
-                   </a>
-            </div>
-        % endif
-        <div class="tag_filter_container" style="">
-            <select data-placeholder="Filter results by tag..."
-                    style="width: 500px;"
-                    multiple=""
-                    class="chzn-select"
-                    tabindex="-1" id="tag_filter">
-                    <option value=""></option>
-                    <option>American Black Bear</option>
-                    <option>Asiatic Black Bear</option>
-                    <option>Brown Bear</option>
-                    <option>Giant Panda</option>
-                    <option selected="">Sloth Bear</option>
-                    <option disabled="">Sun Bear</option>
-                    <option selected="">Polar Bear</option>
-                    <option disabled="">Spectacled Bear</option>
-            </select>
-        </div>
-    </div>
-</div>
-
-<div class="data_list">
-</div>
-
-<div class="controls">
-    <div class="yui3-g">
-        <div class="yui3-u-1-2">
-        </div>
-
-        <div class="yui3-u-1-2" style="text-align: right;">
-            <span class="buttons paging">
-            </span>
-        </div>
-    </div>
-</div>
+<div class="bmarks"></div>
 
 <%include file="../jstpl.mako"/>
 
@@ -86,30 +37,20 @@
                 api_cfg.username = username;
             % endif
 
-            // we want to call the all url route for this view
-            var api = new Y.bookie.Api.route.BmarksAll(api_cfg);
+            % if username:
+                resource_username = '${username}';
+            % else:
+                resource_username = undefined;
+            % endif
 
-            api.call({
-                'success': function (data, request) {
-                    // build models out of our data
-                    var models = new Y.bookie.BmarkList();
-                    models.add(Y.Array.map(
-                        data.bmarks, function (bmark){
-                            var b = new Y.bookie.Bmark(bmark);
-                            b.api_cfg = api_cfg;
-                            return b;
-                        })
-                    );
-                    models.each(function (m, i) {
-                        var testview = new Y.bookie.BmarkView({
-                            model: m,
-                            current_user: username,
-                            resource_user: '${username}'
-                            });
-                        Y.one('.data_list').appendChild(testview.render());
-                    });
-                }
+            // we want to call the all url route for this view
+            listview = new Y.bookie.BmarkListView({
+                api_cfg: api_cfg,
+                current_user: username,
+                resource_user: resource_username
             });
+
+            Y.one('.bmarks').appendChild(listview.render());
         });
     </script>
 </%def>

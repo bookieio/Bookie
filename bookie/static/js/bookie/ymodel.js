@@ -2,11 +2,10 @@
          plusplus: false, newcap: false, */
 /*global _: false, window: false, self: false, escape: false, */
 YUI.add('bookie-model', function (Y) {
-    var _ = Y.Lang.substitute;
+    var _ = Y.Lang.substitute,
+        ns = Y.namespace('bookie');
 
-    Y.namespace('bookie');
-
-    Y.bookie.Bmark = Y.Base.create('bookie-bmark',
+    ns.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
         [],
         {
@@ -97,9 +96,41 @@ YUI.add('bookie-model', function (Y) {
 
         });
 
-    Y.bookie.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
+
+    ns.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
         model: Y.bookie.Bmark,
     });
+
+
+    ns.PagerModel = Y.Base.create('bookie-pager', Y.Model, [], {
+        next: function () {
+            this.set('page', this.get('page') + 1);
+        },
+
+        previous: function () {
+            var cpage = this.get('page');
+
+            if (cpage > 1) {
+                this.set('page', this.get('page') - 1);
+            } else {
+                this.set('page', 1);
+            }
+        }
+
+    }, {
+        ATTRS: {
+            count: {
+                value: 20
+            },
+            page: {
+                value: 1
+            },
+            with_content: {
+                value: false
+            }
+        }
+    });
+
 
 
 }, '0.1.0' /* module version */, {

@@ -165,5 +165,111 @@ YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate
     });
 
     Y.Test.Runner.add(view_test);
+
+
+    /**
+     * Verify that our paging html is functioning correctly
+     *
+     */
+    var paging_test = new Y.Test.Case({
+        name: "Paging Tests",
+
+        setUp: function () {
+        },
+
+        tearDown: function () {
+            Y.one('.pager_test').setContent('');
+        },
+
+        testViewExists: function () {
+            Y.Assert.isObject(Y.bookie.PagerView,
+                              "Should find a PagerView");
+        },
+
+        test_view_renders: function () {
+            // verify that we can render out the html we expect for a pager
+            var pager = new Y.bookie.PagerView();
+            Y.one('.pager_test').appendChild(pager.render());
+
+            next_points = Y.all('.next');
+            Y.Assert.areEqual(1, next_points.size(),
+                "Should find one .next link");
+        },
+
+        test_fires_next_event: function () {
+            // verify that if we click next, we get a custom event
+            var hit = false,
+                pager = new Y.bookie.PagerView({
+                    id: 'test_pager'
+                });
+
+            Y.one('.pager_test').appendChild(pager.render());
+
+            var test_event = function (e) {
+                hit = true;
+            };
+
+            // bind a watcher for the event we're looking for
+            Y.on('test_pager:next', test_event);
+
+            // now let's fire a click event on the next link
+            Y.one('.next').simulate('click');
+            Y.Assert.isTrue(hit, 'Hit should now be true.');
+        },
+
+        test_fires_prev_event: function () {
+            // verify that if we click prev, we get a custom event
+            var hit = false,
+                pager = new Y.bookie.PagerView({
+                    id: 'test_pager'
+                });
+
+            Y.one('.pager_test').appendChild(pager.render());
+
+            var test_event = function (e) {
+                hit = true;
+            };
+
+            // bind a watcher for the event we're looking for
+            Y.on('test_pager:previous', test_event);
+
+            // now let's fire a click event on the prev link
+            Y.one('.previous').simulate('click');
+            Y.Assert.isTrue(hit, 'Hit should now be true.');
+        }
+
+    });
+
+    Y.Test.Runner.add(paging_test);
+
+    var bmark_list_view_test = new Y.Test.Case({
+        name: "Bmark List Tests",
+
+        setUp: function () {
+        },
+
+        tearDown: function () {
+            Y.one('.data_list').setContent('');
+        },
+
+        testViewExists: function () {
+            Y.Assert.isObject(Y.bookie.BmarkListView,
+              "Should find a BmarkListView");
+        },
+
+        test_view_renders: function () {
+            // verify that we can render out the html we expect for a pager
+            var data_list = new Y.bookie.BmarkListView();
+            Y.one('.data_list').appendChild(data_list.render());
+
+            debugger;
+            list = Y.all('.bmark_list');
+            Y.Assert.areEqual(1, list.size(),
+                "Should find one bmark_list container");
+        }
+    });
+
+    Y.Test.Runner.add(bmark_list_view_test);
+
     Y.Test.Runner.run();
 });

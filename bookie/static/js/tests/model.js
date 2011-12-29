@@ -131,9 +131,56 @@ YUI({
                     "We should get a list of ids from the models");
 
             },
+        }),
+
+        pager_test = new Y.Test.Case({
+            name: "Pager Tests",
+            test_init: function () {
+                var p = new Y.bookie.PagerModel();
+
+                A.areEqual(1, p.get('page'),
+                    'The page should start out at 1');
+                A.areEqual(20, p.get('count'),
+                    'The default count is 20');
+            },
+
+            test_decrement_one: function () {
+                var p = new Y.bookie.PagerModel();
+
+                p.previous();
+                A.areEqual(1, p.get('page'),
+                    'The page should never get below 1');
+            },
+
+            test_increment: function () {
+                var p = new Y.bookie.PagerModel();
+
+                p.next();
+                A.areEqual(2, p.get('page'),
+                    'The page should increment to 2');
+            },
+
+            test_feeding_attrs: function () {
+                var p = new Y.bookie.PagerModel({
+                    count: 5,
+                    page: 8,
+                    with_content: true
+                });
+
+                p.next();
+                p.next();
+
+                A.areEqual(10, p.get('page'),
+                    'The page should be up to 10');
+                A.areEqual(5, p.get('count'),
+                    'The count should be at 5 per page');
+                A.isTrue(p.get('with_content'),
+                    'We should be fetching with content');
+            }
         });
 
     Y.Test.Runner.add(model_test);
     Y.Test.Runner.add(modellist_test);
+    Y.Test.Runner.add(pager_test);
     Y.Test.Runner.run();
 });
