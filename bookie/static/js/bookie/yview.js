@@ -104,10 +104,12 @@ YUI.add('bookie-view', function (Y) {
         },
 
         previous_page: function (e) {
+            e.preventDefault();
             Y.fire(this.get('previous_event'));
         },
 
         next_page: function (e) {
+            e.preventDefault();
             Y.fire(this.get('next_event'));
         },
 
@@ -221,7 +223,6 @@ YUI.add('bookie-view', function (Y) {
                     // build models out of our data
                     that.models = new Y.bookie.BmarkList();
 
-
                     that.models.add(Y.Array.map(
                        data.bmarks, function (bmark){
                            var b = new Y.bookie.Bmark(bmark),
@@ -267,6 +268,14 @@ YUI.add('bookie-view', function (Y) {
                  // results
                  this._fetch_dataset();
              }
+         },
+
+         /**
+          * Need to make some updates to the ui based on the current page
+          *
+          */
+         _update_ui: function () {
+
          },
 
         initializer: function (cfg) {

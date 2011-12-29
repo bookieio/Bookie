@@ -54,7 +54,7 @@
 
         {{#if current_user}}
             <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
-                <a href="/{{current_user}}/add}}"
+                <a href="/{{current_user}}/new"
                     class="button">
                     <span class="icon">&</span> Add Bookmark
                 </a>
@@ -75,8 +75,9 @@
 
     <div class="controls">
         <div class="" style="float: right;">
-            <span class="page_info">Showing <span class="count"></span> bookmarks</span>
-            <span class="buttons paging"></span>
+            <div class="page_info" style="display: inline-block;">Showing
+            <span class="count"></span> bookmarks</div>
+            <div class="buttons paging" style="display: inline-block;"></div>
         </div>
     </div>
 </script>
