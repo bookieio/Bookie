@@ -203,30 +203,44 @@ YUI.add('bookie-view', function (Y) {
          *
          */
          _fetch_dataset: function () {
-             var that = this;
+             var that = this,
+                 pager = this.get('pager');
+
+             // make sure we update the api paging information with the latest
+             // from our pager
+
+             this.api.data.count = pager.get('count');
+             this.api.data.page = pager.get('page');
+             this.api.data.with_content = pager.get('with_content');
+
              this.api.call({
                 'success': function (data, request) {
+                    var data_node = Y.one('.data_list'),
+                        new_nodes = new Y.NodeList();
+
                     // build models out of our data
                     that.models = new Y.bookie.BmarkList();
 
 
                     that.models.add(Y.Array.map(
                        data.bmarks, function (bmark){
-                           var b = new Y.bookie.Bmark(bmark);
+                           var b = new Y.bookie.Bmark(bmark),
+                               n = new Y.bookie.BmarkView({
+                                   model: b,
+                                   current_user: that.get('current_user'),
+                                   resource_user: that.get('resource_user')
+                                   }
+                               );
+
                            b.api_cfg = that.get('api_cfg');
+
+                           new_nodes.push(n.render())
                            return b;
                        })
                     );
 
-                    var data_node = Y.one('.data_list');
-                    that.models.each(function (m, i) {
-                       var testview = new Y.bookie.BmarkView({
-                           model: m,
-                           current_user: that.get('current_user'),
-                           resource_user: that.get('resource_user')
-                           });
-                       data_node.appendChild(testview.render());
-                    });
+                    // now set the html
+                    data_node.setContent(new_nodes);
                 }
             });
          },
