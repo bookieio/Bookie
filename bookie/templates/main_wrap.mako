@@ -29,10 +29,10 @@
                 <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
             </div>
             <div class="navigation">
-                <span class="item"><a href="/recent_js" class="button nav_button">All Bookmarks</a></span>
+                <span class="item"><a href="/recent" class="button nav_button">All Bookmarks</a></span>
 
                 % if request.user:
-                    <span class="item"><a href="/${request.user.username}/recent_js" class="button nav_button">My Bookmarks</a></span>
+                    <span class="item"><a href="/${request.user.username}/recent" class="button nav_button">My Bookmarks</a></span>
                 % endif
 
                 <span class="item"><a href="/search" class="button nav_button">Search</a></span>
@@ -77,9 +77,6 @@
         <script src="/static/js/bookie/yapi.js"></script>
         <script src="/static/js/bookie/ymodel.js"></script>
         <script src="/static/js/bookie/yview.js"></script>
-
-        <!--<script type="text/javascript" src="/static/js/lib/underscore.min.js"></script>-->
-        <!--<script type="text/javascript" src="/static/js/lib/underscore.string.min.js"></script>-->
 
         % if hasattr(self, 'add_js'):
             ${self.add_js()}

@@ -161,7 +161,7 @@ define([], function () {
                 'success': function (data)  {
                     main.login.clear();
                     main.login.message(data.message, true);
-                }, 
+                },
                 'error': function (data, error_string) {
                     console.log(data);
                     console.log(error_string);

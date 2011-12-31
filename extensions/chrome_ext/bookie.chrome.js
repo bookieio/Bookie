@@ -92,9 +92,6 @@
 
                     window.close();
                 }
-
-                // if
-
             }
         }
 
