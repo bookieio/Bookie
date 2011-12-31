@@ -1,6 +1,6 @@
 <%inherit file="/main_wrap.mako" />
 <%namespace file="func.mako" import="bmarknextprev, tag_filter"/>
-<%def name="title()">Recent JS Bookmarks</%def>
+<%def name="title()">Recent Bookmarks</%def>
 
 <%
     api_key = None

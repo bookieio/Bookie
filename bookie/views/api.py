@@ -282,7 +282,7 @@ def bmark_recent(request):
 
 @view_config(route_name="api_bmarks_popular", renderer="json")
 @view_config(route_name="api_bmarks_popular_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def bmark_popular(request):
     """Get a list of the most popular bmarks for the api call"""
     rdict = request.matchdict
@@ -293,7 +293,10 @@ def bmark_popular(request):
     count = int(params.get('count', RESULTS_MAX))
     with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
-    username = request.user.username
+    if request.user and request.user.username:
+        username = request.user.username
+    else:
+        username = None
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -387,7 +390,7 @@ def extension_sync(request):
 
 @view_config(route_name="api_bmark_search", renderer="json")
 @view_config(route_name="api_bmark_search_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
 
@@ -406,7 +409,10 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
-    username = request.user.username
+    if request.user and request.user.username:
+        username = request.user.username
+    else:
+        username = None
 
     # with content is always in the get string
     search_content = asbool(rdict.get('search_content', False))

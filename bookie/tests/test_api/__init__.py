@@ -274,8 +274,7 @@ class BookieAPITest(unittest.TestCase):
         res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
         res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
 
-        res = self.testapp.get('/api/v1/bmarks/popular?api_key=' + API_KEY,
-                               status=200)
+        res = self.testapp.get('/api/v1/bmarks/popular', status=200)
 
         # make sure we can decode the body
         bmark_list = json.loads(res.body)['bmarks']
@@ -321,8 +320,7 @@ class BookieAPITest(unittest.TestCase):
         """Test that we can get list of bookmarks ordered by clicks"""
         self._get_good_request(content=True, second_bmark=True)
 
-        res = self.testapp.get('/api/v1/bmarks/search/google?api_key=' + API_KEY,
-                               status=200)
+        res = self.testapp.get('/api/v1/bmarks/search/google', status=200)
 
         # make sure we can decode the body
         bmark_list = json.loads(res.body)
