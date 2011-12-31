@@ -1,42 +1,56 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="func.mako" import="display_bmark_list, bmarknextprev, tag_filter"/>
-<%def name="title()">Recent Bookmarks</%def>
+<%namespace file="func.mako" import="bmarknextprev, tag_filter"/>
+<%def name="title()">Recent JS Bookmarks</%def>
 
-<h1></h1>
-
-<!-- Show the tag filter ui -->
 <%
-    if tags:
-        url = 'bmark_recent_tags'
+    api_key = None
+
+    # we might have a user from the resource path that we want to keep tabs on
+    resource_username = username if username else False
+
+    if request.user and request.user.username:
+        auth_username = request.user.username
+        api_key = request.user.api_key
     else:
-        url = 'bmark_recent'
-
-    if username:
-        url = 'user_' + url
-
+        auth_username = None
+        api_key = None
 %>
-<div class="yui3-g data_list">
-    <div class="yui3-u-2-3">
-        ${tag_filter(url, tags=tags, username=username)}
-    </div>
-    <div class="yui3-u-1-3 col_end">Showing ${max_count} bookmarks</div>
 
-    <div class="yui3-u-7-8 buttons">
-        % if username is not None:
-           <a href="${request.route_url('user_bmark_new', username=username)}" class="button">+ Add</a>
-        % endif
-    </div>
-    <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
-    </div>
+<div class="bmarks"></div>
 
-    <div class="yui3-u-1 data_body">
-        ${display_bmark_list(bmarks, username=username)}
-    </div>
+<%include file="../jstpl.mako"/>
 
-    <div class="yui3-u-7-8">&nbsp;</div>
+<%def name="add_js()">
+    <script type="text/javascript">
+        // Create a new YUI instance and populate it with the required modules.
+        YUI().use('node', 'console', 'bookie-model', 'bookie-api',
+            'bookie-view',  function (Y) {
 
-    <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
-    </div>
-</div>
+            var username = undefined,
+                api_cfg = {
+                    url: APP_URL + '/api/v1'
+                };
+
+            % if request.user and request.user.username:
+                api_cfg.api_key = '${request.user.api_key}';
+                username = '${request.user.username}';
+                api_cfg.username = username;
+            % endif
+
+            % if username:
+                resource_username = '${username}';
+            % else:
+                resource_username = undefined;
+            % endif
+
+            // we want to call the all url route for this view
+            listview = new Y.bookie.BmarkListView({
+                api_cfg: api_cfg,
+                current_user: username,
+                resource_user: resource_username
+            });
+
+            Y.one('.bmarks').appendChild(listview.render());
+        });
+    </script>
+</%def>
