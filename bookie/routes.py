@@ -21,22 +21,13 @@ def build_routes(config):
 
     # bmark routes
     config.add_route("bmark_recent", "recent")
-    config.add_route("bmark_recent_js", "recent_js")
-    config.add_route("bmark_recent_js/", "recent_js/")
     config.add_route("bmark_recent_tags", "recent/*tags")
 
-    config.add_route("bmark_popular", "popular")
-    config.add_route("bmark_popular_tags", "popular/*tags")
     config.add_route("bmark_readable", "bmark/readable/{hash_id}")
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
-    config.add_route("user_bmark_recent_js", "{username}/recent_js")
-    config.add_route("user_bmark_recent_js/", "{username}/recent_js/")
     config.add_route("user_bmark_recent_tags", "{username}/recent/*tags")
-
-    config.add_route("user_bmark_popular", "{username}/popular")
-    config.add_route("user_bmark_popular_tags", "{username}/popular/*tags")
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
     config.add_route("user_bmark_edit_error", "{username}/edit_error/{hash_id}")

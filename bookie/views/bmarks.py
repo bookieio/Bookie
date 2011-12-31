@@ -18,9 +18,10 @@ RESULTS_MAX = 50
 
 
 @view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="bmark_recent/", renderer="/bmark/recent.mako")
+@view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
 @view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="user_bmark_recent/", renderer="/bmark/recent.mako")
+@view_config(route_name="user_bmark_recent_tags",
+    renderer="/bmark/recent.mako")
 def recent(request):
     """Testing a JS driven ui with backbone/etc"""
     rdict = request.matchdict
@@ -43,7 +44,6 @@ def recent(request):
 
     # if we've got url parameters for the page/count then use those to help
     # feed the init of the ajax script
-
     ret['count'] = params.get('count') if 'count' in params else RESULTS_MAX
     ret['page'] = params.get('page') if 'page' in params else 0
 

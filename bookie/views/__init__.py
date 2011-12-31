@@ -13,7 +13,7 @@ def home(request):
     username = rdict.get('username', None)
 
     if not username:
-        return HTTPFound(location=request.route_url("bmark_recent_js"))
+        return HTTPFound(location=request.route_url("bmark_recent"))
     else:
         # we need to see if we have a user by this name
         user = UserMgr.get(username=username)
@@ -21,5 +21,5 @@ def home(request):
         if not user:
             return HTTPNotFound()
         else:
-            return HTTPFound(location=request.route_url("user_bmark_recent_js",
+            return HTTPFound(location=request.route_url("user_bmark_recent",
                                                         username=username))

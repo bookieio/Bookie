@@ -43,12 +43,27 @@
                 resource_username = undefined;
             % endif
 
+            % if count or page:
+                var pager = new Y.bookie.PagerModel();
+                % if count:
+                    pager.set('count', ${count});
+                % endif
+
+                % if page:
+                    pager.set('page', ${page});
+                % endif
+            % endif
+
             // we want to call the all url route for this view
             listview = new Y.bookie.BmarkListView({
                 api_cfg: api_cfg,
                 current_user: username,
                 resource_user: resource_username
             });
+
+            if (pager) {
+                listview.set('pager', pager);
+            }
 
             Y.one('.bmarks').appendChild(listview.render());
         });

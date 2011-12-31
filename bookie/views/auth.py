@@ -62,7 +62,7 @@ def login(request):
             # we're always going to return a user to their own /recent after a
             # login
             return HTTPFound(location=request.route_url(
-                                            'user_bmark_recent_js',
+                                            'user_bmark_recent',
                                             username=auth.username),
                              headers=headers)
 
