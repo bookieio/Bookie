@@ -560,13 +560,11 @@ fieldset {
     }
 }
 
-.page_info {
-    margin-right: 1.5em;
-}
 
 .fullpage {
     @include center;
 }
+
 
 .tabs {
     @include button_base;

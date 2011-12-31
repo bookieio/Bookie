@@ -5,27 +5,22 @@
   font-weight: normal;
   font-style: normal; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000333}}
 .icon {
   font-family: "PictosRegular";
   color: #990000;
   vertical-align: top;
   cursor: pointer; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000378}}
 body {
   font-family: 'Cabin', sans-serif; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000382}}
 a {
   color: #003366;
   text-decoration: none; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000387}}
 #body {
   margin: 1em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\0000391}}
 #readable_content {
   font-family: Garamond, serif;
   font-size: 1.5em;
@@ -34,43 +29,33 @@ a {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.1);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.1); }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003101}}
   #readable_content h1 {
     border-bottom: 1px solid #333333; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003105}}
   #readable_content code, #readable_content pre {
     font-family: Courier New, Courier, monospaced; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003109}}
   #readable_content a {
     color: #0066cc;
     text-decoration: none; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003115}}
 .center {
   text-align: center; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003119}}
 .right {
   text-align: right; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003123}}
 .heading {
   width: 100%; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003128}}
 .logo {
   width: auto;
   display: inline; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003133}}
 .navigation {
   display: inline;
   float: right; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003137}}
   .navigation a {
     text-decoration: none; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003143}}
 .logo {
   font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
   padding-left: .1em;
@@ -78,28 +63,23 @@ a {
   text-decoration: none;
   color: #363d52;
   text-shadow: 1px 1px 0 #cccccc; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003151}}
   .logo .alt_logo {
     color: #333333;
     font-size: .6em;
     text-shadow: 2px 2px 2px #cccccc;
     font-family: 'Cabin', sans-serif; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003159}}
 .footer {
   color: #666666;
   margin-top: 5em;
   font-size: .8em;
   margin-bottom: 1em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003165}}
   .footer a {
     color: #666666;
     text-decoration: none; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003170}}
   .footer .body {
     padding-right: 1em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003175}}
 .button {
   text-align: center;
   color: #333333;
@@ -115,7 +95,6 @@ a {
   padding: 2px 4px 3px;
   text-shadow: 0 1px 0 white;
   text-decoration: none; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003189}}
   .button:hover {
     background: #e1e1e1;
     -moz-box-shadow: 1px 1px 0 0 #464646;
@@ -123,12 +102,10 @@ a {
     box-shadow: 1px 1px 0 0 #464646;
     color: #262626;
     cursor: pointer; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003193}}
   .button.nav_button {
     padding: 8px 10px 9px;
     width: 150px;
     vertical-align: bottom; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003198}}
     .button.nav_button:active {
       background: #e1e1e1;
       -moz-box-shadow: 1px 1px 0 0 #464646;
@@ -137,75 +114,58 @@ a {
       color: #262626;
       cursor: pointer;
       color: black; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003204}}
   .button .icon {
     color: #333333;
     vertical-align: middle; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003210}}
 .actions {
   clear: right;
   float: right;
   padding-right: .3em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003215}}
   .actions * {
     padding-left: .3em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003221}}
 .superblytagitems li {
   margin: 3px 3px 0px 3px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003226}}
 a.button_minimal {
   text-decoration: none; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003234}}
 form div {
   margin: .5em 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003238}}
 form ul {
   margin-left: 0px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003242}}
 form li {
   list-style: none;
   margin-left: 0px;
   padding: .2em 0em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003247}}
   form li label {
     font-weight: bold; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003252}}
 form .button {
   font-weight: bold;
   color: #333333; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003258}}
 form.bmark input[type=text], form.bmark.bmark input[type="url"] {
   width: 35em;
   padding: 5px;
   border: 1px solid #333333; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003264}}
 form.bmark input[type=submit] {
   padding: 5px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003268}}
 form.bmark .superblyTagfieldDiv {
   display: inline-block;
   vertical-align: bottom;
   width: 34.5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003273}}
   form.bmark .superblyTagfieldDiv input[type=text] {
     border: none;
     padding: none; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003278}}
   form.bmark .superblyTagfieldDiv li.superblyTagInputItem {
     padding: 0; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003286}}
 .form {
   background-color: #e6e6e6;
   border: 1px solid #cccccc;
   border-radius: 5px;
   margin: 1em;
   padding: .5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003293}}
   .form label {
     width: 8em;
     text-align: right;
@@ -213,70 +173,55 @@ form.bmark .superblyTagfieldDiv {
     padding-right: 1em;
     font-weight: normal;
     vertical-align: middle; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003302}}
   .form .error {
     color: red; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003306}}
   .form .success {
     color: green; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003310}}
   .form li {
     padding: .5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003314}}
   .form .heading {
     font-size: larger;
     text-decoration: none;
     margin-bottom: .3em;
     color: black; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003320}}
     .form .heading:hover {
       cursor: hand; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003327}}
 fieldset legend {
   font-size: .9em;
   font-weight: bold;
   border-bottom: 1px solid #333333;
   margin-bottom: 2em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003336}}
 .controls {
   margin: .5em 0;
   padding: .3em;
   min-height: 2em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003349}}
 .data_list .col_end {
   font-weight: bold;
   text-align: right; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003354}}
 .data_list .buttons {
   padding: .6em 0;
   vertical-align: top; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003359}}
 .data_list .bmark {
   border-top: 1px solid #CCC;
   clear: both;
   padding: .2em .2em 1em .2em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003364}}
   .data_list .bmark:hover .url {
     color: #990000; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003368}}
   .data_list .bmark .tags {
     float: right; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003372}}
   .data_list .bmark .dateinfo {
     padding-left: 2em;
     clear: right;
     float: right; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003381}}
 .calendar {
   -moz-border-radius: 5px;
   border-radius: 5px;
   margin: 0px .4em;
   width: 4em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003387}}
   .calendar h2 {
     background-color: red;
     background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 40, from(#ff4444), to(red));
@@ -296,7 +241,6 @@ fieldset legend {
     -moz-border-radius-topleft: 2px;
     border-top-right-radius: 2px;
     border-top-left-radius: 2px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003408}}
   .calendar div {
     background-color: #cccccc;
     color: black;
@@ -312,41 +256,32 @@ fieldset legend {
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003427}}
 .bmark a {
   font-size: 1.1em;
   text-decoration: none;
   color: #003366; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003433}}
 .bmark:hover {
   background-color: rgba(155, 175, 235, 0.2); }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003436}}
   .bmark:hover .url, .bmark:hover .url * {
     opacity: 1; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003440}}
   .bmark:hover .icon {
     opacity: 1; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003445}}
 .bmark .icon {
   opacity: .7; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003449}}
 .bmark .url {
   padding: .3em 0 0 1em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003453}}
 .bmark .url, .bmark .url * {
   color: #990000;
   line-height: 1.3;
   opacity: .7;
   overflow: hidden;
   white-space: nowrap; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003461}}
 .bmark .tags {
   padding: .3em;
   padding-left: 2em;
   font-size: .8em;
   text-align: right;
   max-width: 50%; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003468}}
   .bmark .tags .tag {
     padding: .2em .4em .2em .4em;
     background: #e6e6e6;
@@ -355,26 +290,21 @@ fieldset legend {
     text-decoration: none;
     margin-bottom: .2em;
     display: inline-block; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003477}}
     .bmark .tags .tag:hover {
       opacity: 1; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003484}}
 .dateinfo {
   color: #737373;
   font-size: .8em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003489}}
 .note {
   border: 1px solid #333333;
   background: #cccccc;
   padding: .5em;
   margin-top: .5em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003497}}
 .search .body {
   padding-left: 2em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003501}}
 .search .title {
   margin-left: 1.3em;
   font-size: 1.5em;
@@ -382,28 +312,21 @@ fieldset legend {
   padding-bottom: .1em;
   font-weight: normal; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003510}}
 .tag_filter_container {
   display: inline-block;
   vertical-align: middle; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003515}}
 .tag_filter {
   margin: .5em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003519}}
   .tag_filter div {
     margin: 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003523}}
   .tag_filter input {
     width: 25em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003526}}
     .tag_filter input[type=submit] {
       width: 5em;
       min-height: 29px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003531}}
     .tag_filter input[type=checkbox] {
       width: 1em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003536}}
   .tag_filter .item {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -413,7 +336,6 @@ fieldset legend {
     padding: 2px 4px 3px;
     text-align: center;
     text-shadow: 0 1px 0 white; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003546}}
     .tag_filter .item:hover {
       background: #e1e1e1;
       -moz-box-shadow: 1px 1px 0 0 #464646;
@@ -421,25 +343,17 @@ fieldset legend {
       box-shadow: 1px 1px 0 0 #464646;
       color: #262626;
       cursor: pointer; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003550}}
     .tag_filter .item a {
       color: #333333;
       text-decoration: none; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003556}}
   .tag_filter .superblyTagfieldDiv {
     display: inline-block;
     vertical-align: bottom;
     width: 35em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003563}}
-.page_info {
-  margin-right: 1.5em; }
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003567}}
 .fullpage {
   text-align: center; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003571}}
 .tabs {
   color: #333333;
   background: #eeeeee;
@@ -450,7 +364,6 @@ fieldset legend {
   padding: 10px 10px 0 10px;
   border-radius: 5px;
   height: 2em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003579}}
   .tabs li {
     position: relative;
     list-style: none;
@@ -460,15 +373,12 @@ fieldset legend {
     color: #333;
     text-align: center;
     text-shadow: 0 1px 0 white; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003589}}
     .tabs li a {
       text-decoration: none;
       color: #333333; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003594}}
     .tabs li.selected {
       background-color: white;
       border: 1px solid #cccccc; }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/rharding\/src\/bookie\/Bookie\/bookie\/static\/css\/bookie\.scss}line{font-family:\00003599}}
     .tabs li:hover {
       background-color: #cccccc;
       -webkit-transition-duration: .33s;

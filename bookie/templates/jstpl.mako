@@ -47,8 +47,6 @@
 <script type="text/template" id="bmark_list">
     <div class="controls">
         <div class="" style="float: right;">
-            <div class="page_info" style="display: inline-block;">Showing
-            <span class="count"></span> bookmarks</div>
             <div class="buttons paging" style="display: inline-block;"></div>
         </div>
 
@@ -75,8 +73,6 @@
 
     <div class="controls">
         <div class="" style="float: right;">
-            <div class="page_info" style="display: inline-block;">Showing
-            <span class="count"></span> bookmarks</div>
             <div class="buttons paging" style="display: inline-block;"></div>
         </div>
     </div>
