@@ -394,6 +394,59 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+    Y.bookie.Api.route.SuspendUser = Y.Base.create(
+        'bookie-api-route-suspend-user',
+        Y.bookie.Api.route,
+        [], {
+            url: '/suspend',
+            initializer: function (cfg) {
+                this.base_cfg.method = 'POST';
+
+                // we have to have current_password, new_password
+                this.data = {
+                    email: this.get('email')
+                }
+            }
+        }, {
+            ATTRS: {
+                email: {
+                    required: true
+                }
+            }
+        }
+    );
+
+
+    Y.bookie.Api.route.UnSuspendUser = Y.Base.create(
+        'bookie-api-route-unsuspend-user',
+        Y.bookie.Api.route,
+        [], {
+            url: '/suspend',
+            initializer: function (cfg) {
+                this.base_cfg.method = 'DELETE';
+
+                // we have to have current_password, new_password
+                this.data = {
+                    username: this.get('username'),
+                    code: this.get('code'),
+                    password: this.get('password')
+                }
+            }
+        }, {
+            ATTRS: {
+                username: {
+                    required: true
+                },
+                code: {
+                    required: true
+                },
+                password: {
+                    required: true
+                }
+            }
+        }
+    );
+
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json']
 });

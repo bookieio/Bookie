@@ -623,6 +623,10 @@ def suspend_acct(request):
     # we need to get the user from the email
     email = params.get('email', None)
 
+    if email is None:
+        # try the json body
+        email = request.json_body.get('email', None)
+
     if user is None and email is None:
         request.response.status_int = 406
         return {
@@ -688,10 +692,12 @@ def account_activate(request):
     activation = params.get('code', None)
     password = params.get('password', None)
 
-    LOG.debug("PARAMS")
-    LOG.debug(dict(params))
-    LOG.debug(dict(request.params))
-    LOG.debug(password)
+    if username is None and activation is None and password is None:
+        # then try to get the same fields out of a json body
+        json_body = request.json_body
+        username = json_body.get('username', None)
+        activation = json_body.get('code', None)
+        password = json_body.get('password', None)
 
     if not UserMgr.acceptable_password(password):
         request.response.status_int = 406

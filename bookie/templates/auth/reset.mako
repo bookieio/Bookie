@@ -9,8 +9,14 @@ ${password_reset(reset=True)}
 
 <%def name="add_js()">
     <script type="text/javascript">
-        $(document).ready(function() {
-            bookie.reset.init();
+        YUI().use('node', 'bookie-view', 'console', function (Y) {
+            Y.on('domready', function () {
+                var login_view = new Y.bookie.AccountResetView({
+                    api_cfg: {
+                        url: APP_URL + '/api/v1'
+                    }
+                });
+            });
         });
     </script>
 </%def>

@@ -454,7 +454,7 @@ YUI.add('bookie-view', function (Y) {
             Y.one('#password_msg').hide();
 
             // add the password data to the cfg passed to the api
-            Y.mix(api_cfg, {
+            api_cfg = Y.merge(api_cfg, {
                 current_password: Y.one('#current_password').get('value'),
                 new_password: Y.one('#new_password').get('value')
             });
@@ -535,12 +535,10 @@ YUI.add('bookie-view', function (Y) {
                 api_cfg = this.get('api_cfg');
 
             e.preventDefault();
-
-            // hide the current message window
-            Y.one('#password_msg').hide();
+            Y.one('#account_msg').hide();
 
             // add the password data to the cfg passed to the api
-            Y.mix(api_cfg, {
+            api_cfg = Y.merge(api_cfg, {
                 name: Y.one('#name').get('value'),
                 email: Y.one('#email').get('value')
             });
@@ -557,12 +555,163 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#account_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
+
+        initializer: function (cfg) {
+            this._bind();
+        }
+    }, {
+        ATTRS: {
+            api_cfg: {
+                required: true
+            }
+        }
+    });
+
+
+    ns.LoginView = Y.Base.create('bookie-login-view', Y.View, [], {
+        _visible: false,
+
+        _bind: function () {
+            Y.one('#show_forgotten').on(
+                'click',
+                this._show_forgotten,
+                this
+            );
+            Y.one('#submit_forgotten').on(
+                'click',
+                this._forgotten,
+                this
+            );
+
+        },
+
         _clear: function () {
-            Y.one('#account_msg').hide(true);
+            Y.one('#email').set('value', '');
+        },
+
+        _show_forgotten: function (e) {
+            var pass_div = Y.one('#forgotten_password');
+            e.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if(this._visible) {
+                pass_div.hide(true);
+                this._visible = false;
+            } else {
+                this._visible = true;
+                pass_div.show(true);
+            }
+        },
+
+        _forgotten: function (e) {
+            var that = this,
+                api_cfg = this.get('api_cfg');
+
+            e.preventDefault();
+
+            // hide the current message window
+            Y.one('#forgotten_msg').hide();
+
+            // add the password data to the cfg passed to the api
+            api_cfg = Y.merge(api_cfg, {
+                email: Y.one('#email').get('value')
+            });
+
+            var api = new Y.bookie.Api.route.SuspendUser(api_cfg);
+            api.call({
+                success: function (data, request) {
+                    that._clear();
+                    that._show_message(data.message, true);
+                },
+                error: function (data, status_str, response, arguments) {
+                    console.log(data);
+                    console.log(response);
+                }
+            });
         },
 
         _show_message: function (msg, success) {
-            var msg_div = Y.one('#account_msg');
+            var msg_div = Y.one('#forgotten_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
+
+        initializer: function (cfg) {
+            this._bind();
+        }
+    }, {
+        ATTRS: {
+            api_cfg: {
+                required: true
+            }
+        }
+    });
+
+
+    ns.AccountResetView = Y.Base.create('bookie-account-reset-view', Y.View, [], {
+        _bind: function () {
+            Y.one('#submit_password_change').on(
+                'click',
+                this._account_reset,
+                this
+            );
+            Y.one('#password_reset').on(
+                'submit',
+                this._account_reset,
+                this
+            );
+        },
+
+        _account_reset: function (e) {
+            var that = this,
+                api_cfg = this.get('api_cfg');
+
+            e.preventDefault();
+
+            // hide the current message window
+            Y.one('#password_msg').hide();
+
+            // add the password data to the cfg passed to the api
+            api_cfg = Y.merge(api_cfg, {
+                username: Y.one('#username').get('value'),
+                code: Y.one('#code').get('value'),
+                password: Y.one('#new_password').get('value')
+            });
+
+            var api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);
+            api.call({
+                success: function (data, request) {
+                    that._show_message(data.message, true);
+                },
+                error: function (data, status_str, response, arguments) {
+                    that._show_message(data.error, false);
+                    console.log(data);
+                    console.log(response);
+                }
+            });
+        },
+
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#password_msg');
             msg_div.setContent(msg);
 
             if (success) {
