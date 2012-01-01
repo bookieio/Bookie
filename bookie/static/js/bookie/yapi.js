@@ -110,8 +110,8 @@ YUI.add('bookie-api', function (Y) {
                     username: this.get('username')
                 }
             }
-
-            return this.get('url') + _(this.url, data);
+            return this.get('url') +
+                Y.Lang.substitute(this.url, data);
         },
 
         /**
@@ -313,6 +313,20 @@ YUI.add('bookie-api', function (Y) {
                 hash_id: {
                     required: true
                 }
+            }
+        }
+    );
+
+
+    Y.bookie.Api.route.UserApiKey = Y.Base.create(
+        'bookie-api-route-user-api-key',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/api_key',
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
             }
         }
     );

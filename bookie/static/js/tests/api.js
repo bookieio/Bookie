@@ -128,6 +128,29 @@ YUI({
 //             api.call(callbacks);
 //             this.wait(1000);
 //         },
+
+        testApiKey: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(12, data.api_key.length);
+                            Y.Assert.areEqual('admin', data.username);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    api_key: '2dcf75460cb5',
+                },
+                api = new Y.bookie.Api.route.UserApiKey(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
     });
 
     Y.Test.Runner.add(api_test);

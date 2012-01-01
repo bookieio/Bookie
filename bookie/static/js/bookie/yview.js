@@ -7,7 +7,10 @@ YUI.add('bookie-view', function (Y) {
 
     ns.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
         container_html: '<div class="bmark"/>',
-        template: Y.one('#bmark_row').get('text'),
+
+        _get_template: function () {
+            return Y.one('#bmark_row').get('text');
+        },
 
         events: {
             '.delete': {
@@ -16,11 +19,7 @@ YUI.add('bookie-view', function (Y) {
         },
 
         initializer: function (cfg) {
-            this.cTemplate = Y.Handlebars.compile(this.template);
-
-            // hold onto the idea that we only take Bmark objects for the
-            // moment...
-            // console.log(cfg.model instanceof Y.bookie.Bmark);
+            this.cTemplate = Y.Handlebars.compile(this._get_template());
         },
 
         /**
@@ -32,9 +31,9 @@ YUI.add('bookie-view', function (Y) {
             this.get('model').remove();
 
             this.get('container').transition({
-                easing: 'ease-out',
+                easing: 'ease',
                 duration: 0.4,
-                display: 'none'
+                opacity: 0
             }, function () {
                 that.destroy();
             });
@@ -86,8 +85,13 @@ YUI.add('bookie-view', function (Y) {
 
     ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {
         container_html: '<div class="pager"/>',
-        prev_template: Y.one('#previous_control').get('text'),
-        next_template: Y.one('#next_control').get('text'),
+
+        _get_templates: function () {
+            return {
+                prev: Y.one('#previous_control').get('text'),
+                next: Y.one('#next_control').get('text')
+            }
+        },
 
         events: {
             '.previous': {
@@ -99,8 +103,9 @@ YUI.add('bookie-view', function (Y) {
         },
 
         initializer: function (cfg) {
-            this.cPrevTemplate = Y.Handlebars.compile(this.prev_template);
-            this.cNextTemplate = Y.Handlebars.compile(this.next_template);
+            var tpl = this._get_templates();
+            this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
+            this.cNextTemplate = Y.Handlebars.compile(tpl.next);
         },
 
         previous_page: function (e) {
@@ -124,8 +129,8 @@ YUI.add('bookie-view', function (Y) {
     }, {
         ATTRS: {
             container: {
-                valueFn: function() {
-                    return container = Y.Node.create(this.container_html);
+                valueFn: function () {
+                    return Y.Node.create(this.container_html);
                 }
 
             },
@@ -154,16 +159,11 @@ YUI.add('bookie-view', function (Y) {
 
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
         container_html: '<div class="bmark_list"/>',
-        template: Y.one('#bmark_list').get('text'),
-
-        events: {
-            // '.previous': {
-            //     click: 'previous_page'
-            // },
-            // '.next': {
-            //     click: 'next_page'
-            // }
+        _get_template: function () {
+            return Y.one('#bmark_list').get('text');
         },
+
+        events: {},
 
         /**
          * Prepare and add the pager view for our control
@@ -204,18 +204,18 @@ YUI.add('bookie-view', function (Y) {
          * Fetch a dataset based on our current data
          *
          */
-         _fetch_dataset: function () {
-             var that = this,
-                 pager = this.get('pager');
+        _fetch_dataset: function () {
+            var that = this,
+                pager = this.get('pager');
 
-             // make sure we update the api paging information with the latest
-             // from our pager
+            // make sure we update the api paging information with the latest
+            // from our pager
 
-             this.api.data.count = pager.get('count');
-             this.api.data.page = pager.get('page');
-             this.api.data.with_content = pager.get('with_content');
+            this.api.data.count = pager.get('count');
+            this.api.data.page = pager.get('page');
+            this.api.data.with_content = pager.get('with_content');
 
-             this.api.call({
+            this.api.call({
                 'success': function (data, request) {
                     var data_node = Y.one('.data_list'),
                         new_nodes = new Y.NodeList();
@@ -224,90 +224,90 @@ YUI.add('bookie-view', function (Y) {
                     that.models = new Y.bookie.BmarkList();
 
                     that.models.add(Y.Array.map(
-                       data.bmarks, function (bmark){
-                           var b = new Y.bookie.Bmark(bmark),
-                               n = new Y.bookie.BmarkView({
-                                   model: b,
-                                   current_user: that.get('current_user'),
-                                   resource_user: that.get('resource_user')
-                                   }
-                               );
+                        data.bmarks, function (bmark){
+                            var b = new Y.bookie.Bmark(bmark),
+                                n = new Y.bookie.BmarkView({
+                                    model: b,
+                                    current_user: that.get('current_user'),
+                                    resource_user: that.get('resource_user')
+                                    }
+                                );
 
-                           b.api_cfg = that.get('api_cfg');
+                            b.api_cfg = that.get('api_cfg');
 
-                           new_nodes.push(n.render())
-                           return b;
-                       })
+                            new_nodes.push(n.render())
+                            return b;
+                        })
                     );
 
                     // now set the html
                     data_node.setContent(new_nodes);
-                }
-            });
-         },
-
-         _next_page: function (e) {
-
-             this.get('pager').next();
-
-             // now that we've incremented the page let's fetch a new set of
-             // results
-             this._fetch_dataset();
-         },
-
-         _prev_page: function (e) {
-             var p = this.get('pager'),
-                 old_page = p.get('page');
-
-             p.previous();
-
-             // only update the view if we did change pages (e.g. not on page
-             // 1 already)
-             if (old_page != p.get('page')) {
-                 // now that we've incremented the page let's fetch a new set of
-                 // results
-                 this._fetch_dataset();
-             }
-         },
-
-         /**
-          * Need to make some updates to the ui based on the current page
-          *
-          */
-         _update_ui: function () {
-
-         },
-
-        initializer: function (cfg) {
-            this.cTemplate = Y.Handlebars.compile(this.template);
-            this._init_pager();
-            this._init_api();
+               }
+           });
         },
 
-        render: function () {
-            var that = this,
-                // Render this view's HTML into the container element.
-                html = this.get('container').set(
-                    'innerHTML',
-                    this.cTemplate(this.getAttrs())
-                );
+        _next_page: function (e) {
 
-            // start the request for our models
+            this.get('pager').next();
+
+            // now that we've incremented the page let's fetch a new set of
+            // results
             this._fetch_dataset();
+        },
 
-            html.all('.paging').each(function (n) {
-                var p = that.pagers.pop();
-                n.appendChild(p.render());
-            });
+        _prev_page: function (e) {
+            var p = this.get('pager'),
+                old_page = p.get('page');
 
-            return html;
-        }
+            p.previous();
+
+            // only update the view if we did change pages (e.g. not on page
+            // 1 already)
+            if (old_page != p.get('page')) {
+                // now that we've incremented the page let's fetch a new set of
+                // results
+                this._fetch_dataset();
+            }
+        },
+
+        /**
+         * Need to make some updates to the ui based on the current page
+         *
+         */
+        _update_ui: function () {
+
+        },
+
+       initializer: function (cfg) {
+           this.cTemplate = Y.Handlebars.compile(this._get_template());
+           this._init_pager();
+           this._init_api();
+       },
+
+       render: function () {
+           var that = this,
+               // Render this view's HTML into the container element.
+               html = this.get('container').set(
+                   'innerHTML',
+                   this.cTemplate(this.getAttrs())
+               );
+
+           // start the request for our models
+           this._fetch_dataset();
+
+           html.all('.paging').each(function (n) {
+               var p = that.pagers.pop();
+               n.appendChild(p.render());
+           });
+
+           return html;
+       }
 
     }, {
         ATTRS: {
             container: {
                 valueFn: function() {
-                    return container = Y.Node.create(this.container_html);
+                    return Y.Node.create(this.container_html);
                 }
             },
 
@@ -342,6 +342,76 @@ YUI.add('bookie-view', function (Y) {
         }
 
     });
-}, '0.1.0', { requires: ['base', 'view',
-    'bookie-model', 'node-event-simulate',
-    'handlebars', 'transition'] });
+
+    ns.AccountView = Y.Base.create('bookie-account-view', Y.View, [], {
+        _blet_visible: false,
+        _api_visibile: false,
+
+        _bind_buttons: function () {
+            Y.one('#show_key').on(
+                'click',
+                this._show_api_key,
+                this
+            );
+            Y.one('#show_bookmarklet').on(
+                'click',
+                this._show_bookmarklet,
+                this
+            );
+        },
+
+        _show_api_key: function (e) {
+            var key_div = Y.one('#api_key'),
+                key_container = Y.one('#api_key_container');
+
+            e.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if(this._api_visible) {
+                key_container.hide(true);
+                this._api_visible = false;
+            } else {
+                var api = new Y.bookie.Api.route.UserApiKey(this.get('api_cfg'));
+                this._api_visible = true;
+                // make an ajax request to get the api key for this user and then
+                // show it in the container for it
+                api.call({
+                    success: function (data, request) {
+                        key_div.setContent(data.api_key);
+                        key_container.show(true);
+                    }
+
+                });
+            }
+        },
+
+        _show_bookmarklet: function (e) {
+            var blet = Y.one('#bookmarklet_text');
+            e.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            // the opacity must start out at 0 for the transition to take
+            // effect
+            if(this._blet_visible) {
+                this._blet_visible = false;
+                blet.hide(true);
+            } else {
+                this._blet_visible = true;
+                blet.show(true);
+            }
+        },
+
+        initializer: function (cfg) {
+            this._bind_buttons();
+        }
+
+    }, {
+        ATTRS: {
+            api_cfg: {
+                required: true
+            }
+        }
+    });
+
+
+}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition'] });
