@@ -29,7 +29,7 @@
 
         <div id="password_change"
             % if not reset:
-                style="display: none;"
+                style="display: none; opacity: 0;"
             % endif
         >
             <form id="password_reset">
@@ -54,6 +54,6 @@
                 </ul>
             </form>
         </div>
-        <div id="password_msg" class="error"></div>
+        <div id="password_msg" class="error" style="opacity: 0;"></div>
     </div>
 </%def>

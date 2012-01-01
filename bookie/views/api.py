@@ -521,14 +521,23 @@ def account_update(request):
 
     """
     params = request.params
+    json_body = request.json_body
     user_acct = request.user
 
     if 'name' in params and params['name'] is not None:
         name = params.get('name')
         user_acct.name = name
 
+    if 'name' in json_body and json_body['name'] is not None:
+        name = json_body.get('name')
+        user_acct.name = name
+
     if 'email' in params and params['email'] is not None:
         email = params.get('email')
+        user_acct.email = email
+
+    if 'email' in json_body and json_body['email'] is not None:
+        email = json_body.get('email')
         user_acct.email = email
 
     return user_acct.safe_data()
@@ -569,8 +578,18 @@ def reset_password(request):
     current = params.get('current_password', None)
     new = params.get('new_password', None)
 
+    # if we don't have any password info, try a json_body in case it's a json
+    #POST
+    if current is None and new is None:
+        params = request.json_body
+        current = params.get('current_password', None)
+        new = params.get('new_password', None)
+
     user_acct = request.user
 
+    LOG.error("PASSWD")
+    LOG.error(current)
+    LOG.error(new)
     if not UserMgr.acceptable_password(new):
         request.response.status_int = 406
         return {

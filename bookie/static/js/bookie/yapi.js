@@ -72,6 +72,12 @@ YUI.add('bookie-api', function (Y) {
             failure: default_failure
         };
 
+        // if the request is a POST request, then we need to JSON the data
+        // body
+        if (cfg.method == "POST") {
+            cfg.data = Y.JSON.stringify(cfg.data);
+        }
+
         cfg.arguments = arguments;
         request = Y.io(url, cfg);
     };
@@ -327,6 +333,63 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+            }
+        }
+    );
+
+    Y.bookie.Api.route.UserPasswordChange = Y.Base.create(
+        'bookie-api-route-user-password-change',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/password',
+            initializer: function (cfg) {
+                this.base_cfg.method = 'POST',
+
+                // we have to have current_password, new_password
+                this.data = {
+                    current_password: this.get('current_password'),
+                    new_password: this.get('new_password')
+                }
+            }
+        }, {
+            ATTRS: {
+                current_password: {
+                    required: true
+                },
+                new_password: {
+                    required: true
+                }
+            }
+        }
+    );
+
+
+    Y.bookie.Api.route.UserAccountChange = Y.Base.create(
+        'bookie-api-route-user-account-change',
+        Y.bookie.Api.route,
+        [], {
+            url: '/{username}/account',
+            initializer: function (cfg) {
+                this.base_cfg.method = 'POST';
+
+                // we have to have current_password, new_password
+                var name = this.get('name'),
+                    email = this.get('email');
+
+                this.data = {};
+
+                if (name) {
+                    this.data.name = name;
+                }
+
+                if (email) {
+                    this.data.email = email;
+                }
+            }
+        }, {
+            ATTRS: {
+                name: {},
+                email: {}
             }
         }
     );

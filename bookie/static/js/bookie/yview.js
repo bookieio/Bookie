@@ -347,7 +347,7 @@ YUI.add('bookie-view', function (Y) {
         _blet_visible: false,
         _api_visibile: false,
 
-        _bind_buttons: function () {
+        _bind: function () {
             Y.one('#show_key').on(
                 'click',
                 this._show_api_key,
@@ -402,9 +402,181 @@ YUI.add('bookie-view', function (Y) {
         },
 
         initializer: function (cfg) {
-            this._bind_buttons();
+            this._bind();
+
+            // setup the password view
+            // it needs the api cfg for updating the password via the api
+            this.password = new ns.PasswordView({
+                api_cfg: this.get('api_cfg')
+            });
+            this.account_info = new ns.AccountInfoView({
+                api_cfg: this.get('api_cfg')
+            });
         }
 
+    }, {
+        ATTRS: {
+            api_cfg: {
+                required: true
+            }
+        }
+    });
+
+
+    ns.PasswordView = Y.Base.create('bookie-password-view', Y.View, [], {
+        _visible: false,
+
+        _bind: function () {
+            Y.one('#show_password').on(
+                'click',
+                this._show_password,
+                this
+            );
+            Y.one('form#password_reset').on(
+                'submit',
+                this._change_password,
+                this
+            );
+            Y.one('#submit_password_change').on(
+                'click',
+                this._change_password,
+                this
+            );
+        },
+
+        _change_password: function (e) {
+            var that = this,
+                api_cfg = this.get('api_cfg');
+
+            e.preventDefault();
+
+            // hide the current message window
+            Y.one('#password_msg').hide();
+
+            // add the password data to the cfg passed to the api
+            Y.mix(api_cfg, {
+                current_password: Y.one('#current_password').get('value'),
+                new_password: Y.one('#new_password').get('value')
+            });
+
+            var api = new Y.bookie.Api.route.UserPasswordChange(api_cfg);
+            api.call({
+                success: function (data, request) {
+                    that._show_message(data.message, true);
+                    that._reset_password();
+                },
+                error: function (data, status_str, response, arguments) {
+                    that._show_message(data.error, false);
+                    that._reset_password();
+                }
+            });
+        },
+
+        _reset_password: function () {
+            Y.one('#current_password').set('value', '');
+            Y.one('#new_password').set('value', '');
+            Y.one('#password_change').hide(true);
+
+            // make sure we keep visible in sync
+            this._visible = false;
+        },
+
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#password_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
+
+        _show_password: function (e) {
+            var pass_div = Y.one('#password_change');
+            e.preventDefault();
+
+            // if the api key is showing and they click this, hide it
+            if(this._visible) {
+                pass_div.hide(true);
+                this._visible = false;
+            } else {
+                this._visible = true;
+                pass_div.show(true);
+            }
+        },
+
+        initializer: function (cfg) {
+            this._bind();
+        }
+
+    }, {
+        ATTRS: {
+            api_cfg: {
+                required: true
+            }
+        }
+    });
+
+
+    ns.AccountInfoView = Y.Base.create('bookie-account-info-view', Y.View, [], {
+        _bind: function () {
+            Y.one('#submit_account_change').on(
+                'click',
+                this._update_account,
+                this
+            );
+        },
+
+        _update_account: function (e) {
+            var that = this,
+                api_cfg = this.get('api_cfg');
+
+            e.preventDefault();
+
+            // hide the current message window
+            Y.one('#password_msg').hide();
+
+            // add the password data to the cfg passed to the api
+            Y.mix(api_cfg, {
+                name: Y.one('#name').get('value'),
+                email: Y.one('#email').get('value')
+            });
+
+            var api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
+            api.call({
+                success: function (data, request) {
+                    that._show_message('Account updated...', true);
+                },
+                error: function (data, status_str, response, arguments) {
+                    console.log(data);
+                    console.log(response);
+                }
+            });
+        },
+
+        _clear: function () {
+            Y.one('#account_msg').hide(true);
+        },
+
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#account_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
+
+        initializer: function (cfg) {
+            this._bind();
+        }
     }, {
         ATTRS: {
             api_cfg: {
