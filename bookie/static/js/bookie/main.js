@@ -115,51 +115,6 @@ define([], function () {
 
     };
 
-
-    main.reset = {
-        'init': function () {
-            $('#submit_password_change').bind('click', main.reset.change);
-            $('form#password_reset').bind('submit', main.reset.change);
-        },
-
-        'message': function (msg, is_success) {
-            var $msg = $('#password_msg');
-            $msg.html(msg);
-
-            if (is_success) {
-                $msg.attr('class', 'success');
-            } else {
-                $msg.attr('class', 'error');
-            }
-
-            $msg.show('slow');
-        },
-
-        // Change the user's password, get the things together and visit the
-        // api with the current password and new one
-        'change': function (ev) {
-            ev.preventDefault();
-
-            console.log('calling activate');
-
-            main.api.activate({
-                    'username': $('#username').val(),
-                    'code': $('#code').val(),
-                    'password': $('#new_password').val(),
-                },
-                {
-                    'success': function (data) {
-                        main.reset.message(data.message, true);
-                     },
-                    'error': function (data, error_msg) {
-                        console.log(data);
-                        console.log(error_msg);
-                    }
-                }
-            );
-        }
-    };
-
     main.edit = {
         'init': function () {
             this.bind_tag_complete();

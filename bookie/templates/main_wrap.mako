@@ -22,7 +22,7 @@
         </script>
     </head>
 
-    <body>
+    <body class="yui3-skin-sam">
         <div id="heading" class="">
             <div class="logo">
                 <a href="${app_url}" class="logo">Bookie</a>
