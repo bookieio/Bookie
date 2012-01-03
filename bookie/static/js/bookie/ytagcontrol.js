@@ -192,13 +192,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             this._buildui();
             target.get('parentNode').insertBefore(this.ui);
-
-            // handle init'ing if there are initial values in the input box
-            this._process_existing();
         },
 
         syncUI: function () {
-
+            // handle init'ing if there are initial values in the input box
+            this._process_existing();
         }
     }, {
         ATTRS: {

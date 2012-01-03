@@ -53,8 +53,6 @@ YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol', functio
                 });
             this.tc.render();
 
-            debugger;
-
             // now let's start checking out some things
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol').size());
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol-item').size());
