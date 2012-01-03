@@ -53,6 +53,8 @@ YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol', functio
                 });
             this.tc.render();
 
+            debugger;
+
             // now let's start checking out some things
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol').size());
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol-item').size());
@@ -141,6 +143,19 @@ YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol', functio
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol-item').size());
             Y.Assert.areEqual(0, this.tc.get('tags').length);
         },
+
+        test_initial_tags: function () {
+            this.t = Y.one('input');
+            this.t.set('value', 'test test2');
+
+            this.tc = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc.render();
+
+            Y.Assert.areEqual(3, Y.all('.yui3-bookie-tagcontrol-item').size());
+            Y.Assert.areEqual(2, this.tc.get('tags').length);
+        }
     });
 
     Y.Test.Runner.add(view_test);
