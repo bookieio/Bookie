@@ -21,23 +21,34 @@ YUI.add('bookie-tagcontrol', function (Y) {
         backspace:8
     };
 
+    /**
+     * Class for each Tag item in our list of tags we control
+     *
+     */
     function Tag(config) {
         Tag.superclass.constructor.apply(this, arguments);
     }
 
-    Tag.NAME = 'TagControllerTag';
+    Tag.NAME = 'tagcontroller-tag';
     Tag.ATTRS = {
-        'text': {},
-        'cssClass': {},
-        'parent': {}
+        // The actual text of this tag.
+        'text': {
+            required: true
+        },
+        // The css class we stick on all Tag dom nodes
+        'cssClass': {
+            required: true
+        }
     };
 
     Y.extend(Tag, Y.Base, {
+        // bind all events for this particular tag
         _bind: function () {
             // if clicked on, remove it
             this.ui.on('click', this.destroy, this);
         },
 
+        // generate the html for our tag to be placed into the control
         _buildui: function () {
             var ui = Y.Node.create('<li/>');
 
@@ -47,6 +58,15 @@ YUI.add('bookie-tagcontrol', function (Y) {
             return ui;
         },
 
+        /**
+         * Provide specific destroy() implementation
+         *
+         * When we get told to go away, we need to clean up html as well as
+         * our object instance. The controller also wants to know that we're
+         * leaving, so make sure we fire an event so it can update itself as
+         * well.
+         *
+         */
         destructor: function () {
             Y.fire('tag:removed', {
                 target: this
@@ -55,6 +75,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.remove();
         },
 
+        /**
+         * YUI object init method
+         *
+         */
         initializer: function (cfg) {
             this.ui = this._buildui();
             this._bind();
@@ -66,6 +90,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
             main: '<div><ul><li><input/></li></ul></div>',
         },
 
+        /**
+         * Add the tag text into our control as a tag object
+         *
+         * Requires building an instance, adding the UI to the control, and
+         * making sure we're updating our srcNode with the list of tags for
+         * form submitting later on.
+         *
+         */
         _add: function (current_text) {
             var input = this.ui.one('input'),
                 parent = input.get('parentNode'),
@@ -83,6 +115,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this._sync_tags();
         },
 
+        /**
+         * Handle the user manually adding a tag from the control UI
+         *
+         * They can add a tag by hitting space or enter from the control since
+         * that's basically saying that "hey, done with this tag, let's move
+         * on to the next one".
+         *
+         */
         _added_tag: function () {
             var input = this.ui.one('input'),
                 current_text = input.get('value');
@@ -96,6 +136,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             input.focus();
         },
 
+        /**
+         * Bind all events the control is looking for and processing.
+         *
+         */
         _bind_events: function () {
             // events to watch out for from our little control
             // tag:added
@@ -118,6 +162,13 @@ YUI.add('bookie-tagcontrol', function (Y) {
             Y.on('tag:removed', this._remove_tag, this);
         },
 
+        /**
+         * Generate the html layout for our control.
+         *
+         * We need to make sure we stick on the nice namespaced css classes
+         * for our styling to hook into.
+         *
+         */
         _buildui: function () {
             this.ui = Y.Node.create(this.tpl.main);
             this.ui.one('ul').addClass(this.getClassName('tags'));
@@ -125,6 +176,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.one('input').addClass(this.getClassName('input'));
         },
 
+        /**
+         * Check the input for any actions we should take as the user types
+         * into the input control.
+         *
+         */
         _parse_input: function (e) {
             if (e.keyCode == keymap.space || e.keyCode == keymap.enter) {
                 // then handle the current input as a tag and clear for a new
@@ -133,6 +189,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }
         },
 
+        /**
+         * Add any tags that a srcNode already has in it
+         *
+         */
         _process_existing: function () {
             // check the srcNode for any existing value=""
             var that = this,
@@ -150,6 +210,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }
         },
 
+        /**
+         * When a tag is deleted, we need to update our own record of it.
+         *
+         */
         _remove_tag: function (e) {
             var t = e.target
                 tag = t.get('text');
@@ -164,6 +228,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }, this);
         },
 
+        /**
+         * Sync up the list of tags the control knows about to the srcNode
+         * input element.
+         *
+         */
         _sync_tags: function () {
             // make sure we keep the tags in our list up to date with the
             // input box
@@ -178,10 +247,18 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.get('srcNode').set('value', tag_list);
         },
 
+        /**
+         * Override the YUI widget method for binding UI events
+         *
+         */
         bindUI: function () {
             this._bind_events();
         },
 
+        /**
+         * Override the YUI widget method for building out html/rendering.
+         *
+         */
         renderUI: function () {
             // first start out by hiding the initial input and placing our own
             // in it's place
@@ -194,12 +271,21 @@ YUI.add('bookie-tagcontrol', function (Y) {
             target.get('parentNode').insertBefore(this.ui);
         },
 
+        /**
+         * Override the YUI widget method for init'ing the UI per existing
+         * data.
+         *
+         */
         syncUI: function () {
             // handle init'ing if there are initial values in the input box
             this._process_existing();
         }
     }, {
         ATTRS: {
+            /**
+             * Tags is a list of Tag object instances we know about
+             *
+             */
             tags: {
                 value: []
             }
