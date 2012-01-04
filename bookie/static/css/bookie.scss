@@ -689,6 +689,12 @@ fieldset {
         -webkit-border-radius: 3px;
         border-radius: 3px;
         background-color: $button_back;
+
+        &.yui3-bookie-tagcontrol-item-input {
+            background: #FFF;
+            border: none;
+            width: auto;
+        }
     }
 
     input {
@@ -696,5 +702,6 @@ fieldset {
             outline: none;
         }
         border: none;
+        width: 100%;
     }
 }

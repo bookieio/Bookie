@@ -473,7 +473,12 @@ fieldset legend {
   -webkit-border-radius: 3px;
   border-radius: 3px;
   background-color: #eeeeee; }
+  .yui3-bookie-tagcontrol li.yui3-bookie-tagcontrol-item-input {
+    background: #FFF;
+    border: none;
+    width: auto; }
 .yui3-bookie-tagcontrol input {
-  border: none; }
+  border: none;
+  width: 100%; }
   .yui3-bookie-tagcontrol input:focus {
     outline: none; }

@@ -99,20 +99,25 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _add: function (current_text) {
-            var input = this.ui.one('input'),
-                parent = input.get('parentNode'),
-                new_tag = new Tag({
-                    text: current_text,
-                    cssClass: this.getClassName('item'),
-                    parent: this.ui
-                });
+            // only add if there's text here
+            current_text = Y.Lang.trim(current_text);
 
-            // keep this up
-            this.get('tags').push(new_tag);
+            if (current_text) {
+                var input = this.ui.one('input'),
+                    parent = input.get('parentNode'),
+                    new_tag = new Tag({
+                        text: current_text,
+                        cssClass: this.getClassName('item'),
+                        parent: this.ui
+                    });
 
-            // add a new li element before the input one
-            parent.get('parentNode').insertBefore(new_tag.ui, parent);
-            this._sync_tags();
+                // keep this up
+                this.get('tags').push(new_tag);
+
+                // add a new li element before the input one
+                parent.get('parentNode').insertBefore(new_tag.ui, parent);
+                this._sync_tags();
+            }
         },
 
         /**
@@ -173,6 +178,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui = Y.Node.create(this.tpl.main);
             this.ui.one('ul').addClass(this.getClassName('tags'));
             this.ui.one('li').addClass(this.getClassName('item'));
+            this.ui.one('li').addClass(this.getClassName('item-input'));
             this.ui.one('input').addClass(this.getClassName('input'));
         },
 
