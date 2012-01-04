@@ -268,7 +268,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
             target.set('type', 'hidden');
 
             this._buildui();
-            target.get('parentNode').insertBefore(this.ui);
+            var parent = target.get('parentNode');
+            this.ui.appendTo(parent);
         },
 
         /**

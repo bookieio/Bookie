@@ -63,6 +63,12 @@
             }
 
             Y.one('.bmarks').appendChild(listview.render());
+
+            var tagcontrol = new Y.bookie.TagControl({
+               'srcNode': Y.one('#tag_filter')
+            });
+            tagcontrol.render();
+
         });
     </script>
 </%def>

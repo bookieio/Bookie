@@ -457,9 +457,11 @@ fieldset legend {
   background: url(edit.png) no-repeat 50% 50%; }
 
 .yui3-bookie-tagcontrol ul {
+  background: #FFF;
   border: 1px solid #bbbbbb;
+  margin: 0;
   padding: .3em;
-  background: #FFF; }
+  width: 40em; }
 .yui3-bookie-tagcontrol li {
   list-style: none;
   display: inline-block;
@@ -470,7 +472,7 @@ fieldset legend {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  background-color: #FFF; }
+  background-color: #eeeeee; }
 .yui3-bookie-tagcontrol input {
   border: none; }
   .yui3-bookie-tagcontrol input:focus {

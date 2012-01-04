@@ -671,9 +671,11 @@ fieldset {
 
 .yui3-bookie-tagcontrol {
     ul {
-        border: 1px solid $button_border;
-        padding: .3em;
         background: #FFF;
+        border: 1px solid $button_border;
+        margin: 0;
+        padding: .3em;
+        width: 40em;
     }
 
     li {
@@ -686,7 +688,7 @@ fieldset {
         -moz-border-radius: 3px;
         -webkit-border-radius: 3px;
         border-radius: 3px;
-        background-color: #FFF;
+        background-color: $button_back;
     }
 
     input {

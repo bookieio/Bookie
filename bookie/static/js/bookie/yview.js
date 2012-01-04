@@ -299,12 +299,6 @@ YUI.add('bookie-view', function (Y) {
                var p = that.pagers.pop();
                n.appendChild(p.render());
            });
-
-           this.tagcontrol = new Y.bookie.TagControl({
-               'srcNode': html.one('#tag_filter')
-           });
-           this.tagcontrol.render();
-
            return html;
        }
 
