@@ -668,3 +668,31 @@ fieldset {
 .yui3-icon-close { background: url(minus-circle.png) no-repeat 50% 50%; }
 .yui3-icon-edit { background: url(edit.png) no-repeat 50% 50%; }
 
+
+.yui3-bookie-tagcontrol {
+    ul {
+        border: 1px solid $button_border;
+        padding: .3em;
+        background: #FFF;
+    }
+
+    li {
+        list-style: none;
+        display: inline-block;
+        padding: .2em .5em;
+        margin: .1em .1em;
+        border: 1px solid $button_border;
+        background-color: $button_back;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        background-color: #FFF;
+    }
+
+    input {
+        &:focus {
+            outline: none;
+        }
+        border: none;
+    }
+}

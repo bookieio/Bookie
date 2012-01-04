@@ -77,6 +77,7 @@
         <script src="/static/js/bookie/yapi.js"></script>
         <script src="/static/js/bookie/ymodel.js"></script>
         <script src="/static/js/bookie/yview.js"></script>
+        <script src="/static/js/bookie/ytagcontrol.js"></script>
 
         % if hasattr(self, 'add_js'):
             ${self.add_js()}

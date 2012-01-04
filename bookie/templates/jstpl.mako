@@ -60,12 +60,7 @@
         {{/if}}
 
         <div class="tag_filter_container" style="">
-            <select data-placeholder="Filter results by tag..."
-                    style="width: 500px;"
-                    tabindex="-1" id="tag_filter">
-                    <option value=""></option>
-                    <option>American Black Bear</option>
-            </select>
+            <input name="tag_filter" id="tag_filter" value="tag1 tag32145"/>
         </div>
     </div>
 
