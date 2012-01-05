@@ -36,6 +36,31 @@ YUI({
             this.wait(1000);
         },
 
+        testFilteredPublicBmarkList: function () {
+            var that = this,
+                tag = 'books',
+                callbacks = {
+                    'success': function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.count);
+
+                            Y.Array.each(data.bmarks, function (n) {
+                                Y.Assert.areNotEqual(-1, n.tag_str.indexOf(tag));
+                            });
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    tags: [tag]
+                },
+                api = new Y.bookie.Api.route.BmarksAll(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
         testUserBmarkList: function () {
             var that = this,
                 callbacks = {

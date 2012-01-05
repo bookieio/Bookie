@@ -82,6 +82,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
         initializer: function (cfg) {
             this.ui = this._buildui();
             this._bind();
+
+            // fire an event that a new tag was added
+            Y.fire('tag:add', {
+                target: this
+            });
         }
     });
 

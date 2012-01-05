@@ -117,7 +117,7 @@ YUI.add('bookie-api', function (Y) {
                 }
             }
             return this.get('url') +
-                Y.Lang.substitute(this.url, data);
+                Y.Lang.substitute(this.get('url_element'), data);
         },
 
         /**
@@ -205,10 +205,15 @@ YUI.add('bookie-api', function (Y) {
         Y.bookie.Api,
         [],
         {
-            url: '',
             data: {}
         },
-        {}
+        {
+            ATTRS: {
+                url_element: {
+                    value: ''
+                }
+            }
+        }
     );
 
 
@@ -216,16 +221,42 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-bmarksall',
         Y.bookie.Api.route,
         [], {
-            url: '/bmarks',
             data: {
                 count: 10,
                 page: 1,
                 with_content: false
             },
 
-            initializer: function (cfg) {}
-        },
-        {}
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                /**
+                 * Any tags to filter on
+                 *
+                 */
+                tags: {
+                    valueFn: function () {
+                        return [];
+                    }
+                },
+
+                url_element: {
+                    value: '/bmarks',
+                    getter: function () {
+                        if (this.get('tags')) {
+                            return [
+                                '/bmarks',
+                                this.get('tags').join('/')
+                            ].join('/');
+                        } else {
+                            return '/bmarks';
+                        }
+
+                    }
+                }
+            }
+        }
     );
 
 
@@ -233,7 +264,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-tagcomplete',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/tags/complete',
             call: function (callbacks, tag_stub, current_tags) {
                 this.set('options', {
                     data: {
@@ -243,8 +273,14 @@ YUI.add('bookie-api', function (Y) {
                 });
                 Y.bookie.Api.route.TagComplete.superclass.call.apply(this, arguments);
             }
-        },
-        {}
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/tags/complete'
+                }
+            }
+        }
+
     );
 
 
@@ -252,7 +288,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-bmarksall',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/bmarks',
             data: {
                 count: 10,
                 page: 1,
@@ -260,8 +295,13 @@ YUI.add('bookie-api', function (Y) {
             },
 
             initializer: function (cfg) {}
-        },
-        {}
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/bmarks'
+                }
+            }
+        }
     );
 
 
@@ -279,7 +319,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-bmark',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/bmark/{hash_id}',
             initializer: function (cfg) {
                 this.data = {
                     hash_id: this.get('hash_id'),
@@ -290,6 +329,9 @@ YUI.add('bookie-api', function (Y) {
             ATTRS: {
                 hash_id: {
                     required: true
+                },
+                url_element: {
+                    value: '/{username}/bmark/{hash_id}'
                 },
                 username: {
                     required: true
@@ -303,7 +345,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-bmark-delete',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/bmark/{hash_id}',
             initializer: function (cfg) {
                 // force this to a DELETE request by overriding our base_cfg
                 // we extend.
@@ -316,6 +357,9 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                url_element: {
+                    value: '/{username}/bmark/{hash_id}'
+                },
                 hash_id: {
                     required: true
                 }
@@ -328,11 +372,13 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-api-key',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/api_key',
             initializer: function (cfg) {
             }
         }, {
             ATTRS: {
+                url_element: {
+                    value: '/{username}/api_key'
+                }
             }
         }
     );
@@ -341,7 +387,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-password-change',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/password',
             initializer: function (cfg) {
                 this.base_cfg.method = 'POST',
 
@@ -358,6 +403,9 @@ YUI.add('bookie-api', function (Y) {
                 },
                 new_password: {
                     required: true
+                },
+                url_element: {
+                    value: '/{username}/password'
                 }
             }
         }
@@ -368,7 +416,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-account-change',
         Y.bookie.Api.route,
         [], {
-            url: '/{username}/account',
             initializer: function (cfg) {
                 this.base_cfg.method = 'POST';
 
@@ -389,7 +436,10 @@ YUI.add('bookie-api', function (Y) {
         }, {
             ATTRS: {
                 name: {},
-                email: {}
+                email: {},
+                url_element: {
+                    value: '/{username}/account'
+                }
             }
         }
     );
@@ -398,7 +448,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-suspend-user',
         Y.bookie.Api.route,
         [], {
-            url: '/suspend',
             initializer: function (cfg) {
                 this.base_cfg.method = 'POST';
 
@@ -411,6 +460,9 @@ YUI.add('bookie-api', function (Y) {
             ATTRS: {
                 email: {
                     required: true
+                },
+                url_element: {
+                    value: '/suspend'
                 }
             }
         }
@@ -421,7 +473,6 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-unsuspend-user',
         Y.bookie.Api.route,
         [], {
-            url: '/suspend',
             initializer: function (cfg) {
                 this.base_cfg.method = 'DELETE';
 
@@ -442,6 +493,9 @@ YUI.add('bookie-api', function (Y) {
                 },
                 password: {
                     required: true
+                },
+                url_element: {
+                    value: '/suspend'
                 }
             }
         }

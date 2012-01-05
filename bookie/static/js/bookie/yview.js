@@ -180,6 +180,11 @@ YUI.add('bookie-view', function (Y) {
             // bind the pager event
             Y.on('pager:next', this._next_page, this);
             Y.on('pager:previous', this._prev_page, this);
+
+            // if there are tags added/removed form the TagControl, then make
+            // sure we update the list accordingly
+            Y.one('tag:added', this._tags_changed, this);
+            Y.one('tag:removed', this._tags_changed, this);
         },
 
         /**
@@ -270,6 +275,21 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+
+        _tags_changed: function (e) {
+            // update the api data with the tags list
+            var tag_str = this.get('tags_field').get('value'),
+                tags = tag_str.split(' ');
+
+            // @ todo get this into the api_cfg somehow
+
+            // update the pager back to page 1
+            this.get('pager').set('page', 1);
+
+            // and finally fetch the results
+            this._fetch_dataset();
+        },
+
         /**
          * Need to make some updates to the ui based on the current page
          *
@@ -338,6 +358,14 @@ YUI.add('bookie-view', function (Y) {
 
             },
 
+            /**
+             * The node to check for the tags we want to pass to the api for
+             * filtering
+             *
+             */
+            tags_field: {
+                value: 'tag_filter'
+            }
         }
 
     });

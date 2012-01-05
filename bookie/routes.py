@@ -101,6 +101,7 @@ def build_routes(config):
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
 
     config.add_route('api_bmarks', 'api/v1/bmarks')
+    config.add_route('api_bmarks_tags', 'api/v1/bmarks/*tags')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
 
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
