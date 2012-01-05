@@ -316,41 +316,6 @@ fieldset legend {
   display: inline-block;
   vertical-align: middle; }
 
-.tag_filter {
-  margin: .5em; }
-  .tag_filter div {
-    margin: 0; }
-  .tag_filter input {
-    width: 25em; }
-    .tag_filter input[type=submit] {
-      width: 5em;
-      min-height: 29px; }
-    .tag_filter input[type=checkbox] {
-      width: 1em; }
-  .tag_filter .item {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    font-size: 12px;
-    line-height: 1;
-    padding: 2px 4px 3px;
-    text-align: center;
-    text-shadow: 0 1px 0 white; }
-    .tag_filter .item:hover {
-      background: #e1e1e1;
-      -moz-box-shadow: 1px 1px 0 0 #464646;
-      -webkit-box-shadow: 1px 1px 0 0 #464646;
-      box-shadow: 1px 1px 0 0 #464646;
-      color: #262626;
-      cursor: pointer; }
-    .tag_filter .item a {
-      color: #333333;
-      text-decoration: none; }
-  .tag_filter .superblyTagfieldDiv {
-    display: inline-block;
-    vertical-align: bottom;
-    width: 35em; }
-
 .fullpage {
   text-align: center; }
 
@@ -458,27 +423,26 @@ fieldset legend {
 
 .yui3-bookie-tagcontrol ul {
   background: #FFF;
-  border: 1px solid #bbbbbb;
+  border: 1px solid #cccccc;
   margin: 0;
-  min-height: 25px;
-  padding: .3em;
+  min-height: 21px;
+  padding: .2em;
   width: 40em;
   float: left; }
 .yui3-bookie-tagcontrol li {
-  font-size: .9em;
   cursor: pointer;
   background-color: #eeeeee;
-  background-color: #eeeeee;
-  border: 1px solid #bbbbbb;
   border-radius: 3px;
+  box-shadow: 1px 1px 0 0 #868686;
   display: inline-block;
   list-style: none;
-  margin: .1em .1em;
+  margin: 1px 2px;
   -moz-border-radius: 3px;
-  padding: .2em .5em;
+  padding: 2px 3px;
   -webkit-border-radius: 3px; }
   .yui3-bookie-tagcontrol li.yui3-bookie-tagcontrol-item-input {
     background: #FFF;
+    box-shadow: none;
     border: none;
     cursor: auto;
     width: auto; }
@@ -489,5 +453,5 @@ fieldset legend {
       outline: none; }
 .yui3-bookie-tagcontrol input[type="submit"] {
   width: 5em;
-  min-height: 33px;
-  margin-left: .2em; }
+  min-height: 30px;
+  margin-left: .3em; }

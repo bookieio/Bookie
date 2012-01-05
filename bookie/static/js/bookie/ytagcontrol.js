@@ -248,6 +248,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 // one
                 this._added_tag();
             }
+
+            if (e.keyCode == keymap.backspace) {
+                if (this.ui.one('input').get('value') == '') {
+                    // remove the last tag we put on the stack
+                    var last_tag = this.get('tags').pop();
+                    last_tag.destroy();
+                }
+            }
         },
 
         /**

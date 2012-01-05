@@ -512,55 +512,6 @@ fieldset {
     vertical-align: middle;
 }
 
-.tag_filter {
-    margin: .5em;
-
-
-    div {
-        margin: 0;
-    }
-
-    input {
-        width: 25em;
-
-        &[type=submit] {
-            width: 5em;
-            min-height: 29px;
-        }
-
-        &[type=checkbox] {
-            width: 1em;
-        }
-    }
-
-    .item {
-        -moz-border-radius: 3px;
-        -webkit-border-radius: 3px;
-        border-radius: 3px;
-        font-size: 12px;
-        line-height: 1;
-        padding: 2px 4px 3px;
-        text-align: center;
-        text-shadow: 0 1px 0 white;
-
-        &:hover {
-            @include button_base_hover;
-        }
-
-        a {
-            color: $darkgrey;
-            text-decoration: none;
-        }
-    }
-
-    .superblyTagfieldDiv {
-        display: inline-block;
-        vertical-align: bottom;
-        width: 35em;
-    }
-}
-
-
 .fullpage {
     @include center;
 }
@@ -668,35 +619,33 @@ fieldset {
 .yui3-icon-close { background: url(minus-circle.png) no-repeat 50% 50%; }
 .yui3-icon-edit { background: url(edit.png) no-repeat 50% 50%; }
 
-
 .yui3-bookie-tagcontrol {
 
     ul {
         background: #FFF;
-        border: 1px solid $button_border;
+        border: 1px solid $lightgrey;
         margin: 0;
-        min-height: 25px;
-        padding: .3em;
+        min-height: 21px;
+        padding: .2em;
         width: 40em;
         float: left;
     }
 
     li {
-        font-size: .9em;
         cursor: pointer;
         background-color: $button_back;
-        background-color: $button_back;
-        border: 1px solid $button_border;
         border-radius: 3px;
+        box-shadow: 1px 1px 0 0 lighten($button_shadow, 20%);
         display: inline-block;
         list-style: none;
-        margin: .1em .1em;
+        margin: 1px 2px;
         -moz-border-radius: 3px;
-        padding: .2em .5em;
+        padding: 2px 3px;
         -webkit-border-radius: 3px;
 
         &.yui3-bookie-tagcontrol-item-input {
             background: #FFF;
+            box-shadow: none;
             border: none;
             cursor: auto;
             width: auto;
@@ -713,7 +662,7 @@ fieldset {
 
     input[type="submit"] {
         width: 5em;
-        min-height: 33px;
-        margin-left: .2em;
+        min-height: 30px;
+        margin-left: .3em;
     }
 }
