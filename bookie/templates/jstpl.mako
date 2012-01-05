@@ -60,7 +60,7 @@
         {{/if}}
 
         <div class="tag_filter_container" style="">
-            <input name="tag_filter" id="tag_filter" value="tag1 tag32145"/>
+            <input name="tag_filter" id="tag_filter" value=""/>
         </div>
     </div>
 

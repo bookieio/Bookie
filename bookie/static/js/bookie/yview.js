@@ -183,8 +183,7 @@ YUI.add('bookie-view', function (Y) {
 
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
-            Y.one('tag:added', this._tags_changed, this);
-            Y.one('tag:removed', this._tags_changed, this);
+            Y.on('tag:changed', this._tags_changed, this);
         },
 
         /**
@@ -252,7 +251,6 @@ YUI.add('bookie-view', function (Y) {
         },
 
         _next_page: function (e) {
-
             this.get('pager').next();
 
             // now that we've incremented the page let's fetch a new set of
@@ -275,13 +273,17 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
-
         _tags_changed: function (e) {
             // update the api data with the tags list
-            var tag_str = this.get('tags_field').get('value'),
+            var tag_str = Y.one(this.get('tags_field')).get('value'),
+                tags = [];
+
+            if (tag_str.length > 0) {
                 tags = tag_str.split(' ');
+            }
 
             // @ todo get this into the api_cfg somehow
+            this.api.set('tags', tags);
 
             // update the pager back to page 1
             this.get('pager').set('page', 1);
@@ -364,7 +366,7 @@ YUI.add('bookie-view', function (Y) {
              *
              */
             tags_field: {
-                value: 'tag_filter'
+                value: '#tag_filter'
             }
         }
 

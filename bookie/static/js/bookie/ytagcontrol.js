@@ -32,12 +32,17 @@ YUI.add('bookie-tagcontrol', function (Y) {
     Tag.NAME = 'tagcontroller-tag';
     Tag.ATTRS = {
         // The actual text of this tag.
-        'text': {
+        text: {
             required: true
         },
         // The css class we stick on all Tag dom nodes
-        'cssClass': {
+        cssClass: {
             required: true
+        },
+        // should we fire the event that we've been added?
+        // we don't want to when adding initial tags on page load
+        silent: {
+            value: false
         }
     };
 
@@ -68,25 +73,26 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         destructor: function () {
+            // remove this node
+            this.ui.remove();
             Y.fire('tag:removed', {
                 target: this
             });
-            // remove this node
-            this.ui.remove();
         },
 
         /**
          * YUI object init method
          *
          */
-        initializer: function (cfg) {
+        initializer: function (cfg, silent) {
             this.ui = this._buildui();
             this._bind();
 
-            // fire an event that a new tag was added
-            Y.fire('tag:add', {
-                target: this
-            });
+            if (!this.get('silent')) {
+                Y.fire('tag:added', {
+                    target: this
+                });
+            }
         }
     });
 
@@ -113,7 +119,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * form submitting later on.
          *
          */
-        _add: function (current_text) {
+        _add: function (current_text, silent) {
             // only add if there's text here
             current_text = Y.Lang.trim(current_text);
 
@@ -123,7 +129,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     new_tag = new Tag({
                         text: current_text,
                         cssClass: this.getClassName('item'),
-                        parent: this.ui
+                        parent: this.ui,
+                        silent: silent
                     });
 
                 // keep this up
@@ -132,6 +139,13 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 // add a new li element before the input one
                 parent.get('parentNode').insertBefore(new_tag.ui, parent);
                 this._sync_tags();
+
+                // fire an event that a new tag was added
+                if (!silent) {
+                    Y.fire('tag:changed', {
+                        target: new_tag
+                    });
+                }
             }
         },
 
@@ -252,7 +266,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             if (tags.length > 0) {
                 Y.Array.each(tags, function (n) {
-                    that._add(n);
+                    that._add(n, true);
                 });
             }
         },
@@ -269,10 +283,13 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     var tlist = this.get('tags');
                     tlist.splice(index, 1);
                     this.set('tags', tlist);
+                    return true;
                 }
 
-                return true;
             }, this);
+
+            this._sync_tags();
+            Y.fire('tag:changed', e);
         },
 
         /**
