@@ -460,9 +460,11 @@ fieldset legend {
   background: #FFF;
   border: 1px solid #bbbbbb;
   margin: 0;
+  min-height: 25px;
   padding: .3em;
   width: 40em; }
 .yui3-bookie-tagcontrol li {
+  font-size: .9em;
   cursor: pointer;
   background-color: #eeeeee;
   background-color: #eeeeee;
