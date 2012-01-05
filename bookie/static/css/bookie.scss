@@ -679,20 +679,22 @@ fieldset {
     }
 
     li {
-        list-style: none;
-        display: inline-block;
-        padding: .2em .5em;
-        margin: .1em .1em;
+        cursor: pointer;
+        background-color: $button_back;
+        background-color: $button_back;
         border: 1px solid $button_border;
-        background-color: $button_back;
-        -moz-border-radius: 3px;
-        -webkit-border-radius: 3px;
         border-radius: 3px;
-        background-color: $button_back;
+        display: inline-block;
+        list-style: none;
+        margin: .1em .1em;
+        -moz-border-radius: 3px;
+        padding: .2em .5em;
+        -webkit-border-radius: 3px;
 
         &.yui3-bookie-tagcontrol-item-input {
             background: #FFF;
             border: none;
+            cursor: auto;
             width: auto;
         }
     }

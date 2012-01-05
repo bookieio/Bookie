@@ -54,7 +54,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             ui.addClass(this.get('cssClass'));
             ui.setContent(this.get('text'));
-
+            ui.set('title', 'Click to remove...');
             return ui;
         },
 
@@ -86,6 +86,16 @@ YUI.add('bookie-tagcontrol', function (Y) {
     });
 
     ns.TagControl = Y.Base.create('bookie-tagcontrol', Y.Widget, [], {
+        CLONE_CSS: {
+            height: '1em',
+            left: -9999,
+            opacity: 0,
+            overflow: 'hidden',
+            position: 'absolute',
+            top: -9999,
+            width: 'auto'
+        },
+
         tpl: {
             main: '<div><ul><li><input/></li></ul></div>',
         },
@@ -165,6 +175,32 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // if a tag is removed, catch that event and remove it from our
             // knowledge. This event is coming from the tag itself.
             Y.on('tag:removed', this._remove_tag, this);
+
+            // Look at adjusting the size on any value change event including
+            // pasting and such.
+            this.ui.one('input').on('valueChange', function(e) {
+                this._update_input_width(e.newVal);
+            }, this);
+        },
+
+        /**
+         * We need a clone node in order to tell the input how large to be
+         *
+         */
+        _build_clone: function () {
+            var clone= Y.Node.create('<span/>');
+            clone.setContent('');
+            clone.setStyles(this.CLONE_CSS);
+            // remove attributes so we don't accidentally grab this node in the
+            // future
+            clone.generateID();
+            clone.setAttrs({
+                'tabIndex': -1
+            });
+
+            this.get('srcNode').get('parentNode').append(clone);
+            this.clone = clone;
+            this._update_input_width('');
         },
 
         /**
@@ -254,6 +290,24 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         /**
+         * Update the css width of the clone node.
+         *
+         * In the process of page dom manipulation, the width might change based
+         * on other nodes showing up and forcing changes due to padding/etc.
+         *
+         * We'll play safe and just always recalc the width for the clone before
+         * we check it's scroll height.
+         *
+         */
+        _update_input_width: function(new_value) {
+            // we need to update the clone with the content so it resizes
+            this.clone.setContent(new_value);
+
+            // then update the input to be the matching size + a buffer
+            this.ui.one('input').setStyle('width', this.clone.get('offsetWidth') + 20);
+        },
+
+        /**
          * Override the YUI widget method for binding UI events
          *
          */
@@ -276,6 +330,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this._buildui();
             var parent = target.get('parentNode');
             this.ui.appendTo(parent);
+            this._build_clone();
         },
 
         /**
@@ -300,5 +355,5 @@ YUI.add('bookie-tagcontrol', function (Y) {
     });
 
 }, '0.1.0', { requires: [
-    'base', 'widget', 'handlebars', 'array-extras'
+    'base', 'widget', 'handlebars', 'array-extras', 'event-valuechange'
 ] });
