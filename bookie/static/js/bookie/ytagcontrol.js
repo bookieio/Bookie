@@ -243,7 +243,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _parse_input: function (e) {
-            if (e.keyCode == keymap.space || e.keyCode == keymap.enter) {
+            if (e.keyCode == keymap.space || e.keyCode == keymap.enter || e.keyCode == keymap.tab) {
                 // then handle the current input as a tag and clear for a new
                 // one
                 this._added_tag();
