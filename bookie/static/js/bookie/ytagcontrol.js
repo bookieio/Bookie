@@ -97,7 +97,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         tpl: {
-            main: '<div><ul><li><input/></li></ul></div>',
+            main: '<div><ul><li><input/></li></ul><input type="submit" name="filter" value="Go"></div>',
         },
 
         /**

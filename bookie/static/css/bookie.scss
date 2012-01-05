@@ -678,6 +678,7 @@ fieldset {
         min-height: 25px;
         padding: .3em;
         width: 40em;
+        float: left;
     }
 
     li {
@@ -700,13 +701,19 @@ fieldset {
             cursor: auto;
             width: auto;
         }
+
+        input {
+            &:focus {
+                outline: none;
+            }
+            border: none;
+            width: 100%;
+        }
     }
 
-    input {
-        &:focus {
-            outline: none;
-        }
-        border: none;
-        width: 100%;
+    input[type="submit"] {
+        width: 5em;
+        min-height: 33px;
+        margin-left: .2em;
     }
 }
