@@ -12,7 +12,7 @@
 
 YUI.add('bookie-tagcontrol', function (Y) {
     var ns = Y.namespace('bookie');
-    var AJAX_WAITTIME = 450;
+    var AJAX_WAITTIME = 425;
 
     var keymap = {
         downArrow: 40,

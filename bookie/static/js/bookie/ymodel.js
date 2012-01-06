@@ -110,10 +110,10 @@ YUI.add('bookie-model', function (Y) {
         previous: function () {
             var cpage = this.get('page');
 
-            if (cpage > 1) {
+            if (cpage > 0) {
                 this.set('page', this.get('page') - 1);
             } else {
-                this.set('page', 1);
+                this.set('page', 0);
             }
         }
 
@@ -123,7 +123,7 @@ YUI.add('bookie-model', function (Y) {
                 value: 20
             },
             page: {
-                value: 1
+                value: 0
             },
             with_content: {
                 value: false

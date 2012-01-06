@@ -286,7 +286,7 @@ YUI.add('bookie-view', function (Y) {
             this.api.set('tags', tags);
 
             // update the pager back to page 1
-            this.get('pager').set('page', 1);
+            this.get('pager').set('page', 0);
 
             // and finally fetch the results
             this._fetch_dataset();
