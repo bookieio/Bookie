@@ -12,7 +12,7 @@
 
 YUI.add('bookie-tagcontrol', function (Y) {
     var ns = Y.namespace('bookie');
-    var AJAX_WAITTIME = 400;
+    var AJAX_WAITTIME = 450;
 
     var keymap = {
         downArrow: 40,
@@ -262,11 +262,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // you're typing, so let's start a timer to check if you're done
             // in a sec
             clearTimeout(this.typing_lock);
-            console.log('clearing', this.typing_lock);
 
             this.typing_lock = setTimeout(function () {
-                console.log('firing typing lock');
-
                 // check for any events to fire changed for
                 if (that.get('events_waiting')) {
                     Y.fire('tag:changed', {
