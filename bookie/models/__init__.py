@@ -463,7 +463,7 @@ class BmarkMgr(object):
                                group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
                                having(func.count(bmarks_tags.c.tag_id) >= len(tags)).order_by(Bmark.stored.desc())
 
-                qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
+                qry = qry.join((bids_we_want.limit(limit).offset(offset).alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
 
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
