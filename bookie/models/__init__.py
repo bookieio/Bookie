@@ -471,11 +471,9 @@ class BmarkMgr(object):
             qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-
         # join to hashed so we always have the url
         # if we have with_content, this is already done
         qry = qry.options(joinedload('hashed'))
-
 
         return qry.all()
 

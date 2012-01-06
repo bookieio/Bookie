@@ -3,22 +3,24 @@
 /*global _: false, window: false, self: false, escape: false, */
 
 /**
- * ripped off from https://github.com/yui/yui3-gallery/blob/master/src/gallery-taglist/js/taglist.js
+ * ripped off from
+ * https://github.com/yui/yui3-gallery/blob/master/src/gallery-taglist/js/taglist.js
  *
  * Hope to submit to the gallery either as a giant patch or something. For
  * now, will hack it directly into Bookie .
  */
 
 YUI.add('bookie-tagcontrol', function (Y) {
-    ns = Y.namespace('bookie');
+    var ns = Y.namespace('bookie');
+    var AJAX_WAITTIME = 400;
 
     var keymap = {
-        downArrow:40,
-        upArrow:38,
-        enter:13,
-        space:32,
-        tab:9,
-        backspace:8
+        downArrow: 40,
+        upArrow: 38,
+        enter: 13,
+        space: 32,
+        tab: 9,
+        backspace: 8
     };
 
     /**
@@ -108,7 +110,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         tpl: {
-            main: '<div><ul><li><input/></li></ul><input type="submit" name="filter" value="Go"></div>',
+            main: '<div><ul><li><input/></li></ul></div>',
+            submit_button: '<input type="submit" name="filter" value="Go"/>'
         },
 
         /**
@@ -120,6 +123,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _add: function (current_text, silent) {
+            var that = this;
             // only add if there's text here
             current_text = Y.Lang.trim(current_text);
 
@@ -138,13 +142,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
                 // add a new li element before the input one
                 parent.get('parentNode').insertBefore(new_tag.ui, parent);
-                this._sync_tags();
 
                 // fire an event that a new tag was added
                 if (!silent) {
-                    Y.fire('tag:changed', {
-                        target: new_tag
-                    });
+                    this.set('events_waiting', true);
                 }
             }
         },
@@ -175,6 +176,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _bind_events: function () {
+            var that = this;
             // events to watch out for from our little control
             // tag:added
             // tag:removed
@@ -185,6 +187,16 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 'input',
                 this
             );
+
+            // we also want to parse_input on any click event in case you
+            // remove a tag and we need to set the timer/update
+            this.ui.delegate('mouseup', this._parse_input, 'li', this);
+
+            this.ui.delegate('tag:donetyping', function (e) {
+                Y.fire('tag:changed', {
+                    target: that
+                });
+            });
 
             // if you click on anywhere within the ui, focus the input box
             this.ui.on('click', function (e) {
@@ -197,9 +209,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             // Look at adjusting the size on any value change event including
             // pasting and such.
-            this.ui.one('input').on('valueChange', function(e) {
+            this.ui.one('input').on('valueChange', function (e) {
                 this._update_input_width(e.newVal);
             }, this);
+
         },
 
         /**
@@ -207,11 +220,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _build_clone: function () {
-            var clone= Y.Node.create('<span/>');
+            var clone = Y.Node.create('<span/>');
             clone.setContent('');
             clone.setStyles(this.CLONE_CSS);
-            // remove attributes so we don't accidentally grab this node in the
-            // future
+            // remove attributes so we don't accidentally grab this node in
+            // the future
             clone.generateID();
             clone.setAttrs({
                 'tabIndex': -1
@@ -235,6 +248,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.one('li').addClass(this.getClassName('item'));
             this.ui.one('li').addClass(this.getClassName('item-input'));
             this.ui.one('input').addClass(this.getClassName('input'));
+            this.ui.appendChild(this.tpl.submit_button);
         },
 
         /**
@@ -243,11 +257,24 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _parse_input: function (e) {
-            if (e.keyCode == keymap.space || e.keyCode == keymap.enter || e.keyCode == keymap.tab) {
-                // then handle the current input as a tag and clear for a new
-                // one
-                this._added_tag();
-            }
+            var that = this;
+
+            // you're typing, so let's start a timer to check if you're done
+            // in a sec
+            clearTimeout(this.typing_lock);
+            console.log('clearing', this.typing_lock);
+
+            this.typing_lock = setTimeout(function () {
+                console.log('firing typing lock');
+
+                // check for any events to fire changed for
+                if (that.get('events_waiting')) {
+                    Y.fire('tag:changed', {
+                        target: that
+                    });
+                    that.set('events_waiting', undefined);
+                }
+            }, AJAX_WAITTIME);
 
             if (e.keyCode == keymap.backspace) {
                 if (this.ui.one('input').get('value') == '') {
@@ -255,6 +282,18 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     var last_tag = this.get('tags').pop();
                     last_tag.destroy();
                 }
+            }
+
+            // continue on with what you were doing
+            // these are events and keystrokes we want to throttle
+            // external activity for
+            if (e.keyCode === keymap.space ||
+                    e.keyCode === keymap.enter ||
+                    e.keyCode === keymap.tab) {
+                // then handle the current input as a tag and clear for a
+                // new one
+                that._added_tag();
+                this._sync_tags();
             }
         },
 
@@ -265,7 +304,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
         _process_existing: function () {
             // check the srcNode for any existing value=""
             var that = this,
-                val = Y.Lang.trim(this.get('srcNode').get('value'));
+                val = Y.Lang.trim(this.get('srcNode').get('value')),
                 tags = [];
 
             if (val.length > 0) {
@@ -284,10 +323,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _remove_tag: function (e) {
-            var t = e.target
+            var that = this,
+                t = e.target,
                 tag = t.get('text');
             Y.Array.find(this.get('tags'), function (item, index, list) {
-                if (item.get('text') == tag) {
+                if (item.get('text') === tag) {
                     var tlist = this.get('tags');
                     tlist.splice(index, 1);
                     this.set('tags', tlist);
@@ -297,7 +337,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }, this);
 
             this._sync_tags();
-            Y.fire('tag:changed', e);
+            this.set('events_waiting', true);
         },
 
         /**
@@ -308,13 +348,18 @@ YUI.add('bookie-tagcontrol', function (Y) {
         _sync_tags: function () {
             // make sure we keep the tags in our list up to date with the
             // input box
-            var tag_list = Y.Array.reduce(this.get('tags'), '', function (prev, cur, index, array) {
-                if (prev.length > 0) {
-                    return [prev, cur.get('text')].join(' ');
-                } else {
-                    return cur.get('text');
-                }
-            }, this);
+            var tag_list = Y.Array.reduce(
+                this.get('tags'),
+                '',
+                function (prev, cur, index, array) {
+                    if (prev.length > 0) {
+                        return [prev, cur.get('text')].join(' ');
+                    } else {
+                        return cur.get('text');
+                    }
+                },
+                this
+            );
 
             this.get('srcNode').set('value', tag_list);
         },
@@ -322,19 +367,23 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * Update the css width of the clone node.
          *
-         * In the process of page dom manipulation, the width might change based
-         * on other nodes showing up and forcing changes due to padding/etc.
+         * In the process of page dom manipulation, the width might change
+         * based on other nodes showing up and forcing changes due to
+         * padding/etc.
          *
-         * We'll play safe and just always recalc the width for the clone before
-         * we check it's scroll height.
+         * We'll play safe and just always recalc the width for the clone
+         * before we check it's scroll height.
          *
          */
-        _update_input_width: function(new_value) {
+        _update_input_width: function (new_value) {
             // we need to update the clone with the content so it resizes
             this.clone.setContent(new_value);
 
             // then update the input to be the matching size + a buffer
-            this.ui.one('input').setStyle('width', this.clone.get('offsetWidth') + 20);
+            this.ui.one('input').setStyle(
+                'width',
+                this.clone.get('offsetWidth') + 20
+            );
         },
 
         /**
@@ -343,6 +392,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          */
         bindUI: function () {
             this._bind_events();
+            this.typing = false;
         },
 
         /**
@@ -352,13 +402,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
         renderUI: function () {
             // first start out by hiding the initial input and placing our own
             // in it's place
-            var target = this.get('srcNode')
+            var target = this.get('srcNode'),
+                parent = target.get('parentNode');
+
             // make the target a hidden field so it still gets passed to forms
             // submitted
             target.set('type', 'hidden');
 
             this._buildui();
-            var parent = target.get('parentNode');
             this.ui.appendTo(parent);
             this._build_clone();
         },
@@ -374,6 +425,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
         }
     }, {
         ATTRS: {
+            /**
+             * A stack to shove events onto and process
+             *
+             */
+            events_waiting: {
+                value: false
+            },
+
             /**
              * Tags is a list of Tag object instances we know about
              *
