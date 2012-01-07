@@ -38,15 +38,30 @@ YUI.add('bookie-model', function (Y) {
         {
             ATTRS: {
                 'bid': {},
-                'clicks': 0,
+                'clicks': {
+                    value: 0
+                },
                 'description': {},
                 'hash_id': {},
-                'inserted_by': null,
-                'tag_str': '',
-                'tags': [],
-                'total_clicks': 0,
-                'url': '',
-                'username': '',
+                'inserted_by': {},
+                'owner': {
+                    value: false
+                },
+                'tag_str': {
+                    value: ''
+                },
+                'tags': {
+                    value: []
+                },
+                'total_clicks': {
+                    value: 0
+                },
+                'url': { 
+                    value: ''
+                },
+                'username': {
+                    value: ''
+                },
                 'extended': {},
                 'stored': {
                     // we need to turn a string from json into a Date object

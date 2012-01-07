@@ -275,15 +275,7 @@ YUI.add('bookie-view', function (Y) {
 
         _tags_changed: function (e) {
             // update the api data with the tags list
-            var tag_str = Y.one(this.get('tags_field')).get('value'),
-                tags = [];
-
-            if (tag_str.length > 0) {
-                tags = tag_str.split(' ');
-            }
-
-            // @ todo get this into the api_cfg somehow
-            this.api.set('tags', tags);
+            this.api.set('tags', e.tags);
 
             // update the pager back to page 1
             this.get('pager').set('page', 0);

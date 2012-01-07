@@ -138,7 +138,7 @@ YUI({
             test_init: function () {
                 var p = new Y.bookie.PagerModel();
 
-                A.areEqual(1, p.get('page'),
+                A.areEqual(0, p.get('page'),
                     'The page should start out at 1');
                 A.areEqual(20, p.get('count'),
                     'The default count is 20');
@@ -148,7 +148,7 @@ YUI({
                 var p = new Y.bookie.PagerModel();
 
                 p.previous();
-                A.areEqual(1, p.get('page'),
+                A.areEqual(0, p.get('page'),
                     'The page should never get below 1');
             },
 
@@ -156,8 +156,8 @@ YUI({
                 var p = new Y.bookie.PagerModel();
 
                 p.next();
-                A.areEqual(2, p.get('page'),
-                    'The page should increment to 2');
+                A.areEqual(1, p.get('page'),
+                    'The page should increment to 1');
             },
 
             test_feeding_attrs: function () {

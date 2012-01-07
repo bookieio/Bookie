@@ -1,5 +1,5 @@
 // Create a new YUI instance and populate it with the required modules.
-YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
+YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
     //initialize the console
     var yconsole = new Y.Console({
         newestOnTop: false
@@ -122,6 +122,9 @@ YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate
                 hit = true;
             };
 
+            // set the model username to admin so owner is true
+            model.set('username', 'admin');
+
             var testview = new Y.bookie.BmarkView({
                 model: model,
                 current_user: 'admin',
@@ -130,17 +133,20 @@ YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate
 
             Y.one('.view').appendChild(testview.render());
             var click_points = Y.all('.delete');
-            Y.Assert.areEqual(click_points.size(), 1,
+            Y.Assert.areEqual(1, click_points.size(),
                 "We should have one rendered remove button");
 
             var button = click_points.pop();
             button.simulate('click');
             Y.Assert.isTrue(hit);
 
-            // and verify that our node is now gone
-            var click_points = Y.all('.bmark');
-            Y.Assert.areEqual(0, click_points.size(),
-                "We shouldn't have any html elements left after deleting");
+            // we need to wait here for the transition to complete
+            this.wait(function () {
+                // and verify that our node is now gone
+                var click_points = Y.all('.bmark');
+                Y.Assert.areEqual(0, click_points.size(),
+                    "We shouldn't have any html elements left after deleting");
+            }, 500);
         },
 
         test_missing_edit_when_not_logged_in: function () {
@@ -218,6 +224,7 @@ YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate
         },
 
         test_fires_prev_event: function () {
+            debugger;
             // verify that if we click prev, we get a custom event
             var hit = false,
                 pager = new Y.bookie.PagerView({
@@ -258,11 +265,9 @@ YUI().use('console', 'test', 'bookie-view', 'bookie-model', 'node-event-simulate
         },
 
         test_view_renders: function () {
-            // verify that we can render out the html we expect for a pager
             var data_list = new Y.bookie.BmarkListView();
             Y.one('.data_list').appendChild(data_list.render());
 
-            debugger;
             list = Y.all('.bmark_list');
             Y.Assert.areEqual(1, list.size(),
                 "Should find one bmark_list container");

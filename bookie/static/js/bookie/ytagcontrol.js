@@ -193,9 +193,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.delegate('mouseup', this._parse_input, 'li', this);
 
             this.ui.delegate('tag:donetyping', function (e) {
-                Y.fire('tag:changed', {
-                    target: that
-                });
+                that._fire_changed();
             });
 
             // if you click on anywhere within the ui, focus the input box
@@ -251,6 +249,17 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.appendChild(this.tpl.submit_button);
         },
 
+        _fire_changed: function () {
+            debugger;
+            var that = this;
+            Y.fire('tag:changed', {
+                target: that,
+                tags: Y.Array.map(that.get('tags'), function (t) {
+                    return t.get('text')
+                })
+            });
+        },
+
         /**
          * Check the input for any actions we should take as the user types
          * into the input control.
@@ -266,9 +275,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.typing_lock = setTimeout(function () {
                 // check for any events to fire changed for
                 if (that.get('events_waiting')) {
-                    Y.fire('tag:changed', {
-                        target: that
-                    });
+                    that._fire_changed();
                     that.set('events_waiting', undefined);
                 }
             }, AJAX_WAITTIME);
