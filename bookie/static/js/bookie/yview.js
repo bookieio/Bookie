@@ -90,7 +90,7 @@ YUI.add('bookie-view', function (Y) {
             return {
                 prev: Y.one('#previous_control').get('text'),
                 next: Y.one('#next_control').get('text')
-            }
+            };
         },
 
         events: {
@@ -106,6 +106,7 @@ YUI.add('bookie-view', function (Y) {
             var tpl = this._get_templates();
             this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
             this.cNextTemplate = Y.Handlebars.compile(tpl.next);
+
         },
 
         previous_page: function (e) {
@@ -122,7 +123,8 @@ YUI.add('bookie-view', function (Y) {
             // Render this view's HTML into the container element.
             return this.get('container').set(
                 'innerHTML',
-                this.cPrevTemplate() + this.cNextTemplate()
+                this.cPrevTemplate(this.getAttrs()) +
+                    this.cNextTemplate(this.getAttrs())
             );
         }
 
@@ -150,6 +152,41 @@ YUI.add('bookie-view', function (Y) {
                 readOnly: true,
                 valueFn: function () {
                     return this.get('id') + ':next';
+                }
+            },
+
+            /**
+             * By default we don't need a previous usually on initial page
+             * load
+             *
+             *
+             *   @todo move these to events when we can figure out how to
+             *   add an event bound to the show_XXX events and re-call render as
+             *   required
+             *
+             */
+            show_previous: {
+                value: false,
+                setter: function (val, name) {
+                    // make sure we update render
+                    // but only if the value is different
+                    if (val && val !== this.get('show_previous')) {
+                        this.render();
+                    }
+                    return val;
+                }
+            },
+
+            show_next: {
+                value: true,
+                setter: function (val, name) {
+                    var prev_val = this.get('show_next');
+                    // make sure we update render
+                    // but only if the value is different
+                    if (val && prev_val !== undefined && val !== prev_val) {
+                        this.render();
+                    }
+                    return val;
                 }
             }
         }
@@ -246,27 +283,64 @@ YUI.add('bookie-view', function (Y) {
 
                     // now set the html
                     data_node.setContent(new_nodes);
+
+                    // update the pagers
+                    that._update_pagerview();
                }
            });
         },
 
         _next_page: function (e) {
-            this.get('pager').next();
+            var pager = this.get('pager');
+            pager.next();
 
             // now that we've incremented the page let's fetch a new set of
             // results
             this._fetch_dataset();
         },
 
-        _prev_page: function (e) {
-            var p = this.get('pager'),
-                old_page = p.get('page');
+        _update_pagerview: function () {
+            var pager = this.get('pager');
 
-            p.previous();
+            // if the current data count is < the pager page count, hide next
+            if (this.models.size() < pager.get('count')) {
+                 Y.Array.each(this.pagers, function (p) {
+                    p.set('show_next', false);
+                });
+            } else {
+                 Y.Array.each(this.pagers, function (p) {
+                    p.set('show_next', true);
+                });
+            }
+            // update the pagers
+            if (pager.get('page') === 0) {
+                // then there is no need for a previous button
+                Y.Array.each(this.pagers, function (p) {
+                    p.set('show_previous', false);
+                });
+            } else {
+                Y.Array.each(this.pagers, function (p) {
+                    p.set('show_previous', true);
+                });
+            }
+
+            // @todo get rid of this. Changing the showXXX value should fire
+            // an event that causes the pagers to re-render themselves, not us
+            // manually
+            Y.Array.each(this.pagers, function (p) {
+                p.render();
+            });
+        },
+
+        _prev_page: function (e) {
+            var pager = this.get('pager'),
+                old_page = pager.get('page');
+
+            pager.previous();
 
             // only update the view if we did change pages (e.g. not on page
             // 1 already)
-            if (old_page != p.get('page')) {
+            if (old_page != pager.get('page')) {
                 // now that we've incremented the page let's fetch a new set of
                 // results
                 this._fetch_dataset();
@@ -309,9 +383,12 @@ YUI.add('bookie-view', function (Y) {
            // start the request for our models
            this._fetch_dataset();
 
-           html.all('.paging').each(function (n) {
-               var p = that.pagers.pop();
+           var pager_html = html.all('.paging');
+           var idx = 0;
+           pager_html.each(function (n) {
+               var p = that.pagers[idx];
                n.appendChild(p.render());
+               idx = idx + 1;
            });
            return html;
        }

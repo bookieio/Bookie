@@ -37,11 +37,15 @@
 
 
 <script type="text/template" id="previous_control">
-    <a href="#" class="button previous"><span class="icon">[</span> Prev</a>
+    {{#if show_previous}}
+        <a href="#" class="button previous"><span class="icon">[</span> Prev</a>
+    {{/if}}
 </script>
 
 <script type="text/template" id="next_control">
-    <a href="#" class="button next">Next <span class="icon">]</span></a>
+    {{#if show_next}}
+        <a href="#" class="button next">Next <span class="icon">]</span></a>
+    {{/if}}
 </script>
 
 <script type="text/template" id="bmark_list">
