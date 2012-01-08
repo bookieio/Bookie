@@ -224,11 +224,12 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
         },
 
         test_fires_prev_event: function () {
-            debugger;
             // verify that if we click prev, we get a custom event
             var hit = false,
                 pager = new Y.bookie.PagerView({
-                    id: 'test_pager'
+                    id: 'test_pager',
+                    // by default previous is hidden
+                    show_previous: true
                 });
 
             Y.one('.pager_test').appendChild(pager.render());
