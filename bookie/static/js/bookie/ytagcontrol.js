@@ -250,7 +250,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         _fire_changed: function () {
-            debugger;
             var that = this;
             Y.fire('tag:changed', {
                 target: that,

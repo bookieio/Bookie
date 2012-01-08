@@ -93,6 +93,28 @@ YUI.add('bookie-view', function (Y) {
             };
         },
 
+        _show_previous: function (e) {
+            var val = e.newVal,
+                prev = e.prevVal;
+
+            // make sure we update render
+            // but only if the value is different
+            if (val && val !== prev) {
+                this.render();
+            }
+        },
+
+        _show_next: function (e) {
+            var val = e.newVal,
+                prev = e.prevVal;
+
+            // make sure we update render
+            // but only if the value is different
+            if (val && val !== prev) {
+                this.render();
+            }
+        },
+
         events: {
             '.previous': {
                 click: 'previous_page'
@@ -107,6 +129,8 @@ YUI.add('bookie-view', function (Y) {
             this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
             this.cNextTemplate = Y.Handlebars.compile(tpl.next);
 
+            this.after('show_previousChange', this._show_previous, this);
+            this.after('show_nextChange', this._show_next, this);
         },
 
         previous_page: function (e) {
@@ -159,38 +183,15 @@ YUI.add('bookie-view', function (Y) {
              * By default we don't need a previous usually on initial page
              * load
              *
-             *
-             *   @todo move these to events when we can figure out how to
-             *   add an event bound to the show_XXX events and re-call render as
-             *   required
-             *
              */
             show_previous: {
-                value: false,
-                setter: function (val, name) {
-                    // make sure we update render
-                    // but only if the value is different
-                    if (val && val !== this.get('show_previous')) {
-                        this.render();
-                    }
-                    return val;
-                }
+                value: false
             },
 
             show_next: {
-                value: true,
-                setter: function (val, name) {
-                    var prev_val = this.get('show_next');
-                    // make sure we update render
-                    // but only if the value is different
-                    if (val && prev_val !== undefined && val !== prev_val) {
-                        this.render();
-                    }
-                    return val;
-                }
+                value: true
             }
         }
-
     });
 
 
