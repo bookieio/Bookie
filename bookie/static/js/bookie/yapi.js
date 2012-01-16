@@ -116,6 +116,7 @@ YUI.add('bookie-api', function (Y) {
                     username: this.get('username')
                 }
             }
+
             return this.get('url') +
                 Y.Lang.substitute(this.get('url_element'), data);
         },
