@@ -454,6 +454,16 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.typing = false;
         },
 
+        initializer: function (cfg) {
+            var that = this;
+            // check to see if we have any existing tags to use in the
+            // tagcontrol
+
+            if (cfg.tags) {
+                this.get('srcNode').set('value', cfg.tags.join(' '));
+            }
+        },
+
         /**
          * Override the YUI widget method for building out html/rendering.
          *

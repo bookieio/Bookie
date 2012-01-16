@@ -6,6 +6,9 @@
 <%include file="../jstpl.mako"/>
 
 <%def name="add_js()">
+<%
+import json
+%>
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
         YUI().use('node', 'console', 'bookie-view', 'bookie-model',  function (Y) {
@@ -38,14 +41,19 @@
                 listview.set('pager', pager);
             }
 
-            Y.one('.bmarks').appendChild(listview.render());
+            // pre-seed the tags list to the listview
+            var tags = ${json.dumps(tags)|n};
+            if (tags) {
+                listview.api.set('tags', tags);
+            }
 
+            Y.one('.bmarks').appendChild(listview.render());
             var tagcontrol = new Y.bookie.TagControl({
                api_cfg: api_cfg,
-               srcNode: Y.one('#tag_filter')
+               srcNode: Y.one('#tag_filter'),
+               tags: tags
             });
             tagcontrol.render();
-
         });
     </script>
 </%def>
