@@ -73,10 +73,7 @@
             </div>
         </div>
 
-        <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js"></script>-->
-        <script src="/static/js/yui/yui-min.js"></script>
-        <script src="/static/js/yui/combo.js"></script>
-        <script src="/static/js/yui/combo_1.js"></script>
+        <script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js"></script>
         <script src="/static/js/bookie/yapi.js"></script>
         <script src="/static/js/bookie/ymodel.js"></script>
         <script src="/static/js/bookie/yview.js"></script>

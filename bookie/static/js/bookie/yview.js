@@ -5,196 +5,6 @@ YUI.add('bookie-view', function (Y) {
     var _ = Y.Lang.substitute,
         ns = Y.namespace('bookie');
 
-    ns.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
-        container_html: '<div class="bmark"/>',
-
-        _get_template: function () {
-            return Y.one('#bmark_row').get('text');
-        },
-
-        events: {
-            '.delete': {
-                click: 'remove'
-            }
-        },
-
-        initializer: function (cfg) {
-            this.cTemplate = Y.Handlebars.compile(this._get_template());
-        },
-
-        /**
-         * Handle the remove event on this bookmark
-         *
-         */
-        remove: function () {
-            var that = this;
-            this.get('model').remove();
-
-            this.get('container').transition({
-                easing: 'ease',
-                duration: 0.4,
-                opacity: 0
-            }, function () {
-                that.destroy();
-            });
-        },
-
-        render: function () {
-            // Render this view's HTML into the container element.
-            var tpl_data = this.get('model').getAttrs();
-            tpl_data.owner = this.get('current_user') == this.get('model').get('username');
-
-            return this.get('container').set(
-                'innerHTML',
-                this.cTemplate(tpl_data)
-            );
-        }
-    }, {
-        ATTRS: {
-            /**
-             * The view is for a url of a specific user
-             *
-             * Say /admin/bmarks for the admin bookmarks, does not mean I'm
-             * the admin
-             *
-             */
-            resource_user: {
-            },
-
-            /**
-             * The currently authorized user
-             *
-             */
-            current_user: {
-            },
-
-            container: {
-                valueFn: function () {
-                    var container = Y.Node.create(this.container_html);
-                    container.set(
-                        'data-bid',
-                        this.get('model').get('bid')
-                    );
-                    return container;
-                }
-
-            }
-        }
-    });
-
-
-    ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {
-        container_html: '<div class="pager"/>',
-
-        _get_templates: function () {
-            return {
-                prev: Y.one('#previous_control').get('text'),
-                next: Y.one('#next_control').get('text')
-            };
-        },
-
-        _show_previous: function (e) {
-            var val = e.newVal,
-                prev = e.prevVal;
-
-            // make sure we update render
-            // but only if the value is different
-            if (val && val !== prev) {
-                this.render();
-            }
-        },
-
-        _show_next: function (e) {
-            var val = e.newVal,
-                prev = e.prevVal;
-
-            // make sure we update render
-            // but only if the value is different
-            if (val && val !== prev) {
-                this.render();
-            }
-        },
-
-        events: {
-            '.previous': {
-                click: 'previous_page'
-            },
-            '.next': {
-                click: 'next_page'
-            }
-        },
-
-        initializer: function (cfg) {
-            var tpl = this._get_templates();
-            this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
-            this.cNextTemplate = Y.Handlebars.compile(tpl.next);
-
-            this.after('show_previousChange', this._show_previous, this);
-            this.after('show_nextChange', this._show_next, this);
-        },
-
-        previous_page: function (e) {
-            e.preventDefault();
-            Y.fire(this.get('previous_event'));
-        },
-
-        next_page: function (e) {
-            e.preventDefault();
-            Y.fire(this.get('next_event'));
-        },
-
-        render: function () {
-            // Render this view's HTML into the container element.
-            return this.get('container').set(
-                'innerHTML',
-                this.cPrevTemplate(this.getAttrs()) +
-                    this.cNextTemplate(this.getAttrs())
-            );
-        }
-
-    }, {
-        ATTRS: {
-            container: {
-                valueFn: function () {
-                    return Y.Node.create(this.container_html);
-                }
-
-            },
-
-            id: {
-                value: 'pager'
-            },
-
-            previous_event: {
-                readOnly: true,
-                valueFn: function () {
-                    return this.get('id') + ':previous';
-                }
-            },
-
-            next_event: {
-                readOnly: true,
-                valueFn: function () {
-                    return this.get('id') + ':next';
-                }
-            },
-
-            /**
-             * By default we don't need a previous usually on initial page
-             * load
-             *
-             */
-            show_previous: {
-                value: false
-            },
-
-            show_next: {
-                value: true
-            }
-        }
-    });
-
-
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
         container_html: '<div class="bmark_list"/>',
         _get_template: function () {
@@ -441,6 +251,197 @@ YUI.add('bookie-view', function (Y) {
         }
 
     });
+
+
+    ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {
+        container_html: '<div class="pager"/>',
+
+        _get_templates: function () {
+            return {
+                prev: Y.one('#previous_control').get('text'),
+                next: Y.one('#next_control').get('text')
+            };
+        },
+
+        _show_previous: function (e) {
+            var val = e.newVal,
+                prev = e.prevVal;
+
+            // make sure we update render
+            // but only if the value is different
+            if (val && val !== prev) {
+                this.render();
+            }
+        },
+
+        _show_next: function (e) {
+            var val = e.newVal,
+                prev = e.prevVal;
+
+            // make sure we update render
+            // but only if the value is different
+            if (val && val !== prev) {
+                this.render();
+            }
+        },
+
+        events: {
+            '.previous': {
+                click: 'previous_page'
+            },
+            '.next': {
+                click: 'next_page'
+            }
+        },
+
+        initializer: function (cfg) {
+            var tpl = this._get_templates();
+            this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
+            this.cNextTemplate = Y.Handlebars.compile(tpl.next);
+
+            this.after('show_previousChange', this._show_previous, this);
+            this.after('show_nextChange', this._show_next, this);
+        },
+
+        previous_page: function (e) {
+            e.preventDefault();
+            Y.fire(this.get('previous_event'));
+        },
+
+        next_page: function (e) {
+            e.preventDefault();
+            Y.fire(this.get('next_event'));
+        },
+
+        render: function () {
+            // Render this view's HTML into the container element.
+            return this.get('container').set(
+                'innerHTML',
+                this.cPrevTemplate(this.getAttrs()) +
+                    this.cNextTemplate(this.getAttrs())
+            );
+        }
+
+    }, {
+        ATTRS: {
+            container: {
+                valueFn: function () {
+                    return Y.Node.create(this.container_html);
+                }
+
+            },
+
+            id: {
+                value: 'pager'
+            },
+
+            previous_event: {
+                readOnly: true,
+                valueFn: function () {
+                    return this.get('id') + ':previous';
+                }
+            },
+
+            next_event: {
+                readOnly: true,
+                valueFn: function () {
+                    return this.get('id') + ':next';
+                }
+            },
+
+            /**
+             * By default we don't need a previous usually on initial page
+             * load
+             *
+             */
+            show_previous: {
+                value: false
+            },
+
+            show_next: {
+                value: true
+            }
+        }
+    });
+
+
+    ns.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
+        container_html: '<div class="bmark"/>',
+
+        _get_template: function () {
+            return Y.one('#bmark_row').get('text');
+        },
+
+        events: {
+            '.delete': {
+                click: 'remove'
+            }
+        },
+
+        initializer: function (cfg) {
+            this.cTemplate = Y.Handlebars.compile(this._get_template());
+        },
+
+        /**
+         * Handle the remove event on this bookmark
+         *
+         */
+        remove: function () {
+            var that = this;
+            this.get('model').remove();
+
+            this.get('container').transition({
+                easing: 'ease',
+                duration: 0.4,
+                opacity: 0
+            }, function () {
+                that.destroy();
+            });
+        },
+
+        render: function () {
+            // Render this view's HTML into the container element.
+            var tpl_data = this.get('model').getAttrs();
+            tpl_data.owner = this.get('current_user') == this.get('model').get('username');
+
+            return this.get('container').set(
+                'innerHTML',
+                this.cTemplate(tpl_data)
+            );
+        }
+    }, {
+        ATTRS: {
+            /**
+             * The view is for a url of a specific user
+             *
+             * Say /admin/bmarks for the admin bookmarks, does not mean I'm
+             * the admin
+             *
+             */
+            resource_user: {
+            },
+
+            /**
+             * The currently authorized user
+             *
+             */
+            current_user: {
+            },
+
+            container: {
+                valueFn: function () {
+                    var container = Y.Node.create(this.container_html);
+                    container.set(
+                        'data-bid',
+                        this.get('model').get('bid')
+                    );
+                    return container;
+                }
+
+            }
+        }
+    });
+
 
     ns.AccountView = Y.Base.create('bookie-account-view', Y.View, [], {
         _blet_visible: false,
@@ -834,4 +835,6 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
-}, '0.1.0', { requires: ['base', 'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition', 'bookie-tagcontrol'] });
+}, '0.1.0', { requires: ['base',
+    'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition',
+    'bookie-tagcontrol'] });

@@ -172,7 +172,7 @@ form.bmark .superblyTagfieldDiv {
     display: inline-block;
     padding-right: 1em;
     font-weight: normal;
-    vertical-align: middle; }
+    vertical-align: text-top; }
   .form .error {
     color: red; }
   .form .success {
@@ -427,7 +427,7 @@ fieldset legend {
   margin: 0;
   min-height: 21px;
   padding: .2em;
-  width: 40em;
+  width: 25em;
   float: left; }
 .yui3-bookie-tagcontrol li {
   cursor: pointer;
@@ -451,7 +451,24 @@ fieldset legend {
     width: 100%; }
     .yui3-bookie-tagcontrol li input:focus {
       outline: none; }
+  .yui3-bookie-tagcontrol li .yui3-aclist-item {
+    display: block;
+    margin: 1px 2px;
+    padding: 2px 3px;
+    border-radius: 0;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    box-shadow: none;
+    margin: 1px 2px;
+    padding: 2px 3px; }
 .yui3-bookie-tagcontrol input[type="submit"] {
   width: 5em;
   min-height: 28px;
   margin-left: .3em; }
+
+form ul .yui3-bookie-tagcontrol {
+  display: inline-block; }
+  form ul .yui3-bookie-tagcontrol ul {
+    width: 20em;
+    display: inline-block;
+    border: 1px solid #000; }

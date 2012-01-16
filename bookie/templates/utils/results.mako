@@ -17,7 +17,6 @@
     <div class="yui3-u-1-8 col_end buttons">
         ${bmarknextprev(page, max_count, count, url, username=username, url_params=url_params)}
     </div>
-
     <div class="yui3-u-1 data_body">
         ${display_bmark_list(search_results, username=username)}
     </div>

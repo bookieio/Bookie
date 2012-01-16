@@ -24,7 +24,7 @@ YUI.add('bookie-api', function (Y) {
      */
     var request_handler = function (url, cfg, arguments) {
         // extend with the base handlers for each event we want to use
-        // should have cases for complete, success, failure
+        // should have cases for zomplete, success, failure
         // Note: complete fires before both success and failure, not usually
         // the event you want
         var request,
@@ -268,6 +268,7 @@ YUI.add('bookie-api', function (Y) {
                 this.set('options', {
                     data: {
                         tag: tag_stub,
+
                         current: current_tags
                     }
                 });

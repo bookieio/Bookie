@@ -296,7 +296,7 @@ form {
         display: inline-block;
         padding-right: 1em;
         font-weight: normal;
-        vertical-align: middle;
+        vertical-align: text-top;
     }
 
     .error {
@@ -619,6 +619,7 @@ fieldset {
 .yui3-icon-close { background: url(minus-circle.png) no-repeat 50% 50%; }
 .yui3-icon-edit { background: url(edit.png) no-repeat 50% 50%; }
 
+
 .yui3-bookie-tagcontrol {
 
     ul {
@@ -627,7 +628,7 @@ fieldset {
         margin: 0;
         min-height: 21px;
         padding: .2em;
-        width: 40em;
+        width: 25em;
         float: left;
     }
 
@@ -658,11 +659,36 @@ fieldset {
             border: none;
             width: 100%;
         }
+
+        .yui3-aclist-item {
+            display: block;
+            margin: 1px 2px;
+            padding: 2px 3px;
+            border-radius: 0;
+            -moz-border-radius: 0px;
+            -webkit-border-radius: 0px;
+            box-shadow: none;
+            margin: 1px 2px;
+            padding: 2px 3px;
+        }
     }
 
     input[type="submit"] {
         width: 5em;
         min-height: 28px;
         margin-left: .3em;
+    }
+
+
+}
+
+
+form ul .yui3-bookie-tagcontrol {
+    display: inline-block;
+
+    ul {
+        width: 20em;
+        display: inline-block;
+        border: 1px solid #000;
     }
 }

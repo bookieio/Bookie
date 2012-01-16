@@ -12,7 +12,7 @@
 
 YUI.add('bookie-tagcontrol', function (Y) {
     var ns = Y.namespace('bookie');
-    var AJAX_WAITTIME = 425;
+    var AJAX_WAITTIME = 325;
 
     var keymap = {
         downArrow: 40,
@@ -89,6 +89,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
         initializer: function (cfg, silent) {
             this.ui = this._buildui();
             this._bind();
+
+            if (cfg.tag_string) {
+                // split the string on spaces
+                // and add each one
+                Y.Array.each(cfg.tag_string.split(' '), function (val) {
+                    this._add(val);
+                });
+            }
 
             if (!this.get('silent')) {
                 Y.fire('tag:added', {
@@ -192,6 +200,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // remove a tag and we need to set the timer/update
             this.ui.delegate('mouseup', this._parse_input, 'li', this);
 
+            // if you mouse down then check if this is an autcomplete we need
+            // to force adding with
+            this.ac.after('select', this._parse_input, this);
+
             this.ui.delegate('tag:donetyping', function (e) {
                 that._fire_changed();
             });
@@ -246,7 +258,32 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.one('li').addClass(this.getClassName('item'));
             this.ui.one('li').addClass(this.getClassName('item-input'));
             this.ui.one('input').addClass(this.getClassName('input'));
-            this.ui.appendChild(this.tpl.submit_button);
+
+            // if we want a submit button, dump that into play
+            if (this.get('with_submit')) {
+                this.ui.appendChild(this.tpl.submit_button);
+            }
+        },
+
+        _fetch_suggestions: function (qry, callback) {
+            this.ac.api = new Y.bookie.Api.route.TagComplete(
+                this.get('api_cfg')
+            );
+
+            var callback_handler = function (data) {
+                // we need to parse out the list of suggestions and feed that
+                // to the YUI callback for autocomplete
+                callback(data.tags);
+            };
+
+            this.ac.api.call({
+                    success: callback_handler
+                },
+                qry,
+                Y.Array.map(this.get('tags'), function (t) {
+                    return t.get('text')
+                }).join(' ')
+            );
         },
 
         _fire_changed: function () {
@@ -292,7 +329,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // external activity for
             if (e.keyCode === keymap.space ||
                     e.keyCode === keymap.enter ||
-                    e.keyCode === keymap.tab) {
+                    e.keyCode === keymap.tab ||
+                    e.type === 'autocompleteList:select') {
                 // then handle the current input as a tag and clear for a
                 // new one
                 that._added_tag();
@@ -341,6 +379,25 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             this._sync_tags();
             this.set('events_waiting', true);
+        },
+
+        /**
+         * We need to setup the autocomplete onto out input widget
+         *
+         */
+        _setup_autocomplete: function () {
+            console.log(this.get('api_cfg'));
+            var that = this,
+                fetch_wrapper = function (qry, callback) {
+                    that._fetch_suggestions(qry, callback);
+                };
+
+            // not rendered immediately
+            this.ac = new Y.AutoComplete({
+                inputNode: this.ui.one('input'),
+                queryDelay: 150,
+                source: fetch_wrapper
+            });
         },
 
         /**
@@ -415,6 +472,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this._buildui();
             this.ui.appendTo(parent);
             this._build_clone();
+            this._setup_autocomplete();
+
+            // render the auto complete widget
+            this.ac.render();
         },
 
         /**
@@ -429,6 +490,13 @@ YUI.add('bookie-tagcontrol', function (Y) {
     }, {
         ATTRS: {
             /**
+             * We need an api_cfg if we're going to have autocomplete results
+             *
+             */
+             api_cfg: {
+             },
+
+            /**
              * A stack to shove events onto and process
              *
              */
@@ -442,10 +510,17 @@ YUI.add('bookie-tagcontrol', function (Y) {
              */
             tags: {
                 value: []
+            },
+
+            with_submit: {
+                value: true
             }
         },
     });
 
-}, '0.1.0', { requires: [
-    'base', 'widget', 'handlebars', 'array-extras', 'event-valuechange'
-] });
+}, '0.1.0', {
+    requires: [
+        'autocomplete', 'autocomplete-highlighters', 'base', 'widget',
+        'handlebars', 'array-extras', 'event-valuechange'
+    ]
+});
