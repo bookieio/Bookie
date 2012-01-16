@@ -386,7 +386,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _setup_autocomplete: function () {
-            console.log(this.get('api_cfg'));
             var that = this,
                 fetch_wrapper = function (qry, callback) {
                     that._fetch_suggestions(qry, callback);
