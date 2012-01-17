@@ -276,13 +276,19 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 callback(data.tags);
             };
 
+            if (this.get('tags')) {
+                var tags = Y.Array.map(this.get('tags'), function (t) {
+                    return t.get('text')
+                }).join(' ');
+            } else {
+                tags = undefined;
+            }
+
             this.ac.api.call({
                     success: callback_handler
                 },
                 qry,
-                Y.Array.map(this.get('tags'), function (t) {
-                    return t.get('text')
-                }).join(' ')
+                tags
             );
         },
 
@@ -518,7 +524,18 @@ YUI.add('bookie-tagcontrol', function (Y) {
              *
              */
             tags: {
-                value: []
+                value: [],
+
+                // this cannot be null or undefined, so make sure we
+                // always set to a list
+                setter: function (val, name) {
+
+                    if (!Y.Lang.isArray(val)) {
+                        return [];
+                    } else {
+                        return val;
+                    }
+                }
             },
 
             with_submit: {
