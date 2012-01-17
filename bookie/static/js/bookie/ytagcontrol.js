@@ -375,7 +375,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 tag = t.get('text');
             Y.Array.find(this.get('tags'), function (item, index, list) {
                 this.get('tags')[1];
-                console.log(item);
 
                 if (item.get('text') === tag) {
                     var tlist = this.get('tags');
