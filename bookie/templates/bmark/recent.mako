@@ -51,7 +51,7 @@ import json
             var tagcontrol = new Y.bookie.TagControl({
                api_cfg: api_cfg,
                srcNode: Y.one('#tag_filter'),
-               tags: tags
+               initial_tags: tags
             });
             tagcontrol.render();
         });

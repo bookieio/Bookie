@@ -374,6 +374,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 t = e.target,
                 tag = t.get('text');
             Y.Array.find(this.get('tags'), function (item, index, list) {
+                this.get('tags')[1];
+                console.log(item);
+
                 if (item.get('text') === tag) {
                     var tlist = this.get('tags');
                     tlist.splice(index, 1);
@@ -464,9 +467,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
             var that = this;
             // check to see if we have any existing tags to use in the
             // tagcontrol
-
-            if (cfg.tags) {
-                this.get('srcNode').set('value', cfg.tags.join(' '));
+            if (cfg.initial_tags) {
+                this.get('srcNode').set('value', cfg.initial_tags.join(' '));
             }
         },
 
