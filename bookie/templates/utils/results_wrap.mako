@@ -2,6 +2,11 @@
 <%namespace file="../bmark/func.mako" import="api_setup, pager_setup"/>
 <%def name="title()">Search results for: ${phrase}</%def>
 
+<form id="bmark_search">
+        <input type="text"/>
+        <input type="submit"/>
+
+</form>
 <div class="bmarks"></div>
 <%include file="../jstpl.mako"/>
 
@@ -29,10 +34,11 @@
             % endif
 
             // we want to call the all url route for this view
-            listview = new Y.bookie.BmarkListView({
+            listview = new Y.bookie.SearchingBmarkListView({
                 api_cfg: api_cfg,
                 current_user: username,
-                resource_user: resource_username
+                resource_user: resource_username,
+                phrase: '${phrase}'
             });
 
             if (pager) {
@@ -40,14 +46,6 @@
             }
 
             Y.one('.bmarks').appendChild(listview.render());
-
-            var tagcontrol = new Y.bookie.TagControl({
-               'srcNode': Y.one('#tag_filter'),
-               'tag_string': '${phrase}'
-            });
-
-            tagcontrol.render();
-
         });
     </script>
 </%def>

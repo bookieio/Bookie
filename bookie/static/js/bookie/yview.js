@@ -63,7 +63,7 @@ YUI.add('bookie-view', function (Y) {
                     that.models = new Y.bookie.BmarkList();
 
                     that.models.add(Y.Array.map(
-                        data.bmarks, function (bmark){
+                        data[that.get('results_key')], function (bmark){
                             var b = new Y.bookie.Bmark(bmark),
                                 n = new Y.bookie.BmarkView({
                                     model: b,
@@ -227,6 +227,15 @@ YUI.add('bookie-view', function (Y) {
              */
             resource_user: {
 
+            },
+
+            /**
+             * Where in the results can we find out bmarks?
+             *
+             */
+            results_key: {
+                value: 'bmarks',
+                readonly: true
             }
         }
 
@@ -272,10 +281,18 @@ YUI.add('bookie-view', function (Y) {
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
-            Y.on('tag:changed', this._tags_changed, this);
+            Y.one(this.get('search_form')).on('submit', this._search, this);
+
+            if (cfg.phrase) {
+                this.set('phrase', cfg.phrase.split(' '));
+                this.api.set('phrase', this.get('phrase'));
+            }
         },
 
-        _tags_changed: function (e) {
+        _search: function (e) {
+            // find out what our search phrase is and if we've checked the
+            // full content search option, then make the call and let's roll.
+
             // update the api data with the tags list
             this.api.set('tags', e.tags);
 
@@ -299,7 +316,19 @@ YUI.add('bookie-view', function (Y) {
                         return Y.bookie.Api.route.UserSearch;
                     }
                 }
+            },
+            search_form: {
+                value: '#bmark_search'
+            },
+            /**
+             * Where in the results can we find out bmarks?
+             *
+             */
+            results_key: {
+                value: 'search_results',
+                readonly: true
             }
+
         },
     });
 
