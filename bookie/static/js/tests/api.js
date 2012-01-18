@@ -42,7 +42,10 @@ YUI({
                     'success': function (data, request) {
                         that.resume(function () {
                             Y.Assert.areEqual('200', request.status);
-                            Y.Assert.areEqual(10, data.count);
+                            // searching for nothing provides no results
+                            // but we should have the key at least
+                            Y.Assert.areEqual('', data.phrase);
+                            Y.Assert.areEqual(0, data.result_count);
                         });
                     }
                 },
@@ -50,6 +53,38 @@ YUI({
                     url: 'http://127.0.0.1:6543/api/v1'
                 },
                 api = new Y.bookie.Api.route.Search(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
+        testPublicSearchTerms: function () {
+            var that = this,
+                callbacks = {
+                    'success': function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.result_count);
+
+                            // check that all of them have the search term in
+                            // their titles or descriptions or tag strings
+                            Y.Array.each(data.search_results, function (b) {
+                                Y.Assert.isTrue(
+                                    b.tag_str.indexOf('books') !== -1 ||
+                                    b.description.indexOf('books') !== -1 ||
+                                    b.extended.indexOf('books') !== -1
+                                );
+                            });
+
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1'
+                },
+                api = new Y.bookie.Api.route.Search(Y.merge(API_CFG, {
+                    phrase: ['books']
+                }));
 
             api.call(callbacks);
             this.wait(1000);
@@ -168,7 +203,7 @@ YUI({
 //                     hash_id: hash_id,
 //                 },
 //                 api = new Y.bookie.Api.route.UserBmarkDelete(API_CFG);
-// 
+//
 //             api.call(callbacks);
 //             this.wait(1000);
 //         },

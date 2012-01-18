@@ -224,7 +224,7 @@ YUI.add('bookie-api', function (Y) {
         [], {
             data: {
                 count: 10,
-                page: 1,
+                page: 0,
                 with_content: false
             },
 
@@ -292,7 +292,7 @@ YUI.add('bookie-api', function (Y) {
         [], {
             data: {
                 count: 10,
-                page: 1,
+                page: 0,
                 with_content: false
             },
 
@@ -502,6 +502,50 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
+
+    Y.bookie.Api.route.Search = Y.Base.create(
+        'bookie-api-route-search',
+        Y.bookie.Api.route,
+        [], {
+            data: {
+                count: 10,
+                page: 0,
+                with_content: false
+            },
+
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                /**
+                 * Any terms to filter on
+                 *
+                 */
+                phrase: {
+                    valueFn: function () {
+                        return [];
+                    }
+                },
+
+                url_element: {
+                    value: '/bmarks/search',
+                    getter: function () {
+                        if (this.get('phrase')) {
+                            return [
+                                '/bmarks/search',
+                                this.get('phrase').join('/')
+                            ].join('/');
+                        } else {
+                            return '/bmarks/search';
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+
+
 
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json']

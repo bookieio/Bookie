@@ -100,6 +100,12 @@ def build_routes(config):
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
 
+    # we have to search before we hit the bmarks keys so that it doesn't think
+    # the tag is "search"
+    config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
+    config.add_route("api_bmark_search_user",
+                     "/api/v1/{username}/bmarks/search/*terms")
+
     config.add_route('api_bmarks', 'api/v1/bmarks')
     config.add_route('api_bmarks_tags', 'api/v1/bmarks/*tags')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
@@ -107,9 +113,7 @@ def build_routes(config):
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
     config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
 
-    config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
-    config.add_route("api_bmark_search_user",
-                     "/api/v1/{username}/bmarks/search/*terms")
+
 
 
     # user bookmark api calls

@@ -268,7 +268,40 @@ YUI.add('bookie-view', function (Y) {
         },
     });
 
+    ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
+        initializer: function (cfg) {
+            // if there are tags added/removed form the TagControl, then make
+            // sure we update the list accordingly
+            Y.on('tag:changed', this._tags_changed, this);
+        },
 
+        _tags_changed: function (e) {
+            // update the api data with the tags list
+            this.api.set('tags', e.tags);
+
+            // update the pager back to page 1
+            this.get('pager').set('page', 0);
+
+            // and finally fetch the results
+            this._fetch_dataset();
+        },
+    }, {
+        ATTRS: {
+            api_callable: {
+                readonly: true,
+
+                // then there's a user in our resource path, make the api call a
+                // UserBmarksAll vs BmarksAll
+                getter: function () {
+                    if (this.get('resource_user')) {
+                        return Y.bookie.Api.route.UserBmarksAll;
+                    } else {
+                        return Y.bookie.Api.route.BmarksAll;
+                    }
+                }
+            }
+        },
+    });
 
 
     ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {
