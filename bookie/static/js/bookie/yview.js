@@ -28,10 +28,6 @@ YUI.add('bookie-view', function (Y) {
             // bind the pager event
             Y.on('pager:next', this._next_page, this);
             Y.on('pager:previous', this._prev_page, this);
-
-            // if there are tags added/removed form the TagControl, then make
-            // sure we update the list accordingly
-            Y.on('tag:changed', this._tags_changed, this);
         },
 
         /**
@@ -39,17 +35,8 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _init_api: function () {
-            // then there's a user in our resource path, make the api call a
-            // UserBmarksAll vs BmarksAll
-            if (this.get('resource_user')) {
-                this.api = new Y.bookie.Api.route.UserBmarksAll(
-                    this.get('api_cfg')
-                );
-            } else {
-                this.api = new Y.bookie.Api.route.BmarksAll(
-                    this.get('api_cfg')
-                );
-            }
+            var api_callable = this.get('api_callable');
+            this.api = new api_callable(this.get('api_cfg'));
         },
 
         /*
@@ -158,17 +145,6 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
-        _tags_changed: function (e) {
-            // update the api data with the tags list
-            this.api.set('tags', e.tags);
-
-            // update the pager back to page 1
-            this.get('pager').set('page', 0);
-
-            // and finally fetch the results
-            this._fetch_dataset();
-        },
-
         /**
          * Need to make some updates to the ui based on the current page
          *
@@ -212,6 +188,19 @@ YUI.add('bookie-view', function (Y) {
                 }
             },
 
+            /**
+             * You need to override this in extending classes that tells the
+             * view how to fetch results to put into this view when things
+             * like pagers and such change
+             *
+             */
+            api_callable: {
+                readonly: true,
+                getter: function () {
+                    return Y.bookie.Api.route.UserBmarksAll;
+                }
+            },
+
             api_cfg: {
 
             },
@@ -238,19 +227,48 @@ YUI.add('bookie-view', function (Y) {
              */
             resource_user: {
 
-            },
-
-            /**
-             * The node to check for the tags we want to pass to the api for
-             * filtering
-             *
-             */
-            tags_field: {
-                value: '#tag_filter'
             }
         }
 
     });
+
+
+    ns.TagControlBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
+        initializer: function (cfg) {
+            // if there are tags added/removed form the TagControl, then make
+            // sure we update the list accordingly
+            Y.on('tag:changed', this._tags_changed, this);
+        },
+
+        _tags_changed: function (e) {
+            // update the api data with the tags list
+            this.api.set('tags', e.tags);
+
+            // update the pager back to page 1
+            this.get('pager').set('page', 0);
+
+            // and finally fetch the results
+            this._fetch_dataset();
+        },
+    }, {
+        ATTRS: {
+            api_callable: {
+                readonly: true,
+
+                // then there's a user in our resource path, make the api call a
+                // UserBmarksAll vs BmarksAll
+                getter: function () {
+                    if (this.get('resource_user')) {
+                        return Y.bookie.Api.route.UserBmarksAll;
+                    } else {
+                        return Y.bookie.Api.route.BmarksAll;
+                    }
+                }
+            }
+        },
+    });
+
+
 
 
     ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {

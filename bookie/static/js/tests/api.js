@@ -36,6 +36,25 @@ YUI({
             this.wait(1000);
         },
 
+        testPublicSearch: function () {
+            var that = this,
+                callbacks = {
+                    'success': function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.count);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1'
+                },
+                api = new Y.bookie.Api.route.Search(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
         testFilteredPublicBmarkList: function () {
             var that = this,
                 tag = 'books',

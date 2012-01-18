@@ -31,7 +31,7 @@ import json
             % endif
 
             // we want to call the all url route for this view
-            listview = new Y.bookie.BmarkListView({
+            listview = new Y.bookie.TagControlBmarkListView({
                 api_cfg: api_cfg,
                 current_user: username,
                 resource_user: resource_username
