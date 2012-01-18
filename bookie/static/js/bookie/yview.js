@@ -294,9 +294,9 @@ YUI.add('bookie-view', function (Y) {
                 // UserBmarksAll vs BmarksAll
                 getter: function () {
                     if (this.get('resource_user')) {
-                        return Y.bookie.Api.route.UserBmarksAll;
+                        return Y.bookie.Api.route.Search;
                     } else {
-                        return Y.bookie.Api.route.BmarksAll;
+                        return Y.bookie.Api.route.UserSearch;
                     }
                 }
             }

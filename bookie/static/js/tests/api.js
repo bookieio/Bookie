@@ -90,6 +90,38 @@ YUI({
             this.wait(1000);
         },
 
+        testUserPublicSearchTerms: function () {
+            var that = this,
+                callbacks = {
+                    'success': function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(10, data.result_count);
+
+                            // check that all of them have the search term in
+                            // their titles or descriptions or tag strings
+                            Y.Array.each(data.search_results, function (b) {
+                                Y.Assert.isTrue(
+                                    b.tag_str.indexOf('books') !== -1 ||
+                                    b.description.indexOf('books') !== -1 ||
+                                    b.extended.indexOf('books') !== -1
+                                );
+                            });
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1'
+                },
+                api = new Y.bookie.Api.route.UserSearch(Y.merge(API_CFG, {
+                    phrase: ['books'],
+                    username: 'admin'
+                }));
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
         testFilteredPublicBmarkList: function () {
             var that = this,
                 tag = 'books',

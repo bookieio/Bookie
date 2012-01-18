@@ -58,7 +58,8 @@ YUI.add('bookie-api', function (Y) {
                         data,
                         status_str,
                         response,
-                        arguments);
+                        arguments
+                    );
                 } else {
 
                 }
@@ -74,7 +75,7 @@ YUI.add('bookie-api', function (Y) {
 
         // if the request is a POST request, then we need to JSON the data
         // body
-        if (cfg.method == "POST") {
+        if (cfg.method === "POST") {
             cfg.data = Y.JSON.stringify(cfg.data);
         }
 
@@ -114,7 +115,7 @@ YUI.add('bookie-api', function (Y) {
             } else {
                 data = {
                     username: this.get('username')
-                }
+                };
             }
 
             return this.get('url') +
@@ -152,7 +153,7 @@ YUI.add('bookie-api', function (Y) {
                 } else {
                     base_cfg.data = {
                         api_key: this.get('api_key')
-                    }
+                    };
                 }
             }
 
@@ -179,26 +180,25 @@ YUI.add('bookie-api', function (Y) {
                             args);
         }
     }, {
-           ATTRS: {
-               api_key: {
-                   value: ""
-               },
+        ATTRS: {
+            api_key: {
+                value: ""
+            },
 
-               options: {
-                   value: {}
-               },
+            options: {
+                value: {}
+            },
 
-               url: {
-                   value: "",
-                   writeOnce: true
-               },
+            url: {
+                value: "",
+                writeOnce: true
+            },
 
-               username: {
-                   value: ""
-               }
+            username: {
+                value: ""
             }
         }
-    );
+    });
 
 
     Y.bookie.Api.route = Y.Base.create(
@@ -273,7 +273,8 @@ YUI.add('bookie-api', function (Y) {
                         current: current_tags
                     }
                 });
-                Y.bookie.Api.route.TagComplete.superclass.call.apply(this, arguments);
+                Y.bookie.Api.route.TagComplete.superclass.call.apply(this,
+                                                                     arguments);
             }
         }, {
             ATTRS: {
@@ -282,7 +283,6 @@ YUI.add('bookie-api', function (Y) {
                 }
             }
         }
-
     );
 
 
@@ -290,17 +290,22 @@ YUI.add('bookie-api', function (Y) {
         'bookie-api-route-user-bmarksall',
         Y.bookie.Api.route,
         [], {
-            data: {
-                count: 10,
-                page: 0,
-                with_content: false
-            },
-
             initializer: function (cfg) {}
         }, {
             ATTRS: {
                 url_element: {
-                    value: '/{username}/bmarks'
+                    value: '/{username}/bmarks',
+                    getter: function () {
+                        if (this.get('tags')) {
+                            return [
+                                '/{username}/bmarks',
+                                this.get('tags').join('/')
+                            ].join('/');
+                        } else {
+                            return '/{username}/bmarks';
+                        }
+
+                    }
                 }
             }
         }
@@ -325,7 +330,7 @@ YUI.add('bookie-api', function (Y) {
                 this.data = {
                     hash_id: this.get('hash_id'),
                     username: this.get('username')
-                }
+                };
             }
         }, {
             ATTRS: {
@@ -350,12 +355,12 @@ YUI.add('bookie-api', function (Y) {
             initializer: function (cfg) {
                 // force this to a DELETE request by overriding our base_cfg
                 // we extend.
-                this.base_cfg.method = 'DELETE',
+                this.base_cfg.method = 'DELETE';
 
                 // we have to have a hash_id for our url to be built from
                 this.data = {
                     hash_id: this.get('hash_id'),
-                }
+                };
             }
         }, {
             ATTRS: {
@@ -390,13 +395,13 @@ YUI.add('bookie-api', function (Y) {
         Y.bookie.Api.route,
         [], {
             initializer: function (cfg) {
-                this.base_cfg.method = 'POST',
+                this.base_cfg.method = 'POST';
 
                 // we have to have current_password, new_password
                 this.data = {
                     current_password: this.get('current_password'),
                     new_password: this.get('new_password')
-                }
+                };
             }
         }, {
             ATTRS: {
@@ -456,7 +461,7 @@ YUI.add('bookie-api', function (Y) {
                 // we have to have current_password, new_password
                 this.data = {
                     email: this.get('email')
-                }
+                };
             }
         }, {
             ATTRS: {
@@ -483,7 +488,7 @@ YUI.add('bookie-api', function (Y) {
                     username: this.get('username'),
                     code: this.get('code'),
                     password: this.get('password')
-                }
+                };
             }
         }, {
             ATTRS: {
@@ -544,7 +549,46 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+    Y.bookie.Api.route.UserSearch = Y.Base.create(
+        'bookie-api-route-usersearch',
+        Y.bookie.Api.route,
+        [], {
+            data: {
+                count: 10,
+                page: 0,
+                with_content: false
+            },
 
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                /**
+                 * Any terms to filter on
+                 *
+                 */
+                phrase: {
+                    valueFn: function () {
+                        return [];
+                    }
+                },
+
+                url_element: {
+                    value: '/{username}/bmarks/search',
+                    getter: function () {
+                        if (this.get('phrase')) {
+                            return [
+                                '/{username}/bmarks/search',
+                                this.get('phrase').join('/')
+                            ].join('/');
+                        } else {
+                            return '/{username}/bmarks/search';
+                        }
+                    }
+                }
+            }
+        }
+    );
 
 
 }, '0.1.0', {
