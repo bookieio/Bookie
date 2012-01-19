@@ -295,7 +295,7 @@ YUI.add('bookie-view', function (Y) {
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
-            Y.delegate('submit', this._search, '#search_form', this);
+            Y.one('body').delegate('submit', this._search, 'form#bmark_search', this);
 
             if (cfg.phrase) {
                 this.set('phrase', cfg.phrase.split(' '));
@@ -304,17 +304,18 @@ YUI.add('bookie-view', function (Y) {
         },
 
         _search: function (e) {
-            // find out what our search phrase is and if we've checked the
-            // full content search option, then make the call and let's roll.
+            debugger;
 
-            // update the api data with the tags list
-            this.api.set('tags', e.tags);
+            var phrase = Y.one('#bmark_search input').get('value');
+            this.set('phrase', phrase.split(' '));
+            this.api.set('phrase', this.get('phrase'));
 
             // update the pager back to page 1
             this.get('pager').set('page', 0);
 
             // and finally fetch the results
             this._fetch_dataset();
+            e.halt();
         },
     }, {
         ATTRS: {

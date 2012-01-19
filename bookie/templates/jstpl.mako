@@ -86,7 +86,7 @@
 
 
 <script type="text/template" id="bmark_search">
-    <form id="bmark_search">
+    <form id="bmark_search" name="bmark_search">
             <input type="text" value="{{phrase}}"/>
             <input type="submit"/>
     </form>
