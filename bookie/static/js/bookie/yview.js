@@ -63,7 +63,7 @@ YUI.add('bookie-view', function (Y) {
                     that.models = new Y.bookie.BmarkList();
 
                     that.models.add(Y.Array.map(
-                        data[that.get('results_key')], function (bmark){
+                        data[that.get('results_key')], function (bmark) {
                             var b = new Y.bookie.Bmark(bmark),
                                 n = new Y.bookie.BmarkView({
                                     model: b,
@@ -74,7 +74,7 @@ YUI.add('bookie-view', function (Y) {
 
                             b.api_cfg = that.get('api_cfg');
 
-                            new_nodes.push(n.render())
+                            new_nodes.push(n.render());
                             return b;
                         })
                     );
@@ -138,9 +138,9 @@ YUI.add('bookie-view', function (Y) {
 
             // only update the view if we did change pages (e.g. not on page
             // 1 already)
-            if (old_page != pager.get('page')) {
-                // now that we've incremented the page let's fetch a new set of
-                // results
+            if (old_page !== pager.get('page')) {
+                // now that we've incremented the page let's fetch a new set
+                // of results
                 this._fetch_dataset();
             }
         },
@@ -153,32 +153,32 @@ YUI.add('bookie-view', function (Y) {
 
         },
 
-       initializer: function (cfg) {
-           this.cTemplate = Y.Handlebars.compile(this._get_template());
-           this._init_pager();
-           this._init_api();
-       },
+        initializer: function (cfg) {
+            this.cTemplate = Y.Handlebars.compile(this._get_template());
+            this._init_pager();
+            this._init_api();
+        },
 
-       render: function () {
-           var that = this,
-               // Render this view's HTML into the container element.
-               html = this.get('container').set(
-                   'innerHTML',
-                   this.cTemplate(this.getAttrs())
-               );
+        render: function () {
+            var that = this,
+                // Render this view's HTML into the container element.
+                html = this.get('container').set(
+                    'innerHTML',
+                    this.cTemplate(this.getAttrs())
+                );
 
-           // start the request for our models
-           this._fetch_dataset();
+            // start the request for our models
+            this._fetch_dataset();
 
-           var pager_html = html.all('.paging');
-           var idx = 0;
-           pager_html.each(function (n) {
-               var p = that.pagers[idx];
-               n.appendChild(p.render());
-               idx = idx + 1;
-           });
-           return html;
-       }
+            var pager_html = html.all('.paging');
+            var idx = 0;
+            pager_html.each(function (n) {
+                var p = that.pagers[idx];
+                n.appendChild(p.render());
+                idx = idx + 1;
+            });
+            return html;
+        }
     }, {
         ATTRS: {
             container: {
@@ -292,20 +292,6 @@ YUI.add('bookie-view', function (Y) {
     });
 
     ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
-        _get_search_template: function () {
-            return Y.one('#bmark_search').get('text');
-        },
-
-        _generate_search_form: function () {
-            var phrase = this.api.get('tags').join(' '),
-                html = this.cSearchFormTemplate({
-                    phrase: phrase
-                });
-
-            // @todo this is a giant hack...make better.
-            Y.one('tag_filter_container').setContent(html);
-        },
-
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
@@ -348,11 +334,11 @@ YUI.add('bookie-view', function (Y) {
 
             filter_control: {
                 getter: function () {
-                    var tags = this.api.get('tags');
+                    var phrase = this.get('phrase');
                     return Y.Handlebars.compile(
                         Y.one('#bmark_search').get('text')
                     )({
-                        phrase: tags ? tags.join(' ') : ''
+                        phrase: phrase ? phrase.join(' ') : ''
                     });
                 }
             },
@@ -953,8 +939,7 @@ YUI.add('bookie-view', function (Y) {
             }
         }
     });
-
-
 }, '0.1.0', { requires: ['base',
     'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition',
-    'bookie-tagcontrol'] });
+    'bookie-tagcontrol']
+});
