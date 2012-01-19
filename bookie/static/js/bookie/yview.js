@@ -179,7 +179,6 @@ YUI.add('bookie-view', function (Y) {
            });
            return html;
        }
-
     }, {
         ATTRS: {
             container: {
@@ -203,6 +202,14 @@ YUI.add('bookie-view', function (Y) {
 
             api_cfg: {
 
+            },
+
+            /**
+             * You can add a filter control into the bmark list view
+             *
+             */
+            filter_control: {
+                value: ''
             },
 
             pager: {
@@ -263,7 +270,6 @@ YUI.add('bookie-view', function (Y) {
         ATTRS: {
             api_callable: {
                 readonly: true,
-
                 // then there's a user in our resource path, make the api call a
                 // UserBmarksAll vs BmarksAll
                 getter: function () {
@@ -273,15 +279,37 @@ YUI.add('bookie-view', function (Y) {
                         return Y.bookie.Api.route.BmarksAll;
                     }
                 }
+            },
+
+            filter_control: {
+                getter: function () {
+                    return Y.Handlebars.compile(
+                        Y.one('#filter_container').get('text')
+                    )({});
+                }
             }
-        },
+        }
     });
 
     ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
+        _get_search_template: function () {
+            return Y.one('#bmark_search').get('text');
+        },
+
+        _generate_search_form: function () {
+            var phrase = this.api.get('tags').join(' '),
+                html = this.cSearchFormTemplate({
+                    phrase: phrase
+                });
+
+            // @todo this is a giant hack...make better.
+            Y.one('tag_filter_container').setContent(html);
+        },
+
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
-            Y.one(this.get('search_form')).on('submit', this._search, this);
+            Y.delegate('submit', this._search, '#search_form', this);
 
             if (cfg.phrase) {
                 this.set('phrase', cfg.phrase.split(' '));
@@ -317,9 +345,18 @@ YUI.add('bookie-view', function (Y) {
                     }
                 }
             },
-            search_form: {
-                value: '#bmark_search'
+
+            filter_control: {
+                getter: function () {
+                    var tags = this.api.get('tags');
+                    return Y.Handlebars.compile(
+                        Y.one('#bmark_search').get('text')
+                    )({
+                        phrase: tags ? tags.join(' ') : ''
+                    });
+                }
             },
+
             /**
              * Where in the results can we find out bmarks?
              *
@@ -327,8 +364,11 @@ YUI.add('bookie-view', function (Y) {
             results_key: {
                 value: 'search_results',
                 readonly: true
-            }
+            },
 
+            search_form: {
+                value: '#bmark_search'
+            }
         },
     });
 

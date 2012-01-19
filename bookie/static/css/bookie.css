@@ -312,7 +312,7 @@ fieldset legend {
   padding-bottom: .1em;
   font-weight: normal; }
 
-.tag_filter_container {
+.filter_control {
   display: inline-block;
   vertical-align: middle; }
 

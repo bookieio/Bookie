@@ -2,11 +2,6 @@
 <%namespace file="../bmark/func.mako" import="api_setup, pager_setup"/>
 <%def name="title()">Search results for: ${phrase}</%def>
 
-<form id="bmark_search">
-        <input type="text"/>
-        <input type="submit"/>
-
-</form>
 <div class="bmarks"></div>
 <%include file="../jstpl.mako"/>
 

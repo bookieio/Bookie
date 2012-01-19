@@ -63,8 +63,8 @@
             </div>
         {{/if}}
 
-        <div class="tag_filter_container" style="">
-            <input name="tag_filter" id="tag_filter" value=""/>
+        <div class="filter_control">
+            {{{filter_control}}}
         </div>
     </div>
 
@@ -75,4 +75,19 @@
             <div class="buttons paging" style="display: inline-block;"></div>
         </div>
     </div>
+</script>
+
+
+<script type="text/template" id="filter_container">
+    <div class="tag_filter_container" style="">
+        <input name="tag_filter" id="tag_filter" value=""/>
+    </div>
+</script>
+
+
+<script type="text/template" id="bmark_search">
+    <form id="bmark_search">
+            <input type="text" value="{{phrase}}"/>
+            <input type="submit"/>
+    </form>
 </script>
