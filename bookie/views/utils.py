@@ -90,16 +90,16 @@ def search_results(request):
 
     """
     route_name = request.matched_route.name
-
     mdict = request.matchdict
     rdict = request.GET
+
+    username = rdict.get('username', None)
 
     if 'terms' in mdict:
         phrase = " ".join(mdict['terms'])
     else:
         phrase = rdict.get('search', '')
 
-    username = rdict.get('username', None)
 
     # with content is always in the get string
     with_content = asbool(rdict.get('content', False))

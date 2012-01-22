@@ -6,17 +6,14 @@
  * extensions, mobile, and main site
  *
  */
-var bookie = (function (opts) {
-    var $b = opts.bookie,
-        $ = opts.jquery;
-
-    $b.log = opts.console_log.log;
-    $b.api = {
+define(["bookie/main"], function (main) {
+    var api = {};
+    api = {
         'init': function(app_url, username, api_key) {
-            $b.api.opt = {};
-            $b.api.opt.app_url = app_url;
-            $b.api.opt.username = (username ? username : '');
-            $b.api.opt.api_key = (api_key ? api_key : '');
+            api.opt = {};
+            api.opt.app_url = app_url;
+            api.opt.username = (username ? username : '');
+            api.opt.api_key = (api_key ? api_key : '');
         }
     };
 
@@ -25,7 +22,7 @@ var bookie = (function (opts) {
      * Base request object that our custom ones will extend
      *
      */
-    $b.api._request = function (options) {
+    api._request = function (options) {
         var defaults, opts;
 
 
@@ -39,7 +36,7 @@ var bookie = (function (opts) {
             type: "GET",
             dataType: "json",
             data: {},
-            context: $b,
+            context: api,
             timeout: 30000,
             error: function(jqxhr, textStatus, errorThrown) {
                 var data = $.parseJSON(jqxhr.responseText),
@@ -51,13 +48,13 @@ var bookie = (function (opts) {
         };
 
         // now fill in any %s/etc params
-        options.url = $b.api.opt.app_url + options.url;
-        options.url = _.sprintf(options.url, $b.api.opt.username);
+        options.url = api.opt.app_url + options.url;
+        options.url = _.sprintf(options.url, api.opt.username);
 
         opts = $.extend({}, defaults, options);
 
-        if ($b.api.opt.api_key !== undefined) {
-            opts.data.api_key = $b.api.opt.api_key;
+        if (api.opt.api_key !== undefined) {
+            opts.data.api_key = api.opt.api_key;
         }
 
         $.ajax(opts);
@@ -71,10 +68,17 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.recent = function (options, callbacks) {
+    api.recent = function (options, callbacks, system) {
         // we need to get the list of recent from the api
-        var url = "/api/v1/%s/bmarks",
-            data = {
+        var url;
+
+        if (system) {
+            url = "/api/v1/bmarks"
+        } else {
+            url = "/api/v1/%s/bmarks"
+        }
+
+        var data = {
                 'count': 10,
                 'page': 1,
                 'with_content': false
@@ -86,7 +90,7 @@ var bookie = (function (opts) {
                 complete: callbacks.complete
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -97,7 +101,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.popular = function (options, callbacks) {
+    api.popular = function (options, callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/bmarks/popular",
             data = {
@@ -112,7 +116,7 @@ var bookie = (function (opts) {
                 complete: callbacks.complete
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -124,7 +128,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.add = function (data, callbacks) {
+    api.add = function (data, callbacks) {
         var url = "/api/v1/%s/bmark",
             opts = {
                 type: 'post',
@@ -133,7 +137,7 @@ var bookie = (function (opts) {
                 success: callbacks.success,
                 error: callbacks.error
             };
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -146,7 +150,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.bookmark = function (hash_id, options, callbacks) {
+    api.bookmark = function (hash_id, options, callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/bmark/" + hash_id,
             data = {
@@ -160,7 +164,7 @@ var bookie = (function (opts) {
                 error: callbacks.error
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -169,10 +173,10 @@ var bookie = (function (opts) {
      * need to manually override the api_key into the url ourselves
      *
      */
-    $b.api.remove = function (hash_id, callbacks) {
+    api.remove = function (hash_id, callbacks) {
         var url = "/api/v1/%s/bmark/" + _.sprintf("%s?api_key=%s",
                                                   hash_id,
-                                                  $b.api.opt.api_key),
+                                                  api.opt.api_key),
             opts = {
                 url: url,
                 type: "delete",
@@ -180,7 +184,7 @@ var bookie = (function (opts) {
                 error: callbacks.error
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -192,7 +196,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.search = function (terms, options, callbacks) {
+    api.search = function (terms, options, callbacks) {
         // we need to get the list of recent from the api
         var url_terms = terms.join("/"),
             url = "/api/v1/%s/bmarks/search/" + url_terms,
@@ -208,7 +212,7 @@ var bookie = (function (opts) {
                 complete: callbacks.complete
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -221,7 +225,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error callbacks
      *
      */
-    $b.api.tag_complete = function (options, callbacks) {
+    api.tag_complete = function (options, callbacks) {
         var data = {
                 'tag': "",
                 'current': ""
@@ -232,7 +236,7 @@ var bookie = (function (opts) {
                 success: callbacks.success,
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -243,7 +247,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error callbacks
      *
      */
-    $b.api.sync = function (callbacks) {
+    api.sync = function (callbacks) {
         opts = {
             url: "/api/v1/%s/extension/sync",
             success: callbacks.success
@@ -253,7 +257,7 @@ var bookie = (function (opts) {
             opts.error = callbacks.error;
         }
 
-        $b.api._request(opts);
+        api._request(opts);
 
     };
 
@@ -264,7 +268,7 @@ var bookie = (function (opts) {
      * @param callbacks is an object of success, complete, error
      *
      */
-    $b.api.api_key = function (callbacks) {
+    api.api_key = function (callbacks) {
         // we need to get the list of recent from the api
         var url = "/api/v1/%s/api_key",
             opts = {
@@ -272,7 +276,7 @@ var bookie = (function (opts) {
                 success: callbacks.success
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -283,7 +287,7 @@ var bookie = (function (opts) {
      * @param callbacks used with the api call
      *
      */
-    $b.api.change_password = function (options, callbacks) {
+    api.change_password = function (options, callbacks) {
         var url = "/api/v1/%s/password",
             data = {
                 'current_password': "",
@@ -297,7 +301,7 @@ var bookie = (function (opts) {
                 error: callbacks.error
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -308,7 +312,7 @@ var bookie = (function (opts) {
      * @param callbacks used with the api call
      *
      */
-    $b.api.account_update = function (new_data, callbacks) {
+    api.account_update = function (new_data, callbacks) {
         var url = "/api/v1/%s/account",
             data = new_data,
             opts = {
@@ -318,7 +322,7 @@ var bookie = (function (opts) {
                 success: callbacks.success
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -329,7 +333,7 @@ var bookie = (function (opts) {
      * @param callbacks used with the api call
      *
      */
-    $b.api.reactivate = function (options, callbacks) {
+    api.reactivate = function (options, callbacks) {
         var url = "/api/v1/suspend",
             data = { 'email': "" },
             opts = {
@@ -340,7 +344,7 @@ var bookie = (function (opts) {
                 error: callbacks.error
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
 
@@ -351,7 +355,7 @@ var bookie = (function (opts) {
      * @param callbacks
      *
      */
-    $b.api.activate = function (options, callbacks) {
+    api.activate = function (options, callbacks) {
         var url = "/api/v1/suspend",
             data = {
                 'code': "",
@@ -366,8 +370,8 @@ var bookie = (function (opts) {
                 error: callbacks.error
             };
 
-        $b.api._request(opts);
+        api._request(opts);
     };
 
-    return $b;
-})(bookie_opts);
+    return api;
+});

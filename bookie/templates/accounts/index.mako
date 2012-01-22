@@ -19,7 +19,13 @@ ${account_nav()}
                 </span>
         </div>
         <div>
-            Last Seen: <span>${user.last_login.strftime(date_fmt)}</span>
+            Last Seen: <span>
+                % if user.last_login:
+                    ${user.last_login.strftime(date_fmt)}
+                % else:
+                    Not logged in
+                % endif</span>
+
         </div>
     </div>
     <div class="yui3-u-3-4">
@@ -46,7 +52,7 @@ ${account_nav()}
 
 <div class="form">
     <a href="" id="show_key" class="heading">View API Key</a>
-    <div id="api_key_container" style="display: none;">
+    <div id="api_key_container" style="display: none; opacity: 0;">
         <form>
             <ul>
                 <li>
@@ -79,7 +85,7 @@ ${password_reset(reset=False)}
         Bookmarklet code</a> <div>(Handy for Android and other browsers that can't
                 save a link direct to bookmark.)</div>
         <br />
-        <textarea style="display: none; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea> 
+        <textarea style="display: none; opacity: 0; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea>
     </div>
     </p>
 
@@ -87,8 +93,16 @@ ${password_reset(reset=False)}
 </div>
 <%def name="add_js()">
     <script type="text/javascript">
-        $(document).ready(function() {
-            bookie.accounts.init();
+        YUI().use('node', 'bookie-view', 'console', function (Y) {
+            Y.on('domready', function () {
+                var account_view = new Y.bookie.AccountView({
+                    api_cfg: {
+                        url: APP_URL + '/api/v1',
+                        username: '${request.user.username}',
+                        api_key: '${request.user.api_key}',
+                    }
+                });
+            });
         });
     </script>
 </%def>

@@ -5,6 +5,9 @@ def build_routes(config):
 
     config.add_route("home", "/")
 
+    # test routes for JS tests
+    config.add_route("tests", "tests/{file}")
+
     # auth routes
     config.add_route("login", "login")
     config.add_route("logout", "logout")
@@ -20,16 +23,11 @@ def build_routes(config):
     config.add_route("bmark_recent", "recent")
     config.add_route("bmark_recent_tags", "recent/*tags")
 
-    config.add_route("bmark_popular", "popular")
-    config.add_route("bmark_popular_tags", "popular/*tags")
     config.add_route("bmark_readable", "bmark/readable/{hash_id}")
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
     config.add_route("user_bmark_recent_tags", "{username}/recent/*tags")
-
-    config.add_route("user_bmark_popular", "{username}/popular")
-    config.add_route("user_bmark_popular_tags", "{username}/popular/*tags")
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
     config.add_route("user_bmark_edit_error", "{username}/edit_error/{hash_id}")
@@ -102,15 +100,20 @@ def build_routes(config):
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
 
+    # we have to search before we hit the bmarks keys so that it doesn't think
+    # the tag is "search"
+    config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
+    config.add_route("api_bmark_search_user",
+                     "/api/v1/{username}/bmarks/search/*terms")
+
     config.add_route('api_bmarks', 'api/v1/bmarks')
+    config.add_route('api_bmarks_tags', 'api/v1/bmarks/*tags')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
 
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
     config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
 
-    config.add_route("api_bmark_search", "api/v1/bmarks/search/*terms")
-    config.add_route("api_bmark_search_user",
-                     "/api/v1/{username}/bmarks/search/*terms")
+
 
 
     # user bookmark api calls

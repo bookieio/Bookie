@@ -436,22 +436,26 @@ class BmarkMgr(object):
             order_by = Bmark.stored.desc()
 
         if not tags:
+            print "NOT TAGS"
             qry = qry.order_by(order_by).\
                       limit(limit).\
                       offset(offset).\
                       from_self()
 
         if tags:
+            "TAGS"
             qry = qry.join(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
             if isinstance(tags, str):
+                print "IS INSTANCE"
                 qry = qry.filter(Tag.name == tags)
                 qry = qry.order_by(order_by).\
                           limit(limit).\
                           offset(offset).\
                           from_self()
             else:
+                print "NOT INSTANCE"
                 bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
                                        from_obj=[ bmarks_tags.join('tags',
                                                                    and_(Tag.name.in_(tags),
@@ -461,9 +465,9 @@ class BmarkMgr(object):
                                                                    Bmark.bid == bmarks_tags.c.bmark_id)
                                       ]).\
                                group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
-                               having(func.count(bmarks_tags.c.tag_id) == len(tags)).order_by(Bmark.stored.desc()).limit(limit).offset(offset)
+                               having(func.count(bmarks_tags.c.tag_id) >= len(tags)).order_by(Bmark.stored.desc())
 
-                qry = qry.join((bids_we_want.alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
+                qry = qry.join((bids_we_want.limit(limit).offset(offset).alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
 
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
@@ -471,11 +475,9 @@ class BmarkMgr(object):
             qry = qry.outerjoin(Bmark.tags).\
                   options(contains_eager(Bmark.tags))
 
-
         # join to hashed so we always have the url
         # if we have with_content, this is already done
         qry = qry.options(joinedload('hashed'))
-
 
         return qry.all()
 

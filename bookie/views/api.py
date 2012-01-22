@@ -216,9 +216,11 @@ def bmark_remove(request):
 
 @view_config(route_name="api_bmarks", renderer="json")
 @view_config(route_name="api_bmarks_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@view_config(route_name="api_bmarks_tags", renderer="json")
+@api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
+    LOG.debug('BMARK RECENT')
     rdict = request.matchdict
     params = request.params
 
@@ -227,7 +229,7 @@ def bmark_recent(request):
     count = int(params.get('count', RESULTS_MAX))
     with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
-    username = request.user.username
+    username = request.user.username if request.user else None
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -281,7 +283,7 @@ def bmark_recent(request):
 
 @view_config(route_name="api_bmarks_popular", renderer="json")
 @view_config(route_name="api_bmarks_popular_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def bmark_popular(request):
     """Get a list of the most popular bmarks for the api call"""
     rdict = request.matchdict
@@ -292,7 +294,10 @@ def bmark_popular(request):
     count = int(params.get('count', RESULTS_MAX))
     with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
-    username = request.user.username
+    if request.user and request.user.username:
+        username = request.user.username
+    else:
+        username = None
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -386,7 +391,7 @@ def extension_sync(request):
 
 @view_config(route_name="api_bmark_search", renderer="json")
 @view_config(route_name="api_bmark_search_user", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
 
@@ -405,7 +410,10 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
-    username = request.user.username
+    if request.user and request.user.username:
+        username = request.user.username
+    else:
+        username = None
 
     # with content is always in the get string
     search_content = asbool(rdict.get('search_content', False))
@@ -473,10 +481,12 @@ def tag_complete(request):
         tags = TagMgr.complete(tag,
                                current=current_tags,
                                username=username)
+    else:
+        tags = []
 
-        # reset this for the payload join operation
-        if current_tags is None:
-            current_tags = []
+    # reset this for the payload join operation
+    if current_tags is None:
+        current_tags = []
 
     return {
         'current': ",".join(current_tags),
@@ -512,14 +522,23 @@ def account_update(request):
 
     """
     params = request.params
+    json_body = request.json_body
     user_acct = request.user
 
     if 'name' in params and params['name'] is not None:
         name = params.get('name')
         user_acct.name = name
 
+    if 'name' in json_body and json_body['name'] is not None:
+        name = json_body.get('name')
+        user_acct.name = name
+
     if 'email' in params and params['email'] is not None:
         email = params.get('email')
+        user_acct.email = email
+
+    if 'email' in json_body and json_body['email'] is not None:
+        email = json_body.get('email')
         user_acct.email = email
 
     return user_acct.safe_data()
@@ -560,8 +579,18 @@ def reset_password(request):
     current = params.get('current_password', None)
     new = params.get('new_password', None)
 
+    # if we don't have any password info, try a json_body in case it's a json
+    #POST
+    if current is None and new is None:
+        params = request.json_body
+        current = params.get('current_password', None)
+        new = params.get('new_password', None)
+
     user_acct = request.user
 
+    LOG.error("PASSWD")
+    LOG.error(current)
+    LOG.error(new)
     if not UserMgr.acceptable_password(new):
         request.response.status_int = 406
         return {
@@ -594,6 +623,10 @@ def suspend_acct(request):
 
     # we need to get the user from the email
     email = params.get('email', None)
+
+    if email is None:
+        # try the json body
+        email = request.json_body.get('email', None)
 
     if user is None and email is None:
         request.response.status_int = 406
@@ -660,10 +693,12 @@ def account_activate(request):
     activation = params.get('code', None)
     password = params.get('password', None)
 
-    LOG.debug("PARAMS")
-    LOG.debug(dict(params))
-    LOG.debug(dict(request.params))
-    LOG.debug(password)
+    if username is None and activation is None and password is None:
+        # then try to get the same fields out of a json body
+        json_body = request.json_body
+        username = json_body.get('username', None)
+        activation = json_body.get('code', None)
+        password = json_body.get('password', None)
 
     if not UserMgr.acceptable_password(password):
         request.response.status_int = 406

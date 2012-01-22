@@ -178,7 +178,7 @@ def db_init_bookmark():
 
 
     engine = create_engine(env.ini.get('app:main', 'sqlalchemy.url'))
-    initialize_sql(engine)
+    initialize_sql(dict(env.ini.items('app:main')))
 
     from bookie.models import DBSession
     from bookie.models import Bmark

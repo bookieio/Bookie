@@ -21,15 +21,15 @@ RESULTS_MAX = 50
 @view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
 @view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")
 @view_config(route_name="user_bmark_recent_tags",
-             renderer="/bmark/recent.mako")
+    renderer="/bmark/recent.mako")
 def recent(request):
-    """Most recent list of bookmarks capped at MAX"""
+    """Testing a JS driven ui with backbone/etc"""
     rdict = request.matchdict
     params = request.params
 
-    LOG.debug('in recent!')
-    # check if we have a page count submitted
-    page = int(params.get('page', '0'))
+    # check for auth related stuff
+    # are we looking for a specific user
+    username = rdict.get('username', None)
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -37,111 +37,18 @@ def recent(request):
     if isinstance(tags, str):
         tags = [tags]
 
-    # check for auth related stuff
-    # are we looking for a specific user
-    username = rdict.get('username', None)
-
-    # if we don't have tags, we might have them sent by a non-js browser as a
-    # string in a query string
-    if not tags and 'tag_filter' in params:
-        tags = params.get('tag_filter').split()
-
-    recent_list = BmarkMgr.find(limit=RESULTS_MAX,
-                           order_by=Bmark.stored.desc(),
-                           tags=tags,
-                           page=page,
-                           username=username)
-
     ret = {
-             'bmarks': recent_list,
-             'max_count': RESULTS_MAX,
-             'count': len(recent_list),
-             'page': page,
-             'tags': tags,
-             'username': username,
-           }
+         'username': username,
+         'tags': tags,
+    }
+
+    # if we've got url parameters for the page/count then use those to help
+    # feed the init of the ajax script
+    ret['count'] = params.get('count') if 'count' in params else RESULTS_MAX
+    ret['page'] = params.get('page') if 'page' in params else 0
 
     return ret
 
-
-@view_config(route_name="bmark_popular", renderer="/bmark/popular.mako")
-@view_config(route_name="user_bmark_popular", renderer="/bmark/popular.mako")
-@view_config(route_name="bmark_popular_tags", renderer="/bmark/popular.mako")
-@view_config(route_name="user_bmark_popular_tags",
-             renderer="/bmark/popular.mako")
-def popular(request):
-    """Most popular list of bookmarks capped at MAX"""
-    rdict = request.matchdict
-    params = request.params
-
-    # check if we have a page count submitted
-    tags = rdict.get('tags', None)
-    page = int(params.get('page', '0'))
-
-    if isinstance(tags, str):
-        tags = [tags]
-
-    # check for auth related stuff
-    # are we looking for a specific user
-    username = rdict.get('username', None)
-
-    # if we don't have tags, we might have them sent by a non-js browser as a
-    # string in a query string
-    if not tags and 'tag_filter' in params:
-        tags = params.get('tag_filter').split()
-
-    recent_list = BmarkMgr.find(limit=RESULTS_MAX,
-                           order_by=Bmark.clicks.desc(),
-                           tags=tags,
-                           page=page,
-                           username=username, )
-
-    return {
-             'bmarks': recent_list,
-             'max_count': RESULTS_MAX,
-             'count': len(recent_list),
-             'page': page,
-             'tags': tags,
-             'user': request.user,
-             'username': username,
-           }
-
-
-# @view_config(route_name="bmark_delete")
-# def delete(request):
-#     """Remove the bookmark in question"""
-#     rdict = request.POST
-# 
-#     # make sure we have an id value
-#     bid = int(rdict.get('bid', 0))
-# 
-#     if bid:
-#         found = Bmark.query.get(bid)
-# 
-#         if found:
-#             DBSession.delete(found)
-#             return HTTPFound(location=request.route_url('bmark_recent'))
-# 
-#     return HTTPNotFound()
-# 
-
-# @view_config(route_name="bmark_confirm_delete",
-#              renderer="/bmark/confirm_delete.mako")
-# def confirm_delete(request):
-#     """Confirm deletion of bookmark"""
-#     rdict = request.matchdict
-#     bid = int(rdict.get('bid', 0))
-#     if bid:
-#         found = Bmark.query.get(bid)
-# 
-#     if not found:
-#         return HTTPNotFound()
-# 
-#     return {
-#             'bid': bid,
-#             'bmark_description': found.description
-#            }
-# 
 
 @view_config(route_name="user_bmark_edit", renderer="/bmark/edit.mako")
 @view_config(route_name="user_bmark_new", renderer="/bmark/edit.mako")
@@ -231,7 +138,7 @@ def edit_error(request):
             bmark.update_tags(post['tags'])
 
         # if this is a new bookmark from a url, offer to go back to that url
-        # for the user. 
+        # for the user.
         if 'go_back' in params and params['comes_from'] != "":
             return HTTPFound(location=params['comes_from'])
         else:

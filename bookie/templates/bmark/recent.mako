@@ -1,42 +1,58 @@
 <%inherit file="/main_wrap.mako" />
-<%namespace file="func.mako" import="display_bmark_list, bmarknextprev, tag_filter"/>
+<%namespace file="func.mako" import="api_setup, pager_setup"/>
 <%def name="title()">Recent Bookmarks</%def>
 
-<h1></h1>
+<div class="bmarks"></div>
+<%include file="../jstpl.mako"/>
 
-<!-- Show the tag filter ui -->
+<%def name="add_js()">
 <%
-    if tags:
-        url = 'bmark_recent_tags'
-    else:
-        url = 'bmark_recent'
-
-    if username:
-        url = 'user_' + url
-
+import json
 %>
-<div class="yui3-g data_list">
-    <div class="yui3-u-2-3">
-        ${tag_filter(url, tags=tags, username=username)}
-    </div>
-    <div class="yui3-u-1-3 col_end">Showing ${max_count} bookmarks</div>
+    <script type="text/javascript">
+        // Create a new YUI instance and populate it with the required modules.
+        YUI().use('bookie-api', 'bookie-model', 'bookie-tagcontrol', 'bookie-view', function (Y) {
+            <%
+                # we might have a user from the resource path that we want to keep tabs on
+                resource_username = username if username else False
+            %>
 
-    <div class="yui3-u-7-8 buttons">
-        % if username is not None:
-           <a href="${request.route_url('user_bmark_new', username=username)}" class="button">+ Add</a>
-        % endif
-    </div>
-    <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
-    </div>
+            ${api_setup(request.user)}
 
-    <div class="yui3-u-1 data_body">
-        ${display_bmark_list(bmarks, username=username)}
-    </div>
+            % if username:
+                resource_username = '${username}';
+            % else:
+                resource_username = undefined;
+            % endif
 
-    <div class="yui3-u-7-8">&nbsp;</div>
+            % if count or page:
+                ${pager_setup(count=count, page=page)}
+            % endif
 
-    <div class="yui3-u-1-8 col_end buttons">
-        ${bmarknextprev(page, max_count, count, url, tags=tags, username=username)}
-    </div>
-</div>
+            // we want to call the all url route for this view
+            listview = new Y.bookie.TagControlBmarkListView({
+                api_cfg: api_cfg,
+                current_user: username,
+                resource_user: resource_username
+            });
+
+            if (pager) {
+                listview.set('pager', pager);
+            }
+
+            // pre-seed the tags list to the listview
+            var tags = ${json.dumps(tags)|n};
+            if (tags) {
+                listview.api.set('tags', tags);
+            }
+
+            Y.one('.bmarks').appendChild(listview.render());
+            var tagcontrol = new Y.bookie.TagControl({
+               api_cfg: api_cfg,
+               srcNode: Y.one('#tag_filter'),
+               initial_tags: tags
+            });
+            tagcontrol.render();
+        });
+    </script>
+</%def>

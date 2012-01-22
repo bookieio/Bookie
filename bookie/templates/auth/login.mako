@@ -25,15 +25,21 @@
 
 <div class="block form">
     <a href="" id="show_forgotten" class="heading">Forgotten Password</a>
-    <div id="forgotten_password" style="display: none;">
+    <div id="forgotten_password" style="display: none; opacity: 0;">
         <%include file="forgot.mako"/>
     </div>
 </div>
 
 <%def name="add_js()">
     <script type="text/javascript">
-        $(document).ready(function() {
-            bookie.login.init();
+        YUI().use('node', 'bookie-view', 'console', function (Y) {
+            Y.on('domready', function () {
+                var login_view = new Y.bookie.LoginView({
+                    api_cfg: {
+                        url: APP_URL + '/api/v1'
+                    }
+                });
+            });
         });
     </script>
 </%def>
