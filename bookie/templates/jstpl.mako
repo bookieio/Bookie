@@ -1,8 +1,7 @@
 <script type="text/template" id="bmark_row">
     <div class="tags">
         {{#each tags}}
-            <a class="tag"
-                href="/tags/{{name}}">{{name}}</a>
+            <a class="tag" href="">{{name}}</a>
         {{/each}}
     </div>
 

@@ -94,7 +94,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 // split the string on spaces
                 // and add each one
                 Y.Array.each(cfg.tag_string.split(' '), function (val) {
-                    this._add(val);
+                    this.add(val);
                 });
             }
 
@@ -130,7 +130,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * form submitting later on.
          *
          */
-        _add: function (current_text, silent) {
+        add: function (current_text, silent) {
             var that = this;
             // only add if there's text here
             current_text = Y.Lang.trim(current_text);
@@ -170,7 +170,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             var input = this.ui.one('input'),
                 current_text = input.get('value');
 
-            this._add(current_text);
+            this.add(current_text);
 
             // clear the input
             input.set('value', '');
@@ -216,6 +216,13 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // if a tag is removed, catch that event and remove it from our
             // knowledge. This event is coming from the tag itself.
             Y.on('tag:removed', this._remove_tag, this);
+
+            // if someone wants to tell us to add a tag, catch this event
+            Y.on('tag:add', function (e) {
+                this.add(e.tag);
+                this._fire_changed();
+                this.set('events_waiting', undefined);
+            }, this);
 
             // Look at adjusting the size on any value change event including
             // pasting and such.
@@ -360,7 +367,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             if (tags.length > 0) {
                 Y.Array.each(tags, function (n) {
-                    that._add(n, true);
+                    that.add(n, true);
                 });
             }
         },

@@ -317,6 +317,7 @@ YUI.add('bookie-view', function (Y) {
         },
 
         _search: function (e) {
+            e.preventDefault();
             var phrase = Y.one('#search_phrase').get('value'),
                 with_content = Y.one('#with_content');
 
@@ -333,7 +334,6 @@ YUI.add('bookie-view', function (Y) {
 
             // and finally fetch the results
             this._fetch_dataset();
-            e.halt();
         },
     }, {
         ATTRS: {
@@ -498,9 +498,23 @@ YUI.add('bookie-view', function (Y) {
             return Y.one('#bmark_row').get('text');
         },
 
+        /**
+         * If you click on a tag in the bookmark view filter the page to just
+         * that tag.
+         *
+         */
+        _tag_filter: function (e) {
+            e.preventDefault();
+            // find the tag we need to pass in the event
+            Y.fire('tag:add', {tag: e.currentTarget.get('text')});
+        },
+
         events: {
             '.delete': {
                 click: 'remove'
+            },
+            '.tag': {
+                click: '_tag_filter'
             }
         },
 
