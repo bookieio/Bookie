@@ -2,7 +2,7 @@
          plusplus: false, newcap: false, */
 /*global _: false, window: false, self: false, escape: false, */
 YUI.add('bookie-model', function (Y) {
-    var _ = Y.Lang.substitute,
+    var _ = Y.substitute,
         ns = Y.namespace('bookie');
 
     ns.Bmark = Y.Base.create('bookie-bmark',
@@ -149,5 +149,5 @@ YUI.add('bookie-model', function (Y) {
 
 
 }, '0.1.0' /* module version */, {
-    requires: ['base', 'model', 'model-list']
+    requires: ['base', 'model', 'model-list', 'substitute']
 });

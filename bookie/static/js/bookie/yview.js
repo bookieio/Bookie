@@ -2,7 +2,7 @@
          plusplus: false, newcap: false, */
 /*global _: false, window: false, self: false, escape: false, */
 YUI.add('bookie-view', function (Y) {
-    var _ = Y.Lang.substitute,
+    var _ = Y.substitute,
         ns = Y.namespace('bookie');
 
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
@@ -961,5 +961,5 @@ YUI.add('bookie-view', function (Y) {
     });
 }, '0.1.0', { requires: ['base',
     'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition',
-    'bookie-tagcontrol']
+    'bookie-tagcontrol', 'substitute']
 });

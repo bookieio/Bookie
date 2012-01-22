@@ -1,14 +1,34 @@
 <%
     date_fmt = "%m/%d/%Y"
+    combo = request.registry.settings['combo_server']
 %>
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <title>Bookie: ${self.title()}</title>
+        <script src="${combo}/combo/?yui/yui/yui-min.js&bookie/meta.js&yui/loader/loader-min.js&yui/substitute/substitute-min.js"></script>
         <link rel="stylesheet" type="text/css" href="/static/css/yui_reset_layout_grids_3.3.0.css">
         <link href='https://fonts.googleapis.com/css?family=Cabin&v2' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Cabin+Sketch:bold&text=Bookie' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
+        <script type="text/javascript"/>
+            YUI.GlobalConfig = {
+                combine: true,
+                base: '${combo}/combo?yui/',
+                comboBase: '${combo}/combo?',
+                root: 'yui/',
+                groups: {
+                    bookie: {
+                        combine: true,
+                        base: '${combo}/combo/?bookie',
+                        comboBase: '${combo}/combo/?',
+                        root: 'bookie/',
+                        // comes from including bookie/meta.js
+                        modules: YUI_MODULES,
+                    }
+                }
+            };
+        </script>
 
         % if hasattr(self, 'header'):
             ${self.header()}
@@ -72,12 +92,6 @@
                 </div>
             </div>
         </div>
-
-        <script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js"></script>
-        <script src="/static/js/bookie/yapi.js"></script>
-        <script src="/static/js/bookie/ymodel.js"></script>
-        <script src="/static/js/bookie/yview.js"></script>
-        <script src="/static/js/bookie/ytagcontrol.js"></script>
 
         % if hasattr(self, 'add_js'):
             ${self.add_js()}

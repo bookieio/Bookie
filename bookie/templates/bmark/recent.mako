@@ -11,8 +11,7 @@ import json
 %>
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('node', 'console', 'bookie-view', 'bookie-model',  function (Y) {
-
+        YUI().use('bookie-api', 'bookie-model', 'bookie-tagcontrol', 'bookie-view', function (Y) {
             <%
                 # we might have a user from the resource path that we want to keep tabs on
                 resource_username = username if username else False

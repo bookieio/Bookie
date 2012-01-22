@@ -19,6 +19,9 @@ def build_bookie():
     """Copy over the bookie related JS files to the build dir"""
     local('cp {0}/y*.js {1}/bookie'.format(BOOKIE_JS, BUILD_JS))
 
+    # for right now just copy the current files as -min without minifying them
+    local('python scripts/js/jsmin_all.py {0}/bookie'.format(BUILD_JS))
+
 
 def build_metadata():
     """Generate the YUI compatible module list for our application JS"""

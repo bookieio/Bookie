@@ -12,7 +12,7 @@ YUI.add('bookie-api', function (Y) {
 
     Y.namespace('bookie');
 
-    var _ = Y.Lang.substitute;
+    var _ = Y.substitute;
 
     /**
      * We want to wrap our ajax calls through the IO module.
@@ -119,7 +119,7 @@ YUI.add('bookie-api', function (Y) {
             }
 
             return this.get('url') +
-                Y.Lang.substitute(this.get('url_element'), data);
+                Y.substitute(this.get('url_element'), data);
         },
 
         /**
@@ -606,5 +606,5 @@ YUI.add('bookie-api', function (Y) {
 
 
 }, '0.1.0', {
-    requires: ['base', 'io', 'querystring-stringify-simple', 'json']
+    requires: ['base', 'io', 'querystring-stringify-simple', 'json', 'substitute']
 });
