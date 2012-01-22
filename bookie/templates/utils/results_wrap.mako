@@ -33,7 +33,8 @@
                 api_cfg: api_cfg,
                 current_user: username,
                 resource_user: resource_username,
-                phrase: '${phrase}'
+                phrase: '${phrase}',
+                with_content: ${'true' if with_content else 'false'}
             });
 
             if (pager) {

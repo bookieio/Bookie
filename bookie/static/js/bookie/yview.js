@@ -52,7 +52,7 @@ YUI.add('bookie-view', function (Y) {
 
             this.api.data.count = pager.get('count');
             this.api.data.page = pager.get('page');
-            this.api.data.with_content = pager.get('with_content');
+            this.api.data.with_content = this.get('with_content');
 
             this.api.call({
                 'success': function (data, request) {
@@ -243,6 +243,15 @@ YUI.add('bookie-view', function (Y) {
             results_key: {
                 value: 'bmarks',
                 readonly: true
+            },
+
+            /**
+             * Should the search view be searching the content of the bookmarks
+             * as well?
+             *
+             */
+            with_content: {
+                value: false
             }
         }
 
@@ -301,14 +310,23 @@ YUI.add('bookie-view', function (Y) {
                 this.set('phrase', cfg.phrase.split(' '));
                 this.api.set('phrase', this.get('phrase'));
             }
+
+            if (cfg.with_content) {
+                this.api.set('with_content', this.get('with_content'));
+            }
         },
 
         _search: function (e) {
-            debugger;
+            var phrase = Y.one('#search_phrase').get('value'),
+                with_content = Y.one('#with_content');
 
-            var phrase = Y.one('#bmark_search input').get('value');
+            // update our data base don the current form information
             this.set('phrase', phrase.split(' '));
+            this.set('with_content', with_content.get('checked'));
+
+            // then make sure our api calls are updated with that data
             this.api.set('phrase', this.get('phrase'));
+            this.api.set('with_content', this.get('with_content'));
 
             // update the pager back to page 1
             this.get('pager').set('page', 0);
@@ -326,9 +344,9 @@ YUI.add('bookie-view', function (Y) {
                 // UserBmarksAll vs BmarksAll
                 getter: function () {
                     if (this.get('resource_user')) {
-                        return Y.bookie.Api.route.Search;
-                    } else {
                         return Y.bookie.Api.route.UserSearch;
+                    } else {
+                        return Y.bookie.Api.route.Search;
                     }
                 }
             },
@@ -339,7 +357,8 @@ YUI.add('bookie-view', function (Y) {
                     return Y.Handlebars.compile(
                         Y.one('#bmark_search').get('text')
                     )({
-                        phrase: phrase ? phrase.join(' ') : ''
+                        phrase: phrase ? phrase.join(' ') : '',
+                        with_content: this.get('with_content')
                     });
                 }
             },

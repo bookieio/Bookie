@@ -532,6 +532,13 @@ YUI.add('bookie-api', function (Y) {
                     }
                 },
 
+                with_content: {
+                    value: false,
+                    setter: function(val, name) {
+                        this.data.with_content = val;
+                    }
+                },
+
                 url_element: {
                     value: '/bmarks/search',
                     getter: function () {
@@ -570,6 +577,13 @@ YUI.add('bookie-api', function (Y) {
                 phrase: {
                     valueFn: function () {
                         return [];
+                    }
+                },
+
+                with_content: {
+                    value: false,
+                    setter: function(val, name) {
+                        this.data.with_content = val;
                     }
                 },
 

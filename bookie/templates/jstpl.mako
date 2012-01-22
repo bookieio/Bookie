@@ -87,7 +87,13 @@
 
 <script type="text/template" id="bmark_search">
     <form id="bmark_search" name="bmark_search">
-            <input type="text" value="{{phrase}}"/>
+            <input type="text" id="search_phrase" value="{{phrase}}"/>
+            <input type="checkbox"
+                {{#if with_content}}checked="checked"{{/if}}
+                name="with_content"
+                id="with_content"
+                />
+                <label for="with_content">Content</label>
             <input type="submit"/>
     </form>
 </script>
