@@ -21,6 +21,7 @@ from admin import *
 from docs import *
 from database import *
 from development import *
+from js import *
 
 try:
     from environments import *
