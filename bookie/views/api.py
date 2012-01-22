@@ -229,7 +229,8 @@ def bmark_recent(request):
     count = int(params.get('count', RESULTS_MAX))
     with_content = True if 'with_content' in params and params['with_content'] != "false" else False
 
-    username = request.user.username if request.user else None
+    # we only want to do the username if the username is in the url
+    username = rdict.get('username', None)
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
