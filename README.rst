@@ -10,3 +10,8 @@ Delicious.
 
 Check out the main site for documentation on features, how to get started
 installing, and where we're heading from here.
+
+You can check out the Trello board to see what stuff is in the works atm and
+what the status of your favorite pet feature is:
+
+https://trello.com/board/bookie/4f18c1ac96c79ec27105f228
