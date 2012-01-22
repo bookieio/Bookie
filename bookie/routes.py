@@ -128,8 +128,11 @@ def build_routes(config):
                      "/api/v1/{username}/bmark/{hash_id}",
                      request_method="DELETE")
 
-    config.add_route("api_tag_complete",
+    config.add_route("api_tag_complete_user",
                      "/api/v1/{username}/tags/complete")
+    config.add_route("api_tag_complete",
+                     "/api/v1/tags/complete")
+
 
     # admin api calls
     config.add_route("api_admin_readable_todo",

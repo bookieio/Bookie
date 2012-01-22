@@ -459,7 +459,8 @@ def search_results(request):
 
 
 @view_config(route_name="api_tag_complete", renderer="json")
-@api_auth('api_key', UserMgr.get)
+@view_config(route_name="api_tag_complete_user", renderer="json")
+@api_auth('api_key', UserMgr.get, anon=True)
 def tag_complete(request):
     """Complete a tag based on the given text
 
@@ -468,7 +469,11 @@ def tag_complete(request):
 
     """
     params = request.GET
-    username = request.user.username
+
+    if request.user:
+        username = request.user.username
+    else:
+        username = None
 
     if 'current' in params and params['current'] != "":
         current_tags = params['current'].split()
