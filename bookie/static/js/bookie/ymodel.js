@@ -5,6 +5,8 @@ YUI.add('bookie-model', function (Y) {
     var _ = Y.substitute,
         ns = Y.namespace('bookie');
 
+   var TZ = '-05:00';
+
     ns.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
         [],
@@ -56,7 +58,7 @@ YUI.add('bookie-model', function (Y) {
                 'total_clicks': {
                     value: 0
                 },
-                'url': { 
+                'url': {
                     value: ''
                 },
                 'username': {
@@ -66,13 +68,13 @@ YUI.add('bookie-model', function (Y) {
                 'stored': {
                     // we need to turn a string from json into a Date object
                     setter: function (val, name) {
-                        return new Date(val);
+                        return new Date(val.replace(' ', 'T') + TZ);
                     }
                 },
                 'updated': {
                     // we need to turn a string from json into a Date object
                     setter: function (val, name) {
-                        return new Date(val);
+                        return new Date(val.replace(' ', 'T') + TZ);
                     }
                 },
 
@@ -108,9 +110,8 @@ YUI.add('bookie-model', function (Y) {
                     }
                 },
            },
-
-        });
-
+        }
+    );
 
     ns.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
         model: Y.bookie.Bmark,

@@ -51,10 +51,10 @@ YUI({
                 var prop_list = ['bid', 'hash_id', 'description', 'extended'],
                     prop_dates = {
                         stored: String(
-                            new Date("2011-11-10 20:57:40.273044")
+                            new Date("2011-11-10 20:57:40.273044-05:00".replace(' ', 'T'))
                         ),
                         updated: String(
-                            new Date("2011-11-11 20:57:40.273044")
+                            new Date("2011-11-11 20:57:40.273044-05:00".replace(' ', 'T'))
                         ),
                         dateinfo: "11/10",
                         prettystored: "11/10/2011 20:57"
@@ -109,7 +109,6 @@ YUI({
                 bmark.remove();
                 A.isTrue(hit, "We should have hit the sync with delete");
             }
-
         }),
 
         modellist_test = new Y.Test.Case({

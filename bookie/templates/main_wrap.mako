@@ -23,6 +23,7 @@
                         base: '${combo}/combo/?bookie',
                         comboBase: '${combo}/combo/?',
                         root: 'bookie/',
+                        // filter: 'raw',
                         // comes from including bookie/meta.js
                         modules: YUI_MODULES,
                     }
