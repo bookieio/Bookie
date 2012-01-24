@@ -26,11 +26,9 @@
            </a>
        {{/if}}
     </div>
-
     <div class="user">
         <a href="/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
     </div>
-
     <div class="url" title="{{url}}">
         <a href="/bmark/readable/{{hash_id}}"
            title="View readable content" alt="View readable content">

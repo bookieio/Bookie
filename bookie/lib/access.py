@@ -269,9 +269,8 @@ class api_auth():
             if username is not None and request.user.username == username:
                     return action_(*args, **kwargs)
 
-        # if there is no username in the url, it's a public call, allow it
-        # through if the route supports anon request
-        if username is None and self.anon:
+        # if this api call accepts anon requests then let it through
+        if self.anon:
             return action_(*args, **kwargs)
 
         # otherwise, we're done, you're not allowed

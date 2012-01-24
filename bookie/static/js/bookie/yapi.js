@@ -111,18 +111,12 @@ YUI.add('bookie-api', function (Y) {
         build_url: function (data) {
             // make sure the username is in the config as well
             if (Y.Lang.isObject(data)) {
-                if (this.get('username') == this.get('resource')) {
-                    data.username = this.get('username');
-                } else {
-                    data.resource = this.get('resource');
-                }
+                data.username = this.get('username');
+                data.resource = this.get('resource');
             } else {
                 var data = {};
-                if (this.get('username') == this.get('resource')) {
-                    data.username = this.get('username');
-                } else {
-                    data.resource = this.get('resource');
-                };
+                data.username = this.get('username');
+                data.resource = this.get('resource');
             }
 
             return this.get('url') +
@@ -162,13 +156,6 @@ YUI.add('bookie-api', function (Y) {
                         api_key: this.get('api_key')
                     };
                 }
-            }
-
-            // if the resource and the username don't match, update the config
-            // to be an anonymous api request
-            if (this.get('resource') !== this.get('username')) {
-                delete base_cfg.data.api_key;
-                delete base_cfg.data.username;
             }
 
             return base_cfg;
