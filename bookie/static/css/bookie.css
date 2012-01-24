@@ -131,7 +131,8 @@ a {
   display: inline-block;
   width: 9em;
   overflow: hidden;
-  text-align: left; }
+  text-align: right;
+  padding-right: 1em; }
   .user:hover {
     opacity: 1; }
 
