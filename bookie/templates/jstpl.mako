@@ -10,7 +10,6 @@
             title="{{extended}}">{{description}}</a>
     </div>
 
-
     <div class="actions">
         <span class="icon" title="{{prettystored}}">\</span>
         {{#if owner}}
@@ -26,9 +25,11 @@
            </a>
        {{/if}}
     </div>
-    <div class="user">
-        <a href="/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
-    </div>
+    {{#unless owner}}
+        <div class="user">
+            <a href="/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
+        </div>
+    {{/unless}}
     <div class="url" title="{{url}}">
         <a href="/bmark/readable/{{hash_id}}"
            title="View readable content" alt="View readable content">
