@@ -24,7 +24,7 @@ def dirwalk(dir):
 
 def is_min(filename):
     """Check if this file is alrady a minified file"""
-    return re.search("^(min).js$", filename)
+    return re.search("min.js$", filename)
 
 def minify(filename):
     """Given a filename, handle minifying it as -min.js"""

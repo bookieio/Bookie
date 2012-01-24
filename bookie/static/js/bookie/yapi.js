@@ -111,10 +111,17 @@ YUI.add('bookie-api', function (Y) {
         build_url: function (data) {
             // make sure the username is in the config as well
             if (Y.Lang.isObject(data)) {
-                data.username = this.get('username');
+                if (this.get('username') == this.get('resource')) {
+                    data.username = this.get('username');
+                } else {
+                    data.resource = this.get('resource');
+                }
             } else {
-                data = {
-                    username: this.get('username')
+                var data = {};
+                if (this.get('username') == this.get('resource')) {
+                    data.username = this.get('username');
+                } else {
+                    data.resource = this.get('resource');
                 };
             }
 
@@ -155,6 +162,13 @@ YUI.add('bookie-api', function (Y) {
                         api_key: this.get('api_key')
                     };
                 }
+            }
+
+            // if the resource and the username don't match, update the config
+            // to be an anonymous api request
+            if (this.get('resource') !== this.get('username')) {
+                delete base_cfg.data.api_key;
+                delete base_cfg.data.username;
             }
 
             return base_cfg;
@@ -294,18 +308,32 @@ YUI.add('bookie-api', function (Y) {
         }, {
             ATTRS: {
                 url_element: {
-                    value: '/{username}/bmarks',
+                    value: '/{resource}/bmarks',
                     getter: function () {
+                        // if there is no resource, use the username as the
+                        // resource
+                        if (!this.get('resource')) {
+                            this.set('resource', this.get('username'));
+                        }
+
                         if (this.get('tags')) {
                             return [
-                                '/{username}/bmarks',
+                                '/{resource}/bmarks',
                                 this.get('tags').join('/')
                             ].join('/');
                         } else {
-                            return '/{username}/bmarks';
+                            return '/{resource}/bmarks';
                         }
-
                     }
+                },
+
+                username: {
+
+
+                },
+
+                resource: {
+
                 }
             }
         }

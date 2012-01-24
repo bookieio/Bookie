@@ -282,6 +282,9 @@ YUI.add('bookie-view', function (Y) {
                 // UserBmarksAll vs BmarksAll
                 getter: function () {
                     if (this.get('resource_user')) {
+                        var cfg = this.get('api_cfg');
+                        cfg.resource = this.get('resource_user');
+                        this.set('api_cfg', cfg);
                         return Y.bookie.Api.route.UserBmarksAll;
                     } else {
                         return Y.bookie.Api.route.BmarksAll;
