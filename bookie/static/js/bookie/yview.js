@@ -314,6 +314,19 @@ YUI.add('bookie-view', function (Y) {
             if (cfg.with_content) {
                 this.api.set('with_content', this.get('with_content'));
             }
+
+            // if the tag:add event is fired, then we want to add that tag to
+            // our search and reseach
+            Y.on('tag:add', function (e) {
+                // the tag will be in the event
+                var input = Y.one('#search_phrase'),
+                    current = Y.one('#search_phrase').get('value');
+
+                input.set('value', [current, e.tag].join(' '));
+
+                // total hack to reuse the _search method
+                this._search({preventDefault: function () {}});
+            }, this);
         },
 
         _search: function (e) {
