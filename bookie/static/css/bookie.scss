@@ -217,6 +217,17 @@ a {
     }
 }
 
+.user {
+    float: right;
+    opacity: .5;
+    display: inline-block;
+    padding-right: 2em;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
 .superblytagitems {
     li {
         margin: 3px 3px 0px 3px;

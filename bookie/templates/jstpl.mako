@@ -10,6 +10,7 @@
             title="{{extended}}">{{description}}</a>
     </div>
 
+
     <div class="actions">
         <span class="icon" title="{{prettystored}}">\</span>
         {{#if owner}}
@@ -24,6 +25,10 @@
                <span class="icon">*</span>
            </a>
        {{/if}}
+    </div>
+
+    <div class="user">
+        <a href="/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
     </div>
 
     <div class="url" title="{{url}}">

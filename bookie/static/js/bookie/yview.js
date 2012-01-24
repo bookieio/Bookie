@@ -73,7 +73,6 @@ YUI.add('bookie-view', function (Y) {
                                 );
 
                             b.api_cfg = that.get('api_cfg');
-
                             new_nodes.push(n.render());
                             return b;
                         })
