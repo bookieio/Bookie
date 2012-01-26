@@ -217,6 +217,7 @@ def bmark_remove(request):
 @view_config(route_name="api_bmarks", renderer="json")
 @view_config(route_name="api_bmarks_user", renderer="json")
 @view_config(route_name="api_bmarks_tags", renderer="json")
+@view_config(route_name="api_bmarks_user_tags", renderer="json")
 @api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
