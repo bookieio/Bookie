@@ -7,21 +7,16 @@ JS_META_SCRIPT = scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
 
 js: $(JS_BUILD_PATH)/bookie/meta.js $(JS_BUILD_PATH)/yui
-
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
-
 $(JS_BUILD_PATH)/bookie/meta.js: $(JS_BUILD_PATH)/bookie/y*-min.js
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(BOOKIE_JS)/ -o $(JS_BUILD_PATH)/bookie/meta.js
 $(JS_BUILD_PATH)/bookie/y%-min.js: $(JS_BUILD_PATH)/bookie $(JS_BUILD_PATH)/bookie/y%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/bookie
-
 $(JS_BUILD_PATH)/bookie/y%.js: $(BOOKIE_JS)/y%.js
 	cp $? $(JS_BUILD_PATH)/bookie/
-
 $(JS_BUILD_PATH)/bookie:
 	mkdir $(JS_BUILD_PATH)/bookie
-
 $(JS_BUILD_PATH)/yui:
 	mkdir $(JS_BUILD_PATH)/yui
 	mkdir /tmp/yui
@@ -45,10 +40,12 @@ stop: stop_combo stop_css stop_app
 stop_dev: stop stop_livereload
 stop_combo:
 	kill -9 `cat combo.pid`
+	rm combo.pid
 stop_css:
 	killall -9 sass
 stop_app:
 	kill -9 `cat paster.pid`
+	rm paster.pid
 stop_livereload:
 	killall livereload
 
