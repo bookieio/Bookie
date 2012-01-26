@@ -146,15 +146,24 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     });
 
                 // keep this up
-                this.get('tags').push(new_tag);
+                var unique = true;
+                Y.Array.each(this.get('tags'), function (t) {
+                    if (t.get('text') == current_text) {
+                        unique = false;
+                    }
+                });
 
-                // add a new li element before the input one
-                parent.get('parentNode').insertBefore(new_tag.ui, parent);
+                if (unique) {
+                    this.get('tags').push(new_tag);
+                    // add a new li element before the input one
+                    parent.get('parentNode').insertBefore(new_tag.ui, parent);
 
-                // fire an event that a new tag was added
-                if (!silent) {
-                    this.set('events_waiting', true);
+                    // fire an event that a new tag was added
+                    if (!silent) {
+                        this.set('events_waiting', true);
+                    }
                 }
+
             }
         },
 
@@ -335,6 +344,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     var last_tag = this.get('tags').pop();
                     last_tag.destroy();
                 }
+                return;
             }
 
             // continue on with what you were doing
@@ -348,6 +358,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 // new one
                 that._added_tag();
                 this._sync_tags();
+                return;
             }
         },
 
