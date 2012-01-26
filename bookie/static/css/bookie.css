@@ -436,7 +436,8 @@ fieldset legend {
   min-height: 21px;
   padding: .2em;
   width: 25em;
-  float: left; }
+  float: left;
+  cursor: text; }
 .yui3-bookie-tagcontrol li {
   cursor: pointer;
   background-color: #eeeeee;
