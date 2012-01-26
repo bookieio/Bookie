@@ -1,7 +1,6 @@
-# makefile to help automate tasks in bookie
+# Makefile to help automate tasks in bookie
 
-# jsbuild: jsbuild_bookie
-
+BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
@@ -33,23 +32,29 @@ $(JS_BUILD_PATH)/yui:
 
 
 run: run_combo run_css run_app
+run_dev: run run_livereload
 run_combo:
 	gunicorn -p combo.pid combo:application &
 run_css:
 	sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &
 run_app:
-	paster serve --reload --pid-file=paster.pid rick.ini &
+	paster serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
+run_livereload:
+	livereload
 
 stop: stop_combo stop_css stop_app
+stop_dev: stop stop_livereload
 stop_combo:
 	kill -9 `cat combo.pid`
 stop_css:
 	killall -9 sass
 stop_app:
 	kill -9 `cat paster.pid`
+stop_livereload:
+	killall livereload
 
 clean: clean_js
 
-.phone: clean clean_js $(JS_BUILD_PATH)/bookie/meta.js \
-	run run_combo run_css run_app \
-	stop stop_app stop_css stop_combo
+.PHONY: clean clean_js $(JS_BUILD_PATH)/bookie/meta.js \
+	run run_dev run_combo run_css run_app run_livereload \
+	stop stop_dev stop_app stop_css stop_combo stop_livereload
