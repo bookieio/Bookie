@@ -173,7 +173,8 @@ form.bmark input[type=submit] {
     padding: 5px;
     border: 1px solid #333333; }
   .form input[type=submit] {
-    padding: 5px; }
+    padding: 5px;
+    width: 5em; }
   .form label {
     width: 8em;
     text-align: right;
