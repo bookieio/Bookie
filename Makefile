@@ -12,8 +12,7 @@ clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
 
 $(JS_BUILD_PATH)/bookie/meta.js: $(JS_BUILD_PATH)/bookie/y*-min.js
-	$(JS_META_SCRIPT) -n yui_modules -s $(BOOKIE_JS)/y* -o $(JS_BUILD_PATH)/bookie/meta.js
-
+	$(JS_META_SCRIPT) -n YUI_MODULES -s $(BOOKIE_JS)/ -o $(JS_BUILD_PATH)/bookie/meta.js
 $(JS_BUILD_PATH)/bookie/y%-min.js: $(JS_BUILD_PATH)/bookie $(JS_BUILD_PATH)/bookie/y%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/bookie
 
@@ -27,7 +26,7 @@ $(JS_BUILD_PATH)/yui:
 	mkdir $(JS_BUILD_PATH)/yui
 	mkdir /tmp/yui
 	git clone --depth 1 $(YUIGIT) /tmp/yui
-	cp -r /tmp/yui/build $(JS_BUILD_PATH)/yui
+	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/yui
 	rm -rf /tmp/yui
 
 
