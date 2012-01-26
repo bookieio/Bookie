@@ -12,7 +12,7 @@
         auth_username = None
         api_key = None
 %>
-<div class="yui3-g data_list">
+<div class="yui3-g">
     <div class="yui3-u-1">
     <form
         % if new:
@@ -20,7 +20,7 @@
         % else:
             action="${request.route_url('user_bmark_edit_error', username=request.user.username, hash_id=bmark.hash_id)}"
         % endif
-        method="post" class="login form bmark">
+        method="post" class="login form">
         <div class="heading">${"Add" if bmark.hashed.url == "" else "Edit"} bookmark</div>
         % if message:
             <p class="error">${message}</p>
@@ -38,7 +38,7 @@
                        placeholder="description..."/>
             </li>
             <li class="form_tags">
-                <label style="height: 27px;">Tags</label>
+                <label>Tags</label>
                 <input type="text" id="tags" name="tags"
                        value="${bmark.tag_str if bmark.tag_str else ''}"
                        placeholder="add tags..."/>

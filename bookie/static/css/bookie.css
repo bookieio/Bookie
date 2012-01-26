@@ -161,15 +161,6 @@ form.bmark input[type=text], form.bmark.bmark input[type="url"] {
   border: 1px solid #333333; }
 form.bmark input[type=submit] {
   padding: 5px; }
-form.bmark .superblyTagfieldDiv {
-  display: inline-block;
-  vertical-align: bottom;
-  width: 34.5em; }
-  form.bmark .superblyTagfieldDiv input[type=text] {
-    border: none;
-    padding: none; }
-  form.bmark .superblyTagfieldDiv li.superblyTagInputItem {
-    padding: 0; }
 
 .form {
   background-color: #e6e6e6;
@@ -177,6 +168,12 @@ form.bmark .superblyTagfieldDiv {
   border-radius: 5px;
   margin: 1em;
   padding: .5em; }
+  .form input[type=text], .form input[type="url"] {
+    width: 35em;
+    padding: 5px;
+    border: 1px solid #333333; }
+  .form input[type=submit] {
+    padding: 5px; }
   .form label {
     width: 8em;
     text-align: right;
@@ -480,6 +477,6 @@ fieldset legend {
 form ul .yui3-bookie-tagcontrol {
   display: inline-block; }
   form ul .yui3-bookie-tagcontrol ul {
-    width: 20em;
+    width: 34em;
     display: inline-block;
     border: 1px solid #000; }
