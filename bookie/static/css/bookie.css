@@ -479,4 +479,5 @@ form ul .yui3-bookie-tagcontrol {
   form ul .yui3-bookie-tagcontrol ul {
     width: 34em;
     display: inline-block;
-    border: 1px solid #000; }
+    border: 1px solid #000;
+    float: none; }
