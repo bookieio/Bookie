@@ -1,4 +1,5 @@
 <%inherit file="/main_wrap.mako" />
+<%namespace file="func.mako" import="api_setup"/>
 <%def name="title()">${"Add" if bmark.hashed.url == "" else "Edit"} bookmark</%def>
 <%
     # we might have a user from the resource path that we want to keep tabs on
@@ -86,7 +87,9 @@
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
         YUI().use('node', 'console', 'bookie-view',  function (Y) {
+            ${api_setup(request.user)}
             var tagcontrol = new Y.bookie.TagControl({
+               api_cfg: api_cfg,
                'srcNode': Y.one('#tags'),
                'with_submit': false
             });
