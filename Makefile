@@ -5,6 +5,7 @@ BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
+YUITAG = v3.5.0pr1
 
 js: $(JS_BUILD_PATH)/bookie/meta.js $(JS_BUILD_PATH)/yui
 clean_js:
@@ -21,6 +22,7 @@ $(JS_BUILD_PATH)/yui:
 	mkdir $(JS_BUILD_PATH)/yui
 	mkdir /tmp/yui
 	git clone --depth 1 $(YUIGIT) /tmp/yui
+	cd /tmp/yui && git checkout $(YUITAG)
 	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/yui
 	rm -rf /tmp/yui
 

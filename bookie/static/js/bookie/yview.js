@@ -39,6 +39,13 @@ YUI.add('bookie-view', function (Y) {
             this.api = new api_callable(this.get('api_cfg'));
         },
 
+        _init_indicator: function () {
+            this.indicator = new Y.bookie.Indicator({
+                target: Y.one('.bmarks')
+            });
+            this.indicator.render();
+        },
+
         /*
          * Fetch a dataset based on our current data
          *
@@ -49,6 +56,7 @@ YUI.add('bookie-view', function (Y) {
 
             // make sure we update the api paging information with the latest
             // from our pager
+            this.indicator.show();
 
             this.api.data.count = pager.get('count');
             this.api.data.page = pager.get('page');
@@ -83,6 +91,9 @@ YUI.add('bookie-view', function (Y) {
 
                     // update the pagers
                     that._update_pagerview();
+
+                    // finally stop the indicator from spinny spinny
+                    that.indicator.hide();
                }
            });
         },
@@ -156,6 +167,7 @@ YUI.add('bookie-view', function (Y) {
             this.cTemplate = Y.Handlebars.compile(this._get_template());
             this._init_pager();
             this._init_api();
+            this._init_indicator();
         },
 
         render: function () {
@@ -989,6 +1001,6 @@ YUI.add('bookie-view', function (Y) {
         }
     });
 }, '0.1.0', { requires: ['base',
-    'view', 'bookie-model', 'bookie-api', 'handlebars', 'transition',
+    'view', 'bookie-model', 'bookie-api', 'bookie-indicator', 'handlebars', 'transition',
     'bookie-tagcontrol', 'substitute']
 });

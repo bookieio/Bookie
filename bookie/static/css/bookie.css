@@ -483,3 +483,19 @@ form ul .yui3-bookie-tagcontrol {
     display: inline-block;
     border: 1px solid #000;
     float: none; }
+
+.yui3-bookie-indicator {
+  background-color: white;
+  /* for css3 browsers we can limit opacity via alpha channel */
+  background-color: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  z-index: 999; }
+
+.yui3-bookie-indicator-content {
+  text-align: center; }
+
+.yui3-bookie-indicator img {
+  margin-top: 8em; }
+
+.yui3-bookie-indicator-hidden {
+  visibility: hidden; }
