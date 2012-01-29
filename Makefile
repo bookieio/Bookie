@@ -7,25 +7,26 @@ JS_META_SCRIPT = scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr1
 
-js: $(JS_BUILD_PATH)/bookie/meta.js $(JS_BUILD_PATH)/yui
+js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
-$(JS_BUILD_PATH)/bookie/meta.js: $(JS_BUILD_PATH)/bookie/y*-min.js
-	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/bookie/ \
-		-o $(JS_BUILD_PATH)/bookie/meta.js \
+	rm -rf /tmp/yui
+$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/y*-min.js
+	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
+		-o $(JS_BUILD_PATH)/b/meta.js \
 		-x -min.js$
-$(JS_BUILD_PATH)/bookie/y%-min.js: $(JS_BUILD_PATH)/bookie $(JS_BUILD_PATH)/bookie/y%.js
-	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/bookie
-$(JS_BUILD_PATH)/bookie/y%.js: $(BOOKIE_JS)/y%.js
-	cp $? $(JS_BUILD_PATH)/bookie/
-$(JS_BUILD_PATH)/bookie:
-	mkdir $(JS_BUILD_PATH)/bookie
-$(JS_BUILD_PATH)/yui:
-	mkdir $(JS_BUILD_PATH)/yui
+$(JS_BUILD_PATH)/b/y%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/y%.js
+	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
+$(JS_BUILD_PATH)/b/y%.js: $(BOOKIE_JS)/y%.js
+	cp $? $(JS_BUILD_PATH)/b/
+$(JS_BUILD_PATH)/b:
+	mkdir $(JS_BUILD_PATH)/b
+$(JS_BUILD_PATH)/y:
+	mkdir $(JS_BUILD_PATH)/y
 	mkdir /tmp/yui
 	git clone --depth 1 $(YUIGIT) /tmp/yui
 	cd /tmp/yui && git checkout $(YUITAG)
-	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/yui
+	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/y
 	rm -rf /tmp/yui
 
 
@@ -55,6 +56,6 @@ stop_livereload:
 
 clean: clean_js
 
-.PHONY: clean clean_js $(JS_BUILD_PATH)/bookie/meta.js \
+.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js \
 	run run_dev run_combo run_css run_app run_livereload \
 	stop stop_dev stop_app stop_css stop_combo stop_livereload
