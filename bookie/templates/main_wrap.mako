@@ -6,7 +6,7 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <title>Bookie: ${self.title()}</title>
-        <script src="${combo}/combo/?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
+        <script src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
         <link rel="stylesheet" type="text/css" href="/static/css/yui_reset_layout_grids_3.3.0.css">
         <link
         href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2' rel='stylesheet' type='text/css'>
@@ -15,14 +15,14 @@
         <script type="text/javascript"/>
             YUI.GlobalConfig = {
                 combine: true,
-                base: '${combo}/combo/?y/',
-                comboBase: '${combo}/combo/?',
+                base: '${combo}/combo?y/',
+                comboBase: '${combo}/combo?',
                 root: 'y/',
                 groups: {
                     bookie: {
                         combine: true,
-                        base: '${combo}/combo/?b',
-                        comboBase: '${combo}/combo/?',
+                        base: '${combo}/combo?b',
+                        comboBase: '${combo}/combo?',
                         root: 'b/',
                         // filter: 'raw',
                         // comes from including bookie/meta.js
