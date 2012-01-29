@@ -6,8 +6,10 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <title>Bookie: ${self.title()}</title>
-        <script src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
-        <link rel="stylesheet" type="text/css" href="/static/css/yui_reset_layout_grids_3.3.0.css">
+        <script
+        src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="${combo}/combo/?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css">
         <link
         href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2' rel='stylesheet' type='text/css'>
         <!--<link href='https://fonts.googleapis.com/css?family=Cabin+Sketch:bold&text=Bookie' rel='stylesheet' type='text/css'>-->
