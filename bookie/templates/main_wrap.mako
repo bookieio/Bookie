@@ -14,8 +14,8 @@
         <script type="text/javascript"/>
             YUI.GlobalConfig = {
                 combine: true,
-                base: '${combo}/combo?y/',
-                comboBase: '${combo}/combo?',
+                base: '${combo}/combo/?y/',
+                comboBase: '${combo}/combo/?',
                 root: 'y/',
                 groups: {
                     bookie: {
