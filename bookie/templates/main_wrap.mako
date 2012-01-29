@@ -13,7 +13,6 @@
         href="${combo}/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css">
         <link
         href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2' rel='stylesheet' type='text/css'>
-        <!--<link href='https://fonts.googleapis.com/css?family=Cabin+Sketch:bold&text=Bookie' rel='stylesheet' type='text/css'>-->
         <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
         <script type="text/javascript"/>
             YUI.GlobalConfig = {
@@ -102,5 +101,9 @@
         % if hasattr(self, 'add_js'):
             ${self.add_js()}
         % endif
+
+        <%namespace file="deployfunc.mako" import="installspecific"/>
+        ${installspecific()|n}
     </body>
 </html>
+

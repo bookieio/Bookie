@@ -1,12 +1,4 @@
-@font-face {
-  font-family: 'PictosRegular';
-  src: url("http://uploads.mitechie.com/webfonts/Pictos-webfont.eot");
-  src: url("http://uploads.mitechie.com/webfonts/Pictos-webfont.eot?#iefix") format("embedded-opentype"), url("http://uploads.mitechie.com/webfonts/Pictos-webfont.woff") format("woff"), url("http://uploads.mitechie.com/webfonts/Pictos-webfont.ttf") format("truetype"), url("http://uploads.mitechie.com/webfonts/Pictos-webfont.svg#PictosRegular") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-
 .icon {
-  font-family: "PictosRegular";
   color: #990000;
   vertical-align: top;
   cursor: pointer; }
