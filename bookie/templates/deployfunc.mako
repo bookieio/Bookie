@@ -3,7 +3,7 @@
 such -->
 <%
     import os
-    fname = 'installspecific.txt'
+    fname = request.registry.settings['installspecific']
     if os.path.exists(fname):
         return open(fname).read()
 %>
