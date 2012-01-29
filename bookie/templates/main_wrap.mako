@@ -20,6 +20,7 @@
                 combine: true,
                 base: '${combo}/combo?y/',
                 comboBase: '${combo}/combo?',
+                maxURLLength: 1500,
                 root: 'y/',
                 groups: {
                     bookie: {
