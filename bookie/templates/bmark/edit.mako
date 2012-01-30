@@ -94,6 +94,17 @@
                'with_submit': false
             });
             tagcontrol.render();
+
+            // so now we need to bind up the prev tags to add to our tag
+            // control as well
+            Y.all('.prev_tag').on('click', function (ev) {
+                ev.preventDefault();
+                var target = ev.currentTarget;
+                Y.fire('tag:add', {
+                    tag: target.get('text')
+                });
+                target.remove();
+            });
         });
     </script>
 </%def>
