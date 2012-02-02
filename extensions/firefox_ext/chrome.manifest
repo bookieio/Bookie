@@ -1,9 +1,0 @@
-content bookie chrome/content/
-overlay	chrome://browser/content/browser.xul chrome://bookie/content/bookie.xul
-
-skin bookie bookie-skin chrome/skin/all/
-style chrome://global/content/customizeToolbar.xul chrome://bookie/skin/bookie.css
-
-skin bookie-os bookie-skin-os chrome/skin/unix/
-skin bookie-os bookie-skin-os chrome/skin/osx/ os=Darwin
-style chrome://global/content/customizeToolbar.xul chrome://bookie-os/skin/bookie.css
