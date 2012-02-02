@@ -11,6 +11,7 @@ js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
 	rm -rf /tmp/yui
+
 $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/y*-min.js
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
@@ -31,7 +32,7 @@ $(JS_BUILD_PATH)/y:
 
 
 run: run_combo run_css run_app
-run_dev: run run_livereload
+run_dev: run autojsbuild
 run_combo:
 	gunicorn -p combo.pid combo:application &
 run_css:
@@ -40,9 +41,11 @@ run_app:
 	paster serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
 	livereload
+autojsbuild:
+	python scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
 stop: stop_combo stop_css stop_app
-stop_dev: stop stop_livereload
+stop_dev: stop
 stop_combo:
 	kill -9 `cat combo.pid`
 	rm combo.pid
@@ -58,4 +61,5 @@ clean: clean_js
 
 .PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js \
 	run run_dev run_combo run_css run_app run_livereload \
-	stop stop_dev stop_app stop_css stop_combo stop_livereload
+	stop stop_dev stop_app stop_css stop_combo stop_livereload \
+	autojsbuild
