@@ -35,7 +35,7 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
         test_target_attribute: function () {
             // Constrain attribute should be set from passing in target.
             var test_node = Y.one('#' + this.div_id);
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: test_node
             });
             this.indicator.render();
@@ -49,7 +49,7 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
             // We need to create some nesting to really ensure
             // the test is good.
             this.div.appendChild(child_div);
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: child_div
             });
             this.indicator.render();
@@ -62,7 +62,7 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
         test_indicator_has_loading_icon: function () {
             // The indicator should have a loading image added
             // to the contentBox.
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: this.div
             });
             this.indicator.render();
@@ -73,31 +73,31 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
                 img.get('src').indexOf('/static/images/spinner-big.gif'));
         },
 
-        test_indiciator_starts_invisible: function () {
+        test_indicator_starts_invisible: function () {
             // Indicator widgets should start hidden.
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: this.div
             });
             this.indicator.render();
             Y.Assert.isFalse(this.indicator.get('visible'));
             Y.Assert.isTrue(this.indicator.get('boundingBox').hasClass(
-                'yui3-bookie-indicator-hidden'));
+                'yui3-bookie.indicator-hidden'));
         },
 
         test_showing_overlay: function() {
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: Y.one('#' + this.div_id)
             });
             this.indicator.render();
             this.indicator.show();
             Y.Assert.isTrue(this.indicator.get('visible'));
             Y.Assert.isFalse(this.indicator.get('boundingBox').hasClass(
-                'yui3-bookie-indicator-hidden'));
+                'yui3-bookie.Indicator-hidden'));
         },
 
         test_size_matches_on_show: function() {
             // Indicator should always resize when target changes size.
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: this.div
             });
             this.indicator.render();
@@ -123,7 +123,7 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
 
         test_position_matches_on_set_busy: function() {
             // Indicator should always reposition itself before setBusy.
-            this.indicator = new Y.bookie.indicator({
+            this.indicator = new Y.bookie.Indicator({
                 target: this.div
             });
             this.indicator.render();
