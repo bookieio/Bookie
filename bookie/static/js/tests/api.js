@@ -164,6 +164,7 @@ YUI({
                 API_CFG = {
                     url: 'http://127.0.0.1:6543/api/v1',
                     username: 'admin',
+                    resource: 'admin',
                     api_key: '2dcf75460cb5'
                 },
                 api = new Y.bookie.Api.route.UserBmarksAll(API_CFG);
