@@ -481,7 +481,6 @@ YUI.add('bookie-view', function (Y) {
                 valueFn: function () {
                     return Y.Node.create(this.container_html);
                 }
-
             },
 
             id: {
