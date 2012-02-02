@@ -267,6 +267,7 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
 
         test_view_renders: function () {
             var data_list = new Y.bookie.BmarkListView();
+
             Y.one('.data_list').appendChild(data_list.render());
 
             list = Y.all('.bmark_list');

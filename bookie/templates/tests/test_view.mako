@@ -5,12 +5,14 @@
     <script src="/static/js/bookie/ymodel.js"></script>
     <script src="/static/js/bookie/yapi.js"></script>
     <script src="/static/js/bookie/yview.js"></script>
+    <script src="/static/js/bookie/yindicator.js"></script>
     <title>View Tests</title>
 </head>
 <body class="yui3-skin-sam">
     <div class="view"></div>
     <div class="pager_test"></div>
     <div class="data_list"></div>
+    <div class="bmarks"></div>
 
     <div id="#log"></div>
     <script src="/static/js/tests/view.js"></script>

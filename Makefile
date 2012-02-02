@@ -5,7 +5,7 @@ BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
-YUITAG = v3.5.0pr1
+YUITAG = v3.5.0pr2
 
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:

@@ -45,6 +45,7 @@ YUI.add('bookie-indicator', function (Y) {
          * @method _renderUI
          */
          _renderUI: function() {
+             debugger;
              var local_parent = this.get('target').get('parentNode');
              this._renderBoxClassNames();
              this._renderBox(local_parent);
