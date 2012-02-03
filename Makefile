@@ -4,8 +4,13 @@ BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
+CHROME_BUILD = extensions/chrome_ext/lib
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
+
+CSS = bookie/static/css/bookie.css
+
+all: js css
 
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:
@@ -20,6 +25,7 @@ $(JS_BUILD_PATH)/b/y%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/y%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
 $(JS_BUILD_PATH)/b/y%.js: $(BOOKIE_JS)/y%.js
 	cp $? $(JS_BUILD_PATH)/b/
+	cp $? $(CHROME_BUILD)
 $(JS_BUILD_PATH)/b:
 	mkdir $(JS_BUILD_PATH)/b
 $(JS_BUILD_PATH)/y:
@@ -29,6 +35,13 @@ $(JS_BUILD_PATH)/y:
 	cd /tmp/yui && git checkout $(YUITAG)
 	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/y
 	rm -rf /tmp/yui
+
+css: chrome_css
+chrome_css:
+	cp $(CSS) $(CHROME_BUILD)
+
+clean_css:
+	rm $(CHROME_BUILD)/*.css
 
 
 run: run_combo run_css run_app
@@ -57,9 +70,9 @@ stop_app:
 stop_livereload:
 	killall livereload
 
-clean: clean_js
+clean: clean_js clean_css
 
-.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js \
+.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild \
 	run run_dev run_combo run_css run_app run_livereload \
 	stop stop_dev stop_app stop_css stop_combo stop_livereload \
-	autojsbuild
+	css chrome_css clean_css
