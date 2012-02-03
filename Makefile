@@ -16,6 +16,7 @@ js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
 	rm -rf /tmp/yui
+	rm $(CHROME_BUILD)/y*.js
 
 $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/y*-min.js
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
