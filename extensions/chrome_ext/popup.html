@@ -1,106 +1,14 @@
 <html>
     <head>
-        <link type="text/css" href="lib/css/custom-theme/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
-        <link rel="stylesheet" href="lib/tagfield/superbly-tagfield.css" />
+        <link rel="stylesheet" href="lib/bookie.css"/>
 
-        <script type="text/javascript" src="lib/jquery.min.js"></script>
         <script type="text/javascript" src="lib/hash.js"></script>
-        <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="lib/tagfield/superbly-tagfield.js"></script>
-        <script type="text/javascript">
-            // var jq_var = jQuery.noConflict(true);
-            // var $ = jq_var;
-            var logger = {}
-            logger.log = function(msg) {
-                console.log(msg);
-            };
-            logger.log('setting up fake logger');
-            var bookie_opts = {
-                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
-                'jquery': $,
-                'console_log': logger
-            }
-        </script>
-
-        <script type="text/javascript" src="lib/bookie-core.js"></script>
-        <script type="text/javascript" src="lib/bookie.api.js"></script>
-        <script type="text/javascript" src="lib/bookie.utils.js"></script>
-        <script type="text/javascript" src="lib/underscore.min.js"></script>
-        <!-- <script type="text/javascript" src="lib/underscore.string.min.js"></script> -->
-        <script type="text/javascript" src="https://raw.github.com/edtsech/underscore.string/master/lib/underscore.string.js"></script>
-        <script type="text/javascript" src="bookie.chrome.js"></script>
-
-        <script type="text/javascript">
-            var tags = [];
-            $(function() {
-
-                // this could be fed tab info via the url
-                // usually in the case of a keyboard shortcut loading this in a
-                // new tab vs the icon popup
-                var parts = window.location.hash.substring(1).split('|');
-                if (parts.length === 2) {
-                    var tab_data = {
-                        'url': window.atob(parts[0]),
-                        'title': window.atob(parts[1])
-                    }
-                } else {
-                    tab_data = undefined;
-                }
-
-                bookie.init(bookie.chrome_init, tab_data);
-
-                var valid = validateSettings();
-                if(!valid)
-                    return;
-
-                $("#tags").superblyTagField({
-                    complete: function(value, callback) {
-                        bookie.call.getTagCompletions(value, callback);
-                    },
-                });
-
-                // we have to do focus manually since we're replacing our tags
-                // input with the tag plugin version
-                $('input.superblyTagInput').focus();
-
-                // don't worry about loading the content of the page if we
-                // don't have it set in our options
-                if(!localStorage['cache_content'] || localStorage['cache_content'] != "true") {
-                    // then skip it, we don't want the added load on the
-                    // browser or the server
-                } else {
-                    bkg = chrome.extension.getBackgroundPage();
-
-                    bkg.inject_readable(function () {
-                        $('#content').val(bkg.get_html_content());
-                    });
-                }
-
-                function validateSettings() {
-                    var errors = [],
-                        errorOutput = $("#errors");
-
-                    if(!localStorage['api_url'])
-                        errors.push("Bookie URL has not been set");
-                    if(!localStorage['api_username'])
-                        errors.push("Bookie api username has not been set");
-                    if(!localStorage['api_key'])
-                        errors.push("API key has not been set");
-
-                    // display errors if we have them
-                    if(errors.length) {
-                        var errors = errors.map(function(msg) {
-                            return $("<li/>").text(msg).get(0);
-                        });
-                        errorOutput.append(errors).show();
-                        return false;
-                    }
-                    return true;
-                }
-
-            });
-
-        </script>
+        <script type="text/javascript" src="lib/yapi.js"></script>
+        <script type="text/javascript" src="lib/yindicator.js"></script>
+        <script type="text/javascript" src="lib/ymodel.js"></script>
+        <script type="text/javascript" src="lib/ytagcontrol.js"></script>
+        <script type="text/javascript" src="lib/ytagcontrol.js"></script>
+        <script type="text/javascript" src="chrome.js"></script>
         <style>
             body {
                 font-family: sans-serif;
@@ -175,7 +83,7 @@
             <input type="hidden" id="url" name="url" />
             <input type="hidden" id="inserted_by" name="inserted_by" />
             <input type="text" id="description" placeholder="title" name="description" />
-            <input type="text" placeholder="tags" name="tags" id="tags" />
+            <input type="text" placeholder="tags" name="tags" id="tag_filter" />
             <div id="latest_tags">Recent Tags: </div>
             <textarea placeholder="notes" name="extended" id="extended"></textarea>
             <button type="submit" id="submit">Save</button>
@@ -188,5 +96,30 @@
         <ul id="errors">
         </ul>
         <p>&nbsp;</p>
+
+        <script type="text/javascript">
+            YUI().use('base', 'bookie-chrome', function (Y) {
+
+
+                // this could be fed tab info via the url
+                // usually in the case of a keyboard shortcut loading this in a
+                // new tab vs the icon popup
+                var parts = window.location.hash.substring(1).split('|');
+                if (parts.length === 2) {
+                    var tab_data = {
+                        'url': window.atob(parts[0]),
+                        'description': window.atob(parts[1])
+                    }
+                } else {
+                    tab_data = undefined;
+                }
+
+                var settings = new bookie.Settings();
+                var c = new bookie.Chrome({
+                    settings: settings,
+                    url_data: tab_data
+                });
+           });
+        </script>
     </body>
 </html>
