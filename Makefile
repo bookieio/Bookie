@@ -41,6 +41,9 @@ js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
 	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
 
+js_doc_upload: js_doc
+	up_bmark jsdoc/**/*.(html|js|css|json|png|gif)
+
 
 css: chrome_css
 chrome_css:
@@ -78,7 +81,7 @@ stop_livereload:
 
 clean: clean_js clean_css
 
-.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc\
+.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
 	run run_dev run_combo run_css run_app run_livereload \
 	stop stop_dev stop_app stop_css stop_combo stop_livereload \
 	css chrome_css clean_css
