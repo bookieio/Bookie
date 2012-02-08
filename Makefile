@@ -37,6 +37,11 @@ $(JS_BUILD_PATH)/y:
 	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/y
 	rm -rf /tmp/yui
 
+js_doc: js
+	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
+	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
+
+
 css: chrome_css
 chrome_css:
 	cp $(CSS) $(CHROME_BUILD)
@@ -73,7 +78,7 @@ stop_livereload:
 
 clean: clean_js clean_css
 
-.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild \
+.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc\
 	run run_dev run_combo run_css run_app run_livereload \
 	stop stop_dev stop_app stop_css stop_combo stop_livereload \
 	css chrome_css clean_css

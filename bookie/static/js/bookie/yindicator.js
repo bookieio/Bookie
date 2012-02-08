@@ -43,6 +43,7 @@ YUI.add('bookie-indicator', function (Y) {
          * correctly.
          *
          * @method _renderUI
+         * @private
          */
          _renderUI: function() {
              var local_parent = this.get('target').get('parentNode');

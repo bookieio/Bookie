@@ -6,6 +6,9 @@
  * Javascript implementation of the Bookie API used on the app front end and
  * sample implementation itself.
  *
+ * @namespace bookie
+ * @module bookie-api
+ *
  */
 
 YUI.add('bookie-api', function (Y) {
@@ -83,6 +86,11 @@ YUI.add('bookie-api', function (Y) {
         request = Y.io(url, cfg);
     };
 
+    /**
+     * @class Api
+     * @extends Base
+     *
+     */
     Y.bookie.Api = Y.Base.create('bookie-api', Y.Base, [], {
         base_cfg: {
             method: "GET",
@@ -99,6 +107,10 @@ YUI.add('bookie-api', function (Y) {
             arguments: {}
         },
 
+        /**
+         * @constructor
+         *
+         */
         initializer : function (cfg) {},
 
         /**
@@ -106,6 +118,12 @@ YUI.add('bookie-api', function (Y) {
          *
          * If user_username is true then perform a replace on the given url
          * with the api instance's username parameter
+         *
+         * @method build_url
+         * @param {Object} [data] set of request data to be sent along with
+         *     the api request
+         * @return {String} url
+         *
          *
          */
         build_url: function (data) {
@@ -128,6 +146,9 @@ YUI.add('bookie-api', function (Y) {
          * default data set and then any options passed in from the caller
          *
          * Order is passed in options -> base_cfg
+         *
+         * @method build_cfg
+         * @return {Object} config
          *
          */
         build_cfg: function () {
@@ -164,8 +185,12 @@ YUI.add('bookie-api', function (Y) {
         /**
          * Actually make the ajax call with the given cfg we've setup for use.
          *
-         * @param callbacks an object of success/error/complete callbacks
-         * we'll hand json decoded data of the response
+         * The callbacks passed are then sent through to be called upon the
+         * ajax return.
+         *
+         * @method call
+         * @param {Object} callbacks an object of success/error/complete callbacks
+         *     we'll hand json decoded data of the response.
          *
          */
         call: function (callbacks) {
@@ -182,19 +207,45 @@ YUI.add('bookie-api', function (Y) {
         }
     }, {
         ATTRS: {
+            /**
+             * @attribute api_key
+             * @default ""
+             * @type String
+             *
+             */
             api_key: {
                 value: ""
             },
 
+            /**
+             * @attribute api_key
+             * @default {}
+             * @type Object
+             *
+             */
             options: {
                 value: {}
             },
 
+            /**
+             *
+             * @attribute url
+             * @default ""
+             * @type String
+             * @writeOnce
+             *
+             */
             url: {
                 value: "",
                 writeOnce: true
             },
 
+            /**
+             * @attribute username
+             * @default ""
+             * @type String
+             *
+             */
             username: {
                 value: ""
             }
@@ -202,15 +253,37 @@ YUI.add('bookie-api', function (Y) {
     });
 
 
+    /**
+     * A base class used for all future API calls to be based off of.
+     *
+     * @class Api.route
+     * @extends Api
+     *
+     */
     Y.bookie.Api.route = Y.Base.create(
         'bookie-api-route',
         Y.bookie.Api,
         [],
         {
-            data: {}
+            data: {},
+
+            /**
+             * @constructor
+             * @param {object} cfg
+             *
+             */
+            initializer: function (cfg) {}
         },
         {
             ATTRS: {
+                /**
+                 * The specific part of the API url this call is for.
+                 *
+                 * @attribute url_element
+                 * @default ""
+                 * @type String
+                 *
+                 */
                 url_element: {
                     value: ''
                 }
@@ -219,6 +292,13 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Fetch a list of all of the Bookmarks for all users.
+     *
+     * @class Api.route.BmarksAll
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.BmarksAll = Y.Base.create(
         'bookie-api-route-bmarksall',
         Y.bookie.Api.route,
@@ -227,14 +307,15 @@ YUI.add('bookie-api', function (Y) {
                 count: 10,
                 page: 0,
                 with_content: false
-            },
-
-            initializer: function (cfg) {
             }
         }, {
             ATTRS: {
                 /**
-                 * Any tags to filter on
+                 * A list of tags to filter the result set on.
+                 *
+                 * @attribute tags
+                 * @default []
+                 * @type {Array}
                  *
                  */
                 tags: {
@@ -243,6 +324,15 @@ YUI.add('bookie-api', function (Y) {
                     }
                 },
 
+                /**
+                 * The API url segment can be either:
+                 *     /bmarks or /bmarks/{tag}/{tag2}
+                 *
+                 * @attribute url_element
+                 * @default '/bmarks'
+                 * @type String
+                 *
+                 */
                 url_element: {
                     value: '/bmarks',
                     getter: function () {
@@ -262,10 +352,27 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Fetch a list of suggested tags based on stub string.
+     *
+     * @class Api.route.TagComplete
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.TagComplete = Y.Base.create(
         'bookie-api-route-tagcomplete',
         Y.bookie.Api.route,
         [], {
+            /**
+             * Perform the actually ajax request.
+             *
+             * @method call
+             * @param {Object} callbacks
+             * @param {String} tag_stub
+             * @param {Array} current_tags a list of tags to help limit our
+             *     completion options.
+             *
+             */
             call: function (callbacks, tag_stub, current_tags) {
                 this.set('options', {
                     data: {
@@ -287,13 +394,28 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Fetch a list of Bookmarks, but based on a specific user vs all users.
+     *
+     * @class Api.route.UserBmarksAll
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserBmarksAll = Y.Base.create(
         'bookie-api-route-user-bmarksall',
         Y.bookie.Api.route,
         [], {
-            initializer: function (cfg) {}
         }, {
             ATTRS: {
+                /**
+                 * The API url segment can be either:
+                 *     {user}/bmarks or {user}/bmarks/{tag}/{tag2}
+                 *
+                 * @attribute url_element
+                 * @default '/bmarks'
+                 * @type String
+                 *
+                 */
                 url_element: {
                     value: '/{resource}/bmarks',
                     getter: function () {
@@ -314,14 +436,25 @@ YUI.add('bookie-api', function (Y) {
                     }
                 },
 
-                username: {
+                /**
+                 * The username to authenticate the request.
+                 *
+                 * @attribute username
+                 * @default undefined
+                 * @type undefined
+                 *
+                 */
+                username: {},
 
-
-                },
-
-                resource: {
-
-                }
+                /**
+                 * The resource {uesr} to fetch the list of bookmarks for.
+                 *
+                 * @attribute resource
+                 * @default undefined
+                 * @type undefined
+                 *
+                 */
+                resource: {}
             }
         }
     );
@@ -334,7 +467,10 @@ YUI.add('bookie-api', function (Y) {
      * them, you need the user and the hash_id of the bookmark to load it.
      *
      * This is NOT the username of a logged in/api user. It's the username of
-     * the person that bookmarked the url.
+     * the person that bookmarked the url
+     *
+     * @class Api.route.Bmark
+     * @extends Api.route
      *
      */
     Y.bookie.Api.route.Bmark = Y.Base.create(
@@ -349,12 +485,34 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                /**
+                 * @attribute hash_id
+                 * @default undefined
+                 * @required
+                 * @type String
+                 *
+                 */
                 hash_id: {
                     required: true
                 },
+
+                /**
+                 * @attribute url_element
+                 * @default '/{username}/bmark/{hash_id}
+                 * @type String
+                 *
+                 */
                 url_element: {
                     value: '/{username}/bmark/{hash_id}'
                 },
+
+                /**
+                 * @attribute username
+                 * @default undefined
+                 * @required
+                 * @type String
+                 *
+                 */
                 username: {
                     required: true
                 }
@@ -363,6 +521,15 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Remove a specified Bookmark from the system.
+     *
+     * This call is only allowed to be called by the owner of the Bookmark.
+     *
+     * @class Api.route.UserBmarkDelete
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserBmarkDelete = Y.Base.create(
         'bookie-api-route-user-bmark-delete',
         Y.bookie.Api.route,
@@ -382,6 +549,14 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/{username}/bmark/{hash_id}'
                 },
+
+                /**
+                 * @attribute hash_id
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 hash_id: {
                     required: true
                 }
@@ -390,6 +565,13 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Fetch a user's API key.
+     *
+     * @class Api.route.UserApiKey
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserApiKey = Y.Base.create(
         'bookie-api-route-user-api-key',
         Y.bookie.Api.route,
@@ -405,6 +587,14 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+
+    /**
+     * Change a user's password to a new value.
+     *
+     * @class Api.route.UserPasswordChange
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserPasswordChange = Y.Base.create(
         'bookie-api-route-user-password-change',
         Y.bookie.Api.route,
@@ -420,12 +610,28 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                /**
+                 * @attribute current_password
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 current_password: {
                     required: true
                 },
+
+                /**
+                 * @attribute new_password
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 new_password: {
                     required: true
                 },
+
                 url_element: {
                     value: '/{username}/password'
                 }
@@ -434,6 +640,13 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Update the account information for a user such as email and name.
+     *
+     * @class Api.route.userAccountChange
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserAccountChange = Y.Base.create(
         'bookie-api-route-user-account-change',
         Y.bookie.Api.route,
@@ -457,8 +670,22 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                /**
+                 * @attribute name
+                 * @default undefined
+                 * @type String
+                 *
+                 */
                 name: {},
+
+                /**
+                 * @attribute email
+                 * @default undefined
+                 * @type String
+                 *
+                 */
                 email: {},
+
                 url_element: {
                     value: '/{username}/account'
                 }
@@ -466,6 +693,14 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+
+    /**
+     * Suspend a user account and force them to go through reactivation.
+     *
+     * @class Api.route.SuspendUser
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.SuspendUser = Y.Base.create(
         'bookie-api-route-suspend-user',
         Y.bookie.Api.route,
@@ -480,9 +715,17 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                /**
+                 * @attribute email
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 email: {
                     required: true
                 },
+
                 url_element: {
                     value: '/suspend'
                 }
@@ -491,6 +734,13 @@ YUI.add('bookie-api', function (Y) {
     );
 
 
+    /**
+     * Remove the suspension on the user account and reset their account.
+     *
+     * @class Api.route.UnSuspendUser
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UnSuspendUser = Y.Base.create(
         'bookie-api-route-unsuspend-user',
         Y.bookie.Api.route,
@@ -507,15 +757,41 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+                /**
+                 * @attribute username
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 username: {
                     required: true
                 },
+
+                /**
+                 * The activation code sent to the user upon suspension.
+                 *
+                 * @attribute code
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 code: {
                     required: true
                 },
+
+                /**
+                 * @attribute password
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
                 password: {
                     required: true
                 },
+
                 url_element: {
                     value: '/suspend'
                 }
@@ -523,6 +799,15 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+
+    /**
+     * Search bookmarks for keywords including the option to search our
+     * fulltext indexes of the web page content.
+     *
+     * @class Api.route.Search
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.Search = Y.Base.create(
         'bookie-api-route-search',
         Y.bookie.Api.route,
@@ -538,7 +823,9 @@ YUI.add('bookie-api', function (Y) {
         }, {
             ATTRS: {
                 /**
-                 * Any terms to filter on
+                 * @attribute phrase
+                 * @default []
+                 * @type Array
                  *
                  */
                 phrase: {
@@ -547,6 +834,12 @@ YUI.add('bookie-api', function (Y) {
                     }
                 },
 
+                /**
+                 * @attribute with_content
+                 * @default false
+                 * @type Boolean
+                 *
+                 */
                 with_content: {
                     value: false,
                     setter: function(val, name) {
@@ -571,6 +864,15 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+
+    /**
+     * Search the bookmarks, but limit to a specific user account with the
+     * option to search the fulltext indexes of the cached web page content.
+     *
+     * @class Api.route.UserSearch
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserSearch = Y.Base.create(
         'bookie-api-route-usersearch',
         Y.bookie.Api.route,
@@ -585,8 +887,11 @@ YUI.add('bookie-api', function (Y) {
             }
         }, {
             ATTRS: {
+
                 /**
-                 * Any terms to filter on
+                 * @attribute phrase
+                 * @default []
+                 * @type Array
                  *
                  */
                 phrase: {
@@ -595,6 +900,12 @@ YUI.add('bookie-api', function (Y) {
                     }
                 },
 
+                /**
+                 * @attribute with_content
+                 * @default false
+                 * @type Boolean
+                 *
+                 */
                 with_content: {
                     value: false,
                     setter: function(val, name) {
@@ -618,7 +929,6 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
-
 
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json', 'substitute']
