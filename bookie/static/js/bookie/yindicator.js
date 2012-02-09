@@ -5,15 +5,26 @@
  *
  * Large indicator of pending operations.
  *
- * Usage:
+ * @example Usage:
+ *
  *     Y.bookie.indicator({
  *         target: Y.one('#id')
  *     });
+ *
+ * @namespace bookie
+ * @module indicator
  *
  */
 YUI.add('bookie-indicator', function (Y) {
     var ns = Y.namespace('bookie');
 
+    /**
+     * Indicator widget class
+     *
+     * @class Indicator
+     * @extends Y.Widget
+     *
+     */
     ns.Indicator = Y.Base.create( 'bookie-indicator', Y.Widget, [], {
         initializer: function(cfg) {
             this.hide();
@@ -63,6 +74,12 @@ YUI.add('bookie-indicator', function (Y) {
             this.get('contentBox').append(img);
         },
 
+        /**
+         * Bind the ui events needed to operate this widget.
+         *
+         * @method bindUI
+         *
+         */
         bindUI: function() {
             this._addListeners();
         },

@@ -1,25 +1,5 @@
 <html>
     <head>
-        <script type="text/javascript" src="lib/jquery.min.js"></script>
-        <script type="text/javascript">
-            // var jq_var = jQuery.noConflict(true);
-            // var $ = jq_var;
-            var logger = {}
-            logger.log = function(msg) {
-                console.log(msg);
-            };
-            logger.log('setting up fake logger');
-            var bookie_opts = {
-                'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
-                'jquery': $,
-                'console_log': logger
-            }
-        </script>
-        <script type="text/javascript" src="lib/bookie-core.js"></script>
-        <script type="text/javascript" src="lib/bookie.api.js"></script>
-        <script type="text/javascript" src="bookie.chrome.js"></script>
-
-
         <style>
             body {
                 font-family: sans-serif;
@@ -176,8 +156,6 @@
                 bookmarks.</p>
         </div>
     </body>
-    <script type="text/javascript" src="lib/underscore.min.js"></script>
-    <script type="text/javascript" src="lib/underscore.string.min.js"></script>
 
     <script type="text/javascript">
         bookie.options.init();

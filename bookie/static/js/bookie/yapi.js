@@ -7,7 +7,7 @@
  * sample implementation itself.
  *
  * @namespace bookie
- * @module bookie-api
+ * @module api
  *
  */
 
@@ -23,6 +23,8 @@ YUI.add('bookie-api', function (Y) {
      * This will apply the right callback function provided by the caller,
      * allow callers to use default callbacks, and make sure we parse json
      * back to provide to the caller's callback as data
+     *
+     * @method
      *
      */
     var request_handler = function (url, cfg, arguments) {
@@ -88,7 +90,7 @@ YUI.add('bookie-api', function (Y) {
 
     /**
      * @class Api
-     * @extends Base
+     * @extends Y.Base
      *
      */
     Y.bookie.Api = Y.Base.create('bookie-api', Y.Base, [], {
@@ -108,6 +110,7 @@ YUI.add('bookie-api', function (Y) {
         },
 
         /**
+         * @method initializer
          * @constructor
          *
          */
@@ -268,6 +271,7 @@ YUI.add('bookie-api', function (Y) {
             data: {},
 
             /**
+             * @method initializer
              * @constructor
              * @param {object} cfg
              *

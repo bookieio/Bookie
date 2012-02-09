@@ -1,10 +1,24 @@
 /*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
          plusplus: false, newcap: false, */
 /*global _: false, window: false, self: false, escape: false, */
+/**
+ * Bookie's View objects used to represent pages or parts of page content.
+ *
+ * @namespace bookie
+ * @module view
+ *
+ */
 YUI.add('bookie-view', function (Y) {
     var _ = Y.substitute,
         ns = Y.namespace('bookie');
 
+    /**
+     * Display a list of bookmarks from the API to the end user.
+     *
+     * @class BmarkListView
+     * @extends Y.View
+     *
+     */
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
         container_html: '<div class="bmark_list"/>',
         _get_template: function () {
@@ -17,6 +31,9 @@ YUI.add('bookie-view', function (Y) {
          * Prepare and add the pager view for our control
          *
          * We need two, one for the top and one for the bottom
+         *
+         * @method _init_pager
+         * @private
          *
          */
         _init_pager: function () {
@@ -33,12 +50,21 @@ YUI.add('bookie-view', function (Y) {
         /**
          * Setup the api call for filling in our data based on our config
          *
+         * @method _init_api
+         * @private
+         *
          */
         _init_api: function () {
             var api_callable = this.get('api_callable');
             this.api = new api_callable(this.get('api_cfg'));
         },
 
+        /**
+         *
+         * @method _init_indicator
+         * @private
+         *
+         */
         _init_indicator: function () {
             this.indicator = new Y.bookie.Indicator({
                 target: Y.one('.bmarks')
@@ -48,6 +74,9 @@ YUI.add('bookie-view', function (Y) {
 
         /*
          * Fetch a dataset based on our current data
+         *
+         * @method _fetch_dataset
+         * @private
          *
          */
         _fetch_dataset: function () {
@@ -98,6 +127,14 @@ YUI.add('bookie-view', function (Y) {
            });
         },
 
+        /**
+         * Increment the pager and fetch the next results from the last call.
+         *
+         * @method _next_page
+         * @param {Event} e
+         * @private
+         *
+         */
         _next_page: function (e) {
             var pager = this.get('pager');
             pager.next();
@@ -107,6 +144,16 @@ YUI.add('bookie-view', function (Y) {
             this._fetch_dataset();
         },
 
+        /**
+         * Update the html reprensenting our Pager information after loading a
+         * dataset. For instance, should we hide the prev control if we're
+         * onthe first page of results? If we're on last page should we be
+         * hiding the next control?
+         *
+         * @method _update_pagerview
+         * @private
+         *
+         */
         _update_pagerview: function () {
             var pager = this.get('pager');
 
@@ -140,6 +187,14 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        /**
+         * Decrement the pager for the current list and fetch a new set of
+         * results.
+         *
+         * @method _prev_page
+         * @param {Event} e
+         *
+         */
         _prev_page: function (e) {
             var pager = this.get('pager'),
                 old_page = pager.get('page');
@@ -156,13 +211,13 @@ YUI.add('bookie-view', function (Y) {
         },
 
         /**
-         * Need to make some updates to the ui based on the current page
+         * Initializer for a class extending Y.Base
+         *
+         * @method initializer
+         * @param {Object} cfg
+         * @constructor
          *
          */
-        _update_ui: function () {
-
-        },
-
         initializer: function (cfg) {
             this.cTemplate = Y.Handlebars.compile(this._get_template());
             this._init_pager();
@@ -170,6 +225,12 @@ YUI.add('bookie-view', function (Y) {
             this._init_indicator();
         },
 
+        /**
+         * Build the UI for the result set we've gotten from the API.
+         *
+         * @method render
+         *
+         */
         render: function () {
             var that = this,
                 // Render this view's HTML into the container element.
@@ -192,6 +253,14 @@ YUI.add('bookie-view', function (Y) {
         }
     }, {
         ATTRS: {
+            /**
+             * We're creating a new set of html for our results by getting the
+             * container_html.
+             *
+             * @attribute container
+             * @type Y.Node
+             *
+             */
             container: {
                 valueFn: function() {
                     return Y.Node.create(this.container_html);
@@ -203,6 +272,10 @@ YUI.add('bookie-view', function (Y) {
              * view how to fetch results to put into this view when things
              * like pagers and such change
              *
+             * @attribute api_callable
+             * @default Api.route.UserBmarksAll
+             * @readonly
+             *
              */
             api_callable: {
                 readonly: true,
@@ -211,18 +284,35 @@ YUI.add('bookie-view', function (Y) {
                 }
             },
 
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
 
             },
 
             /**
-             * You can add a filter control into the bmark list view
+             * You can add a filter control into the bmark list view. This
+             * method is over rideable so that you can figure out how to fetch
+             * the filters to apply to the api calls.
+             *
+             * @attribute filter_control
+             * @default ''
              *
              */
             filter_control: {
                 value: ''
             },
 
+            /**
+             * @attribute pager
+             * @default new PagerModel
+             * @type PagerModel
+             *
+             */
             pager: {
                 valueFn: function () {
                     return new Y.bookie.PagerModel();
@@ -231,6 +321,10 @@ YUI.add('bookie-view', function (Y) {
 
             /**
              * Who is the currently auth'd user
+             *
+             * @attribute current_user
+             * @default undefined
+             * @type String
              *
              */
             current_user: {
@@ -242,6 +336,10 @@ YUI.add('bookie-view', function (Y) {
              *
              * e.g. /admin/bmarks == admin user even though I'm not logged in
              * as admin
+             *
+             * @attribute resource_user
+             * @default undefined
+             * @type String
              */
             resource_user: {
 
@@ -249,6 +347,11 @@ YUI.add('bookie-view', function (Y) {
 
             /**
              * Where in the results can we find out bmarks?
+             *
+             * @attribute results_key
+             * @readonly
+             * @default 'bmarks'
+             * @type String
              *
              */
             results_key: {
@@ -260,6 +363,10 @@ YUI.add('bookie-view', function (Y) {
              * Should the search view be searching the content of the bookmarks
              * as well?
              *
+             * @attribute with_content
+             * @default false
+             * @type Boolean
+             *
              */
             with_content: {
                 value: false
@@ -269,13 +376,38 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Extends BmarkListView to specify a view used for the main /recent pages
+     * for displaying lists of bookmarks with a tag control widget tied into
+     * the game.
+     *
+     * @class TagControlBmarkListView
+     * @extends BmarkListView
+     *
+     */
     ns.TagControlBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
+
+        /**
+         * Standard initializer, note that this ends up being "appended" not
+         * replacing the parent's initializer method.
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
             Y.on('tag:changed', this._tags_changed, this);
         },
 
+        /**
+         * Handle when tags in the control are changed.
+         *
+         * @method _tags_changed
+         * @param {Event} e
+         *
+         */
         _tags_changed: function (e) {
             // update the api data with the tags list
             this.api.set('tags', e.tags);
@@ -314,7 +446,27 @@ YUI.add('bookie-view', function (Y) {
         }
     });
 
+
+    /**
+     * Extends BmarkListView to specify a view used for the main /search pages
+     * for displaying lists of bookmarks from a search result for the user.
+     *
+     * @class SearchControlBmarkListView
+     * @extends BmarkListView
+     *
+     */
     ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
+
+        /**
+         * Standard initializer, note that this ends up being "appended" not
+         * replacing the parent's initializer method.
+         *
+         * @method initializer
+         * @param {Object} cfg
+         * @event tag:add Handle a tag:add event so that we can help add it to
+         *     the search in question.
+         *
+         */
         initializer: function (cfg) {
             // if there are tags added/removed form the TagControl, then make
             // sure we update the list accordingly
@@ -343,6 +495,14 @@ YUI.add('bookie-view', function (Y) {
             }, this);
         },
 
+        /**
+         * Update our result set from a search of the user.
+         *
+         * @method _search
+         * @param {Event} e
+         * @private
+         *
+         */
         _search: function (e) {
             e.preventDefault();
             var phrase = Y.one('#search_phrase').get('value'),
@@ -390,15 +550,20 @@ YUI.add('bookie-view', function (Y) {
                 }
             },
 
-            /**
-             * Where in the results can we find out bmarks?
-             *
-             */
             results_key: {
                 value: 'search_results',
                 readonly: true
             },
 
+            /**
+             * Where is the search form input we're getting input to search
+             * against from?
+             *
+             * @attribute search_form
+             * @default '#bmark_search'
+             * @type String
+             *
+             */
             search_form: {
                 value: '#bmark_search'
             }
@@ -406,9 +571,24 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * A View for handling representing our paging controls for next/prev
+     * pages.
+     *
+     * @class PagerView
+     * @extends Y.View
+     *
+     */
     ns.PagerView = Y.Base.create('bookie-pager-view', Y.View, [], {
         container_html: '<div class="pager"/>',
 
+        /**
+         * Fetch the templates used from the script tags in the html.
+         *
+         * @method _get_templates
+         * @private
+         *
+         */
         _get_templates: function () {
             return {
                 prev: Y.one('#previous_control').get('text'),
@@ -416,6 +596,13 @@ YUI.add('bookie-view', function (Y) {
             };
         },
 
+        /**
+         * Make sure the previous contol is visible to the user.
+         *
+         * @method _show_previous
+         * @param {Event} e
+         *
+         */
         _show_previous: function (e) {
             var val = e.newVal,
                 prev = e.prevVal;
@@ -427,6 +614,13 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * Make sure that we display the next control properly.
+         *
+         * @method _show_next
+         * @param {Event} e
+         *
+         */
         _show_next: function (e) {
             var val = e.newVal,
                 prev = e.prevVal;
@@ -438,6 +632,11 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * @attribute events
+         * @default Object
+         *
+         */
         events: {
             '.previous': {
                 click: 'previous_page'
@@ -447,6 +646,15 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * Basic initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         * @event show_previousChange
+         * @event show_nextChange
+         *
+         */
         initializer: function (cfg) {
             var tpl = this._get_templates();
             this.cPrevTemplate = Y.Handlebars.compile(tpl.prev);
@@ -456,16 +664,37 @@ YUI.add('bookie-view', function (Y) {
             this.after('show_nextChange', this._show_next, this);
         },
 
+        /**
+         * Handle the previous page clicked event.
+         *
+         * @method previous_page
+         * @param {Event} e
+         *
+         */
         previous_page: function (e) {
             e.preventDefault();
             Y.fire(this.get('previous_event'));
         },
 
+        /**
+         * Handle the next page clicked event.
+         *
+         * @method next_page
+         * @param {Event} e
+         *
+         */
         next_page: function (e) {
             e.preventDefault();
             Y.fire(this.get('next_event'));
         },
 
+        /**
+         * render out the control to the container specified.
+         *
+         * @method render
+         * @return {String} generated html
+         *
+         */
         render: function () {
             // Render this view's HTML into the container element.
             return this.get('container').set(
@@ -477,16 +706,35 @@ YUI.add('bookie-view', function (Y) {
 
     }, {
         ATTRS: {
+            /**
+             * @attribute container
+             * @default Y.Node
+             * @type Y.Node
+             *
+             */
             container: {
                 valueFn: function () {
                     return Y.Node.create(this.container_html);
                 }
             },
 
+            /**
+             * @attribute id
+             * @default 'pager'
+             * @type String
+             *
+             */
             id: {
                 value: 'pager'
             },
 
+            /**
+             * @attribute previous_event
+             * @default '$id:previous'
+             * @type String
+             * @readonly
+             *
+             */
             previous_event: {
                 readOnly: true,
                 valueFn: function () {
@@ -494,6 +742,13 @@ YUI.add('bookie-view', function (Y) {
                 }
             },
 
+            /**
+             * @attribute next_event
+             * @default '$id:next'
+             * @type String
+             * @readonly
+             *
+             */
             next_event: {
                 readOnly: true,
                 valueFn: function () {
@@ -505,11 +760,21 @@ YUI.add('bookie-view', function (Y) {
              * By default we don't need a previous usually on initial page
              * load
              *
+             * @attribute show_previous
+             * @default false
+             * @type Boolean
+             *
              */
             show_previous: {
                 value: false
             },
 
+            /**
+             * @attribute show_next
+             * @default true
+             * @type Boolean
+             *
+             */
             show_next: {
                 value: true
             }
@@ -517,9 +782,25 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * This is the view for a single bookmark in a result set. It handles its
+     * own events and rendering/updating and this is where the remove event
+     * from the UI gets captured and passed along to the bound model.
+     *
+     * @class BmarkView
+     * @extends Y.View
+     *
+     */
     ns.BmarkView = Y.Base.create('bookie-bmark-view', Y.View, [], {
         container_html: '<div class="bmark"/>',
 
+        /**
+         * Get the template string used to render this view.
+         *
+         * @method _get_template
+         * @private
+         *
+         */
         _get_template: function () {
             return Y.one('#bmark_row').get('text');
         },
@@ -527,6 +808,9 @@ YUI.add('bookie-view', function (Y) {
         /**
          * If you click on a tag in the bookmark view filter the page to just
          * that tag.
+         *
+         * @method _tag_filter
+         * @private
          *
          */
         _tag_filter: function (e) {
@@ -544,12 +828,22 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * General initializer method.
+         *
+         * @method intializer
+         * @param {Object} cfg
+         * @constructor
+         *
+         */
         initializer: function (cfg) {
             this.cTemplate = Y.Handlebars.compile(this._get_template());
         },
 
         /**
          * Handle the remove event on this bookmark
+         *
+         * @method remove
          *
          */
         remove: function () {
@@ -565,6 +859,13 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        /**
+         * Render out html for this bookmark based on the model data.
+         *
+         * @method render
+         * @return Y.Node
+         *
+         */
         render: function () {
             // Render this view's HTML into the container element.
             var tpl_data = this.get('model').getAttrs();
@@ -578,22 +879,41 @@ YUI.add('bookie-view', function (Y) {
     }, {
         ATTRS: {
             /**
-             * The view is for a url of a specific user
+             *
+             * The view is for a url of a specific user.
              *
              * Say /admin/bmarks for the admin bookmarks, does not mean I'm
-             * the admin
+             * the admin.
+             *
+             * @attribute resource_user
+             * @default undefined
+             * @type String
              *
              */
             resource_user: {
             },
 
             /**
-             * The currently authorized user
+             * The current authorized user.
+             *
+             * @attribute current_user
+             * @default undefined
+             * @type String
              *
              */
             current_user: {
             },
 
+            /**
+             * Each view is rendered into a container node that's then
+             * returned via the render method.
+             *
+             * @attribute container
+             * @default Y.Node
+             * @type Y.Node
+             * @readonly
+             *
+             */
             container: {
                 valueFn: function () {
                     var container = Y.Node.create(this.container_html);
@@ -609,10 +929,23 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Generate the html view for a User's account
+     *
+     * @class AccountView
+     * @extends Y.View
+     *
+     */
     ns.AccountView = Y.Base.create('bookie-account-view', Y.View, [], {
         _blet_visible: false,
         _api_visibile: false,
 
+        /**
+         * Bind all events for this html view.
+         *
+         * @method _bind
+         *
+         */
         _bind: function () {
             Y.one('#show_key').on(
                 'click',
@@ -626,6 +959,15 @@ YUI.add('bookie-view', function (Y) {
             );
         },
 
+        /**
+         * Handle displaying the API key for a user. This requires making an
+         * API request since we don't dump the API key by default into the
+         * page html to help prevent it leaking out.
+         *
+         * @method _show_api_key
+         * @param {Event} e
+         *
+         */
         _show_api_key: function (e) {
             var key_div = Y.one('#api_key'),
                 key_container = Y.one('#api_key_container');
@@ -651,6 +993,14 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * Handle displaying the bookmarklet information when the user
+         * requests it.
+         *
+         * @method _show_bookmarklet
+         * @param {Event} e
+         *
+         */
         _show_bookmarklet: function (e) {
             var blet = Y.one('#bookmarklet_text');
             e.preventDefault();
@@ -667,6 +1017,13 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             this._bind();
 
@@ -682,6 +1039,12 @@ YUI.add('bookie-view', function (Y) {
 
     }, {
         ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
                 required: true
             }
@@ -689,9 +1052,23 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Handle the display of the password reset view.
+     *
+     * @class PasswordView
+     * @extends Y.View
+     *
+     */
     ns.PasswordView = Y.Base.create('bookie-password-view', Y.View, [], {
         _visible: false,
 
+        /**
+         * Bind all events thats the UI needs to function.
+         *
+         * @method _bind
+         * @private
+         *
+         */
         _bind: function () {
             Y.one('#show_password').on(
                 'click',
@@ -710,6 +1087,14 @@ YUI.add('bookie-view', function (Y) {
             );
         },
 
+        /**
+         * Handle changing the password via an API call.
+         *
+         * @method _change_password
+         * @param {Event} e
+         * @private
+         *
+         */
         _change_password: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg');
@@ -738,6 +1123,14 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+
+        /**
+         * Reset the form once we've successfully completed an an attempt to
+         * change the password.
+         *
+         * @method _reset_password
+         *
+         */
         _reset_password: function () {
             Y.one('#current_password').set('value', '');
             Y.one('#new_password').set('value', '');
@@ -747,6 +1140,15 @@ YUI.add('bookie-view', function (Y) {
             this._visible = false;
         },
 
+        /**
+         * Display any message based on if the request to change is successful
+         * or ended in error.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
         _show_message: function (msg, success) {
             var msg_div = Y.one('#password_msg');
             msg_div.setContent(msg);
@@ -760,6 +1162,13 @@ YUI.add('bookie-view', function (Y) {
             msg_div.show(true);
         },
 
+        /**
+         * Show the password change component.
+         *
+         * @method _show_password
+         * @param {Event} e
+         *
+         */
         _show_password: function (e) {
             var pass_div = Y.one('#password_change');
             e.preventDefault();
@@ -774,12 +1183,26 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             this._bind();
         }
 
     }, {
         ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
                 required: true
             }
@@ -787,7 +1210,22 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Handle the view ofr the account information. This is for changing the
+     * user's name, email, etc.
+     *
+     * @class AccountInfoView
+     * @extends Y.View
+     *
+     */
     ns.AccountInfoView = Y.Base.create('bookie-account-info-view', Y.View, [], {
+        /**
+         * Bind all UI events for the UI.
+         *
+         * @method _bind
+         * @private
+         *
+         */
         _bind: function () {
             Y.one('#submit_account_change').on(
                 'click',
@@ -796,6 +1234,14 @@ YUI.add('bookie-view', function (Y) {
             );
         },
 
+        /**
+         * Handle submitting the API to update the user's account information.
+         *
+         * @method _update_account
+         * @param {Event} e
+         * @private
+         *
+         */
         _update_account: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg');
@@ -821,6 +1267,15 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        /**
+         * Handle showing the user any success for failure messages based on
+         * the result of an attempt to update the user's account information.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
         _show_message: function (msg, success) {
             var msg_div = Y.one('#account_msg');
             msg_div.setContent(msg);
@@ -834,11 +1289,24 @@ YUI.add('bookie-view', function (Y) {
             msg_div.show(true);
         },
 
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             this._bind();
         }
     }, {
         ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
                 required: true
             }
@@ -846,9 +1314,23 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Handle the UI for the login view.
+     *
+     * @class LoginView
+     * @extends Y.View
+     *
+     */
     ns.LoginView = Y.Base.create('bookie-login-view', Y.View, [], {
         _visible: false,
 
+        /**
+         * Bind all of the UI events for this html view.
+         *
+         * @method _bind
+         * @private
+         *
+         */
         _bind: function () {
             Y.one('#show_forgotten').on(
                 'click',
@@ -863,10 +1345,25 @@ YUI.add('bookie-view', function (Y) {
 
         },
 
+        /**
+         * Clear out the login form.
+         *
+         * @method _clear
+         * @private
+         *
+         */
         _clear: function () {
             Y.one('#email').set('value', '');
         },
 
+        /**
+         * Show the forgotten password UI box for the user to use.
+         *
+         * @method _show_forgotten
+         * @param {Event} e
+         * @private
+         *
+         */
         _show_forgotten: function (e) {
             var pass_div = Y.one('#forgotten_password');
             e.preventDefault();
@@ -881,6 +1378,15 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * Handle a user submitting the form to reset their account because
+         * they've forgotten the information.
+         *
+         * @method _forgotten
+         * @param {Event} e
+         * @private
+         *
+         */
         _forgotten: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg');
@@ -908,6 +1414,15 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        /**
+         * Handle displaying success and failure messages to the user when
+         * they submit the forgotten login information request.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
         _show_message: function (msg, success) {
             var msg_div = Y.one('#forgotten_msg');
             msg_div.setContent(msg);
@@ -921,11 +1436,24 @@ YUI.add('bookie-view', function (Y) {
             msg_div.show(true);
         },
 
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             this._bind();
         }
     }, {
         ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
                 required: true
             }
@@ -933,7 +1461,22 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+    /**
+     * Handle the UI for the user resetting of their account after it's been
+     * deactivated.
+     *
+     * @class AccountResetView
+     * @extends Y.View
+     *
+     */
     ns.AccountResetView = Y.Base.create('bookie-account-reset-view', Y.View, [], {
+        /**
+         * Bind the UI events for this html view.
+         *
+         * @method _bind
+         * @private
+         *
+         */
         _bind: function () {
             Y.one('#submit_password_change').on(
                 'click',
@@ -947,6 +1490,14 @@ YUI.add('bookie-view', function (Y) {
             );
         },
 
+        /**
+         * Handle the API request to unlock the user's account so they can use
+         * it again.
+         *
+         * @method _account_reset
+         * @param {Event} e
+         *
+         */
         _account_reset: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg');
@@ -976,6 +1527,15 @@ YUI.add('bookie-view', function (Y) {
             });
         },
 
+        /**
+         * Handle displaying the success and faliure messages to the user
+         * based on the response of the API request.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
         _show_message: function (msg, success) {
             var msg_div = Y.one('#password_msg');
             msg_div.setContent(msg);
@@ -989,11 +1549,24 @@ YUI.add('bookie-view', function (Y) {
             msg_div.show(true);
         },
 
+        /**
+         * General initializer method.
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             this._bind();
         }
     }, {
         ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
             api_cfg: {
                 required: true
             }

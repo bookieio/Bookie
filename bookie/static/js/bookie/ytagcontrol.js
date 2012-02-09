@@ -8,6 +8,10 @@
  *
  * Hope to submit to the gallery either as a giant patch or something. For
  * now, will hack it directly into Bookie .
+ *
+ * @namespace bookie
+ * @module tagcontrol
+ *
  */
 
 YUI.add('bookie-tagcontrol', function (Y) {
@@ -24,7 +28,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
     };
 
     /**
-     * Class for each Tag item in our list of tags we control
+     * Class for each Tag item in our list of tags we control.
+     *
+     * @class Tag
+     * @extends Y.Base
      *
      */
     function Tag(config) {
@@ -33,29 +40,65 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
     Tag.NAME = 'tagcontroller-tag';
     Tag.ATTRS = {
-        // The actual text of this tag.
+        /**
+         * The actual text of this tag.
+         *
+         * @attribute text
+         * @default undefined
+         * @type String
+         *
+         */
         text: {
             required: true
         },
-        // The css class we stick on all Tag dom nodes
+
+        /**
+         * The css class we stick on all Tag dom nodes
+         *
+         * @attribute cssClass
+         * @default undefined
+         * @type String
+         *
+         */
         cssClass: {
             required: true
         },
-        // should we fire the event that we've been added?
-        // we don't want to when adding initial tags on page load
+
+        /**
+         *
+         * Should we fire the event that we've been added?
+         * We don't want to when adding initial tags on page load.
+         *
+         * @attribute silent
+         * @default false
+         * @type Boolean
+         *
+         */
         silent: {
             value: false
         }
     };
 
     Y.extend(Tag, Y.Base, {
-        // bind all events for this particular tag
+        /**
+         * Bind all events for this tag object
+         *
+         * @method _bind
+         * @private
+         *
+         */
         _bind: function () {
             // if clicked on, remove it
             this.ui.on('click', this.destroy, this);
         },
 
-        // generate the html for our tag to be placed into the control
+        /**
+         * Generate the html for our tag that is placed into the control.
+         *
+         * @method _buildui
+         * @private
+         *
+         */
         _buildui: function () {
             var ui = Y.Node.create('<li/>');
 
@@ -73,6 +116,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * leaving, so make sure we fire an event so it can update itself as
          * well.
          *
+         * @method destructor
+         * @event tag:removed
+         *
          */
         destructor: function () {
             // remove this node
@@ -84,6 +130,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
         /**
          * YUI object init method
+         *
+         * @constructor
+         * @event tag:added
+         * @param {Object} cfg
+         * @param {Boolean} silent
          *
          */
         initializer: function (cfg, silent) {
@@ -106,6 +157,15 @@ YUI.add('bookie-tagcontrol', function (Y) {
         }
     });
 
+
+    /**
+     * A TagControl Widget used to filter and manage list of tags on
+     * bookmarks.
+     *
+     * @class TagControl
+     * @extends Y.Widget
+     *
+     */
     ns.TagControl = Y.Base.create('bookie-tagcontrol', Y.Widget, [], {
         CLONE_CSS: {
             height: '1em',
@@ -128,6 +188,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * Requires building an instance, adding the UI to the control, and
          * making sure we're updating our srcNode with the list of tags for
          * form submitting later on.
+         *
+         * @method add
+         * @param {String} current_text
+         * @param {Boolean} silent
          *
          */
         add: function (current_text, silent) {
@@ -174,6 +238,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * that's basically saying that "hey, done with this tag, let's move
          * on to the next one".
          *
+         * @method _added_tag
+         * @private
+         *
          */
         _added_tag: function () {
             var input = this.ui.one('input'),
@@ -190,6 +257,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
         /**
          * Bind all events the control is looking for and processing.
+         *
+         * @method _bind_event
+         * @private
+         * @event tag:donetyping
          *
          */
         _bind_events: function () {
@@ -244,6 +315,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * We need a clone node in order to tell the input how large to be
          *
+         * @method _build_clone
+         * @private
+         *
          */
         _build_clone: function () {
             var clone = Y.Node.create('<span/>');
@@ -267,6 +341,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * We need to make sure we stick on the nice namespaced css classes
          * for our styling to hook into.
          *
+         * @method _buildui
+         * @private
+         *
          */
         _buildui: function () {
             this.ui = Y.Node.create(this.tpl.main);
@@ -281,6 +358,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }
         },
 
+        /**
+         * Fetch any autocomplete suggestions from the API.
+         *
+         * @method _fetch_suggestions
+         * @param {String} qry
+         * @param {Function} callback
+         *
+         */
         _fetch_suggestions: function (qry, callback) {
             this.ac.api = new Y.bookie.Api.route.TagComplete(
                 this.get('api_cfg')
@@ -308,6 +393,15 @@ YUI.add('bookie-tagcontrol', function (Y) {
             );
         },
 
+        /**
+         * Fire an event to broadcast that there was a change in our list of
+         * tags in the control.
+         *
+         * @method _fire_changed
+         * @event tag:changed
+         * @private
+         *
+         */
         _fire_changed: function () {
             var that = this;
             Y.fire('tag:changed', {
@@ -321,6 +415,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * Check the input for any actions we should take as the user types
          * into the input control.
+         *
+         * @method _parse_input
+         * @private
+         * @param {Event} e
          *
          */
         _parse_input: function (e) {
@@ -365,6 +463,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * Add any tags that a srcNode already has in it
          *
+         * @method _process_existing
+         * @private
+         *
          */
         _process_existing: function () {
             // check the srcNode for any existing value=""
@@ -385,6 +486,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
         /**
          * When a tag is deleted, we need to update our own record of it.
+         *
+         * @method _remove_tag
+         * @private
+         * @param {Event} e
          *
          */
         _remove_tag: function (e) {
@@ -408,7 +513,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         /**
-         * We need to setup the autocomplete onto out input widget
+         * We need to setup the autocomplete onto out input widget.
+         *
+         * @method _setup_autocomplete
+         * @private
          *
          */
         _setup_autocomplete: function () {
@@ -428,6 +536,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * Sync up the list of tags the control knows about to the srcNode
          * input element.
+         *
+         * @method _sync_tags
+         * @private
          *
          */
         _sync_tags: function () {
@@ -459,6 +570,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * We'll play safe and just always recalc the width for the clone
          * before we check it's scroll height.
          *
+         * @method _update_input_width
+         * @private
+         * @param {String} new_value
+         *
          */
         _update_input_width: function (new_value) {
             // we need to update the clone with the content so it resizes
@@ -474,12 +589,21 @@ YUI.add('bookie-tagcontrol', function (Y) {
         /**
          * Override the YUI widget method for binding UI events
          *
+         * @method bindUI
          */
         bindUI: function () {
             this._bind_events();
             this.typing = false;
         },
 
+        /**
+         * Init method for standard YUI object extending Base
+         *
+         * @method initializer
+         * @constructor
+         * @param {Object} cfg
+         *
+         */
         initializer: function (cfg) {
             var that = this;
             // check to see if we have any existing tags to use in the
@@ -491,6 +615,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
         /**
          * Override the YUI widget method for building out html/rendering.
+         *
+         * @method renderUI
          *
          */
         renderUI: function () {
@@ -516,6 +642,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * Override the YUI widget method for init'ing the UI per existing
          * data.
          *
+         * @method syncUI
+         *
          */
         syncUI: function () {
             // handle init'ing if there are initial values in the input box
@@ -523,15 +651,23 @@ YUI.add('bookie-tagcontrol', function (Y) {
         }
     }, {
         ATTRS: {
-            /**
-             * We need an api_cfg if we're going to have autocomplete results
-             *
-             */
+             /**
+              * We need an api_cfg if we're going to have autocomplete results.
+              *
+              * @attribute api_cfg
+              * @default undefined
+              * @type Object
+              *
+              */
              api_cfg: {
              },
 
             /**
-             * A stack to shove events onto and process
+             * Are there events on our stack we're waiting to process?
+             *
+             * @attribute events_waiting
+             * @default false
+             * @type Boolean
              *
              */
             events_waiting: {
@@ -540,6 +676,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             /**
              * Tags is a list of Tag object instances we know about
+             *
+             * @attribute tags
+             * @default []
+             * @type Array
              *
              */
             tags: {
@@ -557,6 +697,15 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 }
             },
 
+            /**
+             * Do we want the submit button in the control? For instance, we
+             * don't want it on the edit form, but we do in the filtering ui.
+             *
+             * @attribute with_submit
+             * @default true
+             * @type Boolean
+             *
+             */
             with_submit: {
                 value: true
             }

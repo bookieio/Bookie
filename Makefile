@@ -42,8 +42,7 @@ js_doc: js
 	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
 
 js_doc_upload: js_doc
-	up_bmark jsdoc/**/*.(html|js|css|json|png|gif)
-
+	s3cp.py --bucket files.bmark.us --public jsdoc/**/*.*`
 
 css: chrome_css
 chrome_css:

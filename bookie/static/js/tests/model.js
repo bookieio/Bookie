@@ -178,8 +178,73 @@ YUI({
             }
         });
 
+        chrome_options = new Y.Test.Case({
+            name: "Tests for the Options model",
+            _local_storage_keys: [
+                'api_url',
+                'api_username',
+                'api_key',
+                'cache_content'
+            ],
+
+            setUp: function () {
+
+            },
+
+            tearDown: function () {
+                Y.Array.each(this._local_storage_keys, function (k) {
+                    localStorage.removeItem(k);
+                });
+            },
+
+            test_init: function () {
+                A.isObject(Y.bookie.OptionsModel,
+                    'We should be able to see the OptionsModel in the namespace');
+            },
+
+            test_defaults: function () {
+                // We should have some sane defaults for our config
+                var m = new Y.bookie.OptionsModel();
+
+                A.areEqual('https://bmark.us', m.get('api_url'));
+                A.areEqual('username', m.get('api_username'));
+                A.areEqual('XXXXXX', m.get('api_key'));
+                A.areEqual('true', m.get('cache_content'));
+            },
+
+            test_save: function () {
+                // When we tell a model to save, it should be writing out to
+                // our localStorage for us to keep a hold of
+                var m = new Y.bookie.OptionsModel();
+                m.save();
+
+                A.areEqual('https://bmark.us', localStorage.getItem('api_url'));
+                A.areEqual('username', localStorage.getItem('api_username'));
+                A.areEqual('XXXXXX', localStorage.getItem('api_key'));
+                A.areEqual('true', localStorage.getItem('cache_content'));
+            },
+
+            test_load: function () {
+                // we should be able to retrieve the settings from the
+                // localStorage
+                localStorage.setItem('api_url', 'test.com');
+                localStorage.setItem('api_username', 'test');
+                localStorage.setItem('api_key', 'test123');
+                localStorage.setItem('cache_content', 'false');
+
+                var m = new Y.bookie.OptionsModel();
+                m.load();
+
+                A.areEqual('test.com', m.get('api_url'));
+                A.areEqual('test', m.get('api_username'));
+                A.areEqual('test123', m.get('api_key'));
+                A.areEqual('false', m.get('cache_content'));
+            }
+        });
+
     Y.Test.Runner.add(model_test);
     Y.Test.Runner.add(modellist_test);
     Y.Test.Runner.add(pager_test);
+    Y.Test.Runner.add(chrome_options);
     Y.Test.Runner.run();
 });
