@@ -1635,28 +1635,29 @@ YUI.add('bookie-view', function (Y) {
         _sync_bookmarks: function (e) {
             var opts = this.get('model');
             var ind = new Y.bookie.Indicator({
-                target: '#sync'
+                target: Y.one('#sync')
             });
             ind.render();
             ind.show();
 
-            var api = new Y.bookie.Api.Sync({
+            var api = new Y.bookie.Api.route.Sync({
                 url: opts.get('api_url') + '/api/v1',
                 username: opts.get('api_username'),
                 api_key: opts.get('api_key')
             });
 
             // make the api calls
-            this.api.call({
+            api.call({
                 'success': function (data, request) {
-                    debugger;
+                    Y.Array.each(data.hash_list, function (h) {
+                        // write out each hash to localStorage
+                        localStorage.setItem(h, 'true');
+                    });
 
                     // finally stop the indicator from spinny spinny
                     ind.hide();
                 }
             });
-
-
         },
 
         /**

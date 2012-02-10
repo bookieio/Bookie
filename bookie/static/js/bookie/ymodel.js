@@ -23,8 +23,82 @@ YUI.add('bookie-model', function (Y) {
      */
     ns.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
-        [],
-        {
+        [], {
+            /**
+             * Handle the save() event for objects that don't yet have an id.
+             *
+             * @method _create
+             * @param {Object} options
+             * @param {Function} callback
+             * @private
+             *
+             */
+            _create: function (options, callback) {
+
+            },
+
+            /**
+             * Handle the delete() event for objects.
+             *
+             * @method _delete
+             * @param {Object} options
+             * @param {Function} callback
+             * @private
+             *
+             */
+            _delete: function (options, callback) {
+               // perform a delete api request to the server
+               var delete_cfg = this.api_cfg;
+               delete_cfg.hash_id = this.get('hash_id');
+               var api = new Y.bookie.Api.route.UserBmarkDelete(delete_cfg);
+               api.call({
+                   success: callback
+               });
+            },
+
+            /**
+             * Handle the read() event for objects and load it from storage.
+             *
+             * We need to fetch it from the api.
+             *
+             * @method _read
+             * @param {Object} options
+             * @param {Function} callback
+             * @private
+             *
+             */
+            _read: function (options, callback) {
+                // the bid is required in order to fetch the bookmark from the
+                // api.
+                if (!options.bid) {
+                    throw "Could not load bookmark without a bid property!";
+                }
+
+                var api = new Y.bookie.Api.route.Bmark(this.get('api_cfg'));
+                api.call({
+                    'success': function (data, request) {
+                        debugger;
+                    }
+                });
+            },
+
+            /**
+             * Handle the save() event for objects that have an id and write it
+             * out to storage.
+             *
+             * @method _update
+             * @param {Object} options
+             * @param {Function} callback
+             * @private
+             *
+             */
+            _update: function (options, callback) {
+                localStorage.setItem('api_url', this.get('api_url'));
+                localStorage.setItem('api_username', this.get('api_username'));
+                localStorage.setItem('api_key', this.get('api_key'));
+                localStorage.setItem('cache_content', this.get('cache_content'));
+            },
+
             /**
              * Maps to destroy with delete: true to remove a bookmark from the
              * system.
@@ -52,20 +126,40 @@ YUI.add('bookie-model', function (Y) {
              */
             sync: function (action, options, callback) {
                 switch (action) {
+                    case 'create':
+                        this._create(options, callback);
+                        return;
 
                     case 'delete':
-                        // perform a delete api request to the server
-                        var delete_cfg = this.api_cfg;
-                        delete_cfg.hash_id = this.get('hash_id');
-                        var api = new Y.bookie.Api.route.UserBmarkDelete(delete_cfg);
-                        api.call({
-                            success: callback
-                        });
+                        this._delete(options, callback);
+                        return;
+
+                    case 'read':
+                        this._read(options, callback);
+                        return;
+
+                    case 'update':
+                        this._update(options, callback);
+                        return;
+
+                    default:
+                        console.log('Invalid action to Bmark Model ' + action);
+                        callback('Invalid action');
                 };
             }
         },
         {
             ATTRS: {
+                /**
+                 * @attribute api_cfg
+                 * @default undefined
+                 * @type Object
+                 *
+                 */
+                api_cfg: {
+
+                },
+
                 /**
                  * @attribute bid
                  * @default undefined
