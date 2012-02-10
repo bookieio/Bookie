@@ -1572,6 +1572,184 @@ YUI.add('bookie-view', function (Y) {
             }
         }
     });
+
+    /**
+     * View control for the options html pane in the extension.
+     *
+     * @class OptionsView
+     * @extends Y.View
+     *
+     */
+    ns.OptionsView = Y.Base.create('bookie-options-view', Y.View, [], {
+        /**
+         * Setup the options form with data from our model to start out with.
+         *
+         * @method _init_form
+         * @private
+         *
+         */
+        _init_form: function () {
+            var opts = this.get('model');
+
+            Y.one('#api_url').set('value', opts.get('api_url'));
+            Y.one('#api_username').set('value', opts.get('api_username'));
+            Y.one('#api_key').set('value', opts.get('api_key'));
+
+            if (opts.get('cache_content') === 'true') {
+                Y.one('#cache_content').set('checked', true);
+            } else {
+                Y.one('#cache_content').set('checked', false);
+            }
+        },
+
+        /**
+         * Display any message based on if the request to change is successful
+         * or ended in error.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#options_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
+
+        /**
+         * Perform a sync of the bookmarks they user has stored by requesting
+         * the list of hashes from the API on the server.
+         *
+         * @method _sync_bookmarks
+         * @param {Event} e
+         *
+         */
+        _sync_bookmarks: function (e) {
+            var opts = this.get('model');
+            var ind = new Y.bookie.Indicator({
+                target: '#sync'
+            });
+            ind.render();
+            ind.show();
+
+            var api = new Y.bookie.Api.Sync({
+                url: opts.get('api_url') + '/api/v1',
+                username: opts.get('api_username'),
+                api_key: opts.get('api_key')
+            });
+
+            // make the api calls
+            this.api.call({
+                'success': function (data, request) {
+                    debugger;
+
+                    // finally stop the indicator from spinny spinny
+                    ind.hide();
+                }
+            });
+
+
+        },
+
+        /**
+         * Handle dispatching events for the UI.
+         *
+         * @attribute events
+         * @type Object
+         *
+         *
+         */
+        events: {
+            // @event #form:submit
+            'form#form': {
+                'submit': 'update_options'
+            },
+            '#sync_button': {
+                'click': '_sync_bookmarks'
+            }
+        },
+
+        template: '',
+
+        /**
+         * General initializer method.
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
+        initializer: function (cfg) {
+            this._init_form();
+        },
+
+
+        /**
+         * Handle updating the options model with our selected information
+         * whenthe form is submitted.
+         *
+         * @method update_options
+         * @param {Event} e
+         *
+         */
+        update_options: function (e) {
+            e.preventDefault();
+
+            var msg_div = Y.one('#options_msg');
+            msg_div.hide();
+
+            var opts = this.get('model');
+            // fetch the new values from the form and then update our model
+            // with them.
+            opts.set('api_url', Y.one('#api_url').get('value'));
+            opts.set('api_username', Y.one('#api_username').get('value'));
+            opts.set('api_key', Y.one('#api_key').get('value'));
+
+            if (Y.one('#cache_content').get('checked')) {
+                opts.set('cache_content', 'true');
+            } else {
+                opts.set('cache_content', 'false');
+            }
+
+            // one updated, now save it
+            opts.save()
+            this._show_message('Saved your settings...', true);
+        }
+    }, {
+        ATTRS: {
+            /**
+             * @attribute container
+             * @default Y.Node the body of the document
+             * @type Y.Node
+             *
+             */
+            container: {
+                valueFn: function () {
+                    return Y.one('body');
+                }
+            },
+
+            /**
+             * @attribute model
+             * @default Y.bookie.OptionModel
+             * @type Y.bookie.OptionModel
+             *
+             */
+            model: {
+                valueFn: function () {
+                    return new Y.bookie.OptionsModel();
+                }
+            }
+        }
+    });
+
 }, '0.1.0', { requires: ['base',
     'view', 'bookie-model', 'bookie-api', 'bookie-indicator', 'handlebars', 'transition',
     'bookie-tagcontrol', 'substitute']

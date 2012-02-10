@@ -278,5 +278,22 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
 
     Y.Test.Runner.add(bmark_list_view_test);
 
+    var options_view_test = new Y.Test.Case({
+        name: 'Options View',
+        setUp: function () {
+
+        },
+
+        tearDown: function () {
+
+        },
+
+        test_exists: function () {
+            Y.Assert.isObject(Y.bookie.OptionsView,
+                'We should be able to find the OptionsView object');
+        }
+    });
+    Y.Test.Runner.add(bmark_list_view_test);
+
     Y.Test.Runner.run();
 });

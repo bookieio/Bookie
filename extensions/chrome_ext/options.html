@@ -1,6 +1,9 @@
 <html>
     <head>
-        <style>
+        <link rel="stylesheet" href="lib/combo.css" type="text/css" charset="utf-8">
+        <link rel="stylesheet" href="lib/bookie.css" type="text/css" charset="utf-8">
+
+        <style type="text/css">
             body {
                 font-family: sans-serif;
                 color:#444;
@@ -30,42 +33,12 @@
                 border-bottom-left-radius: 5px;
             }
 
-            label, input {
-                float:left;
-                margin:5px 0;
-            }
-
-            label {
-                clear:left;
-                width:150px;
-            }
-
-            label:after {
-                content:":";
-            }
-
-            input {
-                border:1px solid #999;
-                padding:2px;
-                border-radius:2px;
-                width:180px;
+            .form input[type=text], .form input[type="url"], .form input[type="password"] {
+                width: 15em;
             }
 
             input:focus {
                 outline:1px solid #acf;
-            }
-
-            fieldset {
-                border:1px solid #ccc;
-                padding:10px;
-            }
-
-            legend {
-                font-size:12px;
-            }
-
-            #buttonrow {
-                text-align:center;
             }
 
             button {
@@ -73,91 +46,89 @@
                 width:80px;
                 padding:2px 0px;
             }
-
-        #circle{
-            display: inline-block;
-        }
-
-        /** Stolen from: http://www.nikesh.me/demo/loading.html **/
-        .circle{
-            background-color:#CCC;
-            float:left;
-            height:15px;
-            margin-left:8px;
-            width:15px;
-            -webkit-animation-name: bounce_circle;
-            -webkit-border-radius:10px;
-            -webkit-animation-duration: 1.5s;
-            -webkit-animation-iteration-count: infinite;
-            -webkit-animation-direction: linear;
-            opacity:0.3;
-        }
-
-        #circle_1 {
-            -webkit-animation-delay: .3s;
-         }
-
-        #circle_2 {
-            -webkit-animation-delay: .7s;
-        }
-
-        #circle_3 {
-            -webkit-animation-delay: .9s;
-        }
-
-        @-webkit-keyframes bounce_circle {
-            0%{opacity:0.3;}
-            50%{opacity:1; background-color:#111}
-            100%{opacity:0.3;}
-        }
         </style>
-
-
     </head>
     <body>
         <h1>Bookie Settings</h1>
-        <div id='info'></div>
-        <form id="form">
-            <fieldset>
-                <legend>Connection</legend>
-                <label for="api_url">Bookie url</label>
-                <input type="url" id="api_url"/>
-                <div style="display: inline-block; margin: 5px;">[http[s]://someurl]</div>
+        <div style="width: 45%; float: left; padding-right: 2em;
+            vertical-align: top;" class="form">
 
-                <label for="api_username">Bookie account username</label>
-                <input type="text" id="api_username"/>
-
-                <label for="api_key">API key</label>
-                <input type="password" placeholder="api key" id="api_key"/>
-
-                <label for="cache_content">Cache Content</label>
-                <input type="checkbox" id="cache_content" />
-            </fieldset>
-            <div id="buttonrow">
-                <button id="cancelBtn">Cancel</button>
-                <button id="saveBtn" type="submit">Save</button>
-            </div>
-        </form>
-        <div id="sync">
-            <h3>Server Sync</h3>
-            <button id="syncBtn">Sync</button>
-            <div id="circle" class="marginLeft">
-                <div id="circle_1" class="circle"></div>
-                <div id="circle_2" class="circle"></div>
-                <div id="circle_3" class="circle"></div>
-                <div class="clearfix"></div>
-            </div>
-            <p><strong>Note:</strong> your Bookie url and api key settings must
-                be set and saved before using Sync</p>
-            <p>This will download information about your bookmarks from the
-                bookie server instance into your browser. This helps us notify you
-                when you're on a page you've already bookmarked. In the future,
-                this might be able to sync Chrome bookmarks with your Bookie
-                bookmarks.</p>
+            <div class="heading">Connection Information</div>
+            <form id="form">
+                <ul>
+                    <li>
+                        <label for="api_url">Bookie url</label>
+                        <input type="url" id="api_url"/>
+                    </li>
+                    <li>
+                        <label for="api_username">Bookie username</label>
+                        <input type="text" id="api_username"/>
+                    </li>
+                    <li>
+                        <label for="api_key">API key</label>
+                        <input type="password" placeholder="api key" id="api_key"/>
+                    </li>
+                    <li>
+                        <label for="cache_content">Cache Content</label>
+                        <input type="checkbox" id="cache_content" />
+                    </li>
+                </ul>
+                <div id="buttonrow">
+                    <button id="saveBtn" type="submit">Save</button>
+                </div>
+                <div id="options_msg" class="error" style="opacity: 0;"></div>
+            </form>
+        </div>
+        <div style="width: 45%; float: left; padding-right: 2em;" class="form">
+            <div class="heading">Server Sync</div>
+            <div id="sync">
+                <p><strong>Note:</strong> your Bookie url and api key settings must
+                    be set and saved before using Sync</p>
+                <p>This will download information about your bookmarks from the
+                    bookie server instance into your browser. This helps us notify you
+                    when you're on a page you've already bookmarked.</p>
+                </div>
+                <button id="sync_button">Sync</button>
         </div>
     </body>
+    <script src="lib/combo.js"></script>
+    <script src="lib/combo2.js"></script>
+    <script src="lib/combo3.js"></script>
+    <script src="lib/combo3.js"></script>
+    <script src="lib/yapi.js"></script>
+    <script src="lib/yindicator.js"></script>
+    <script src="lib/ymodel.js"></script>
+    <script src="lib/ytagcontrol.js"></script>
+    <script src="lib/yview.js"></script>
 
     <script type="text/javascript">
-        bookie.options.init();
+        YUI.GlobalConfig = {
+            combine: true,
+            base: '${combo}/combo?y/',
+            fetchCSS: false,
+            comboBase: '${combo}/combo?',
+            maxURLLength: 1500,
+            root: 'y/',
+            groups: {
+                bookie: {
+                    combine: true,
+                    base: '${combo}/combo?b',
+                    comboBase: '${combo}/combo?',
+                    root: 'b/',
+                    fetchCSS: false,
+                    filter: 'raw',
+                    // comes from including bookie/meta.js
+                    modules: YUI_MODULES,
+                }
+            }
+        };
+
+        YUI().use('bookie-model', 'bookie-view', function (Y) {
+            var options = new Y.bookie.OptionsModel();
+            options.load();
+            var view = new Y.bookie.OptionsView({
+                model: options
+            });
+        });
     </script>
 </html>

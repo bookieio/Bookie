@@ -357,6 +357,29 @@ YUI.add('bookie-api', function (Y) {
 
 
     /**
+     * Perform an API request to the server and request the hash ids of all
+     * the bookmarks a user has bookmarked.
+     *
+     * @class Api.route.Sync
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.Sync = Y.Base.create(
+        'bookie-api-route-sync',
+        Y.bookie.Api.route,
+        [],
+        {
+
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/extension/sync'
+                }
+            }
+        }
+    );
+
+    /**
      * Fetch a list of suggested tags based on stub string.
      *
      * @class Api.route.TagComplete

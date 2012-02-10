@@ -160,7 +160,7 @@ form.bmark input[type=submit] {
   border-radius: 5px;
   margin: 1em;
   padding: .5em; }
-  .form input[type=text], .form input[type="url"] {
+  .form input[type=text], .form input[type="url"], .form input[type="password"] {
     width: 35em;
     padding: 5px;
     border: 1px solid #333333; }
