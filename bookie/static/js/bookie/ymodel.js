@@ -68,16 +68,17 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             _read: function (options, callback) {
+                var that = this;
                 // the bid is required in order to fetch the bookmark from the
                 // api.
-                if (!options.bid) {
-                    throw "Could not load bookmark without a bid property!";
+                if (!options.hash_id) {
+                    throw "Could not load bookmark without a hash_id property!";
                 }
 
                 var api = new Y.bookie.Api.route.Bmark(this.get('api_cfg'));
                 api.call({
                     'success': function (data, request) {
-                        debugger;
+                        that.setAttrs(data.bmark);
                     }
                 });
             },
@@ -97,6 +98,22 @@ YUI.add('bookie-model', function (Y) {
                 localStorage.setItem('api_username', this.get('api_username'));
                 localStorage.setItem('api_key', this.get('api_key'));
                 localStorage.setItem('cache_content', this.get('cache_content'));
+            },
+
+            /**
+             * General initializer, we need this to hash urls passed in during
+             * construction.
+             *
+             * @method initializer
+             * @param {Object} cfg
+             *
+             */
+            initializer: function (cfg) {
+                // If there's a url in here, make sure we store the hash_id
+                // since that's the key we need for future api calls and such.
+                if (cfg.url) {
+                    this.set('hash_id', Y.bookie.Hash.hash_url(cfg.url));
+                }
             },
 
             /**
@@ -249,7 +266,15 @@ YUI.add('bookie-model', function (Y) {
                  *
                  */
                 'url': {
-                    value: ''
+                    value: '',
+                    setter: function (val) {
+                        // whenever we update the url, hash it and update our
+                        // hash_id
+                        var hashed = Y.bookie.Hash.hash_url(val);
+                        this.set('hash_id', hashed);
+
+                        return val;
+                    }
                 },
 
                 /**
@@ -624,5 +649,5 @@ YUI.add('bookie-model', function (Y) {
     });
 
 }, '0.1.0' /* module version */, {
-    requires: ['base', 'model', 'model-list', 'substitute']
+    requires: ['base', 'model', 'model-list', 'substitute', 'bookie-hash']
 });

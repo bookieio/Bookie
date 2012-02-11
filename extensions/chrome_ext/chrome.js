@@ -1,13 +1,81 @@
 YUI().add('bookie-chrome', function (Y) {
-    var ns = Y.namespace('bookie'),
-        // hash the url into our defined mechanism
-        hash_url = function (url) {
-            console.log('Hashing url: ' + url);
-            var hash = Sha256.hash(url, true).substr(0, 14);
-            return hash;
-        };
+    var ns = Y.namespace('bookie');
 
-    ns.Chrome = Y.Base.create('bookie-chrome', Y.Base, [], {
+    ns.ChromePopup = Y.Base.create('bookie-chrome-view', Y.View, [], {
+
+        /**
+         * Process deleting a bookmark requested by the extension.
+         *
+         * @method _handle_delete
+         * @param {Event} e
+         *
+         */
+        _handle_delete: function (e) {
+
+        },
+
+        /**
+         * Process storing a bookmark via the API.
+         *
+         * @method _handle_submit
+         * @param {Event} e
+         *
+         */
+        _handle_submit: function (e) {
+
+        },
+
+        events: {
+            'form#form': {
+                submit: '_handle_submit'
+            },
+            '#delete': {
+                'click': '_handle_delete'
+            }
+        },
+
+        /**
+         * Standard initializer, prep up the popup for use.
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
+        initializer: function (cfg) {
+
+        }
+
+    }, {
+        ATTRS: {
+            /**
+             * @attribute container
+             * @default Y.Node the body of the document
+             * @type Y.Node
+             *
+             */
+            container: {
+                valueFn: function () {
+                    return Y.one('body');
+                }
+            },
+
+            /**
+             * @attribute model
+             * @default Y.bookie.OptionModel
+             * @type Y.bookie.OptionModel
+             *
+             */
+            model: {
+                valueFn: function () {
+                    return new Y.bookie.Bmark();
+                }
+            }
+
+
+        }
+    });
+
+    ns.Chrome = Y.Base.create('bookie-chrome-popup', Y.Base, [], {
 
         _init_popup: function () {
             // bind up the TagControl to get that UI flash over with asap

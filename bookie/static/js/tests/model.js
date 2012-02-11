@@ -2,7 +2,7 @@
 YUI({
     logInclude: { TestRunner: true},
     filter: 'raw'
-}).use('console', 'test', 'bookie-model', function (Y) {
+}).use('console', 'test', 'bookie-model', 'bookie-api', function (Y) {
     //initialize the console
     var yconsole = new Y.Console({
         newestOnTop: false
@@ -108,6 +108,21 @@ YUI({
 
                 bmark.remove();
                 A.isTrue(hit, "We should have hit the sync with delete");
+            },
+
+            "creating a bmark with a url should get a hash_id": function () {
+                var b = new Y.bookie.Bmark({
+                    url: 'http://google.com'
+                });
+                Y.Assert.areEqual('aa2239c17609b2', b.get('hash_id'));
+            },
+
+            "updating the url should change the hash_id": function () {
+                var b = new Y.bookie.Bmark({
+                    url: 'http://google.com'
+                });
+                b.set('url', 'http://bmark.us');
+                Y.Assert.areEqual('c5c21717c99797', b.get('hash_id'));
             }
         }),
 

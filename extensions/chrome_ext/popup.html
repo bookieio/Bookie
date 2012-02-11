@@ -99,8 +99,6 @@
 
         <script type="text/javascript">
             YUI().use('base', 'bookie-chrome', function (Y) {
-
-
                 // this could be fed tab info via the url
                 // usually in the case of a keyboard shortcut loading this in a
                 // new tab vs the icon popup
@@ -114,10 +112,12 @@
                     tab_data = undefined;
                 }
 
+                var b = new Y.bookie.Bmark(tab_data);
                 var settings = new bookie.Settings();
+
                 var c = new bookie.Chrome({
                     settings: settings,
-                    url_data: tab_data
+                    bookmark: b
                 });
            });
         </script>
