@@ -1,6 +1,14 @@
 YUI().add('bookie-chrome', function (Y) {
     var ns = Y.namespace('bookie.chrome');
 
+    /**
+     * The View object to the extension popup page.
+     *
+     * @class Popup
+     * @extends Y.View
+     * @namespace bookie.chrome
+     *
+     */
     ns.Popup = Y.Base.create('bookie-chrome-view', Y.View, [], {
         /**
          * We start out with an empty model from the extension and we need to
@@ -44,6 +52,7 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _init_form: function () {
+            console.log('in init form');
             // update the fields with model data
             Y.one('#url').set('value', this.get('model').get('url'));
             Y.one('#description').set('value', this.get('model').get('description'));
@@ -52,11 +61,14 @@ YUI().add('bookie-chrome', function (Y) {
             Y.one('#inserted_by').set('value', 'chrome_ext');
 
             // make the tag field a TagControl
-            this.tag_controller = new Y.bookie.TagControl({
-                api_cfg: this.api_cfg,
-                srcNode: Y.one('#tag_filter'),
-                initial_tags: this.get('model').get('tag_str').split(' ')
-            });
+            // but only if it's not already one
+            if (!Y.one('.yui3-bookie-tagcontrol')) {
+                this.tag_controller = new Y.bookie.TagControl({
+                    api_cfg: this.api_cfg,
+                    srcNode: Y.one('#tag_filter'),
+                    initial_tags: this.get('model').get('tag_str').split(' ')
+                });
+            }
         },
 
         _validate_settings: function () {
@@ -108,16 +120,20 @@ YUI().add('bookie-chrome', function (Y) {
                 var n = new Y.bookie.chrome.Notification({
                     code: '9999',
                     type: 'error',
-                    short_text: 'Error',
-                    long_text: 'The extension settings are not valid. Please go to the options page and update them.'
+                    title: 'Error',
+                    message: 'The extension settings are not valid. Please go to the options page and update them.'
                 });
+
+                return;
             }
 
             this.api_cfg = this.get('settings').get_apicfg();
 
+            // now bind the model event
+            this.get('model').on('change', this._init_form, this);
+
             // fire the ajax request to see if the model can be updated
             var m = this.get('model');
-            m.set('api_cfg', this.api_cfg);
             m.load({
                 hash_id: m.get('hash_id')
             });
@@ -306,63 +322,78 @@ YUI().add('bookie-chrome', function (Y) {
     // });
 
 
-    ns.Errors = Y.Base.create('bookie-chrome-errors', Y.Base, [], {
-        add: function (error_msg) {
-            this.get('errors').push(error_msg);
-        },
+    // ns.Errors = Y.Base.create('bookie-chrome-errors', Y.Base, [], {
+    //     add: function (error_msg) {
+    //         this.get('errors').push(error_msg);
+    //     },
 
-        clear: function () {
-            this.set('errors', []);
-            this.get('target_node').setContent('');
-        },
+    //     clear: function () {
+    //         this.set('errors', []);
+    //         this.get('target_node').setContent('');
+    //     },
 
-        render: function () {
-            var errors = this.get('errors');
+    //     render: function () {
+    //         var errors = this.get('errors');
 
-            if(errors.length) {
-                var error_nodes = new Y.NodeList();
+    //         if(errors.length) {
+    //             var error_nodes = new Y.NodeList();
 
-                Y.Array.each(function (msg) {
-                    var n = Y.Node.create('<li/>');
-                    n.set('text', msg);
-                    error_nodes.push(n);
-                });
+    //             Y.Array.each(function (msg) {
+    //                 var n = Y.Node.create('<li/>');
+    //                 n.set('text', msg);
+    //                 error_nodes.push(n);
+    //             });
 
-                this.get('target_node').setContent(error_nodes);
-            }
-        }
-    }, {
-        ATTRS: {
-            errors: {
-                value: []
-            },
+    //             this.get('target_node').setContent(error_nodes);
+    //         }
+    //     }
+    // }, {
+    //     ATTRS: {
+    //         errors: {
+    //             value: []
+    //         },
 
-            length: {
-                getter: function () {
-                    return this.get('errors').length;
-                }
-            },
+    //         length: {
+    //             getter: function () {
+    //                 return this.get('errors').length;
+    //             }
+    //         },
 
-            target_node: {
-                valueFn: function () {
-                    return Y.one('#errors');
-                }
-            }
-        }
-    });
+    //         target_node: {
+    //             valueFn: function () {
+    //                 return Y.one('#errors');
+    //             }
+    //         }
+    //     }
+    // });
 
 
+    /**
+     * Display Chrome notification windows to the user.
+     *
+     * @class Notification
+     * @extends Y.Base
+     * @namespace bookie.chrome
+     *
+     */
     ns.Notification = Y.Base.create('bookie-chrome-notification',
         Y.Base, [], {
 
+            /**
+             * The notification init shows and runs the whole thing.
+             *
+             * @method initializer
+             * @param {Object} cfg
+             *
+             */
             initializer: function (cfg) {
                 if (window.chrome !== undefined && chrome.tabs) {
                     if(this.get('type') === "error") {
                         //show a desktop notification
                         var n = webkitNotifications.createNotification(
                             'logo.128.png',
-                            this.get('short_text'),
-                            this.get('long_text')
+                            this.get('title'),
+                            this.get('message')
                             );
                         n.show();
 
@@ -372,7 +403,7 @@ YUI().add('bookie-chrome', function (Y) {
                         }, 5000);
                     } else {
                         // some post notify checks
-                        if (this.get('long_text') === "saved") {
+                        if (this.get('description') === "saved") {
                             chrome.tabs.getSelected(null, function (tab) {
                                 // we need to hash this into storage
                                 var hash_id = Y.bookie.Hash.hash_url(tab.url);
@@ -385,10 +416,37 @@ YUI().add('bookie-chrome', function (Y) {
             }
         }, {
             ATTRS: {
-                code: {},
-                type: {},
-                short_text: {},
-                long_text: {},
+                /**
+                 * Valid values are info and error at the moment.
+                 *
+                 * @attribute type
+                 * @default info
+                 * @type String
+                 *
+                 */
+                type: {
+                    value: 'info'
+                },
+
+                /**
+                 * @attribute title
+                 * @default ''
+                 * @type String
+                 *
+                 */
+                title: {
+                    value: ''
+                },
+
+                /**
+                 * @attribute message
+                 * @default ''
+                 * @type String
+                 *
+                 */
+                message: {
+                    value: ''
+                },
             }
         }
     );
@@ -449,10 +507,8 @@ YUI().add('bookie-chrome', function (Y) {
                 // length to show the badge in ms
                 value: 5000
             }
-
         }
     });
-
 
 }, '0.1', {
     requires: ['base', 'node', 'view', 'bookie-model', 'bookie-tagcontrol', 'bookie-api']

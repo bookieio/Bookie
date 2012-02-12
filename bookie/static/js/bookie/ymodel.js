@@ -75,9 +75,12 @@ YUI.add('bookie-model', function (Y) {
                     throw "Could not load bookmark without a hash_id property!";
                 }
 
-                var api = new Y.bookie.Api.route.Bmark(this.get('api_cfg'));
+                var api = new Y.bookie.Api.route.Bmark(Y.merge(this.get('api_cfg'), options));
                 api.call({
                     'success': function (data, request) {
+                        console.log('should be getting new data');
+                        console.log(that.getAttrs());
+                        console.log(data.bmark);
                         that.setAttrs(data.bmark);
                     }
                 });
@@ -111,9 +114,6 @@ YUI.add('bookie-model', function (Y) {
             initializer: function (cfg) {
                 // If there's a url in here, make sure we store the hash_id
                 // since that's the key we need for future api calls and such.
-                console.log(cfg);
-                console.trace();
-
                 if (cfg.url) {
                     this.set('hash_id', Y.bookie.Hash.hash_url(cfg.url));
                 }
@@ -200,11 +200,13 @@ YUI.add('bookie-model', function (Y) {
 
                 /**
                  * @attribute description
-                 * @default undefined
+                 * @default ''
                  * @type String
                  *
                  */
-                'description': {},
+                'description': {
+                    value: ''
+                },
 
                 /**
                  * @attribute hash_id
@@ -292,11 +294,13 @@ YUI.add('bookie-model', function (Y) {
 
                 /**
                  * @attribute extended
-                 * @default undefined
+                 * @default ''
                  * @type String
                  *
                  */
-                'extended': {},
+                'extended': {
+                    value: ''
+                },
 
                 /**
                  * @attribute stored

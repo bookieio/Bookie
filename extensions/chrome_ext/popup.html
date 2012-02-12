@@ -129,22 +129,27 @@
             YUI().use('bookie-chrome', function (Y) {
                 var run = function (tab_data) {
                     if (tab_data) {
-                        console.log('model', tab_data);
-                        var bookmark = new Y.bookie.Bmark(tab_data);
                         var settings = new Y.bookie.OptionsModel();
                         // load the settings from the extension for use
                         settings.load();
+
+                        var bookmark = new Y.bookie.Bmark(Y.merge(
+                            tab_data, {
+                                api_cfg: settings.get_apicfg()
+                            }
+                        ));
 
                         var c = new Y.bookie.chrome.Popup({
                             settings: settings,
                             model: bookmark
                         });
+
                     } else {
                         var n = new Y.bookie.chrome.Notification({
                             code: '9999',
                             type: 'error',
-                            short_text: 'Err',
-                            long_text: 'Could not find a url to bookmark.'
+                            title: 'Err',
+                            message: 'Could not find a url to bookmark.'
                         });
                     }
                 }
@@ -164,15 +169,12 @@
                     run(tab_data);
                 } else {
                     chrome.tabs.getSelected(null, function (tab) {
-                        console.log('tab', tab);
                         run({
                             url: tab.url,
                             description: tab.title
                         });
                     });
                 }
-
-                console.log('data set', tab_data);
            });
         </script>
     </body>
