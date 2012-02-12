@@ -111,6 +111,9 @@ YUI.add('bookie-model', function (Y) {
             initializer: function (cfg) {
                 // If there's a url in here, make sure we store the hash_id
                 // since that's the key we need for future api calls and such.
+                console.log(cfg);
+                console.trace();
+
                 if (cfg.url) {
                     this.set('hash_id', Y.bookie.Hash.hash_url(cfg.url));
                 }
@@ -539,6 +542,14 @@ YUI.add('bookie-model', function (Y) {
                 return def;
             } else {
                 return found;
+            }
+        },
+
+        get_apicfg: function () {
+            return {
+                url: this.get('api_url'),
+                username: this.get('api_username'),
+                api_key: this.get('api_key')
             }
         },
 

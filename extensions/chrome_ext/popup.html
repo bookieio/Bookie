@@ -1,14 +1,9 @@
 <html>
     <head>
-        <link rel="stylesheet" href="lib/bookie.css"/>
+        <link rel="stylesheet" href="lib/combo.css" type="text/css" charset="utf-8">
+        <link rel="stylesheet" href="lib/bookie.css" type="text/css" charset="utf-8">
 
-        <script type="text/javascript" src="lib/hash.js"></script>
-        <script type="text/javascript" src="lib/yapi.js"></script>
-        <script type="text/javascript" src="lib/yindicator.js"></script>
-        <script type="text/javascript" src="lib/ymodel.js"></script>
-        <script type="text/javascript" src="lib/ytagcontrol.js"></script>
-        <script type="text/javascript" src="lib/ytagcontrol.js"></script>
-        <script type="text/javascript" src="chrome.js"></script>
+
         <style>
             body {
                 font-family: sans-serif;
@@ -89,36 +84,95 @@
             <button type="submit" id="submit">Save</button>
 
             <button type="button" id="delete" style="display: none;">Delete</button>
-
-            <input type="hidden" value="" name="api_key" id="api_key" />
             <textarea name="content" id="content"></textarea>
         </form>
         <ul id="errors">
         </ul>
         <p>&nbsp;</p>
 
+        <script src="lib/combo.js"></script>
         <script type="text/javascript">
-            YUI().use('base', 'bookie-chrome', function (Y) {
+            YUI.GlobalConfig = {
+                combine: true,
+                base: '${combo}/combo?y/',
+                fetchCSS: false,
+                comboBase: '${combo}/combo?',
+                maxURLLength: 1500,
+                root: 'y/',
+                groups: {
+                    bookie: {
+                        combine: true,
+                        base: '${combo}/combo?b',
+                        comboBase: '${combo}/combo?',
+                        root: 'b/',
+                        fetchCSS: false,
+                        filter: 'raw',
+                        // comes from including bookie/meta.js
+                        modules: YUI_MODULES,
+                    }
+                }
+            };
+        </script>
+
+        <script src="lib/combo2.js"></script>
+        <script src="lib/combo3.js"></script>
+        <script src="lib/combo3.js"></script>
+        <script src="lib/yapi.js"></script>
+        <script src="lib/yhash.js"></script>
+        <script src="lib/yindicator.js"></script>
+        <script src="lib/ymodel.js"></script>
+        <script src="lib/ytagcontrol.js"></script>
+        <script src="lib/yview.js"></script>
+        <script type="text/javascript" src="chrome.js"></script>
+
+        <script type="text/javascript">
+            YUI().use('bookie-chrome', function (Y) {
+                var run = function (tab_data) {
+                    if (tab_data) {
+                        console.log('model', tab_data);
+                        var bookmark = new Y.bookie.Bmark(tab_data);
+                        var settings = new Y.bookie.OptionsModel();
+                        // load the settings from the extension for use
+                        settings.load();
+
+                        var c = new Y.bookie.chrome.Popup({
+                            settings: settings,
+                            model: bookmark
+                        });
+                    } else {
+                        var n = new Y.bookie.chrome.Notification({
+                            code: '9999',
+                            type: 'error',
+                            short_text: 'Err',
+                            long_text: 'Could not find a url to bookmark.'
+                        });
+                    }
+                }
+
+
                 // this could be fed tab info via the url
                 // usually in the case of a keyboard shortcut loading this in a
                 // new tab vs the icon popup
                 var parts = window.location.hash.substring(1).split('|');
+                var tab_data;
                 if (parts.length === 2) {
                     var tab_data = {
                         'url': window.atob(parts[0]),
                         'description': window.atob(parts[1])
                     }
+
+                    run(tab_data);
                 } else {
-                    tab_data = undefined;
+                    chrome.tabs.getSelected(null, function (tab) {
+                        console.log('tab', tab);
+                        run({
+                            url: tab.url,
+                            description: tab.title
+                        });
+                    });
                 }
 
-                var b = new Y.bookie.Bmark(tab_data);
-                var settings = new bookie.Settings();
-
-                var c = new bookie.Chrome({
-                    settings: settings,
-                    bookmark: b
-                });
+                console.log('data set', tab_data);
            });
         </script>
     </body>
