@@ -10,6 +10,13 @@ YUI().add('bookie-chrome', function (Y) {
      *
      */
     ns.Popup = Y.Base.create('bookie-chrome-view', Y.View, [], {
+        _bind_site_link: function (e) {
+            var url = this.api_cfg.url
+            url = url.replace(/api\/v1\/?/, '');
+            url = url + this.api_cfg.username;
+            Y.one('#bookie_site').set('href', url);
+        },
+
         /**
          * We start out with an empty model from the extension and we need to
          * check if there's information on this bookmark on the server and if
@@ -30,6 +37,7 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _handle_delete: function (e) {
+            // same thing, a remove method call should work
 
         },
 
@@ -41,7 +49,8 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _handle_save: function (e) {
-
+            // should just be able to fire the save method on the model and
+            // display to the user we're working on it.
         },
 
         /**
@@ -52,7 +61,6 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _init_form: function () {
-            console.log('in init form');
             // update the fields with model data
             Y.one('#url').set('value', this.get('model').get('url'));
             Y.one('#description').set('value', this.get('model').get('description'));
@@ -60,15 +68,27 @@ YUI().add('bookie-chrome', function (Y) {
             Y.one('#extended').set('value', this.get('model').get('extended'));
             Y.one('#inserted_by').set('value', 'chrome_ext');
 
-            // make the tag field a TagControl
-            // but only if it's not already one
+            // make the tag field a TagControl, but only if it's not already one.
+            // Once this is done, we need to make sure we update the tags from
+            // the model correctly since we need to talk to the TagControl
+            // now, and not the tag_filter input element.
             if (!Y.one('.yui3-bookie-tagcontrol')) {
                 this.tag_controller = new Y.bookie.TagControl({
                     api_cfg: this.api_cfg,
                     srcNode: Y.one('#tag_filter'),
-                    initial_tags: this.get('model').get('tag_str').split(' ')
+                    initial_tags: this.get('model').get('tag_str').split(' '),
+                    with_submit: false
                 });
+                this.tag_controller.render();
+            } else {
+                // update the tags via the TagControl
+                var tags = this.get('model').get('tags');
+                Y.Array.each(tags, function (t) {
+                    this.tag_controller.add(t.name);
+                }, this);
             }
+
+            this._bind_site_link();
         },
 
         _validate_settings: function () {
@@ -102,6 +122,9 @@ YUI().add('bookie-chrome', function (Y) {
             },
             '#delete': {
                 'click': '_handle_delete'
+            },
+            '#bookie_site': {
+                'click': '_bookie_instance_link'
             }
         },
 

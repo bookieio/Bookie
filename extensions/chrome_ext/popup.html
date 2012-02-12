@@ -9,21 +9,16 @@
                 font-family: sans-serif;
                 font-size:10pt;
                 padding:3px;
-                width:250px;
+                width:500px;
                 height: 250px;
             }
-            input, textarea {
-                width: 100%;
-                margin: 3px 0;
-                padding: 5px;
-                border: 1px solid #777;
+
+            .button {
+                min-width: 6em;
             }
-            textarea {
-                height: 60px;
-                font-family: inherit;
-            }
-            h1 {
-                font-size:12pt;
+
+            textarea: {
+                min_height: 4em;
             }
 
             #latest_tags { display: none; }
@@ -50,16 +45,6 @@
             #suggestions a:hover {
                 text-decoration: underline;
             }
-            #errors {
-                display:none;
-                padding:5px 0;
-                text-align:center;
-                border:1px solid #aaa;
-                background-color:#eee;
-                color:#F00;
-                font-weight:bold;
-                list-style:none;
-            }
 
             #content {
                 margin-left: -1000px;
@@ -67,23 +52,28 @@
             }
         </style>
     </head>
-    <body id="bmarkbody">
+    <body id="bmarkbody" class="form">
         <div>
             <span style="float: right;">
-                <a href="" title="" target="_blank" id="bookie_site"><img src="logo.16.png" /></a>
+                <a href="" title="Your Bookie website" target="_blank" id="bookie_site"><img src="logo.16.png" /></a>
             </span>
-            <h1>Post to Bookie</h1>
+            <div class="heading">Post to Bookie</div>
         </div>
+
         <form id="form" name="form">
             <input type="hidden" id="url" name="url" />
             <input type="hidden" id="inserted_by" name="inserted_by" />
-            <input type="text" id="description" placeholder="title" name="description" />
-            <input type="text" placeholder="tags" name="tags" id="tag_filter" />
-            <div id="latest_tags">Recent Tags: </div>
-            <textarea placeholder="notes" name="extended" id="extended"></textarea>
-            <button type="submit" id="submit">Save</button>
 
-            <button type="button" id="delete" style="display: none;">Delete</button>
+            <ul>
+                <li><input type="text" id="description" placeholder="title" name="description" /> </li>
+                <li><input type="text" placeholder="tags" name="tags" id="tag_filter" /></li>
+                <li id="latest_tags">Recent Tags: </li>
+                <li><textarea placeholder="notes" name="extended" id="extended"></textarea></li>
+                <li>
+                    <button type="submit" id="submit" class="button">Save</button>
+                    <button type="button" id="delete" class="button" style="display: none;">Delete</button>
+                </li>
+            </ul>
             <textarea name="content" id="content"></textarea>
         </form>
         <ul id="errors">
