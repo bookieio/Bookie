@@ -89,6 +89,10 @@ YUI().add('bookie-chrome', function (Y) {
             }
 
             this._bind_site_link();
+
+            // focus on the tag control
+            var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
+            tag_control.focus();
         },
 
         _validate_settings: function () {
@@ -152,7 +156,8 @@ YUI().add('bookie-chrome', function (Y) {
 
             this.api_cfg = this.get('settings').get_apicfg();
 
-            // now bind the model event
+            // bind to the event that if the model changes, check it for the
+            // suggested tags to show/update the form?
             this.get('model').on('change', this._init_form, this);
 
             // fire the ajax request to see if the model can be updated
@@ -164,10 +169,11 @@ YUI().add('bookie-chrome', function (Y) {
             // setup the form with the current model data
             this._init_form();
 
-            // bind to the event that if the model changes, check it for the
-            // suggested tags to show/update the form?
-
             // see if we should be loading the page content
+
+            // focus on the tag control
+            var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
+            tag_control.focus();
         }
 
     }, {
