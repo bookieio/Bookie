@@ -24,6 +24,9 @@ YUI.add('bookie-model', function (Y) {
     ns.Bmark = Y.Base.create('bookie-bmark',
         Y.Model,
         [], {
+
+            idAttribute: 'hash_id',
+
             /**
              * Handle the save() event for objects that don't yet have an id.
              *
@@ -34,7 +37,8 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             _create: function (options, callback) {
-
+                console.log('in create...nothing to see here yet');
+                debugger;
             },
 
             /**
@@ -78,9 +82,6 @@ YUI.add('bookie-model', function (Y) {
                 var api = new Y.bookie.Api.route.Bmark(Y.merge(this.get('api_cfg'), options));
                 api.call({
                     'success': function (data, request) {
-                        console.log('should be getting new data');
-                        console.log(that.getAttrs());
-                        console.log(data.bmark);
                         that.setAttrs(data.bmark);
                     }
                 });
@@ -97,10 +98,25 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             _update: function (options, callback) {
-                localStorage.setItem('api_url', this.get('api_url'));
-                localStorage.setItem('api_username', this.get('api_username'));
-                localStorage.setItem('api_key', this.get('api_key'));
-                localStorage.setItem('cache_content', this.get('cache_content'));
+                // we need to prepare an api request with the data to update
+                var that = this,
+                    data = that.getAttrs();
+
+                // remove the api cfg from the data, that doesn't need to get
+                // sent in the url
+                delete data.api_cfg;
+
+                var api = new Y.bookie.Api.route.UserBmarkSave(
+                    Y.merge(this.get('api_cfg'), {
+                        model: data
+                    })
+                );
+
+                debugger;
+
+                api.call({
+                    success: callback
+                });
             },
 
             /**

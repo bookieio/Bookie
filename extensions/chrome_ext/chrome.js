@@ -10,23 +10,19 @@ YUI().add('bookie-chrome', function (Y) {
      *
      */
     ns.Popup = Y.Base.create('bookie-chrome-view', Y.View, [], {
-        _bind_site_link: function (e) {
+        /**
+         * We need to bind the bookie icon to the site that your settings say
+         * you're using. This is because Bookie can be self hosted and it's
+         * the only way to know where to link to.
+         *
+         * @method _bind_site_link
+         *
+         */
+        _bind_site_link: function () {
             var url = this.api_cfg.url
             url = url.replace(/api\/v1\/?/, '');
             url = url + this.api_cfg.username;
             Y.one('#bookie_site').set('href', url);
-        },
-
-        /**
-         * We start out with an empty model from the extension and we need to
-         * check if there's information on this bookmark on the server and if
-         * so update the bookmark model.
-         *
-         * @method _fetch_model
-         *
-         */
-        _fetch_model: function () {
-
         },
 
         /**
@@ -49,8 +45,14 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _handle_save: function (e) {
+            e.preventDefault();
+            var model = this.get('model');
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
+            model.save(function (data, request) {
+                debugger;
+                window.close();
+            });
         },
 
         /**

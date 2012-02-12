@@ -591,6 +591,50 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+    /**
+     * Store the specified bookmark.
+     *
+     * This call is only allowed to be called by the owner of the Bookmark.
+     *
+     * @class Api.route.UserBmarkSave
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.UserBmarkSave = Y.Base.create(
+        'bookie-api-route-user-bmark-save',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+                // force this to a POST request by overriding our base_cfg
+                // we extend.
+                this.base_cfg.method = 'POST';
+                this.data = this.get('model');
+            }
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/bmark'
+                },
+
+                /**
+                 * The model is the object of data for the bookmark we want to
+                 * store. This would be the things like url, decsription, etc.
+                 * See the docs for the fields the model will accept. Other
+                 * fields will be ignored.
+                 *
+                 * @attribute model
+                 * @default undefined
+                 * @type Object
+                 * @required
+                 *
+                 */
+                model: {
+                    required: true
+                }
+            }
+        }
+    );
+
 
     /**
      * Fetch a user's API key.
