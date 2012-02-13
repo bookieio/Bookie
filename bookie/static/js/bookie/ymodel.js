@@ -38,7 +38,6 @@ YUI.add('bookie-model', function (Y) {
              */
             _create: function (options, callback) {
                 console.log('in create...nothing to see here yet');
-                debugger;
             },
 
             /**
@@ -106,13 +105,17 @@ YUI.add('bookie-model', function (Y) {
                 // sent in the url
                 delete data.api_cfg;
 
+                // the Bookie api expects the tags to be a string, so put
+                // those together and replace the data with it.
+                data.tags = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
+                    return [prev, cur.name].join(' ');
+                });
+
                 var api = new Y.bookie.Api.route.UserBmarkSave(
                     Y.merge(this.get('api_cfg'), {
                         model: data
                     })
                 );
-
-                debugger;
 
                 api.call({
                     success: callback
