@@ -105,13 +105,16 @@ YUI.add('bookie-model', function (Y) {
                 // sent in the url
                 delete data.api_cfg;
 
+                debugger;
                 // the Bookie api expects the tags to be a string, so put
                 // those together and replace the data with it.
-                data.tags = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
-                    return [prev, cur.name].join(' ');
+                var tmp = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
+                    return [prev, cur.get('text')].join(' ');
                 });
+                data.tags = tmp;
 
                 var api = new Y.bookie.Api.route.UserBmarkSave(
+
                     Y.merge(this.get('api_cfg'), {
                         model: data
                     })

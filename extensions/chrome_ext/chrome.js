@@ -47,6 +47,13 @@ YUI().add('bookie-chrome', function (Y) {
         _handle_save: function (e) {
             e.preventDefault();
             var model = this.get('model');
+
+            model.set('url', Y.one('#url').get('value'));
+            model.set('inserted_by', Y.one('#inserted_by').get('value'));
+            model.set('description', Y.one('#description').get('value'));
+            model.set('tags', this.tag_control.get('tags'));
+            model.set('extended', Y.one('#extended').get('value'));
+
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
             model.save(function (data, request) {
@@ -75,18 +82,18 @@ YUI().add('bookie-chrome', function (Y) {
             // the model correctly since we need to talk to the TagControl
             // now, and not the tag_filter input element.
             if (!Y.one('.yui3-bookie-tagcontrol')) {
-                this.tag_controller = new Y.bookie.TagControl({
+                this.tag_control = new Y.bookie.TagControl({
                     api_cfg: this.api_cfg,
                     srcNode: Y.one('#tag_filter'),
                     initial_tags: this.get('model').get('tag_str').split(' '),
                     with_submit: false
                 });
-                this.tag_controller.render();
+                this.tag_control.render();
             } else {
                 // update the tags via the TagControl
                 var tags = this.get('model').get('tags');
                 Y.Array.each(tags, function (t) {
-                    this.tag_controller.add(t.name);
+                    this.tag_control.add(t.name);
                 }, this);
             }
 
@@ -124,7 +131,6 @@ YUI().add('bookie-chrome', function (Y) {
         events: {
             '#form': {
                 submit: '_handle_save'
-
             },
             '#delete': {
                 'click': '_handle_delete'
