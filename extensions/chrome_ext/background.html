@@ -5,24 +5,11 @@
 	<title></title>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/hash.js"></script>
-    <script type="text/javascript">
-        var logger = {}
-        logger.log = function(msg) {
-            console.log(msg);
-        };
-        logger.log('setting up fake logger');
-        var bookie_opts = {
-            'bookie': typeof(bookie) !== 'undefined' ? bookie : {},
-            'jquery': $,
-            'console_log': logger
-        }
-    </script>
+
     <script type="text/javascript" src="lib/bookie-core.js"></script>
     <script type="text/javascript" src="bookie.chrome.js"></script>
     <script type="text/javascript" src="lib/bookie.api.js"></script>
     <script type="text/javascript" src="lib/bookie.utils.js"></script>
-    <script type="text/javascript" src="lib/underscore.min.js"></script>
-    <script type="text/javascript" src="lib/underscore.string.min.js"></script>
 
     <script type="text/javascript">
         bookie.background_init();

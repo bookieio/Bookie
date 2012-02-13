@@ -105,7 +105,6 @@ YUI.add('bookie-model', function (Y) {
                 // sent in the url
                 delete data.api_cfg;
 
-                debugger;
                 // the Bookie api expects the tags to be a string, so put
                 // those together and replace the data with it.
                 var tmp = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {

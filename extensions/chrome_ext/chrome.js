@@ -54,10 +54,21 @@ YUI().add('bookie-chrome', function (Y) {
             model.set('tags', this.tag_control.get('tags'));
             model.set('extended', Y.one('#extended').get('value'));
 
+            // we need to set the content to be part of the model for this
+            // request so we can pass it along, even though the content
+            // isn't really valid for it.
+            model.addAttr('content', {});
+            model.set('content', Y.one('#content').get('value'));
+
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
             model.save(function (data, request) {
-                debugger;
+                // make sure that we store that this is a saved bookmark in
+                // the localStorage index
+                if (data.bmark.hash_id) {
+                    localStorage.setItem(data.bmark.hash_id, 'true');
+                }
+
                 window.close();
             });
         },
