@@ -507,45 +507,43 @@ YUI().add('bookie-chrome', function (Y) {
             'blue':  [0, 191, 255, 255]
         },
 
-        _clear: function (ms) {
+        clear: function (ms) {
             var ttl = ms || 0;
             window.setTimeout(function() {
                 chrome.browserAction.setBadgeText({text: ''});
             }, ttl);
         },
 
-        _set: function (text, bgcolor) {
+        _set_badge: function (text, bgcolor, hidetime) {
             if (bgcolor) {
                 chrome.browserAction.setBadgeBackgroundColor({color: bgcolor});
             }
 
             chrome.browserAction.setBadgeText({text: text});
 
-            this.clear(this.get('time'));
+            if (hidetime) {
+                this.clear(hidetime);
+            }
         },
 
         initializer: function () {},
 
-        show: function (notification) {
-            var color,
-                badge;
+        /**
+         * Update the badge to reprsent that the url is bookmarked.
+         *
+         * @method is_bookmarked
+         *
+         */
+        is_bookmarked: function () {
+            this._set_badge('+', this._colors.blue);
+        },
 
-            switch(notification.type) {
-                case "error":
-                    color = "red";
-                    badge = "Err";
-                    break;
-                case "info":
-                    color = "green";
-                    badge = "Ok";
-                    break;
-                default:
-                    console.log("Unknown notification type: " +
-                                notification.type);
-            };
+        show_error: function () {
+            this._set_badge('Err', this._colors.red, this.get('time'));
+        },
 
-            // add a notice to the badge as necessary
-            this._set(badge, this.get('time'), this._colors[color]);
+        success: function () {
+            this._set_badge('Ok', this._colors.green, this.get('time'));
         }
     }, {
         ATTRS: {
