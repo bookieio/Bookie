@@ -38,133 +38,21 @@
     <script src="lib/yview.js"></script>
     <script type="text/javascript" src="chrome.js"></script>
 
-    <script type="text/javascript">
-        YUI().use('bookie-chrome', function (Y) {
-            var badge = new Y.bookie.chrome.Badge(),
-                settings = new Y.bookie.OptionsModel();
-
-            settings.load();
-
-            check_url_bookmarked = function(url) {
-                var is_bookmarked =
-                    localStorage.getItem(Y.bookie.Hash.hash_url(url));
-
-                console.log('Checking ' + url + ' is bookmarked: ' + is_bookmarked);
-
-                // check if we have this bookmarked
-                // if so update the badge text with +
-                if (is_bookmarked === 'true') {
-                    badge.is_bookmarked();
-                } else {
-                    badge.clear();
-                }
-            };
-
-            // bind to the events to check if the current url is bookmarked or not
-            chrome.tabs.onUpdated.addListener(
-                function(tabId, changeInfo, tab) {
-                    var tid = tabId;
-
-                    // we only want to grab this if we change the current url in
-                    // the current tab
-                    if ('url' in changeInfo) {
-                        if (tab.url) {
-                            chrome.tabs.getSelected(undefined, function (tab) {
-                                if (tid === tab.id) {
-                                    check_url_bookmarked(tab.url);
-                                }
-                            });
-                        } else {
-                            console.log('no hash for you');
-                        }
-                    }
-                }
-            );
-
-            chrome.tabs.onSelectionChanged.addListener(
-                function(tabId, changeInfo) {
-                    chrome.tabs.get(tabId, function (tab) {
-                        if (tab.url) {
-                            check_url_bookmarked(tab.url);
-                        } else {
-                            console.log('no hash for you');
-                        }
-                    });
-                }
-            );
-
-            // add some right-click content menu love for a quick "read later"
-            var read_later = function (info, tab) {
-                var api = settings.get_apicfg();
-
-                if (bookie.settings.get('cache_content') === 'true') {
-                    inject_readable(function () {
-                        // grab the html content of the page to send along for the ride
-                        bookie.call.read_later(tab.url,
-                                           tab.title,
-                                           get_html_content());
-
-                    });
-                } else {
-                    bookie.call.read_later(tab.url, tab.title);
-                }
-            };
-
-            chrome.contextMenus.create({
-                "title": "Read Later",
-                "contexts":["page"],
-                "onclick": read_later
-            });
-
-            // test out listening for a call from the content script
-            // readable.js for the content of the page to send along in a
-            // submission as the content
-            chrome.extension.onRequest.addListener(
-                function(request, sender, sendResponse) {
-                    if (request.html) {
-                        Y.one('#html_content').set('value', request.html);
-                        console.log('should have content stored');
-                    } else {
-                        console.log('hit the else');
-                    }
-                }
-            );
-
-
-            /**
-             * This addListener is for the shortcut.js. It means that we want
-             * to open the extension with this url.
-             *
-             */
-            chrome.extension.onRequest.addListener(
-                function(request, sender, sendResponse) {
-                    if (request.url) {
-                        chrome.tabs.getSelected(null, function(tab_obj) {
-                            var encoded_url = window.btoa(tab_obj.url),
-                                encoded_title = window.btoa(tab_obj.title)
-                                hash = [encoded_url, encoded_title].join('|');
-
-                            chrome.tabs.create({url: "popup.html#" + hash});
-                        });
-                    }
-                }
-            );
-
-            function inject_readable(callback) {
-                chrome.tabs.executeScript(null, {file:"readable.js"}, callback);
-            };
-
-            function get_html_content() {
-                Y.one('#html_content').get('value');
-            };
-        });
-
-
-        // go ahead and inject the
-    </script>
 </head>
 <body>
     <textarea id="html_content"></textarea>
     <input id="url_hash" />
+
+    <script type="text/javascript">
+        YUI().use('bookie-chrome', function (Y) {
+            var b = new Y.bookie.chrome.BackgroundPage();
+            b.init_background();
+        });
+
+        window.inject_readable = function (callback) {
+            chrome.tabs.executeScript(null, {file:"readable.js"});
+        };
+    </script>
+
 </body>
 </html>

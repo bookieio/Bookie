@@ -129,9 +129,18 @@
                             // then skip it, we don't want the added load on the
                             // browser or the server
                         } else {
-                            bkg = chrome.extension.getBackgroundPage();
+                            chrome.extension.onRequest.addListener(
+                                function(request, sender, sendResponse) {
+                                    if (request.id === 'from_readable') {
+                                        Y.one('#content').set('value', request.html);
+                                    }
+                                }
+                            );
+
+                            var bkg = chrome.extension.getBackgroundPage();
                             bkg.inject_readable(function () {
-                                $('#content').val(bkg.get_html_content());
+                                var c = document.getElementById('content');
+                                c.value = bkg.get_html_content();
                             });
                         }
 

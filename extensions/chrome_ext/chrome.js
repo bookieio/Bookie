@@ -69,6 +69,10 @@ YUI().add('bookie-chrome', function (Y) {
                     localStorage.setItem(data.bmark.hash_id, 'true');
                 }
 
+                // update the badge now that we've saved
+                var b = new Y.bookie.chrome.Badge();
+                b.success();
+
                 window.close();
             });
         },
@@ -170,6 +174,9 @@ YUI().add('bookie-chrome', function (Y) {
                     message: 'The extension settings are not valid. Please go to the options page and update them.'
                 });
 
+                var b = new Y.bookie.chrome.Badge();
+                b.show_error();
+
                 return;
             }
 
@@ -231,189 +238,6 @@ YUI().add('bookie-chrome', function (Y) {
             }
         }
     });
-
-    // ns.Chrome = Y.Base.create('bookie-chrome-popup', Y.Base, [], {
-
-    //     _init_popup: function () {
-    //         // bind up the TagControl to get that UI flash over with asap
-    //         var tagcontrol = new Y.bookie.TagControl({
-    //            api_cfg: api_cfg,
-    //            srcNode: Y.one('#tag_filter'),
-    //            initial_tags: tags
-    //         });
-    //         tagcontrol.render();
-
-    //         // input with the tag plugin version
-    //         Y.one('div.yui3-bookie-tagcontrol input').focus();
-
-    //         Y.one('#form').on('submit', this.save, this);
-    //         this.init_form_data('chrome-extension');
-
-    //         /**
-    //          * Load the data for the current page in case we've got data on it
-    //          *
-    //          */
-    //         var api_cfg = this.settings.getAttrs();
-    //         api_cfg.hash_id = hash_url(this.bookmark.url);
-    //         var api = new Y.bookie.Api.route.Bmark(API_CFG);
-
-    //         api.call({
-    //             success: function (data, request) {
-
-    //             },
-    //             error: function (data, status_str, response) {
-
-    //             }
-    //         });
-
-    //         // $($b.EVENTID).trigger($b.events.LOAD, current_tab_info);
-
-    //         /**
-    //          *
-    //          * @todo
-    //          * This is all about setting up the suggested tags for use. We
-    //          * need to bind click events, etc when used. We'll add that back
-    //          * in later
-    //          *
-    //          */
-    //         // $($b.EVENTID).bind($b.events.DUPE_TAGS, $b.ui.dupe_tags);
-    //         // $('#latest_tags').delegate('a', 'click', function (ev) {
-    //         //     ev.preventDefault();
-    //         //     $b.ui.dupe_tags($(this));
-    //         // });
-    //     },
-
-    //     /**
-    //      * We need to fill in a bunch of our form data in order to be able to
-    //      * move forward with things
-    //      *
-    //      * @param inserted_by string for how this is getting saved, the toread
-    //      * right click option, the chrome extension itself, etc?
-    //      *
-    //      */
-    //     init_form_data: function (inserted_by) {
-    //         Y.one('#url').set('value', this.bookmark.url);
-    //         Y.one('#description').set('value', this.bookmark.description);
-    //         Y.one('#inserted_by').set('value', inserted_by);
-    //         Y.one('#extended').set('value', "");
-    //         console.log('populating form base');
-    //     },
-
-    //     _setup_readable_content: function () {
-    //         // don't worry about loading the content of the page if we
-    //         // don't have it set in our options
-    //         if(!localStorage['cache_content'] || localStorage['cache_content'] != "true") {
-    //             // then skip it, we don't want the added load on the
-    //             // browser or the server
-    //         } else {
-    //             bkg = chrome.extension.getBackgroundPage();
-
-    //             bkg.inject_readable(function () {
-    //                 Y.one('#content').set('value', bkg.get_html_content());
-    //             });
-    //         }
-
-    //     },
-
-    //     initializer: function (cfg) {
-    //         this.settings = new ns.Settings();
-    //         this.bookmark = new Y.bookie.Bmark(cfg.url_data);
-
-    //         // we can only go on if the settings are ok
-    //         if (!this.valid_settings()) {
-    //             // the errors are displayed by the error code, yea this should
-    //             // be split out I know...but time heals all code wounds
-    //             // right?...right?
-    //             return;
-    //         } else {
-    //             // now let's bind up the popup and make it all work
-    //             this._init_popup();
-    //             this._setup_readable_content();
-    //         }
-    //     },
-
-    //     valid_settings: function () {
-    //         var errors = new ns.PopupErrors();
-
-    //         settings = this.settings;
-
-    //         var required = [
-    //             'api_url',
-    //             'api_username',
-    //             'api_key'
-    //         ];
-
-    //         Y.Array.each(required, function (key) {
-    //             if (!setting.get(key)) {
-    //                 errors.add("The value for " + key + " has not been set");
-    //             }
-    //         });
-
-    //         // display errors if we have them
-    //         if (errors.length) {
-    //             errors.render();
-    //             return false;
-    //         } else {
-    //             return true;
-    //         }
-    //     },
-    // }, {
-    //     ATTRS: {
-    //         /**
-    //          * When we init we want to tell the chrome extension about the
-    //          * current url. It's passed into via this url data from the chrome
-    //          * extension api that has the url and title of the current page
-    //          *
-    //          */
-    //         url_data: {},
-    //     }
-    // });
-
-
-    // ns.Errors = Y.Base.create('bookie-chrome-errors', Y.Base, [], {
-    //     add: function (error_msg) {
-    //         this.get('errors').push(error_msg);
-    //     },
-
-    //     clear: function () {
-    //         this.set('errors', []);
-    //         this.get('target_node').setContent('');
-    //     },
-
-    //     render: function () {
-    //         var errors = this.get('errors');
-
-    //         if(errors.length) {
-    //             var error_nodes = new Y.NodeList();
-
-    //             Y.Array.each(function (msg) {
-    //                 var n = Y.Node.create('<li/>');
-    //                 n.set('text', msg);
-    //                 error_nodes.push(n);
-    //             });
-
-    //             this.get('target_node').setContent(error_nodes);
-    //         }
-    //     }
-    // }, {
-    //     ATTRS: {
-    //         errors: {
-    //             value: []
-    //         },
-
-    //         length: {
-    //             getter: function () {
-    //                 return this.get('errors').length;
-    //             }
-    //         },
-
-    //         target_node: {
-    //             valueFn: function () {
-    //                 return Y.one('#errors');
-    //             }
-    //         }
-    //     }
-    // });
 
 
     /**
@@ -544,6 +368,10 @@ YUI().add('bookie-chrome', function (Y) {
 
         success: function () {
             this._set_badge('Ok', this._colors.green, this.get('time'));
+        },
+
+        removed: function () {
+            this._set_badge('Del', this._colors.green, this.get('time'));
         }
     }, {
         ATTRS: {
@@ -553,6 +381,95 @@ YUI().add('bookie-chrome', function (Y) {
                 // length to show the badge in ms
                 value: 5000
             }
+        }
+    });
+
+
+    ns.BackgroundPage = Y.Base.create('bookie-chrome-background', Y.Base, [], {
+        _check_url_bookmarked: function (url) {
+            var is_bookmarked =
+                localStorage.getItem(Y.bookie.Hash.hash_url(url));
+
+            // check if we have this bookmarked
+            // if so update the badge text with +
+            if (is_bookmarked === 'true') {
+                this.badge.is_bookmarked();
+            } else {
+                this.badge.clear();
+            }
+        },
+
+        initializer: function (cfg) {
+            this.badge = new Y.bookie.chrome.Badge();
+            this.settings = new Y.bookie.OptionsModel();
+            this.settings.load();
+        },
+
+        init_background: function () {
+            var that = this;
+
+            // bind to the events to check if the current url is bookmarked or not
+            chrome.tabs.onUpdated.addListener(
+                function(tabId, changeInfo, tab) {
+                    var tid = tabId;
+                    console.log('on updated');
+
+                    // we only want to grab this if we change the current url in
+                    // the current tab
+                    if ('url' in changeInfo) {
+                        if (tab.url) {
+                            chrome.tabs.getSelected(undefined, function (tab) {
+                                if (tid === tab.id) {
+                                    that._check_url_bookmarked(tab.url);
+                                }
+                            });
+                        } else {
+                            console.log('no hash for you');
+                        }
+                    }
+                }
+            );
+
+            chrome.tabs.onSelectionChanged.addListener(
+                function(tabId, changeInfo) {
+                    chrome.tabs.get(tabId, function (tab) {
+                        if (tab.url) {
+                            that._check_url_bookmarked(tab.url);
+                        } else {
+                            console.log('no hash for you');
+                        }
+                    });
+                }
+            );
+
+            // chrome.contextMenus.create({
+            //     "title": "Read Later",
+            //     "contexts":["page"],
+            //     "onclick": this.read_later
+            // });
+
+            /**
+             * This addListener is for the shortcut.js. It means that we want
+             * to open the extension with this url.
+             *
+             */
+            chrome.extension.onRequest.addListener(
+                function(request, sender, sendResponse) {
+                    if (request.url) {
+                        chrome.tabs.getSelected(null, function(tab_obj) {
+                            var encoded_url = window.btoa(tab_obj.url),
+                                encoded_title = window.btoa(tab_obj.title)
+                                hash = [encoded_url, encoded_title].join('|');
+
+                            chrome.tabs.create({url: "popup.html#" + hash});
+                        });
+                    }
+                }
+            );
+        }
+    }, {
+        ATTRS: {
+
         }
     });
 

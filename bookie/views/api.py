@@ -173,8 +173,8 @@ def bmark_add(request):
         mark = commander.process()
 
         # if we have content, stick it on the object here
-        if 'content' in request.params:
-            content = StringIO(request.params['content'])
+        if 'content' in params:
+            content = StringIO(params['content'])
             content.seek(0)
             parsed = ReadContent.parse(content, content_type="text/html")
 
