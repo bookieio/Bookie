@@ -7,7 +7,13 @@
 
     <div class="description">
         <a href="/redirect/{{hash_id}}"
-            title="{{extended}}">{{description}}</a>
+            title="{{extended}}">
+            {{#if description}}
+                {{description}}
+            {{else}}
+                ----
+            {{/if}}
+        </a>
     </div>
 
     <div class="actions">
