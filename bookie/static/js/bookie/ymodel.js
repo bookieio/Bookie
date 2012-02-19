@@ -114,7 +114,7 @@ YUI.add('bookie-model', function (Y) {
                 // the Bookie api expects the tags to be a string, so put
                 // those together and replace the data with it.
                 var tmp = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
-                    return [prev, cur.get('text')].join(' ');
+                    return [prev, cur].join(' ');
                 });
                 data.tags = tmp;
 

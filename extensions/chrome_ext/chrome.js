@@ -11,6 +11,13 @@ YUI().add('bookie-chrome', function (Y) {
      */
     ns.Popup = Y.Base.create('bookie-chrome-view', Y.View, [], {
         /**
+         * By default we haven't loaded any recent tags. If we do, update this
+         * so that we don't load them again.
+         *
+         */
+        loaded_recent: false,
+
+        /**
          * We need to bind the bookie icon to the site that your settings say
          * you're using. This is because Bookie can be self hosted and it's
          * the only way to know where to link to.
@@ -64,7 +71,10 @@ YUI().add('bookie-chrome', function (Y) {
             model.set('url', Y.one('#url').get('value'));
             model.set('inserted_by', Y.one('#inserted_by').get('value'));
             model.set('description', Y.one('#description').get('value'));
-            model.set('tags', this.tag_control.get('tags'));
+            debugger;
+            model.set('tags', Y.Array.map(this.tag_control.get('tags'), function (t) {
+                return t.get('text');
+            }));
             model.set('extended', Y.one('#extended').get('value'));
 
             // we need to set the content to be part of the model for this
@@ -146,11 +156,11 @@ YUI().add('bookie-chrome', function (Y) {
 
             this._bind_site_link();
 
-
             // if we've gotten back a last bookmark, then make sure we build a
             // list of tags for the clicking in the view
-            if (model.get('last')) {
+            if (!this.loaded_recent && model.get('last')) {
                 // find any tags and pass them to the suggestion handler
+                this.loaded_recent = true;
                 var tag_str = model.get('last').tag_str;
                 if (tag_str.length) {
                     this._build_suggested_tags(tag_str.split(' '));
