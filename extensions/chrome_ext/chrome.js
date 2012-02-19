@@ -77,13 +77,13 @@ YUI().add('bookie-chrome', function (Y) {
             // firing of the "init_model" callback on the model:change event
             model.setAttrs({
                 url: Y.one('#url').get('value'),
-                inserted_by, Y.one('#inserted_by').get('value'),
-                description, Y.one('#description').get('value'),
-                tags, Y.Array.map(this.tag_control.get('tags'), function (t) {
+                inserted_by: Y.one('#inserted_by').get('value'),
+                description: Y.one('#description').get('value'),
+                tags: Y.Array.map(this.tag_control.get('tags'), function (t) {
                     return t.get('text');
                 }),
-                extended, Y.one('#extended').get('value'),
-                content, Y.one('#content').get('value')
+                extended: Y.one('#extended').get('value'),
+                content: Y.one('#content').get('value')
             });
 
             // should just be able to fire the save method on the model and
