@@ -362,6 +362,11 @@ fieldset legend {
 .clearfix {
   *display: inline-block; }
 
+.prev_tag {
+  padding-left: .5em; }
+  .prev_tag:hover {
+    cursor: hand; }
+
 .yui3-taglistentry-holder {
   padding: 5px;
   padding-bottom: 1px;

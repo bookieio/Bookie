@@ -43,7 +43,7 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 LOG = logging.getLogger(__name__)
-RECENT = 8  # number of hours to consider a bookmark as recent
+RECENT = 24  # number of hours to consider a bookmark as recent
 
 
 def initialize_sql(settings):

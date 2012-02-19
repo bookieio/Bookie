@@ -20,8 +20,6 @@
                 outline: none;
             }
 
-            #latest_tags { display: none; }
-
             #suggestions {
                 margin: 0;
                 padding: 0;
@@ -66,7 +64,7 @@
             <ul>
                 <li><input type="text" id="description" placeholder="title" name="description" /> </li>
                 <li><input type="text" placeholder="tags" name="tags" id="tag_filter" /></li>
-                <li id="latest_tags">Recent Tags: </li>
+                <li id="suggested_tags">Suggested Tags: <span id="latest_tags"></span></li>
                 <li><textarea placeholder="notes" name="extended"
                     id="extended" style="height: 5em;"></textarea></li>
                 <li>
@@ -114,6 +112,9 @@
 
         <script type="text/javascript">
             YUI().use('bookie-chrome', function (Y) {
+                // start out with the suggested tags hidden
+                Y.one('#suggested_tags').hide();
+
                 var run = function (tab_data) {
                     if (tab_data) {
                         var settings = new Y.bookie.OptionsModel();

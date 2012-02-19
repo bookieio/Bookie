@@ -25,6 +25,19 @@ YUI().add('bookie-chrome', function (Y) {
             Y.one('#bookie_site').set('href', url);
         },
 
+        _build_suggested_tags: function (suggestions) {
+            // see if we have the last set of tags to add
+            var tag_html = new Y.NodeList();
+                tag_container = Y.one('#latest_tags');
+
+            for (tag in suggestions) {
+                 tag_html.push(Y.Node.create('<a href="" class="prev_tag">' + suggestions[tag] + '</a>'));
+            }
+
+            tag_container.appendChild(tag_html);
+            Y.one('#suggested_tags').show();
+        },
+
         /**
          * Process deleting a bookmark requested by the extension.
          *
@@ -78,6 +91,24 @@ YUI().add('bookie-chrome', function (Y) {
         },
 
         /**
+         * When a user clicks on a suggested tag, get it into our tag control
+         * and clear it from the suggested tags.
+         *
+         * @method _handle_suggested_tag
+         * @param {Event} ev
+         * @private
+         *
+         */
+        _handle_suggested_tag: function (ev) {
+            ev.preventDefault();
+            var target = ev.currentTarget;
+            Y.fire('tag:add', {
+                tag: target.get('text')
+            });
+            target.remove();
+        },
+
+        /**
          * Bind the model up with the form and display it's values into the
          * fields.
          *
@@ -85,11 +116,12 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _init_form: function () {
+            var model = this.get('model');
             // update the fields with model data
-            Y.one('#url').set('value', this.get('model').get('url'));
-            Y.one('#description').set('value', this.get('model').get('description'));
-            Y.one('#tag_filter').set('value', this.get('model').get('tag_str'));
-            Y.one('#extended').set('value', this.get('model').get('extended'));
+            Y.one('#url').set('value', model.get('url'));
+            Y.one('#description').set('value', model.get('description'));
+            Y.one('#tag_filter').set('value', model.get('tag_str'));
+            Y.one('#extended').set('value', model.get('extended'));
             Y.one('#inserted_by').set('value', 'chrome_ext');
 
             // make the tag field a TagControl, but only if it's not already one.
@@ -100,13 +132,13 @@ YUI().add('bookie-chrome', function (Y) {
                 this.tag_control = new Y.bookie.TagControl({
                     api_cfg: this.api_cfg,
                     srcNode: Y.one('#tag_filter'),
-                    initial_tags: this.get('model').get('tag_str').split(' '),
+                    initial_tags: model.get('tag_str').split(' '),
                     with_submit: false
                 });
                 this.tag_control.render();
             } else {
                 // update the tags via the TagControl
-                var tags = this.get('model').get('tags');
+                var tags = model.get('tags');
                 Y.Array.each(tags, function (t) {
                     this.tag_control.add(t.name);
                 }, this);
@@ -114,9 +146,21 @@ YUI().add('bookie-chrome', function (Y) {
 
             this._bind_site_link();
 
+
+            // if we've gotten back a last bookmark, then make sure we build a
+            // list of tags for the clicking in the view
+            if (model.get('last')) {
+                // find any tags and pass them to the suggestion handler
+                var tag_str = model.get('last').tag_str;
+                if (tag_str.length) {
+                    this._build_suggested_tags(tag_str.split(' '));
+                }
+            }
+
             // focus on the tag control
             var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
             tag_control.focus();
+
         },
 
         _validate_settings: function () {
@@ -152,6 +196,9 @@ YUI().add('bookie-chrome', function (Y) {
             },
             '#bookie_site': {
                 'click': '_bookie_instance_link'
+            },
+            '.prev_tag': {
+                'click': '_handle_suggested_tag'
             }
         },
 

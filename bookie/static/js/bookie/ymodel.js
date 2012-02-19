@@ -82,6 +82,12 @@ YUI.add('bookie-model', function (Y) {
                 api.call({
                     'success': function (data, request) {
                         that.setAttrs(data.bmark);
+
+                        // if there's a last in the data we need to set that
+                        // as well
+                        if (data.last) {
+                            that.set('last', data.last);
+                        }
                     }
                 });
             },
@@ -244,6 +250,21 @@ YUI.add('bookie-model', function (Y) {
                  *
                  */
                 'inserted_by': {},
+
+                /**
+                 * If the request says to, we'll set the last bookmark we
+                 * stored here in the last attribute.
+                 *
+                 * This is used to help suggested tags using the tags we've
+                 * set on recent bookmarks.
+                 *
+                 * @attribute last
+                 * @default undefined
+                 * @type Bmark
+                 *
+                 */
+                'last': {
+                },
 
                 /**
                  * @attribute owner
@@ -531,8 +552,11 @@ YUI.add('bookie-model', function (Y) {
            this.set('api_key',
                 this._get_data('api_key', this.get('api_key')));
            this.set('cache_content',
-                this._get_data('cache_content', this.get('cache_content')))
+                this._get_data('cache_content', this.get('cache_content')));
+           this.set('last_bmark',
+                this._get_data('last_bmark', this.get('last_bmark')));
         },
+
 
         /**
          * Handle the save() event for objects that have an id and write it
@@ -549,6 +573,7 @@ YUI.add('bookie-model', function (Y) {
             localStorage.setItem('api_username', this.get('api_username'));
             localStorage.setItem('api_key', this.get('api_key'));
             localStorage.setItem('cache_content', this.get('cache_content'));
+            localStorage.setItem('last_bmark', this.get('last_bmark'));
         },
 
         /**
@@ -574,7 +599,8 @@ YUI.add('bookie-model', function (Y) {
             return {
                 url: this.get('api_url'),
                 username: this.get('api_username'),
-                api_key: this.get('api_key')
+                api_key: this.get('api_key'),
+                last_bmark: this.get('last_bmark')
             }
         },
 
@@ -680,6 +706,18 @@ YUI.add('bookie-model', function (Y) {
              */
             cache_content: {
                 value: 'true'
+            },
+
+            /**
+             * Should we get the last bookmark when we're setting up the api
+             * cfg?
+             * @attribute last_bmark
+             * @default true
+             * @type Boolean
+             *
+             */
+            last_bmark: {
+                value: true
             }
         }
     });

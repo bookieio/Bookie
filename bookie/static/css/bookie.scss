@@ -559,6 +559,15 @@ fieldset {
 }
 .clearfix { *display: inline-block }
 
+
+.prev_tag {
+    &:hover {
+        cursor: hand;
+    }
+
+    padding-left: .5em;
+}
+
 .yui3-taglistentry-holder {
     padding: 5px;
     padding-bottom: 1px;

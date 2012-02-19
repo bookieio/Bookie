@@ -49,7 +49,7 @@
                     <label>&nbsp;</label>
                     <span id="tag_suggest">Suggested Tags:
                     % for tag in tag_suggest:
-                        <a href="" class="prev_tag">${tag}</a>&nbsp;
+                        <a href="" class="prev_tag">${tag}</a>
                     % endfor
                     </span>
                 </li>
