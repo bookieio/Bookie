@@ -68,19 +68,23 @@ YUI().add('bookie-chrome', function (Y) {
             e.preventDefault();
             var model = this.get('model');
 
-            model.set('url', Y.one('#url').get('value'));
-            model.set('inserted_by', Y.one('#inserted_by').get('value'));
-            model.set('description', Y.one('#description').get('value'));
-            model.set('tags', Y.Array.map(this.tag_control.get('tags'), function (t) {
-                return t.get('text');
-            }));
-            model.set('extended', Y.one('#extended').get('value'));
-
             // we need to set the content to be part of the model for this
             // request so we can pass it along, even though the content
             // isn't really valid for it.
             model.addAttr('content', {});
-            model.set('content', Y.one('#content').get('value'));
+
+            // we have to do these changes in one fell swoop to prevent a mass
+            // firing of the "init_model" callback on the model:change event
+            model.setAttrs({
+                url: Y.one('#url').get('value'),
+                inserted_by, Y.one('#inserted_by').get('value'),
+                description, Y.one('#description').get('value'),
+                tags, Y.Array.map(this.tag_control.get('tags'), function (t) {
+                    return t.get('text');
+                }),
+                extended, Y.one('#extended').get('value'),
+                content, Y.one('#content').get('value')
+            });
 
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
