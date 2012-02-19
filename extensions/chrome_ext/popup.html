@@ -176,10 +176,19 @@
                     }
                     run(tab_data);
                 } else {
-                    chrome.tabs.getSelected(null, function (tab) {
-                        run({
-                            url: tab.url,
-                            description: tab.title
+                    // first get the windowid
+                    chrome.windows.getCurrent(function(window) {
+                        // then get the current active tab in that window
+                        chrome.tabs.query({
+                            active: true,
+                            windowId: window.id
+                        }, function (tabs) {
+                            // and use that tab to fill in out title and url
+                            var tab = tabs[0];
+                            run({
+                                url: tab.url,
+                                description: tab.title
+                            });
                         });
                     });
                 }
