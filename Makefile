@@ -2,6 +2,7 @@
 WD:=$(shell pwd)
 BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
+BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
 CHROME_BUILD = extensions/chrome_ext/lib
@@ -48,6 +49,14 @@ $(JS_BUILD_PATH)/y:
 	cd /tmp/yui && git checkout $(YUITAG)
 	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/y
 	rm -rf /tmp/yui
+
+static_upload: js css
+	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
+	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar bookie.css
+	gzip $(WD)/bookie_static.tar
+	cd $(WD) && s3cp.py --bucket files.bmark.us --public bookie_static.tar.gz
+	rm $(WD)/bookie_static.tar.gz
+
 
 js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
