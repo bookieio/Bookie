@@ -57,23 +57,25 @@
             <div class="heading">Post to Bookie</div>
         </div>
 
-        <form id="form" name="form">
-            <input type="hidden" id="url" name="url" />
-            <input type="hidden" id="inserted_by" name="inserted_by" />
+        <div id="form_overlay">
+            <form id="form" name="form">
+                <input type="hidden" id="url" name="url" />
+                <input type="hidden" id="inserted_by" name="inserted_by" />
 
-            <ul>
-                <li><input type="text" id="description" placeholder="title" name="description" /> </li>
-                <li><input type="text" placeholder="tags" name="tags" id="tag_filter" /></li>
-                <li id="suggested_tags">Suggested Tags: <span id="latest_tags"></span></li>
-                <li><textarea placeholder="notes" name="extended"
-                    id="extended" style="height: 5em;"></textarea></li>
-                <li>
-                    <button type="submit" id="submit" class="button">Save</button>
-                    <button type="button" id="delete" class="button" style="display: none;">Delete</button>
-                </li>
-            </ul>
-            <textarea name="content" id="content"></textarea>
-        </form>
+                <ul>
+                    <li><input type="text" id="description" placeholder="title" name="description" /> </li>
+                    <li><input type="text" placeholder="tags" name="tags" id="tag_filter" /></li>
+                    <li id="suggested_tags">Suggested Tags: <span id="latest_tags"></span></li>
+                    <li><textarea placeholder="notes" name="extended"
+                        id="extended" style="height: 5em;"></textarea></li>
+                    <li>
+                        <button type="submit" id="submit" class="button">Save</button>
+                        <button type="button" id="delete" class="button" style="display: none;">Delete</button>
+                    </li>
+                </ul>
+                <textarea name="content" id="content"></textarea>
+            </form>
+        </div>
         <ul id="errors">
         </ul>
         <p>&nbsp;</p>
@@ -114,7 +116,6 @@
             YUI().use('bookie-chrome', function (Y) {
                 // start out with the suggested tags hidden
                 Y.one('#suggested_tags').hide();
-
                 var run = function (tab_data) {
                     if (tab_data) {
                         var settings = new Y.bookie.OptionsModel();

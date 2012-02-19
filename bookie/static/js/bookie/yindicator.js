@@ -7,7 +7,7 @@
  *
  * @example Usage:
  *
- *     Y.bookie.indicator({
+ *     Y.bookie.Indicator({
  *         target: Y.one('#id')
  *     });
  *

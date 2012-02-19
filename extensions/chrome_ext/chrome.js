@@ -66,6 +66,7 @@ YUI().add('bookie-chrome', function (Y) {
          */
         _handle_save: function (e) {
             e.preventDefault();
+            this.indicator.show();
             var model = this.get('model');
 
             // we need to set the content to be part of the model for this
@@ -174,6 +175,8 @@ YUI().add('bookie-chrome', function (Y) {
             var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
             tag_control.focus();
 
+            this.indicator.hide();
+
         },
 
         _validate_settings: function () {
@@ -241,6 +244,11 @@ YUI().add('bookie-chrome', function (Y) {
             }
 
             this.api_cfg = this.get('settings').get_apicfg();
+            this.indicator = new Y.bookie.Indicator({
+                target: Y.one('#form_overlay')
+            });
+            this.indicator.render();
+            this.indicator.show();
 
             // bind to the event that if the model changes, check it for the
             // suggested tags to show/update the form?
@@ -534,6 +542,6 @@ YUI().add('bookie-chrome', function (Y) {
     });
 
 }, '0.1', {
-    requires: ['base', 'node', 'view', 'bookie-model', 'bookie-tagcontrol', 'bookie-api']
+    requires: ['base', 'node', 'view', 'bookie-model', 'bookie-tagcontrol', 'bookie-api', 'bookie-indicator']
 });
 
