@@ -71,7 +71,6 @@ YUI().add('bookie-chrome', function (Y) {
             model.set('url', Y.one('#url').get('value'));
             model.set('inserted_by', Y.one('#inserted_by').get('value'));
             model.set('description', Y.one('#description').get('value'));
-            debugger;
             model.set('tags', Y.Array.map(this.tag_control.get('tags'), function (t) {
                 return t.get('text');
             }));
