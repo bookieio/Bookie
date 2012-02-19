@@ -1,5 +1,5 @@
 # Makefile to help automate tasks in bookie
-
+WD:=$(shell pwd)
 BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
@@ -8,7 +8,19 @@ CHROME_BUILD = extensions/chrome_ext/lib
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
 
+EXTENSION = $(WD)/extensions/
+CHROME = /usr/bin/google-chrome
+CHROME_EXT_PATH = $(EXTENSION)/chrome_ext
+CHROME_KEY = /home/rharding/.ssh/chrome_ext.pem
+CHROME_FILESERVE = /home/bmark.us/www/bookie_chrome.crx
+CHROME_BUILD_FILE = $(EXTENSION)/chrome_ext.crx
+CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
+CHROME_UPLOAD = /home/rharding/bin/up_bmark
+
 CSS = bookie/static/css/bookie.css
+
+
+S3CP = s3cp.py --bucket files.bmark.us --public
 
 all: js css
 
@@ -51,6 +63,19 @@ chrome_css:
 clean_css:
 	rm $(CHROME_BUILD)/*.css
 
+
+.PHONY: chrome_ext
+chrome: clean_chrome
+	$(CHROME) --pack-extension=$(CHROME_EXT_PATH) --pack-extension-key=$(CHROME_KEY)
+
+chrome_upload: chrome
+	cd $(EXTENSION) && $(S3CP) chrome_ext.crx
+
+.PHONY: clean_chrome
+clean_chrome:
+	if [ -f $(CHROME_BUILD_FILE)]; then \
+		rm $(CHROME_BUILD_FILE); \
+	fi
 
 run: run_combo run_css run_app
 run_dev: run autojsbuild
