@@ -1641,7 +1641,7 @@ YUI.add('bookie-view', function (Y) {
             ind.show();
 
             var api = new Y.bookie.Api.route.Sync({
-                url: opts.get('api_url') + '/api/v1',
+                url: opts.get('api_url'),
                 username: opts.get('api_username'),
                 api_key: opts.get('api_key')
             });
