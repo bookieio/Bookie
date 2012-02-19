@@ -671,7 +671,7 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             api_url: {
-                value: 'https://bmark.us'
+                value: 'https://bmark.us/api/v1'
             },
 
             /**
