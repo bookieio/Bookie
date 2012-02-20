@@ -126,7 +126,6 @@ a {
     }
 }
 
-
 .logo {
     @include cabin_sketch;
     padding-left: .1em;
@@ -787,10 +786,19 @@ form ul .yui3-bookie-tagcontrol {
                 display: none;
             }
 
+            /* We float this right because you'll only have this if you don't
+             * have the name of the user that owns it. So you'll either get
+             * edit controls or the user it belongs to
+             */
             .actions {
                 clear: both;
-                float: none;
+                float: right;
+                padding-top: .3em;
                 padding-right: .3em;
+
+                .icon {
+                    font-size: 1.3em;
+                }
             }
         }
     }

@@ -534,15 +534,23 @@ form ul .yui3-bookie-tagcontrol {
     .filter_control input[type="submit"] {
       display: none; }
 
-  .data_list .bmark .tags {
-    display: block;
-    float: none;
-    padding-left: 0;
-    text-align: left;
-    max-width: 100%; }
-  .data_list .bmark .url {
-    display: none; }
-  .data_list .bmark .actions {
-    clear: both;
-    float: none;
-    padding-right: .3em; } }
+  .data_list .bmark {
+    /* We float this right because you'll only have this if you don't
+     * have the name of the user that owns it. So you'll either get
+     * edit controls or the user it belongs to
+     */ }
+    .data_list .bmark .tags {
+      display: block;
+      float: none;
+      padding-left: 0;
+      text-align: left;
+      max-width: 100%; }
+    .data_list .bmark .url {
+      display: none; }
+    .data_list .bmark .actions {
+      clear: both;
+      float: right;
+      padding-top: .3em;
+      padding-right: .3em; }
+      .data_list .bmark .actions .icon {
+        font-size: 1.3em; } }
