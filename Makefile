@@ -58,7 +58,6 @@ static_upload: js css
 	cd $(WD) && s3cp.py --bucket files.bmark.us --public bookie_static.tar.gz
 	rm $(WD)/bookie_static.tar.gz
 
-
 js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
 	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
