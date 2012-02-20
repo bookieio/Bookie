@@ -7,15 +7,16 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <meta name="viewport" content="width=device-width" initial-scale="1">
         <title>Bookie: ${self.title()}</title>
-        <script
+        <script type="text/javascript"
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
 
         <link rel="stylesheet" type="text/css"
-        href="${combo}/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css">
+        href="${combo}/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css"/>
         <link
-        href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" type="text/css" href="/static/css/bookie.css">
-        <script type="text/javascript"/>
+            href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2'
+            rel='stylesheet' type='text/css'/>
+        <link rel="stylesheet" type="text/css" href="/static/css/bookie.css"/>
+        <script type="text/javascript">
             YUI.GlobalConfig = {
                 combine: true,
                 base: '${combo}/combo?y/',
