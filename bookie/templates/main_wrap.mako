@@ -5,6 +5,7 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
+        <meta name="viewport" content="width=device-width">
         <title>Bookie: ${self.title()}</title>
         <script
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>

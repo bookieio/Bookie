@@ -110,13 +110,6 @@ a {
     color: #333333;
     vertical-align: middle; }
 
-.actions {
-  clear: right;
-  float: right;
-  padding-right: .3em; }
-  .actions * {
-    padding-left: .3em; }
-
 .user {
   float: right;
   opacity: .5;
@@ -211,6 +204,12 @@ fieldset legend {
   padding: .2em .2em 1em .2em; }
   .data_list .bmark:hover .url {
     color: #990000; }
+  .data_list .bmark .actions {
+    clear: right;
+    float: right;
+    padding-right: .3em; }
+    .data_list .bmark .actions * {
+      padding-left: .3em; }
   .data_list .bmark .tags {
     float: right; }
   .data_list .bmark .dateinfo {
@@ -496,3 +495,34 @@ form ul .yui3-bookie-tagcontrol {
 
 .yui3-bookie-indicator-hidden {
   visibility: hidden; }
+
+/* MOBILE */
+@media all and (max-width: 650px) {
+  span[data-icon="\\"] {
+    display: none; }
+
+  .button {
+    font-size: 14px; }
+
+  #heading {
+    display: none; }
+
+  .controls div {
+    float: none; }
+
+  .filter_control {
+    clear: both;
+    margin-top: .3em;
+    display: block; }
+
+  .data_list .bmark .tags {
+    display: block;
+    float: none;
+    padding-left: 0;
+    text-align: left; }
+  .data_list .bmark .url {
+    display: none; }
+  .data_list .bmark .actions {
+    clear: both;
+    float: none;
+    padding-right: .3em; } }

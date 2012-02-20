@@ -194,15 +194,6 @@ a {
     }
 }
 
-.actions {
-    clear: right;
-    float: right;
-    padding-right: .3em;
-
-    * {
-        padding-left: .3em;
-    }
-}
 
 .user {
     float: right;
@@ -358,6 +349,16 @@ fieldset {
 
         &:hover .url {
             color: $altcolor;
+        }
+
+        .actions {
+            clear: right;
+            float: right;
+            padding-right: .3em;
+
+            * {
+                padding-left: .3em;
+            }
         }
 
         .tags {
@@ -717,3 +718,55 @@ form ul .yui3-bookie-tagcontrol {
 .yui3-bookie-indicator-hidden {
     visibility: hidden;
     }
+
+
+
+/* MOBILE */
+@media all and (max-width: 650px) {
+    span[data-icon="\\"] {
+        display: none;
+    }
+    .button {
+        font-size: 14px;
+    }
+
+    #heading {
+        display: none;
+    }
+
+    .controls div {
+        float: none;
+    }
+
+    .filter_control {
+        clear: both;
+        margin-top: .3em;
+        display: block;
+
+    }
+
+    .data_list {
+
+        .bmark {
+            .tags {
+                display: block;
+                float: none;
+                padding-left: 0;
+                text-align: left;
+            }
+
+            .url {
+                display: none;
+            }
+
+            .actions {
+                clear: both;
+                float: none;
+                padding-right: .3em;
+
+
+            }
+
+        }
+    }
+}
