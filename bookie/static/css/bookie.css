@@ -501,15 +501,21 @@ form ul .yui3-bookie-tagcontrol {
   span[data-icon="\\"] {
     display: none; }
 
+  #body {
+    margin: .2em; }
+
   .button {
     font-size: 14px; }
 
   .logo {
     display: none; }
 
+  .user {
+    padding-right: .2em; }
+
   .navigation {
     float: none;
-    margin-left: 1em;
+    margin-left: .2em;
     width: 100%; }
     .navigation .button {
       font-size: smaller; }
