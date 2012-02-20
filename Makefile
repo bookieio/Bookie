@@ -5,18 +5,17 @@ BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = scripts/js/generate_meta.py
-CHROME_BUILD = extensions/chrome_ext/lib
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
 
 EXTENSION = $(WD)/extensions/
 CHROME = /usr/bin/google-chrome
+CHROME_BUILD = $(EXTENSION)/chrome_ext/lib
 CHROME_EXT_PATH = $(EXTENSION)/chrome_ext
 CHROME_KEY = /home/rharding/.ssh/chrome_ext.pem
 CHROME_FILESERVE = /home/bmark.us/www/bookie_chrome.crx
 CHROME_BUILD_FILE = $(EXTENSION)/chrome_ext.crx
 CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
-CHROME_UPLOAD = /home/rharding/bin/up_bmark
 
 CSS = bookie/static/css/bookie.css
 
@@ -30,6 +29,7 @@ clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
 	rm -rf /tmp/yui
 	rm $(CHROME_BUILD)/y*.js
+	rm -rf jsdoc
 
 $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/y*-min.js
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
@@ -61,9 +61,8 @@ static_upload: js css
 js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
 	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
-
 js_doc_upload: js_doc
-	s3cp.py --bucket files.bmark.us --public jsdoc/**/*.*`
+	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css: chrome_css
 chrome_css:
