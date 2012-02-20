@@ -553,4 +553,29 @@ form ul .yui3-bookie-tagcontrol {
       padding-top: .3em;
       padding-right: .3em; }
       .data_list .bmark .actions .icon {
-        font-size: 1.3em; } }
+        font-size: 1.3em; }
+
+  .form label {
+    text-align: left; }
+  .form input[type=text], .form input[type="url"], .form input[type="password"], .form textarea {
+    display: block;
+    width: 98%;
+    padding: 5px;
+    border: 1px solid #333333; }
+  .form input[type=submit] {
+    padding: 5px;
+    min-width: 5em; }
+
+  /* Update the tagcontol with some more touch friendly buttons */
+  ul.yui3-bookie-tagcontrol-tags {
+    width: 98%; }
+
+  form ul .yui3-bookie-tagcontrol {
+    display: block; }
+    form ul .yui3-bookie-tagcontrol ul {
+      width: 98%; }
+
+  .yui3-bookie-tagcontrol li.yui3-aclist-item {
+    font-size: 16px;
+    padding-bottom: .5em;
+    margin: 5px 2px; } }
