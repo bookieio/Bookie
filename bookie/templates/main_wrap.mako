@@ -5,11 +5,11 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width" initial-scale="1">
         <title>Bookie: ${self.title()}</title>
         <script
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
-        
+
         <link rel="stylesheet" type="text/css"
         href="${combo}/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css">
         <link

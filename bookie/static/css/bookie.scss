@@ -726,12 +726,29 @@ form ul .yui3-bookie-tagcontrol {
     span[data-icon="\\"] {
         display: none;
     }
+
     .button {
         font-size: 14px;
     }
 
-    #heading {
+    .logo {
         display: none;
+    }
+
+    .navigation {
+        float: none;
+        margin-left: 1em;
+        width: 100%;
+
+        .button {
+            font-size: smaller;
+
+            &.nav_button {
+                padding: 3px 2px;
+                border-radius: 0;
+                margin-top: 0;
+            }
+        }
     }
 
     .controls div {
@@ -743,6 +760,9 @@ form ul .yui3-bookie-tagcontrol {
         margin-top: .3em;
         display: block;
 
+        input[type="submit"] {
+            display: none;
+        }
     }
 
     .data_list {
@@ -753,6 +773,7 @@ form ul .yui3-bookie-tagcontrol {
                 float: none;
                 padding-left: 0;
                 text-align: left;
+                max-width: 100%;
             }
 
             .url {
@@ -763,10 +784,7 @@ form ul .yui3-bookie-tagcontrol {
                 clear: both;
                 float: none;
                 padding-right: .3em;
-
-
             }
-
         }
     }
 }
