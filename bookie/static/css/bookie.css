@@ -556,7 +556,8 @@ form ul .yui3-bookie-tagcontrol {
         font-size: 1.3em; }
 
   .form label {
-    text-align: left; }
+    text-align: left;
+    display: block; }
   .form input[type=text], .form input[type="url"], .form input[type="password"], .form textarea {
     display: block;
     width: 98%;

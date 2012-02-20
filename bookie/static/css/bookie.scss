@@ -806,7 +806,7 @@ form ul .yui3-bookie-tagcontrol {
     .form {
         label {
             text-align: left;
-
+            display: block;
         }
         input[type=text], input[type="url"], input[type="password"], textarea{
             display: block;
