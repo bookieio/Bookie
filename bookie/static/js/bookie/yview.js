@@ -97,10 +97,9 @@ YUI.add('bookie-view', function (Y) {
                         new_nodes = new Y.NodeList();
 
                     // build models out of our data
-                    that.models = new Y.bookie.BmarkList();
 
-                    that.models.add(Y.Array.map(
-                        data[that.get('results_key')], function (bmark) {
+                    that.models = Y.Array.map(data[that.get('results_key')],
+                        function (bmark) {
                             var b = new Y.bookie.Bmark(bmark),
                                 n = new Y.bookie.BmarkView({
                                     model: b,
@@ -112,7 +111,7 @@ YUI.add('bookie-view', function (Y) {
                             b.api_cfg = that.get('api_cfg');
                             new_nodes.push(n.render());
                             return b;
-                        })
+                        }
                     );
 
                     // now set the html
@@ -158,7 +157,7 @@ YUI.add('bookie-view', function (Y) {
             var pager = this.get('pager');
 
             // if the current data count is < the pager page count, hide next
-            if (this.models.size() < pager.get('count')) {
+            if (this.models.length < pager.get('count')) {
                  Y.Array.each(this.pagers, function (p) {
                     p.set('show_next', false);
                 });
