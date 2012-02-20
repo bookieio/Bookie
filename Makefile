@@ -53,6 +53,7 @@ $(JS_BUILD_PATH)/y:
 static_upload: js css
 	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
 	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar bookie.css
+	cd $(WD)/bookie/static/images && tar uf $(WD)/bookie_static.tar *
 	gzip $(WD)/bookie_static.tar
 	cd $(WD) && s3cp.py --bucket files.bmark.us --public bookie_static.tar.gz
 	rm $(WD)/bookie_static.tar.gz
