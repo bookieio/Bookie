@@ -41,12 +41,18 @@ bootstrap:
 bootstrap_upload: bootstrap
 	cd scripts/bootstrap && $(S3) bootstrap.py
 
+.PHONY: deps
+deps:
+	pip install -r requirements.txt
+
 .PHONY: test
 test:
 	nosetests --with-id bookie/tests
 
-
+.PHONY: js
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
+
+.PHONY: clean_js
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
 	rm -rf /tmp/yui
