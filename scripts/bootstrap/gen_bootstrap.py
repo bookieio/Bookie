@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """This will combine the custom additions with the original virtualenv script
 
 A new bootstrap.py file will be generated for use

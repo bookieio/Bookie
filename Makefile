@@ -1,5 +1,8 @@
 # Makefile to help automate tasks in bookie
 WD:=$(shell pwd)
+PY:=$(shell which python)
+S3:=s3cp.py --bucket files.bmark.us --public
+
 BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
@@ -19,10 +22,29 @@ CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
 CSS = bookie/static/css/bookie.css
 
-
-S3CP = s3cp.py --bucket files.bmark.us --public
-
 all: js css
+clean: clean_js clean_css
+
+.PHONY: docs
+docs:
+	cd docs && make html
+
+.PHONY: docs_upload
+docs_open: docs
+	xdg-open docs/_build/html/index.html
+
+.PHONY: bootstrap
+bootstrap:
+	scripts/bootstrap/gen_bootstrap.py > scripts/bootstrap/bootstrap.py
+
+.PHONY: bootstrap_upload
+bootstrap_upload: bootstrap
+	cd scripts/bootstrap && $(S3) bootstrap.py
+
+.PHONY: test
+test:
+	nosetests --with-id bookie/tests
+
 
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 clean_js:
@@ -55,7 +77,7 @@ static_upload: js css
 	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar bookie.css
 	cd $(WD)/bookie/static/images && tar uf $(WD)/bookie_static.tar *
 	gzip $(WD)/bookie_static.tar
-	cd $(WD) && s3cp.py --bucket files.bmark.us --public bookie_static.tar.gz
+	cd $(WD) && $(S3) bookie_static.tar.gz
 	rm $(WD)/bookie_static.tar.gz
 
 js_doc: js
@@ -111,7 +133,6 @@ stop_app:
 stop_livereload:
 	killall livereload
 
-clean: clean_js clean_css
 
 .PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
 	run run_dev run_combo run_css run_app run_livereload \
