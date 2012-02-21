@@ -11,7 +11,7 @@
             {{#if description}}
                 {{description}}
             {{else}}
-                ----
+                [no title]
             {{/if}}
         </a>
     </div>
