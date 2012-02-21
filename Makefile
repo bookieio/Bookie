@@ -22,8 +22,13 @@ CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
 CSS = bookie/static/css/bookie.css
 
-all: js css
+all: deps js css
 clean: clean_js clean_css
+
+# DOCS
+#
+# docs are built from sphinx locally. They're hosted remotely using
+# readthedocs.org though, so we don't need anything to upload/push them.
 
 .PHONY: docs
 docs:
@@ -33,6 +38,11 @@ docs:
 docs_open: docs
 	xdg-open docs/_build/html/index.html
 
+# BOOTSTRAP
+#
+# I don't know that we'll be using this much longer. I want to get things into
+# the Makefile and more repeatable with clean/all setups.
+
 .PHONY: bootstrap
 bootstrap:
 	scripts/bootstrap/gen_bootstrap.py > scripts/bootstrap/bootstrap.py
@@ -41,6 +51,10 @@ bootstrap:
 bootstrap_upload: bootstrap
 	cd scripts/bootstrap && $(S3) bootstrap.py
 
+# DEPS
+#
+# Install the packages we need.
+
 .PHONY: deps
 deps:
 	pip install -r requirements.txt
@@ -48,6 +62,29 @@ deps:
 .PHONY: test
 test:
 	nosetests --with-id bookie/tests
+
+.PHONY: jstest
+jstest: test_api test_model test_view test_indicator test_tagcontrol
+.PHONY: jstest_index
+jstest_index:
+	xdg-open http://127.0.0.1:6543/tests/index
+.PHONY: test_api
+test_api:
+	xdg-open http://127.0.0.1:6543/tests/test_api
+.PHONY: test_model
+test_model:
+	xdg-open http://127.0.0.1:6543/tests/test_model
+.PHONY: test_view
+test_view:
+	xdg-open http://127.0.0.1:6543/tests/test_view
+.PHONY: test_indicator
+test_indicator:
+	xdg-open http://127.0.0.1:6543/tests/test_indicator
+.PHONY: test_tagcontrol
+test_tagcontrol:
+	xdg-open http://127.0.0.1:6543/tests/test_tagcontrol
+
+
 
 .PHONY: js
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
