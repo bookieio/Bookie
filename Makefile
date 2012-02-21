@@ -1,6 +1,9 @@
 # Makefile to help automate tasks in bookie
 WD:=$(shell pwd)
-PY:=$(shell which python)
+PY:=bin/python
+PIP:=bin/pip
+PASTER:=bin/paster
+GUNICORN:=bin/gunicorn
 S3:=s3cp.py --bucket files.bmark.us --public
 
 BOOKIE_INI = rick.ini
@@ -24,6 +27,7 @@ CSS = bookie/static/css/bookie.css
 
 all: deps js css
 clean: clean_js clean_css
+clean_all: clean_venv clean_js clean_css clean_chrome
 
 # DOCS
 #
@@ -56,8 +60,12 @@ bootstrap_upload: bootstrap
 # Install the packages we need.
 
 .PHONY: deps
-deps:
-	pip install -r requirements.txt
+deps: venv
+	$(PIP) install -r requirements.txt
+
+# TESTS
+#
+# Tools for running python and javascript tests
 
 .PHONY: test
 test:
@@ -84,7 +92,10 @@ test_indicator:
 test_tagcontrol:
 	xdg-open http://127.0.0.1:6543/tests/test_tagcontrol
 
-
+# JAVASCRIPT
+#
+# Javascript tools for building out combo loader build directory, out meta.js,
+# and syncing things over to the chrome extension directory.
 
 .PHONY: js
 js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
@@ -136,6 +147,10 @@ chrome_css:
 clean_css:
 	rm $(CHROME_BUILD)/*.css
 
+# CHROME
+#
+# Helpers for dealing with the Chrome extension such as building the
+# extension, copying it up to files.bmark.us, and such.
 
 .PHONY: chrome_ext
 chrome: clean_chrome
@@ -153,15 +168,15 @@ clean_chrome:
 run: run_combo run_css run_app
 run_dev: run autojsbuild
 run_combo:
-	gunicorn -p combo.pid combo:application &
+	$(GUNICORN) -p combo.pid combo:application &
 run_css:
 	sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &
 run_app:
-	paster serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
+	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
 	livereload
 autojsbuild:
-	python scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
+	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
 stop: stop_combo stop_css stop_app
 stop_dev: stop
@@ -176,6 +191,19 @@ stop_app:
 stop_livereload:
 	killall livereload
 
+
+# INSTALL
+#
+# Crap to help us install and setup Bookie
+# We need a virtualenv
+
+venv: bin/python
+bin/python:
+	virtualenv --no-site-packages .
+
+.PHONY: clean_venv
+clean_venv:
+	rm -rf lib include local bin
 
 .PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
 	run run_dev run_combo run_css run_app run_livereload \
