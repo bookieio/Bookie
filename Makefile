@@ -36,7 +36,7 @@ clean: clean_js clean_css
 .PHONY: clean_all
 clean_all: clean_venv clean_js clean_css clean_chrome
 
-install: bookie.ini all
+install: bookie.ini all first_bookmark
 
 develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
@@ -65,6 +65,10 @@ db_down: bookie.db
 .PHONY: db_new
 db_new: bookie.db
 	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
+
+.PHONY: first_bookmark
+first_bookmark:
+	$(PY) scripts/admin/first_bookmark.py
 
 # DOCS
 #
