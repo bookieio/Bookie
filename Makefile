@@ -117,9 +117,9 @@ $(JS_BUILD_PATH)/b/y%.js: $(BOOKIE_JS)/y%.js
 	cp $? $(JS_BUILD_PATH)/b/
 	cp $? $(CHROME_BUILD)
 $(JS_BUILD_PATH)/b:
-	mkdir $(JS_BUILD_PATH)/b
+	mkdir -p $(JS_BUILD_PATH)/b
 $(JS_BUILD_PATH)/y:
-	mkdir $(JS_BUILD_PATH)/y
+	mkdir -p $(JS_BUILD_PATH)/y
 	mkdir /tmp/yui
 	git clone --depth 1 $(YUIGIT) /tmp/yui
 	cd /tmp/yui && git checkout $(YUITAG)
