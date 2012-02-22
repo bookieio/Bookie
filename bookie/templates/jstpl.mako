@@ -19,6 +19,15 @@
     <div class="actions">
         <span aria-hidden="true" class="icon" title="{{prettystored}}" data-icon="\"></span>
         <em class="icon">Date Stored</em>
+
+        <a href="/bmark/readable/{{hash_id}}"
+           title="View readable content"
+           alt="View readable content"
+           class="readable">
+           <span aria-hidden="true" class="icon" data-icon="E"></span>
+           <em class="icon">View readable content</em>
+        </a> 
+
         {{#if owner}}
             <a href="/{{username}}/edit/{{hash_id}}"
                 title="Edit the bookmark" alt="Edit the bookmark"
@@ -69,7 +78,7 @@
         </div>
 
         {{#if current_user}}
-            <div class="buttons" style="display: inline-block; width: 10em; vertical-align: middle;">
+            <div class="buttons add" style="display: inline-block; vertical-align: middle;">
                 <a href="/{{current_user}}/new"
                     class="button">
                     <span class="icon" data-icon="&" aria-hidden="true"></span> Add Bookmark

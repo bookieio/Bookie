@@ -3,6 +3,9 @@
   vertical-align: top;
   cursor: pointer; }
 
+.readable {
+  display: none; }
+
 body {
   font-family: 'Cabin', sans-serif; }
 
@@ -191,6 +194,8 @@ fieldset legend {
   margin: .5em 0;
   padding: .3em;
   min-height: 2em; }
+  .controls .add {
+    width: 10em; }
 
 .data_list .col_end {
   font-weight: bold;
@@ -498,14 +503,23 @@ form ul .yui3-bookie-tagcontrol {
 
 /* MOBILE */
 @media all and (max-width: 650px) {
+  body {
+    font-size: 24px; }
+
   span[data-icon="\\"] {
     display: none; }
+
+  .readable {
+    display: inline-block; }
 
   #body {
     margin: .2em; }
 
+  .buttons {
+    width: auto; }
+
   .button {
-    font-size: 14px; }
+    font-size: 25px; }
 
   .logo {
     display: none; }
@@ -517,12 +531,10 @@ form ul .yui3-bookie-tagcontrol {
     float: none;
     margin-left: .2em;
     width: 100%; }
-    .navigation .button {
-      font-size: smaller; }
-      .navigation .button.nav_button {
-        padding: 3px 2px;
-        border-radius: 0;
-        margin-top: 0; }
+    .navigation .button.nav_button {
+      padding: .3em;
+      border-radius: 0;
+      margin-top: 0; }
 
   .controls div {
     float: none; }
@@ -533,27 +545,42 @@ form ul .yui3-bookie-tagcontrol {
     display: block; }
     .filter_control input[type="submit"] {
       display: none; }
+    .filter_control .yui3-bookie-tagcontrol-tags {
+      border: 2px solid #333;
+      box-shadow: 2px 2px 1 1 #333; }
 
-  .data_list .bmark {
-    /* We float this right because you'll only have this if you don't
-     * have the name of the user that owns it. So you'll either get
-     * edit controls or the user it belongs to
-     */ }
-    .data_list .bmark .tags {
-      display: block;
-      float: none;
-      padding-left: 0;
-      text-align: left;
-      max-width: 100%; }
-    .data_list .bmark .url {
-      display: none; }
-    .data_list .bmark .actions {
-      clear: both;
-      float: right;
-      padding-top: .3em;
-      padding-right: .3em; }
-      .data_list .bmark .actions .icon {
-        font-size: 1.3em; }
+  .data_list {
+    margin-top: 3em; }
+    .data_list .bmark {
+      /* We float this right because you'll only have this if you don't
+       * have the name of the user that owns it. So you'll either get
+       * edit controls or the user it belongs to
+       */ }
+      .data_list .bmark:hover {
+        background-color: #FFF; }
+      .data_list .bmark a {
+        font-size: 34px; }
+      .data_list .bmark .url, .data_list .bmark .url * {
+        opacity: 1; }
+      .data_list .bmark .icon {
+        opacity: 1; }
+      .data_list .bmark .tags {
+        display: block;
+        float: none;
+        padding-left: 0;
+        text-align: left;
+        max-width: 100%; }
+        .data_list .bmark .tags .tag {
+          font-size: 24px; }
+      .data_list .bmark .url {
+        display: none; }
+      .data_list .bmark .actions {
+        clear: both;
+        float: right;
+        padding-top: .3em;
+        padding-right: .3em; }
+        .data_list .bmark .actions .icon {
+          font-size: 35px; }
 
   .form label {
     text-align: left;
@@ -577,6 +604,6 @@ form ul .yui3-bookie-tagcontrol {
       width: 98%; }
 
   .yui3-bookie-tagcontrol li.yui3-aclist-item {
-    font-size: 16px;
+    font-size: 26px;
     padding-bottom: .5em;
     margin: 5px 2px; } }

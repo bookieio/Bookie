@@ -24,6 +24,10 @@ $links: #003366;
     cursor: pointer;
 }
 
+.readable {
+    display: none;
+}
+
 @mixin cabin() {
     font-family: 'Cabin', sans-serif;
 }
@@ -193,7 +197,6 @@ a {
     }
 }
 
-
 .user {
     float: right;
     opacity: .5;
@@ -323,10 +326,11 @@ fieldset {
     padding: .3em;
     min-height: 2em;
 
-    .icon {
-
-
+    .add {
+        width: 10em;
     }
+
+    .icon {}
 }
 
 
@@ -722,16 +726,28 @@ form ul .yui3-bookie-tagcontrol {
 
 /* MOBILE */
 @media all and (max-width: 650px) {
+    body {
+        font-size: 24px;
+    }
+
     span[data-icon="\\"] {
         display: none;
+    }
+
+    .readable {
+        display: inline-block;
     }
 
     #body {
         margin: .2em;
     }
 
+    .buttons {
+        width: auto;
+    }
+
     .button {
-        font-size: 14px;
+        font-size: 25px;
     }
 
     .logo {
@@ -748,10 +764,8 @@ form ul .yui3-bookie-tagcontrol {
         width: 100%;
 
         .button {
-            font-size: smaller;
-
             &.nav_button {
-                padding: 3px 2px;
+                padding: .3em;
                 border-radius: 0;
                 margin-top: 0;
             }
@@ -770,16 +784,45 @@ form ul .yui3-bookie-tagcontrol {
         input[type="submit"] {
             display: none;
         }
+        .yui3-bookie-tagcontrol-tags {
+            border: 2px solid #333;
+            box-shadow: 2px 2px 1 1 #333;
+
+        }
+
     }
 
     .data_list {
+        margin-top: 3em;
+
         .bmark {
+            &:hover {
+                background-color: #FFF;
+
+            }
+
+            a {
+                font-size: 34px;
+            }
+
+            .url, .url * {
+                opacity: 1;
+            }
+
+            .icon {
+                opacity: 1;
+            }
+
             .tags {
                 display: block;
                 float: none;
                 padding-left: 0;
                 text-align: left;
                 max-width: 100%;
+
+                .tag {
+                    font-size: 24px;
+                }
             }
 
             .url {
@@ -797,7 +840,7 @@ form ul .yui3-bookie-tagcontrol {
                 padding-right: .3em;
 
                 .icon {
-                    font-size: 1.3em;
+                    font-size: 35px;
                 }
             }
         }
@@ -834,7 +877,7 @@ form ul .yui3-bookie-tagcontrol {
     }
 
     .yui3-bookie-tagcontrol li.yui3-aclist-item {
-        font-size: 16px;
+        font-size: 26px;
         padding-bottom: .5em;
         margin: 5px 2px;
     }
