@@ -6,7 +6,7 @@ MIGRATE := bin/migrate
 PASTER := bin/paster
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
-INI = rick.ini
+INI = bookie.ini
 SAURL := $(shell grep sqlalchemy.url $(INI) | cut -d "=" -f 2 | tr -d " ")
 
 BOOKIE_JS = bookie/static/js/bookie
