@@ -49,6 +49,18 @@ def parse_args():
         default=None,
         help='The email to use for this task.')
 
+    parser.add_argument('--reset-password', '-r',
+        dest="reset",
+        action='store_true',
+        default=None,
+        help="Reset the user's password")
+
+    parser.add_argument('--password', '-p',
+        dest='password',
+        action='store',
+        default=None,
+        help='The password to use for this task.')
+
     args = parser.parse_args()
     return args
 
@@ -108,6 +120,29 @@ def _new_user(args):
     transaction.commit()
 
 
+def _reset_password(args):
+    """Reset a user's password"""
+
+    if not args.username:
+        args.username = raw_input('username? ')
+
+    if not args.password:
+        args.password = raw_input('password? ')
+
+    if not args.username or not args.password:
+        raise Exception('Must supply a username and password')
+
+    import transaction
+    _init_sql(args)
+    from bookie.models import DBSession
+    sess = DBSession()
+
+    u = UserMgr.get(username=unicode(args.username))
+    u.password = args.password
+    sess.flush()
+    transaction.commit()
+
+
 def dispatch(args):
     """Based on the args, build our task up and complete it for the user"""
 
@@ -116,6 +151,9 @@ def dispatch(args):
 
     if args.newuser:
         return _new_user(args)
+
+    if args.reset:
+        return _reset_password(args)
 
 if __name__ == '__main__':
     args = parse_args()
