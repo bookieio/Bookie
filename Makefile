@@ -27,11 +27,16 @@ CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
 CSS = bookie/static/css/bookie.css
 
-all: deps js css develop
+.PHONY: all
+all: deps develop bookie.db db_up js css
+
+.PHONY: clean
 clean: clean_js clean_css
+
+.PHONY: clean_all
 clean_all: clean_venv clean_js clean_css clean_chrome
 
-install: bookie.ini all bookie.db
+install: bookie.ini all
 
 develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
