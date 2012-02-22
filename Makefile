@@ -1,12 +1,14 @@
 # Makefile to help automate tasks in bookie
-WD:=$(shell pwd)
-PY:=bin/python
-PIP:=bin/pip
-PASTER:=bin/paster
-GUNICORN:=bin/gunicorn
-S3:=s3cp.py --bucket files.bmark.us --public
+WD := $(shell pwd)
+PY := bin/python
+PIP := bin/pip
+MIGRATE := bin/migrate
+PASTER := bin/paster
+GUNICORN := bin/gunicorn
+S3 := s3cp.py --bucket files.bmark.us --public
+INI = rick.ini
+SAURL := $(shell grep sqlalchemy.url $(INI) | cut -d "=" -f 2 | tr -d " ")
 
-BOOKIE_INI = rick.ini
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
@@ -25,9 +27,39 @@ CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
 CSS = bookie/static/css/bookie.css
 
-all: deps js css
+all: deps js css develop
 clean: clean_js clean_css
 clean_all: clean_venv clean_js clean_css clean_chrome
+
+install: all bookie.ini bookie.db
+
+develop: lib/python*/site-packages/bookie.egg-link
+lib/python*/site-packages/bookie.egg-link:
+	$(PY) setup.py develop
+
+$(INI):
+	cp sample.ini $(INI)
+
+# DATABASE
+#
+# Need a series of commands to handle migrations
+
+bookie.db:
+	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
+
+.PHONY: db_up
+db_up: bookie.db
+	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
+
+# make db_down ver=10
+.PHONY: db_down
+db_down: bookie.db
+	$(MIGRATE) downgrade --url=$(SAURL) --repository=migrations $(ver)
+
+# make db_new desc="This is a new migration"
+.PHONY: db_new
+db_new: bookie.db
+	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
 
 # DOCS
 #
@@ -172,7 +204,7 @@ run_combo:
 run_css:
 	sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &
 run_app:
-	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
+	$(PASTER) serve --reload --pid-file=paster.pid $(INI) &
 run_livereload:
 	livereload
 autojsbuild:
