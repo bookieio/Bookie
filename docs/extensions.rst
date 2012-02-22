@@ -42,8 +42,10 @@ up the options page right-click on the extension in the tool bar and select the
 
 API Url
     set this to the installed url for your bookie instance. In dev mode
-    it's `127.0.0.1:6543/api/v1`. If you do not set the api url you should get
+    it's `http://127.0.0.1:6543/api/v1`. If you do not set the api url you should get
     an error about not being able to find a bookie instance at that url.
+
+    By default the extension attempts to hook you up to the bmark.us instance.
 
 API Key
     You can get the API key for your user by logging into the website and going

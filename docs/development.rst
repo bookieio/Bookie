@@ -23,7 +23,7 @@ Contents:
    :maxdepth: 1
 
    changes
-   fabric
+   makefile
    tests
    api
    todo

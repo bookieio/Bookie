@@ -5,6 +5,16 @@ Change Log
 Ok, so I'm going to try to summarize changes here, but for full changes see the
 commit log. Commit often and all that.
 
+What's new in 0.4
+==================
+0.4 was all about the port from jQuery to YUI for the Javascript side of
+things. This meant that the UI got a big facelift, we've moved to the YUI MVC
+framework, and the extensions needed to be updated to use the new library of
+code.
+
+We also spent time getting most of the fabric tasks moved over to the Makefile
+to help aid in running and managing the installation.
+
 What's new in 0.3
 ==================
 The main goals of 0.3 were to add a full JSON API and to add authentication so

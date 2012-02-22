@@ -206,8 +206,8 @@ clean_chrome:
 		rm $(CHROME_BUILD_FILE); \
 	fi
 
-run: run_combo run_css run_app
-run_dev: run autojsbuild
+run: run_combo run_app
+run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
@@ -219,8 +219,8 @@ run_livereload:
 autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
-stop: stop_combo stop_css stop_app
-stop_dev: stop
+stop: stop_combo stop_app
+stop_dev: stop stop_css 
 stop_combo:
 	kill -9 `cat combo.pid`
 	rm combo.pid

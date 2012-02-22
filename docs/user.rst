@@ -23,7 +23,7 @@ Parameters
 
 --ini
     (Required) what is the *.ini* file we're using to do things like figure out
-    the db connection string?
+    the db connection string? By default this should be `bookie.ini`.
 
 --new
     Only go through and fetch/parse html content for bookmarks that have not
@@ -62,7 +62,6 @@ A sample of cron'ing this to run at 6am every day would be:
 
   0 6 * * * /usr/bin/python /path/to/Bookie/scripts/misc/backup.py
 
-.. _Chrome Plugin: extensions.html
 .. _sample script: https://github.com/mitechie/Bookie/blob/develop/scripts/misc/backup.py
 
 Bookmarklet

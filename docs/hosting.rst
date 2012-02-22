@@ -22,7 +22,7 @@ paster development server. So you run the web server with the command:
 
 ::
 
-    paster serve  --daemon $my.ini
+    paster serve  --daemon bookie.ini
 
 Then to serve it behind Nginx you need to setup a new virtual host config.
 
@@ -71,8 +71,11 @@ the normal bootstrap process it should be in:
 ::
 
     bookie/bookie/bookie/wsgi.py
+    bookie/bookie/bookie/combo.py
 
 With the following:
+
+wsgi.py
 
 ::
 
@@ -96,10 +99,20 @@ With the following:
     application = loadapp('config:' + os.path.join(install_dir, 'production.ini'))
 
 
+combo.py
+
+::
+
+    """WSGI file to serve the combo JS out of convoy"""
+    from convoy.combo import combo_app
+    JS_FILES = 'bookie/static/js/build'
+    application = combo_app(JS_FILES)
+
+
 uWSGI Config
 ~~~~~~~~~~~~
 Now we need to add the uwsgi daemon settings for this application. We'll create
-a file `/etc/init/rick.bookie.conf` that will give us an upstart enabled
+a file `/etc/init/bookie.conf` that will give us an upstart enabled
 service to run the app through.
 
 ::
@@ -108,11 +121,25 @@ service to run the app through.
     start on runlevel [2345]
     stop on runlevel [!2345]
     respawn
-    exec /usr/bin/uwsgi26 --socket /tmp/rick.bookie.sock \
+    exec /usr/bin/uwsgi26 --socket /tmp/bookie.sock \
     -H /home/$username/bookie/ \
     --chmod-socket --module wsgi \
     --pythonpath /home/$username/bookie/bookie/bookie \
     -p 4
+
+combo loader
+
+::
+
+    description "uWSGI Convoy"
+    start on runlevel [2345]
+    stop on runlevel [!2345]
+    respawn
+    exec /usr/bin/uwsgi --socket /tmp/convoy.sock \
+    -H /home/$username/bookie \
+    --chmod-socket --module combo \
+    -p 4 --threads 2
+
 
 We should not be able to start up the server with uWSGI command there.
 
@@ -129,7 +156,8 @@ launch the daemon with:
 
 ::
 
-    $ sudo service rick.bmark start
+    $ sudo service bookie start
+    $ sudo service combo start
 
 Nginx Config
 ~~~~~~~~~~~~
@@ -156,9 +184,16 @@ application.
         break;
       }
     
+      location /combo {
+        include     uwsgi_params;
+        uwsgi_pass  unix:///tmp/convoy.sock;
+        uwsgi_param UWSGI_SCHEME $scheme;
+        break;
+      }
+    
       location / { 
         include     uwsgi_params;
-        uwsgi_pass  unix:///tmp/rick.bmark.sock;
+        uwsgi_pass  unix:///tmp/bookie.sock;
         uwsgi_param SCRIPT_NAME /;
         uwsgi_param UWSGI_SCHEME $scheme;
       }

@@ -5,20 +5,18 @@
 
 Bookie - bookmark your web
 ==================================
-Bookie is my attempt to rid myself of Delicious, and be able host my bookmarks
-which I hold dear myself.
+Bookie is a young open source project to help replace Delicious.
 
-Beyond that, there's some features I think that are long overdue.
 
 .. image:: http://files.bmark.us/bmark.us_screenshot.png
     :width: 500
     :scale: 100
 
 
-Latest
---------
+Latest Release
+---------------
 :Stable: v0.3_
-:Development: v0.4_
+:Development: v0.4_ *eta March 2012*
 
 .. _v0.3: https://github.com/mitechie/Bookie/tree/master
 .. _v0.4: https://github.com/mitechie/Bookie/tree/develop
@@ -28,11 +26,11 @@ Bookie Features
 ----------------
 - Open source!
 - Imports from Delicious.com and Google Bookmarks
-- Google Chrome extension
-- Bookmarklet for other browsers
-- Store page content and fulltext search
+- Google Chrome extension (Firefox in development)
+- Bookmarklet for other browsers (mobile devices)
+- Store page content and fulltext searches it
 - Support for Sqlite, MySQL, and Postgresql
-- *Disabled* Mobile view powered by JQuery Mobile
+- Mobile friendly responsive layout
 
 See the features_ page for full length details.
 
@@ -41,7 +39,8 @@ Important Links
 ----------------
 :Github: http://github.com/mitechie/Bookie
 :Mailing List: https://groups.google.com/forum/?hl=en#!forum/bookie_bookmarks
-:Main Site: https://bmark.us
+:See it live: https://bmark.us
+:ToDo List: https://trello.com/board/bookie/4f18c1ac96c79ec27105f228
 
 Contents:
 ---------
@@ -50,11 +49,11 @@ Contents:
    :maxdepth: 1
 
    install
-   hosting
    user
    extensions
-   events
+   hosting
    development
+   events
 
 .. Indices and tables
 .. ==================
@@ -69,7 +68,7 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Our next sprint is taking place at my place Feb 25th!
+Our next sprint is taking place at my place **Feb 25th!**
 
 .. _events: events.html
 .. _features: features.html
