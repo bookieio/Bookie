@@ -7,7 +7,7 @@ PASTER := bin/paster
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
 INI = bookie.ini
-SAURL := $(shell grep sqlalchemy.url $(INI) | cut -d "=" -f 2 | tr -d " ")
+SAURL = $(shell grep sqlalchemy.url $(INI) | cut -d "=" -f 2 | tr -d " ")
 
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
@@ -31,7 +31,7 @@ all: deps js css develop
 clean: clean_js clean_css
 clean_all: clean_venv clean_js clean_css clean_chrome
 
-install: all bookie.ini bookie.db
+install: bookie.ini all bookie.db
 
 develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
