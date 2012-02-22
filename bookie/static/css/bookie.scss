@@ -727,7 +727,7 @@ form ul .yui3-bookie-tagcontrol {
 /* MOBILE */
 @media all and (max-width: 650px) {
     body {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     span[data-icon="\\"] {
@@ -802,7 +802,7 @@ form ul .yui3-bookie-tagcontrol {
             }
 
             a {
-                font-size: 34px;
+                font-size: 24px;
             }
 
             .url, .url * {
@@ -821,7 +821,7 @@ form ul .yui3-bookie-tagcontrol {
                 max-width: 100%;
 
                 .tag {
-                    font-size: 24px;
+                    font-size: 20px;
                 }
             }
 
@@ -840,7 +840,7 @@ form ul .yui3-bookie-tagcontrol {
                 padding-right: .3em;
 
                 .icon {
-                    font-size: 35px;
+                    font-size: 25px;
                 }
             }
         }

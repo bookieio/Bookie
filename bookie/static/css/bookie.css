@@ -504,7 +504,7 @@ form ul .yui3-bookie-tagcontrol {
 /* MOBILE */
 @media all and (max-width: 650px) {
   body {
-    font-size: 24px; }
+    font-size: 20px; }
 
   span[data-icon="\\"] {
     display: none; }
@@ -559,7 +559,7 @@ form ul .yui3-bookie-tagcontrol {
       .data_list .bmark:hover {
         background-color: #FFF; }
       .data_list .bmark a {
-        font-size: 34px; }
+        font-size: 24px; }
       .data_list .bmark .url, .data_list .bmark .url * {
         opacity: 1; }
       .data_list .bmark .icon {
@@ -571,7 +571,7 @@ form ul .yui3-bookie-tagcontrol {
         text-align: left;
         max-width: 100%; }
         .data_list .bmark .tags .tag {
-          font-size: 24px; }
+          font-size: 20px; }
       .data_list .bmark .url {
         display: none; }
       .data_list .bmark .actions {
@@ -580,7 +580,7 @@ form ul .yui3-bookie-tagcontrol {
         padding-top: .3em;
         padding-right: .3em; }
         .data_list .bmark .actions .icon {
-          font-size: 35px; }
+          font-size: 25px; }
 
   .form label {
     text-align: left;
