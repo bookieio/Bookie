@@ -28,10 +28,15 @@ Most of the details are available over in the extension_ docs. Make sure that
 after you install it, that you go into the options to configure it to talk to
 your specific Bookie installation.
 
+Firefox Extension
+------------------
+In the works, see the extension_ docs.
+
 Bookmarklet
 -----------
 You can use a bookmarklet to save bookmarks from any other browser, including
-mobile browsers
+mobile browsers. Log into your account and you can get a copy/paste-able
+bookmarklet from your account page.
 
 Fulltext indexing and seach
 ----------------------------
@@ -79,38 +84,13 @@ This includes all of the fulltext indexing and searching. Obviously, how each
 database performs these is a little bit different so you might find better luck
 with some backends over others.
 
-Delicious API Compatibility
----------------------------
-We're attempted to work with the Delicious API so that if you have a tool that
-talks to Delicious, it should be easy to update it to work with Bookie.
-Pointing the url it communicates with to http://yourbookieurl.com/delapi should
-get things going. We don't currently support all of the API methods. If you
-have a tool you're trying to do this with that doesn't work let us know.
+
+Mobile Friendly
+~~~~~~~~~~~~~~~~
+We're working on making the website mobile friendly using responsive design
+techniques.
 
 .. _extension: extensions.html
 .. _Instapaper: http://instapaper.com
 .. _Readability: http://readability.com
 .. _bit.ly: http://bit.ly
-
-
-Currently not available due to broken features
-----------------------------------------------
-These two features are not enabled in the latest release because they've fallen
-out of date and are in need of some serious love to catch up again. See the
-milestones in the Github issue tracker for when they're scheduled to get full
-attention again.
-
-Firefox Extension
-~~~~~~~~~~~~~~~~~
-Most of the details are available over in the extension_ docs.
-
-Mobile View
-~~~~~~~~~~~
-Bookie supports a web based mobile view implementing using `JQuery Mobile`_.
-You can view your bookmarks, read the content from the page, if you've enabled
-the readable content features, and search your bookmarks from a number of
-devices. Just head to the `/m` url for your site. See http://rick.bmark.us/{user}/m
-for an example of how things look.
-
-.. _JQuery Mobile: http://jquerymobile.com/
-

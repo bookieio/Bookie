@@ -10,7 +10,7 @@ which I hold dear myself.
 
 Beyond that, there's some features I think that are long overdue.
 
-.. image:: http://uploads.mitechie.com/bookie_ui_05_07_11.png.png
+.. image:: http://files.bmark.us/bmark.us_screenshot.png
     :width: 500
     :scale: 100
 
@@ -69,7 +69,7 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Our next sprint is taking place at PyOhio_ July 29th and 30th!
+Our next sprint is taking place at my place Feb 25th!
 
 .. _events: events.html
 .. _features: features.html

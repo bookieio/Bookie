@@ -2,6 +2,31 @@
 Hacking Events
 =============================
 
+Sprint: Feb 25th
+-----------------
+Location: My Place
+Time: 10am-4pm
+
+Tasks
+~~~~~~
+The main task is to work on a full Firefox extension based off the add-on SDK.
+Current base is located:
+
+- https://github.com/mitechie/bookie-firefox
+
+Misc Tasks
+~~~~~~~~~~
+A lot's changed. We could use help with:
+
+- Installation testing
+- Updating the current failing unit tests broken by recent code changes
+- Documentation updates
+- Working on UI updates/css tweaks for the mobile/media query drive UI
+- Adding JS tests for the new JS driven UI
+- Implementing DELETE in the chrome extension
+- anything else we can think up.
+
+
 Sprint: July 29th and 30th
 ----------------------------
 
