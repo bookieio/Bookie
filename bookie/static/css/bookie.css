@@ -602,6 +602,10 @@ form ul .yui3-bookie-tagcontrol {
   .form {
     margin: 1em 0;
     padding: .2em; }
+    .form ul {
+      margin: 0; }
+    .form li {
+      padding: .5em 0; }
     .form label {
       text-align: left;
       display: block;
@@ -610,7 +614,7 @@ form ul .yui3-bookie-tagcontrol {
         display: none; }
     .form input[type=text], .form input[type="url"], .form input[type="password"], .form textarea {
       display: block;
-      width: 98%;
+      width: 100%;
       padding: 5px;
       border: 1px solid #333333; }
     .form input[type=submit] {
@@ -624,7 +628,7 @@ form ul .yui3-bookie-tagcontrol {
   form ul .yui3-bookie-tagcontrol {
     display: block; }
     form ul .yui3-bookie-tagcontrol ul {
-      width: 95%; }
+      width: 98%; }
 
   .yui3-bookie-tagcontrol li.yui3-aclist-item {
     font-size: 26px;
