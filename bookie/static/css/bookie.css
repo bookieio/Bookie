@@ -545,13 +545,15 @@ form ul .yui3-bookie-tagcontrol {
       margin-top: 0; }
 
   .controls {
-    clear: both; }
+    clear: both;
+    margin: 1em 0;
+    padding: .5em 0; }
     .controls div {
       float: none; }
 
   .filter_control {
     clear: both;
-    margin-top: .5em;
+    margin-top: 1em;
     display: block; }
     .filter_control input[type="submit"] {
       display: none; }

@@ -785,6 +785,8 @@ form ul .yui3-bookie-tagcontrol {
 
     .controls {
         clear: both;
+        margin: 1em 0;
+        padding: .5em 0;
 
         div {
             float: none;
@@ -794,7 +796,7 @@ form ul .yui3-bookie-tagcontrol {
 
     .filter_control {
         clear: both;
-        margin-top: .5em;
+        margin-top: 1em;
         display: block;
 
         input[type="submit"] {
