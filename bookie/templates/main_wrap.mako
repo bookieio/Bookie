@@ -5,7 +5,7 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
-        <meta name="viewport" content="width=device-width" initial-scale="1">
+        <meta name="viewport" content="width=device-width" initial-scale="1.0">
         <title>Bookie: ${self.title()}</title>
         <script type="text/javascript"
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
@@ -56,10 +56,10 @@
                 <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
             </div>
             <div class="navigation">
-                <span class="item"><a href="/recent" class="button nav_button">All Bookmarks</a></span>
+                <span class="item"><a href="/recent" class="button nav_button">All</a></span>
 
                 % if request.user:
-                    <span class="item"><a href="/${request.user.username}/recent" class="button nav_button">My Bookmarks</a></span>
+                    <span class="item"><a href="/${request.user.username}/recent" class="button nav_button">Mine</a></span>
                 % endif
 
                 <span class="item"><a href="/search" class="button nav_button">Search</a></span>

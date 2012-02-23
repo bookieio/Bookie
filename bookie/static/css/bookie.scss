@@ -725,9 +725,23 @@ form ul .yui3-bookie-tagcontrol {
 
 
 /* MOBILE */
-@media all and (max-width: 650px) {
+@media all and (max-width: 768px) {
     body {
-        font-size: 20px;
+        font-size: 25px;
+        margin: .2em;
+    }
+
+    #body {
+        margin: 0;
+    }
+
+    #readable_content {
+        max-width: 98%;
+    }
+
+    a.bmark {
+        max-width: 100%;
+        overflow: hidden;
     }
 
     span[data-icon="\\"] {
@@ -738,9 +752,6 @@ form ul .yui3-bookie-tagcontrol {
         display: inline-block;
     }
 
-    #body {
-        margin: .2em;
-    }
 
     .buttons {
         width: auto;
@@ -748,6 +759,7 @@ form ul .yui3-bookie-tagcontrol {
 
     .button {
         font-size: 25px;
+        line-height: inherit;
     }
 
     .logo {
@@ -760,7 +772,6 @@ form ul .yui3-bookie-tagcontrol {
 
     .navigation {
         float: none;
-        margin-left: .2em;
         width: 100%;
 
         .button {
@@ -772,28 +783,33 @@ form ul .yui3-bookie-tagcontrol {
         }
     }
 
-    .controls div {
-        float: none;
+    .controls {
+        clear: both;
+
+        div {
+            float: none;
+        }
+
     }
 
     .filter_control {
         clear: both;
-        margin-top: .3em;
+        margin-top: .5em;
         display: block;
 
         input[type="submit"] {
             display: none;
         }
         .yui3-bookie-tagcontrol-tags {
-            border: 2px solid #333;
-            box-shadow: 2px 2px 1 1 #333;
+            border: 2px solid #bbb;
+            box-shadow: 2px 2px 0 0 #666;
 
         }
 
     }
 
     .data_list {
-        margin-top: 3em;
+        margin-top: 2em;
 
         .bmark {
             &:hover {
@@ -805,12 +821,17 @@ form ul .yui3-bookie-tagcontrol {
                 font-size: 24px;
             }
 
+            .description {
+                max-width: 100%;
+                overflow: hidden;
+            }
+
             .url, .url * {
                 opacity: 1;
             }
 
             .icon {
-                opacity: 1;
+                opacity: .7;
             }
 
             .tags {

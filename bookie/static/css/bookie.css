@@ -502,9 +502,20 @@ form ul .yui3-bookie-tagcontrol {
   visibility: hidden; }
 
 /* MOBILE */
-@media all and (max-width: 650px) {
+@media all and (max-width: 768px) {
   body {
-    font-size: 20px; }
+    font-size: 25px;
+    margin: .2em; }
+
+  #body {
+    margin: 0; }
+
+  #readable_content {
+    max-width: 98%; }
+
+  a.bmark {
+    max-width: 100%;
+    overflow: hidden; }
 
   span[data-icon="\\"] {
     display: none; }
@@ -512,14 +523,12 @@ form ul .yui3-bookie-tagcontrol {
   .readable {
     display: inline-block; }
 
-  #body {
-    margin: .2em; }
-
   .buttons {
     width: auto; }
 
   .button {
-    font-size: 25px; }
+    font-size: 25px;
+    line-height: inherit; }
 
   .logo {
     display: none; }
@@ -529,28 +538,29 @@ form ul .yui3-bookie-tagcontrol {
 
   .navigation {
     float: none;
-    margin-left: .2em;
     width: 100%; }
     .navigation .button.nav_button {
       padding: .3em;
       border-radius: 0;
       margin-top: 0; }
 
-  .controls div {
-    float: none; }
+  .controls {
+    clear: both; }
+    .controls div {
+      float: none; }
 
   .filter_control {
     clear: both;
-    margin-top: .3em;
+    margin-top: .5em;
     display: block; }
     .filter_control input[type="submit"] {
       display: none; }
     .filter_control .yui3-bookie-tagcontrol-tags {
-      border: 2px solid #333;
-      box-shadow: 2px 2px 1 1 #333; }
+      border: 2px solid #bbb;
+      box-shadow: 2px 2px 0 0 #666; }
 
   .data_list {
-    margin-top: 3em; }
+    margin-top: 2em; }
     .data_list .bmark {
       /* We float this right because you'll only have this if you don't
        * have the name of the user that owns it. So you'll either get
@@ -560,10 +570,13 @@ form ul .yui3-bookie-tagcontrol {
         background-color: #FFF; }
       .data_list .bmark a {
         font-size: 24px; }
+      .data_list .bmark .description {
+        max-width: 100%;
+        overflow: hidden; }
       .data_list .bmark .url, .data_list .bmark .url * {
         opacity: 1; }
       .data_list .bmark .icon {
-        opacity: 1; }
+        opacity: .7; }
       .data_list .bmark .tags {
         display: block;
         float: none;
