@@ -802,6 +802,7 @@ form ul .yui3-bookie-tagcontrol {
         input[type="submit"] {
             display: none;
         }
+
         .yui3-bookie-tagcontrol-tags {
             border: 2px solid #bbb;
             box-shadow: 2px 2px 0 0 #666;
@@ -889,13 +890,13 @@ form ul .yui3-bookie-tagcontrol {
 
     /* Update the tagcontol with some more touch friendly buttons */
     ul.yui3-bookie-tagcontrol-tags {
-            width: 98%;
+        width: 95%;
     }
 
     form ul .yui3-bookie-tagcontrol {
         display: block;
         ul {
-            width: 98%;
+            width: 95%;
         }
     }
 

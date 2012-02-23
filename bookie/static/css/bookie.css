@@ -611,12 +611,12 @@ form ul .yui3-bookie-tagcontrol {
 
   /* Update the tagcontol with some more touch friendly buttons */
   ul.yui3-bookie-tagcontrol-tags {
-    width: 98%; }
+    width: 95%; }
 
   form ul .yui3-bookie-tagcontrol {
     display: block; }
     form ul .yui3-bookie-tagcontrol ul {
-      width: 98%; }
+      width: 95%; }
 
   .yui3-bookie-tagcontrol li.yui3-aclist-item {
     font-size: 26px;
