@@ -61,13 +61,13 @@
 <script type="text/template" id="previous_control">
     {{#if show_previous}}
         <a href="#" class="button previous"><span aria-hidden="true"
-        class="icon" data-icon="["></span> <span class="desc">Prev</span></a>
+        class="icon" data-icon="["></span><span class="desc">Prev</span></a>
     {{/if}}
 </script>
 
 <script type="text/template" id="next_control">
     {{#if show_next}}
-        <a href="#" class="button next"><span class="desc">Next</span> <span class="icon"
+        <a href="#" class="button next"><span class="desc">Next</span><span class="icon"
         aria-hidden="true" data-icon="]"></span></a>
     {{/if}}
 </script>
