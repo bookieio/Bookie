@@ -60,13 +60,14 @@
 
 <script type="text/template" id="previous_control">
     {{#if show_previous}}
-        <a href="#" class="button previous"><span aria-hidden="true" class="icon" data-icon="["></span> Prev</a>
+        <a href="#" class="button previous"><span aria-hidden="true"
+        class="icon" data-icon="["></span> <span class="desc">Prev</span></a>
     {{/if}}
 </script>
 
 <script type="text/template" id="next_control">
     {{#if show_next}}
-        <a href="#" class="button next">Next <span class="icon"
+        <a href="#" class="button next"><span class="desc">Next</span> <span class="icon"
         aria-hidden="true" data-icon="]"></span></a>
     {{/if}}
 </script>
@@ -81,7 +82,8 @@
             <div class="buttons add" style="display: inline-block; vertical-align: middle;">
                 <a href="/{{current_user}}/new"
                     class="button">
-                    <span class="icon" data-icon="&" aria-hidden="true"></span> Add Bookmark
+                    <span class="icon" data-icon="&"
+                    aria-hidden="true"></span> <span class="desc">Add Bookmark</span>
                 </a>
             </div>
         {{/if}}

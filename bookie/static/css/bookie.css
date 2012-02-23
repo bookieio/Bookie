@@ -519,6 +519,9 @@ form ul .yui3-bookie-tagcontrol {
     .readable #readable_content {
       max-width: 98%; }
 
+  .button span.desc {
+    display: none; }
+
   span[data-icon="\\"] {
     display: none; }
 
