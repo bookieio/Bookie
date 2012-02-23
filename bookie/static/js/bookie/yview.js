@@ -89,7 +89,6 @@ YUI.add('bookie-view', function (Y) {
 
             this.api.data.count = pager.get('count');
             this.api.data.page = pager.get('page');
-            this.api.data.with_content = this.get('with_content');
 
             this.api.call({
                 'success': function (data, request) {
@@ -356,19 +355,6 @@ YUI.add('bookie-view', function (Y) {
             results_key: {
                 value: 'bmarks',
                 readonly: true
-            },
-
-            /**
-             * Should the search view be searching the content of the bookmarks
-             * as well?
-             *
-             * @attribute with_content
-             * @default false
-             * @type Boolean
-             *
-             */
-            with_content: {
-                value: false
             }
         }
 
@@ -476,10 +462,6 @@ YUI.add('bookie-view', function (Y) {
                 this.api.set('phrase', this.get('phrase'));
             }
 
-            if (cfg.with_content) {
-                this.api.set('with_content', this.get('with_content'));
-            }
-
             // if the tag:add event is fired, then we want to add that tag to
             // our search and reseach
             Y.on('tag:add', function (e) {
@@ -504,16 +486,13 @@ YUI.add('bookie-view', function (Y) {
          */
         _search: function (e) {
             e.preventDefault();
-            var phrase = Y.one('#search_phrase').get('value'),
-                with_content = Y.one('#with_content');
+            var phrase = Y.one('#search_phrase').get('value');
 
             // update our data base don the current form information
             this.set('phrase', phrase.split(' '));
-            this.set('with_content', with_content.get('checked'));
 
             // then make sure our api calls are updated with that data
             this.api.set('phrase', this.get('phrase'));
-            this.api.set('with_content', this.get('with_content'));
 
             // update the pager back to page 1
             this.get('pager').set('page', 0);
@@ -543,8 +522,7 @@ YUI.add('bookie-view', function (Y) {
                     return Y.Handlebars.compile(
                         Y.one('#bmark_search').get('text')
                     )({
-                        phrase: phrase ? phrase.join(' ') : '',
-                        with_content: this.get('with_content')
+                        phrase: phrase ? phrase.join(' ') : ''
                     });
                 }
             },

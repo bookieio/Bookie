@@ -306,7 +306,8 @@ fieldset legend {
   border: 1px solid #333333;
   background: #cccccc;
   padding: .5em;
-  margin-top: .5em; }
+  margin-top: .5em;
+  max-width: 40em; }
 
 .search .body {
   padding-left: 2em; }
@@ -317,12 +318,18 @@ fieldset legend {
   padding-bottom: .1em;
   font-weight: normal; }
 
+#search {
+  height: 2em;
+  vertical-align: middle; }
+
 .filter_control {
   display: inline-block;
   vertical-align: middle; }
 
 .fullpage {
   text-align: center; }
+  .fullpage .note {
+    margin: auto; }
 
 .tabs {
   color: #333333;

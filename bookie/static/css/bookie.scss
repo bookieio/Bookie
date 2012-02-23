@@ -490,6 +490,7 @@ fieldset {
     background: $lightgrey;
     padding: .5em;
     margin-top: .5em;
+    max-width: 40em;
 }
 
 .search {
@@ -506,6 +507,11 @@ fieldset {
     }
 }
 
+#search {
+    height: 2em;
+    vertical-align: middle;
+}
+
 .filter_control {
     display: inline-block;
     vertical-align: middle;
@@ -513,6 +519,10 @@ fieldset {
 
 .fullpage {
     @include center;
+
+    .note {
+        margin: auto;
+    }
 }
 
 

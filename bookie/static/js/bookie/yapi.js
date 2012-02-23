@@ -901,7 +901,7 @@ YUI.add('bookie-api', function (Y) {
             data: {
                 count: 10,
                 page: 0,
-                with_content: false
+                with_content: true
             },
 
             initializer: function (cfg) {
@@ -927,7 +927,7 @@ YUI.add('bookie-api', function (Y) {
                  *
                  */
                 with_content: {
-                    value: false,
+                    value: true,
                     setter: function(val, name) {
                         this.data.with_content = val;
                     }
@@ -966,7 +966,7 @@ YUI.add('bookie-api', function (Y) {
             data: {
                 count: 10,
                 page: 0,
-                with_content: false
+                with_content: true
             },
 
             initializer: function (cfg) {
@@ -993,7 +993,7 @@ YUI.add('bookie-api', function (Y) {
                  *
                  */
                 with_content: {
-                    value: false,
+                    value: true,
                     setter: function(val, name) {
                         this.data.with_content = val;
                     }

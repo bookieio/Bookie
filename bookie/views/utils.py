@@ -85,9 +85,6 @@ def search_results(request):
     The ones in the matchdict win in the case that they both exist
     but we'll fall back to query string search=XXX
 
-    with_content
-        is always GET and specifies if we're searching the fulltext of pages
-
     """
     route_name = request.matched_route.name
     mdict = request.matchdict
@@ -101,10 +98,8 @@ def search_results(request):
         phrase = rdict.get('search', '')
 
 
-    # with content is always in the get string
-    with_content = asbool(rdict.get('content', False))
-    LOG.debug('with_content')
-    LOG.debug(with_content)
+    # Always search the fulltext content
+    with_content = True
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)
@@ -132,7 +127,6 @@ def search_results(request):
                 'result_count': len(res_list),
                 'phrase': phrase,
                 'page': page,
-                'with_content': with_content,
                 'username': username,
             }
         }
@@ -143,7 +137,6 @@ def search_results(request):
             'max_count': 50,
             'phrase': phrase,
             'page': page,
-            'with_content': with_content,
             'username': username,
         }
 
