@@ -1,17 +1,19 @@
 <%inherit file="/main_wrap.mako" />
-<%def name="title()">Displaying: ${bmark.hashed.url}</%def>
+<div class="readable">
+    <%def name="title()">Displaying: ${bmark.hashed.url}</%def>
 
-<h1>Displaying: <a class="bmark"
-                % if username:
-                    href="${request.route_url('user_redirect', hash_id=bmark.hash_id, username=username)}">${bmark.description}</a></h1>
-                % else:
-                    href="${request.route_url('redirect', hash_id=bmark.hash_id)}">
-                % endif
-                ${bmark.description}</a></h1>
-<div id="readable_content">
-    % if bmark.readable and bmark.readable.content:
-        ${bmark.readable.content|n}
-    % else:
-        <p>No parsed content for this bookmark</p>
-    % endif
+    <h1>Displaying: <a class="bmark"
+                    % if username:
+                        href="${request.route_url('user_redirect', hash_id=bmark.hash_id, username=username)}">${bmark.description}</a></h1>
+                    % else:
+                        href="${request.route_url('redirect', hash_id=bmark.hash_id)}">
+                    % endif
+                    ${bmark.description}</a></h1>
+    <div id="readable_content">
+        % if bmark.readable and bmark.readable.content:
+            ${bmark.readable.content|n}
+        % else:
+            <p>No parsed content for this bookmark</p>
+        % endif
+    </div>
 </div>

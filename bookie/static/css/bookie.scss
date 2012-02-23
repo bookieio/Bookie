@@ -735,13 +735,20 @@ form ul .yui3-bookie-tagcontrol {
         margin: 0;
     }
 
-    #readable_content {
-        max-width: 98%;
-    }
 
-    a.bmark {
-        max-width: 100%;
-        overflow: hidden;
+    .readable {
+        font-size: 16px;
+
+        h1 a.bmark {
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        #readable_content {
+            max-width: 98%;
+        }
+
     }
 
     span[data-icon="\\"] {
