@@ -878,10 +878,19 @@ form ul .yui3-bookie-tagcontrol {
     }
 
     .form {
+        margin: 1em 0;
+        padding: .2em;
+
         label {
             text-align: left;
             display: block;
+            margin: .3em 0;
+
+            &:empty {
+                display: none;
+            }
         }
+
         input[type=text], input[type="url"], input[type="password"], textarea{
             display: block;
             width: 98%;
@@ -911,5 +920,13 @@ form ul .yui3-bookie-tagcontrol {
         font-size: 26px;
         padding-bottom: .5em;
         margin: 5px 2px;
+    }
+
+    .account_info {
+        display: none;
+    }
+
+    .tabs .user_import {
+        display: none;
     }
 }

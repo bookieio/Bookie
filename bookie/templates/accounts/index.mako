@@ -7,7 +7,7 @@
 ${account_nav()}
 
 <div class="form yui3-g">
-    <div class="yui3-u-1-4">
+    <div class="yui3-u-1-4 account_info">
         <div class="heading">${user.username}</div>
 
         <div>Member since: <span>
@@ -28,7 +28,7 @@ ${account_nav()}
 
         </div>
     </div>
-    <div class="yui3-u-3-4">
+    <div class="yui3-u-3-4 account_form">
         <form>
             <ul>
                 <li>

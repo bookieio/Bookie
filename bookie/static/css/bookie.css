@@ -599,17 +599,23 @@ form ul .yui3-bookie-tagcontrol {
         .data_list .bmark .actions .icon {
           font-size: 25px; }
 
-  .form label {
-    text-align: left;
-    display: block; }
-  .form input[type=text], .form input[type="url"], .form input[type="password"], .form textarea {
-    display: block;
-    width: 98%;
-    padding: 5px;
-    border: 1px solid #333333; }
-  .form input[type=submit] {
-    padding: 5px;
-    min-width: 5em; }
+  .form {
+    margin: 1em 0;
+    padding: .2em; }
+    .form label {
+      text-align: left;
+      display: block;
+      margin: .3em 0; }
+      .form label:empty {
+        display: none; }
+    .form input[type=text], .form input[type="url"], .form input[type="password"], .form textarea {
+      display: block;
+      width: 98%;
+      padding: 5px;
+      border: 1px solid #333333; }
+    .form input[type=submit] {
+      padding: 5px;
+      min-width: 5em; }
 
   /* Update the tagcontol with some more touch friendly buttons */
   ul.yui3-bookie-tagcontrol-tags {
@@ -623,4 +629,10 @@ form ul .yui3-bookie-tagcontrol {
   .yui3-bookie-tagcontrol li.yui3-aclist-item {
     font-size: 26px;
     padding-bottom: .5em;
-    margin: 5px 2px; } }
+    margin: 5px 2px; }
+
+  .account_info {
+    display: none; }
+
+  .tabs .user_import {
+    display: none; } }

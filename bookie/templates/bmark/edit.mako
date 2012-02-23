@@ -46,7 +46,7 @@
 
             % if tag_suggest and len(tag_suggest) > 0:
                 <li>
-                    <label>&nbsp;</label>
+                    <label></label>
                     <span id="tag_suggest">Suggested Tags:
                     % for tag in tag_suggest:
                         <a href="" class="prev_tag">${tag}</a>
