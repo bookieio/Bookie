@@ -54,11 +54,12 @@ YUI().add('bookie-chrome', function (Y) {
          */
         _handle_delete: function (e) {
             e.preventDefault();
-            console.log("DELETE ALL THE THINGS");
+
             var model = this.get('model');
             console.log(model.getAttrs());
-            model.remove();
-            // same thing, a remove method call should work
+            model.remove(function () {
+                console.log("DONE DELETE");
+            });
         },
 
         /**
