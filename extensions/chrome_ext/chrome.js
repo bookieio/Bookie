@@ -53,8 +53,15 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _handle_delete: function (e) {
-            // same thing, a remove method call should work
+            e.preventDefault();
 
+            var model = this.get('model');
+            var hashid = model.get('hash_id');
+
+            model.remove(function () {
+                localStorage.removeItem(hashid);
+                window.close();
+            });
         },
 
         /**
@@ -175,8 +182,12 @@ YUI().add('bookie-chrome', function (Y) {
             var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
             tag_control.focus();
 
-            this.indicator.hide();
+            if (model.get('bid')) {
+                var delete_button = Y.one('#delete');
+                delete_button.show();
+            }
 
+            this.indicator.hide();
         },
 
         _validate_settings: function () {
