@@ -58,7 +58,7 @@ YUI().add('bookie-chrome', function (Y) {
             var model = this.get('model');
             var hashid = model.get('hash_id');
 
-            model.remove(function (c) {
+            model.remove(function () {
                 localStorage.removeItem(hashid);
                 window.close();
             });
