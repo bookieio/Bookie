@@ -102,6 +102,7 @@ bootstrap_upload: bootstrap
 
 .PHONY: deps
 deps: venv
+	@echo "\n\nSilently installing packages (this will take a while)..."
 	$(PIP) install -r requirements.txt
 
 # TESTS
