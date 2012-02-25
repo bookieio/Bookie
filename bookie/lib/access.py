@@ -256,19 +256,27 @@ class api_auth():
                 return action_(*args, **kwargs)
 
         # get the user the api key belongs to
-        api_key = request.params.get(self.api_field, None)
+        if self.api_field in request.params:
+            # we've got a request with url params
+            api_key = request.params.get(self.api_field, None)
+            username = request.params.get('username', username)
+
+        elif request.json_body and self.api_field in request.json_body:
+            # we've got a ajax request with post data
+            api_key = request.json_body.get(self.api_field, None)
+            username = request.json_body.get('username', None)
+
+        # now get what this user should be based on the api_key
         request.user = self.user_fetcher(api_key=api_key)
 
-        # get the current user from the params that passed this api key
-        username = request.params.get('username', username)
+        print 'API Key:', api_key
+        print 'Username:', username
 
         if username is not None:
-            # then we have a user to try out with
-
             # if there's a username in the url (rdict) then make sure the user the
             # api belongs to is the same as the url. You can't currently use the
             # api to get info for other users.
-            if request.user.username == username:
+            if request.user and request.user.username == username:
                 return action_(*args, **kwargs)
 
         # if this api call accepts anon requests then let it through
