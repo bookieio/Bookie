@@ -640,7 +640,7 @@ def suspend_acct(request):
     # we need to get the user from the email
     email = params.get('email', None)
 
-    if email is None:
+    if email is None and hasattr(request, 'json_body'):
         # try the json body
         email = request.json_body.get('email', None)
 

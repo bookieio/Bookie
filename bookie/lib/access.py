@@ -241,6 +241,7 @@ class api_auth():
         # request should be the one and only arg to the view function
         request = args[0]
         username = request.matchdict.get('username', None)
+        api_key = None
 
         # if this is admin only, you're either an admin or not
         if self.admin_only:
@@ -261,15 +262,15 @@ class api_auth():
             api_key = request.params.get(self.api_field, None)
             username = request.params.get('username', username)
 
-        elif request.json_body and self.api_field in request.json_body:
+        elif hasattr(request, 'json_body') and self.api_field in request.json_body:
             # we've got a ajax request with post data
             api_key = request.json_body.get(self.api_field, None)
             username = request.json_body.get('username', None)
 
-        # now get what this user should be based on the api_key
-        request.user = self.user_fetcher(api_key=api_key)
+        if username is not None and api_key is not None:
+            # now get what this user should be based on the api_key
+            request.user = self.user_fetcher(api_key=api_key)
 
-        if username is not None:
             # if there's a username in the url (rdict) then make sure the user the
             # api belongs to is the same as the url. You can't currently use the
             # api to get info for other users.

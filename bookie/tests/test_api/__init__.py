@@ -48,6 +48,7 @@ class BookieAPITest(unittest.TestCase):
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'api_key': API_KEY,
+                'username': 'admin',
                 'inserted_by': 'chrome_ext',
         }
 
@@ -56,9 +57,11 @@ class BookieAPITest(unittest.TestCase):
         if content:
             prms['content'] = "<h1>There's some content in here dude</h1>"
 
-        req_params = urllib.urlencode(prms)
+        # req_params = urllib.urlencode(prms)
         res = self.testapp.post('/api/v1/admin/bmark?',
-                                params=req_params)
+                               content_type='application/json',
+                               params=json.dumps(prms),
+        )
 
         if second_bmark:
             prms = {
@@ -67,6 +70,7 @@ class BookieAPITest(unittest.TestCase):
                     'extended': u'Exteded notes',
                     'tags': u'bookmarks',
                     'api_key': API_KEY,
+                    'username': 'admin',
                     'inserted_by': 'chrome_ext',
             }
 
@@ -74,9 +78,11 @@ class BookieAPITest(unittest.TestCase):
             # pass content into the new bookmark
             prms['content'] = "<h1>Second bookmark man</h1>"
 
-            req_params = urllib.urlencode(prms)
+            # req_params = urllib.urlencode(prms)
             res = self.testapp.post('/api/v1/admin/bmark?',
-                                    params=req_params)
+                                    content_type='application/json',
+                                    params=json.dumps(prms)
+            )
 
         session.flush()
         transaction.commit()
@@ -232,73 +238,6 @@ class BookieAPITest(unittest.TestCase):
         ok_('here dude' in bmark[u'readable']['content'],
             "There should be content: " + str(bmark))
 
-    def test_bookmark_popular_user(self):
-        """Test that we can get list of bookmarks ordered by clicks"""
-        self._get_good_request(content=True, second_bmark=True)
-
-        # we want to make sure the click count of 0 is greater than 1
-        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
-        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
-
-        res = self.testapp.get('/api/v1/admin/bmarks/popular?api_key=' + API_KEY,
-                               status=200)
-
-        # make sure we can decode the body
-        bmark_list = json.loads(res.body)['bmarks']
-
-        eq_(len(bmark_list), 2,
-                "We should have two results coming back: {0}".format(len(bmark_list)))
-
-        bmark1 = bmark_list[0]
-        bmark2 = bmark_list[1]
-
-        eq_(GOOGLE_HASH, bmark1[u'hash_id'],
-            "The hash_id {0} should match: {1} ".format(
-                str(GOOGLE_HASH),
-                str(bmark1[u'hash_id'])))
-
-        ok_('clicks' in bmark1,
-            "The clicks field should be in there")
-        eq_(2, bmark1['clicks'],
-            "The clicks should be 2: " + str(bmark1['clicks']))
-        eq_(0, bmark2['clicks'],
-            "The clicks should be 0: " + str(bmark2['clicks']))
-        eq_('chrome_ext', bmark2['inserted_by'],
-            "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
-
-    def test_bookmark_popular(self):
-        """Test that we can get list of bookmarks ordered by clicks"""
-        self._get_good_request(content=True, second_bmark=True)
-
-        # we want to make sure the click count of 0 is greater than 1
-        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
-        res = self.testapp.get('/admin/redirect/' + GOOGLE_HASH)
-
-        res = self.testapp.get('/api/v1/bmarks/popular', status=200)
-
-        # make sure we can decode the body
-        bmark_list = json.loads(res.body)['bmarks']
-
-        eq_(len(bmark_list), 2,
-                "We should have two results coming back: {0}".format(len(bmark_list)))
-
-        bmark1 = bmark_list[0]
-        bmark2 = bmark_list[1]
-
-        eq_(GOOGLE_HASH, bmark1[u'hash_id'],
-            "The hash_id {0} should match: {1} ".format(
-                str(GOOGLE_HASH),
-                str(bmark1[u'hash_id'])))
-
-        ok_('clicks' in bmark1,
-            "The clicks field should be in there")
-        eq_(2, bmark1['clicks'],
-            "The clicks should be 2: " + str(bmark1['clicks']))
-        eq_(0, bmark2['clicks'],
-            "The clicks should be 0: " + str(bmark2['clicks']))
-        eq_('chrome_ext', bmark2['inserted_by'],
-            "Should be inserted by chrome_ext: " + str(bmark2['inserted_by']))
-
     def test_bookmark_sync(self):
         """Test that we can get the sync list from the server"""
         self._get_good_request(content=True, second_bmark=True)
@@ -391,7 +330,8 @@ class BookieAPITest(unittest.TestCase):
             'name': u'Test Admin'
         }
         res = self.testapp.post(str("/api/v1/admin/account?api_key=" + str(API_KEY)),
-                               params=params,
+                               content_type='application/json',
+                               params=json.dumps(params),
                                status=200)
 
         # make sure we can decode the body

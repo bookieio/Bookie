@@ -80,27 +80,21 @@ class TestFulltext(TestCase):
         # first let's add a bookmark we can search on
         res = self._get_good_request()
 
-        search_res = self.testapp.get('/admin/results?search=google')
-
+        search_res = self.testapp.get('/api/v1/admin/bmarks/search/google')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
-
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/admin/results?search=python')
-
+        search_res = self.testapp.get('/api/v1/admin/bmarks/search/python')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
-
         ok_('my google desc' in search_res.body,
             "Tag search should find our description on the page: " + search_res.body)
 
-        search_res = self.testapp.get('/admin/results?search=extended%20notes')
-
+        search_res = self.testapp.get('/api/v1/admin/bmarks/search/extended%20notes')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
-
         ok_('extended notes' in search_res.body,
             "Extended search should find our description on the page: " + search_res.body)
 
@@ -122,35 +116,6 @@ class TestFulltext(TestCase):
 
         ok_('icon' in search_res.body,
             "We should find the new tag icon on the page: " + search_res.body)
-
-    def test_restlike_search(self):
-        """Verify that our searches work with the more restful like url match"""
-        # first let's add a bookmark we can search on
-        self._get_good_request()
-
-        search_res = self.testapp.get('/admin/results/google')
-
-        ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
-
-        ok_('my google desc' in search_res.body,
-            "We should find our description on the page: " + search_res.body)
-
-        search_res = self.testapp.get('/admin/results/python')
-
-        ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
-
-        ok_('my google desc' in search_res.body,
-            "Tag search should find our description on the page: " + search_res.body)
-
-        search_res = self.testapp.get('/admin/results/extended/notes')
-
-        ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
-
-        ok_('extended notes' in search_res.body,
-            "Extended search should find our description on the page: " + search_res.body)
 
     def test_ajax_search(self):
         """Verify that we can get a json MorJSON response when ajax search"""

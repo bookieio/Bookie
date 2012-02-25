@@ -110,7 +110,7 @@ deps: venv
 
 .PHONY: test
 test:
-	nosetests --with-id bookie/tests
+	nosetests --with-id -x -s bookie/tests
 
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol

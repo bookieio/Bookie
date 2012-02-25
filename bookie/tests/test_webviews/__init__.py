@@ -86,25 +86,3 @@ class BookieViewsTest(unittest.TestCase):
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
-
-    def test_bookmark_tag(self):
-        """Verify we can call the /tags/bookmarks url """
-        self._add_bmark()
-
-        body_str = "Bookmarks: bookmarks"
-        res = self.testapp.get('/tags/bookmarks')
-
-        eq_(res.status, "200 OK",
-            msg='recent status is 200, ' + res.status)
-        ok_(body_str in res.body,
-            msg="Request should contain body_str: " + res.body)
-
-    def test_bookmark_tag_no_edits(self):
-         """Verify the tags view"""
-         self._add_bmark()
-
-         delete_str = "/bmark/confirm/delete"
-         res = self.testapp.get('/tags/bookmarks')
-
-         ok_(delete_str not in res.body,
-             msg="Tag view delete link should NOT be visible:" + res.body)

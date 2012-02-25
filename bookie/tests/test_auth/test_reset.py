@@ -50,7 +50,9 @@ class TestReactivateFunctional(TestCase):
 
     def test_activate_form_bad(self):
         """Test bad call to reset"""
-        res = self.testapp.post('/api/v1/suspend', status=406)
+        res = self.testapp.post('/api/v1/suspend',
+            content_type='application/json',
+            status=406)
         success = json.loads(res.body)['error']
         ok_(success is not None, "Should not be successful with no email address: " + str(res))
 
