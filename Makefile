@@ -1,7 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-PIP := bin/pip
+PIP := bin/pip -q
 MIGRATE := bin/migrate
 PASTER := bin/paster
 GUNICORN := bin/gunicorn
