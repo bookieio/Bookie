@@ -106,7 +106,6 @@ YUI().add('bookie-chrome', function (Y) {
                 // update the badge now that we've saved
                 var b = new Y.bookie.chrome.Badge();
                 b.success();
-
                 window.close();
             });
         },
@@ -186,8 +185,6 @@ YUI().add('bookie-chrome', function (Y) {
                 var delete_button = Y.one('#delete');
                 delete_button.show();
             }
-
-            this.indicator.hide();
         },
 
         _validate_settings: function () {
@@ -259,7 +256,6 @@ YUI().add('bookie-chrome', function (Y) {
                 target: Y.one('#form_overlay')
             });
             this.indicator.render();
-            this.indicator.show();
 
             // bind to the event that if the model changes, check it for the
             // suggested tags to show/update the form?

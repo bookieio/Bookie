@@ -199,7 +199,7 @@ chrome: clean_chrome
 	$(CHROME) --pack-extension=$(CHROME_EXT_PATH) --pack-extension-key=$(CHROME_KEY)
 
 chrome_upload: chrome
-	cd $(EXTENSION) && $(S3CP) chrome_ext.crx
+	cd $(EXTENSION) && $(S3) chrome_ext.crx
 
 .PHONY: clean_chrome
 clean_chrome:
