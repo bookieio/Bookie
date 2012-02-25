@@ -269,9 +269,6 @@ class api_auth():
         # now get what this user should be based on the api_key
         request.user = self.user_fetcher(api_key=api_key)
 
-        print 'API Key:', api_key
-        print 'Username:', username
-
         if username is not None:
             # if there's a username in the url (rdict) then make sure the user the
             # api belongs to is the same as the url. You can't currently use the
