@@ -255,19 +255,21 @@ class api_auth():
                 # then we're good, this is a valid user for this url
                 return action_(*args, **kwargs)
 
-
         # get the user the api key belongs to
         api_key = request.params.get(self.api_field, None)
         request.user = self.user_fetcher(api_key=api_key)
 
-        if request.user is not None:
+        # get the current user from the params that passed this api key
+        username = request.params.get('username', username)
+
+        if username is not None:
             # then we have a user to try out with
 
             # if there's a username in the url (rdict) then make sure the user the
             # api belongs to is the same as the url. You can't currently use the
             # api to get info for other users.
-            if username is not None and request.user.username == username:
-                    return action_(*args, **kwargs)
+            if request.user.username == username:
+                return action_(*args, **kwargs)
 
         # if this api call accepts anon requests then let it through
         if self.anon:
