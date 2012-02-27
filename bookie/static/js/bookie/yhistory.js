@@ -30,6 +30,32 @@ YUI.add('bookie-history', function (Y) {
             Y.on('tag:changed', function (e) {
                 this.set('terms', e.tags);
             }, this);
+
+
+            // watch the history for pop states such as when a user hits back,
+            // etc
+            Y.on('history:change', function (ev) {
+                // if we've got an empty history, then set the current passed
+                // info as the initial state (chrome popevent on page load for
+                // instance)
+                if (!this.history.get('pager')) {
+                    this.history.replace({
+                        pager: this.get('pager').getAttrs(),
+                        terms: this.get('terms')
+                    }, {
+                        title: 'Viewing page: ' + this.get('pager').get('page') + 1,
+                        url  : this._build_url()
+                    });
+                }
+
+                debugger;
+                // if we've popped the state, such as with a back button, then
+                // update the history state to be the prev state.
+                if (ev.src === Y.HistoryHTML5.SRC_POPSTATE) {
+                    this._update();
+                }
+            }, this);
+
         },
 
         /**
@@ -80,8 +106,9 @@ YUI.add('bookie-history', function (Y) {
          *
          */
         initializer: function (cfg) {
+            var pager = this.get('pager');
             this.history = new Y.History({
-                pager: this.get('pager').getAttrs(),
+                pager: pager.getAttrs(),
                 terms: this.get('terms')
             });
 
