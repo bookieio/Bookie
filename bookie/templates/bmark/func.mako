@@ -42,10 +42,9 @@
     % if count:
         pager.set('count', ${count});
     % endif
-    pager.set('count', ${count});
 
     % if page:
-        pager.set('page', page);
+        pager.set('page', ${page});
     % endif
 </%def>
 

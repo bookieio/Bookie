@@ -279,7 +279,7 @@ def bmark_recent(request):
         return_obj['total_clicks'] = res.hashed.clicks
 
         if with_content:
-            return_obj['readable'] = dict(res.readable)
+            return_obj['readable'] = dict(res.readable) if res.readable else {}
 
         result_set.append(return_obj)
 

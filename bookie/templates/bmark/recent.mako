@@ -11,7 +11,8 @@ import json
 %>
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('bookie-api', 'bookie-model', 'bookie-tagcontrol', 'bookie-view', function (Y) {
+        YUI().use('bookie-api', 'bookie-history', 'bookie-model',
+            'bookie-tagcontrol', 'bookie-view', function (Y) {
             <%
                 # we might have a user from the resource path that we want to keep tabs on
                 resource_username = username if username else False
@@ -20,9 +21,11 @@ import json
             ${api_setup(request.user)}
 
             % if username:
-                resource_username = '${username}';
+                var resource_username = '${username}';
+                var route = '/recent/' + resource_username;
             % else:
-                resource_username = undefined;
+                var resource_username = undefined;
+                var route = '/recent'
             % endif
 
             % if count or page:
@@ -44,7 +47,16 @@ import json
             var tags = ${json.dumps(tags)|n};
             if (tags) {
                 listview.api.set('tags', tags);
+            } else {
+                tags = [];
             }
+
+            // bind up the history tracker
+            var hist = new Y.bookie.BmarkListHistory({
+                pager: pager,
+                terms: tags,
+                route: route
+            });
 
             Y.one('.bmarks').appendChild(listview.render());
             var tagcontrol = new Y.bookie.TagControl({
