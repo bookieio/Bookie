@@ -88,6 +88,15 @@ YUI.add('bookie-model', function (Y) {
                         if (data.last) {
                             that.set('last', data.last);
                         }
+                    },
+                    'error': function (data, status_str, response, arguments) {
+                        // If there's a last in the data we need to set that
+                        // so that we can suggest tags to new bookmarks as
+                        // well. This occurs usually via 404's from the chrome
+                        // extension.
+                        if (data.last) {
+                            that.set('last', data.last);
+                        }
                     }
                 });
             },
