@@ -177,10 +177,6 @@ YUI().add('bookie-chrome', function (Y) {
                 }
             }
 
-            // focus on the tag control
-            var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
-            tag_control.focus();
-
             if (model.get('bid')) {
                 var delete_button = Y.one('#delete');
                 delete_button.show();
@@ -269,12 +265,6 @@ YUI().add('bookie-chrome', function (Y) {
 
             // setup the form with the current model data
             this._init_form();
-
-            // see if we should be loading the page content
-
-            // focus on the tag control
-            var tag_control = Y.one('.yui3-bookie-tagcontrol-item input');
-            tag_control.focus();
         }
 
     }, {
