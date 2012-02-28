@@ -25,7 +25,8 @@ CHROME_FILESERVE = /home/bmark.us/www/bookie_chrome.crx
 CHROME_BUILD_FILE = $(EXTENSION)/chrome_ext.crx
 CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
-CSS = bookie/static/css/bookie.css
+RESCSS = bookie/static/css/responsive.css
+BASECSS = bookie/static/css/base.css
 
 .PHONY: all
 all: deps develop bookie.db db_up js css
@@ -170,7 +171,7 @@ $(JS_BUILD_PATH)/y:
 
 static_upload: js css
 	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
-	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar bookie.css
+	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar $(BASECSS)
 	cd $(WD)/bookie/static/images && tar uf $(WD)/bookie_static.tar *
 	gzip $(WD)/bookie_static.tar
 	cd $(WD) && $(S3) bookie_static.tar.gz
@@ -184,7 +185,7 @@ js_doc_upload: js_doc
 
 css: chrome_css
 chrome_css:
-	cp $(CSS) $(CHROME_BUILD)
+	cp $(BASECSS) $(CHROME_BUILD)
 
 clean_css:
 	rm $(CHROME_BUILD)/*.css
@@ -212,7 +213,7 @@ run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
-	sass --watch bookie/static/css/bookie.scss:bookie/static/css/bookie.css &
+	sass --watch bookie/static/css:bookie/static/css &
 run_app:
 	$(PASTER) serve --reload --pid-file=paster.pid $(INI) &
 run_livereload:
