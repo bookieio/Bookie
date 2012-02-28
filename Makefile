@@ -171,7 +171,7 @@ $(JS_BUILD_PATH)/y:
 
 static_upload: js css
 	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
-	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar $(BASECSS)
+	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar base.css
 	cd $(WD)/bookie/static/images && tar uf $(WD)/bookie_static.tar *
 	gzip $(WD)/bookie_static.tar
 	cd $(WD) && $(S3) bookie_static.tar.gz
