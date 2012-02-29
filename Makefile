@@ -84,6 +84,11 @@ docs:
 docs_open: docs
 	xdg-open docs/_build/html/index.html
 
+# Generate ctags for the code in the project
+.PHONY: tags
+tags:
+	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
+
 # BOOTSTRAP
 #
 # I don't know that we'll be using this much longer. I want to get things into
