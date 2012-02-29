@@ -29,7 +29,7 @@ RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
 .PHONY: all
-all: deps develop bookie.db db_up js css
+all: deps develop bookie.db db_up js chrome_css
 
 .PHONY: clean
 clean: clean_js clean_css
@@ -188,11 +188,13 @@ js_doc: js
 js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
-css: chrome_css
-chrome_css:
+css:
+	sass --update bookie/static/css:bookie/static/css
+chrome_css: css
 	cp $(BASECSS) $(CHROME_BUILD)
-
+	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
 clean_css:
+	rm $(BOOKIE_CSS)/*.css
 	rm $(CHROME_BUILD)/*.css
 
 # CHROME
@@ -232,7 +234,7 @@ autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
 stop: stop_combo stop_app
-stop_dev: stop stop_css 
+stop_dev: stop stop_css
 stop_combo:
 	kill -9 `cat combo.pid`
 	rm combo.pid
