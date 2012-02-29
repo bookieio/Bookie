@@ -88,6 +88,14 @@ YUI.add('bookie-model', function (Y) {
                         if (data.last) {
                             that.set('last', data.last);
                         }
+                    },
+                    'error': function (data, status_str, response, arguments) {
+                        // We might also get a last bookmark data on not
+                        // found error condition. If we've got a last record,
+                        // go ahead and set it on the current bookmark.
+                        if (data.last) {
+                            that.set('last', data.last);
+                        }
                     }
                 });
             },

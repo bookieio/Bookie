@@ -198,6 +198,7 @@ clean_css:
 .PHONY: chrome_ext
 chrome: clean_chrome
 	$(CHROME) --pack-extension=$(CHROME_EXT_PATH) --pack-extension-key=$(CHROME_KEY)
+	cd $(CHROME_EXT_PATH) && zip -r $(CHROME_DEV_FILE) .
 
 chrome_upload: chrome
 	cd $(EXTENSION) && $(S3) chrome_ext.crx
@@ -207,6 +208,10 @@ clean_chrome:
 	if [ -f $(CHROME_BUILD_FILE)]; then \
 		rm $(CHROME_BUILD_FILE); \
 	fi
+	if [ -f $(CHROME_DEV_FILE)]; then \
+		rm $(CHROME_DEV_FILE); \
+	fi
+
 
 run: run_combo run_app
 run_dev: run run_css autojsbuild
