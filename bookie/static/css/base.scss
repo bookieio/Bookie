@@ -358,6 +358,10 @@ fieldset {
             * {
                 padding-left: .3em;
             }
+
+            .readable {
+                display: none;
+            }
         }
 
         .tags {
