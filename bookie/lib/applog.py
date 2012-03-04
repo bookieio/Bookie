@@ -12,6 +12,7 @@ from bookie.models.applog import AppLogMgr
 
 LOG = logging.getLogger(__name__)
 
+
 class Log(object):
     """Log handler"""
 
@@ -67,7 +68,8 @@ class AuthLog(Log):
         if success:
             msg = "{0} was reactivated".format(username)
         else:
-            msg = "{0} was attempted to be reactivated with invalid credentials".format(username)
+            msg = "{0} attempted to reactivate with invalid credentials"
+            msg = msg.format(username)
 
         LOG.debug(msg)
         data = {
@@ -99,8 +101,8 @@ class BmarkLog(Log):
             current_user = "None"
 
         status = get_status(your_export)
-        message = "User {0} exported the bookmarks for {1}".format(current_user,
-                                                          for_user)
+        message = "User {0} exported the bookmarks for {1}".format(
+                current_user, for_user)
 
         data = {
                 'user': current_user,

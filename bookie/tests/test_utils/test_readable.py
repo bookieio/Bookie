@@ -19,9 +19,9 @@ from bookie.models import Readable
 from bookie.models import bmarks_tags
 
 
-
 LOG = logging.getLogger(__file__)
 API_KEY = None
+
 
 class TestReadable(TestCase):
     """Test that our fulltext classes function"""
@@ -68,7 +68,8 @@ class TestReadable(TestCase):
 
         ok_(read.status == 901, "The status is 901: " + str(read.status))
         ok_(not read.is_image(), "The content is not an image")
-        ok_(read.content is None, "Content should be none: " + str(read.content))
+        ok_(read.content is None,
+            "Content should be none: " + str(read.content))
 
     def test_image_url(self):
         """Verify we don't store, but just tag an image url"""
@@ -80,8 +81,12 @@ class TestReadable(TestCase):
 
     def test_nonworking_url(self):
         """Testing some urls we know we had issues with initially"""
-        urls = { 'CouchSurfing': 'http://allthatiswrong.wordpress.com/2010/01/24/a-criticism-of-couchsurfing-and-review-of-alternatives/#problems',
-                 'Electronic': 'https://www.fbo.gov/index?s=opportunity&mode=form&tab=core&id=dd11f27254c796f80f2aadcbe4158407',
+        urls = {'CouchSurfing': ('http://allthatiswrong.wordpress.com/2010/01'
+                                 '/24/a-criticism-of-couchsurfing-and-review-o'
+                                 'f-alternatives/#problems'),
+                 'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
+                                'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
+                                '8407'),
                  'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
 
@@ -92,6 +97,7 @@ class TestReadable(TestCase):
 
             ok_(read.status == 200, "The status is 200: " + str(read.status))
             ok_(read.content is not None, "Content should not be none: ")
+
 
 class TestReadableFulltext(TestCase):
     """Test that our fulltext index function"""
@@ -106,7 +112,9 @@ class TestReadableFulltext(TestCase):
         testing.setUp()
         global API_KEY
         if API_KEY is None:
-            res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+            res = DBSession.execute(
+                "SELECT api_key FROM users WHERE username = 'admin'").\
+                fetchone()
             API_KEY = res['api_key']
 
     def tearDown(self):
@@ -140,27 +148,28 @@ class TestReadableFulltext(TestCase):
         transaction.commit()
         return res
 
-
     def test_sqlite_save(self):
         """Verify that if we store a bookmark we get the fulltext storage"""
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/api/v1/admin/bmarks/search/bmark?search_content=True')
+        search_res = self.testapp.get(
+            '/api/v1/admin/bmarks/search/bmark?search_content=True')
 
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
         ok_('python' in search_res.body,
-                "We should find the python tag in the results: " + search_res.body)
+            "We should find the python tag in the results: " + search_res.body)
 
     def test_restlike_search(self):
         """Verify that our search still works in a restful url method"""
         # first let's add a bookmark we can search on
         self._get_good_request()
 
-        search_res = self.testapp.get('/api/v1/admin/bmarks/search/bmark?search_content=True')
+        search_res = self.testapp.get(
+            '/api/v1/admin/bmarks/search/bmark?search_content=True')
 
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
         ok_('python' in search_res.body,
-                "We should find the python tag in the results: " + search_res.body)
+            "We should find the python tag in the results: " + search_res.body)

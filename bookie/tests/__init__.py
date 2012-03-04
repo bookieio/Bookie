@@ -29,6 +29,7 @@ settings = dict(ini.items('app:main'))
 
 BOOKIE_TEST_INI = test_ini
 
+
 def setup_db(settings):
     """ We need to create the test sqlite database to run our tests against
 
@@ -52,7 +53,7 @@ def setup_db(settings):
         engine = create_engine(sa_url)
 
         # # drop any existing data
-        all_tables = engine.execute('SHOW TABLES');
+        all_tables = engine.execute('SHOW TABLES')
         if all_tables.rowcount:
             qry = "`, `".join([res[0] for res in all_tables])
             engine.execute("DROP TABLES `" + qry + '`;')
@@ -66,16 +67,14 @@ def setup_db(settings):
         all_tables = engine.execute("""SELECT table_name
                                        FROM information_schema.tables
                                        WHERE table_schema = 'public'
-        """);
+        """)
 
         if all_tables.rowcount:
             qry = ", ".join([res[0] for res in all_tables])
             engine.execute("DROP TABLE " + qry + ';')
-
-
     else:
-        # we're hackish here since we're going to assume the test db is whatever is
-        # after the last slash of the SA url sqlite:///somedb.db
+        # we're hackish here since we're going to assume the test db is
+        # whatever is after the last slash of the SA url sqlite:///somedb.db
         db_name = sa_url[sa_url.rindex('/') + 1:]
         try:
             # if this is a sqlite db then try to take care of the db file

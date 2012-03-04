@@ -29,7 +29,8 @@ class BookieAPITest(unittest.TestCase):
         testing.setUp()
 
         global API_KEY
-        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
         API_KEY = res['api_key']
 
     def tearDown(self):
@@ -74,8 +75,8 @@ class BookieAPITest(unittest.TestCase):
                     'inserted_by': 'chrome_ext',
             }
 
-            # if we want to test the readable fulltext side we want to make sure we
-            # pass content into the new bookmark
+            # if we want to test the readable fulltext side we want to make
+            # sure we pass content into the new bookmark
             prms['content'] = "<h1>Second bookmark man</h1>"
 
             # req_params = urllib.urlencode(prms)
@@ -92,7 +93,8 @@ class BookieAPITest(unittest.TestCase):
         """We should be able to add a new bookmark to the system"""
         # we need to know what the current admin's api key is so we can try to
         # add
-        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
         key = res['api_key']
 
         test_bmark = {
@@ -129,7 +131,8 @@ class BookieAPITest(unittest.TestCase):
             "We should have a list of tags in the bmark returned")
 
         ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
-            "Tag should be either python or search:" + str(bmark[u'tags'][0][u'name']))
+            "Tag should be either python or search:" + \
+                str(bmark[u'tags'][0][u'name']))
 
         ok_(u'readable' not in bmark,
             "We should not have readable content")
@@ -138,10 +141,11 @@ class BookieAPITest(unittest.TestCase):
                 "tag_str should be populated: " + str(dict(bmark)))
 
         # to get readble content we need to pass the flash with_content
-        res = self.testapp.get('/api/v1/admin/bmark/{0}?api_key={1}&with_content=true'.format(
-                               GOOGLE_HASH,
-                               API_KEY),
-                               status=200)
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}&with_content=true'.format(
+            GOOGLE_HASH,
+            API_KEY),
+            status=200)
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmark']
@@ -150,7 +154,8 @@ class BookieAPITest(unittest.TestCase):
             "We should have readable content")
 
         ok_('dude' in bmark['readable']['content'],
-                "We should have 'dude' in our content: " + bmark['readable']['content'])
+            "We should have 'dude' in our content: " + \
+                bmark['readable']['content'])
 
     def test_bookmark_fetch_fail(self):
         """Verify we get a failed response when wrong bookmark"""
@@ -187,7 +192,6 @@ class BookieAPITest(unittest.TestCase):
         ok_(BMARKUS_HASH in res.body,
                 "Should have the bmark.us hash: " + res.body)
 
-
     def test_bookmark_recent_user(self):
         """Test that we can get list of bookmarks with details"""
         self._get_good_request(content=True)
@@ -203,10 +207,12 @@ class BookieAPITest(unittest.TestCase):
             "We should have a list of tags in the bmark returned")
 
         ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
-            "Tag should be either python or search:" + str(bmark[u'tags'][0][u'name']))
+            "Tag should be either python or search:" + \
+                str(bmark[u'tags'][0][u'name']))
 
-        res = self.testapp.get('/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
-                               status=200)
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
+            status=200)
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmarks'][0]
@@ -228,10 +234,12 @@ class BookieAPITest(unittest.TestCase):
             "We should have a list of tags in the bmark returned")
 
         ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
-            "Tag should be either python or search:" + str(bmark[u'tags'][0][u'name']))
+            "Tag should be either python or search:" + \
+                str(bmark[u'tags'][0][u'name']))
 
-        res = self.testapp.get('/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
-                               status=200)
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
+            status=200)
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmarks'][0]
@@ -265,7 +273,7 @@ class BookieAPITest(unittest.TestCase):
         bmark_list = json.loads(res.body)
         results = bmark_list['search_results']
         eq_(len(results), 1,
-                "We should have one result coming back: {0}".format(len(results)))
+            "We should have one result coming back: {0}".format(len(results)))
 
         bmark = results[0]
 
@@ -276,7 +284,6 @@ class BookieAPITest(unittest.TestCase):
 
         ok_('clicks' in bmark,
             "The clicks field should be in there")
-
 
     def test_bookmark_tag_complete(self):
         """Test we can complete tags in the system
@@ -329,10 +336,11 @@ class BookieAPITest(unittest.TestCase):
         params = {
             'name': u'Test Admin'
         }
-        res = self.testapp.post(str("/api/v1/admin/account?api_key=" + str(API_KEY)),
-                               content_type='application/json',
-                               params=json.dumps(params),
-                               status=200)
+        res = self.testapp.post(
+            str("/api/v1/admin/account?api_key=" + str(API_KEY)),
+            content_type='application/json',
+            params=json.dumps(params),
+            status=200)
 
         # make sure we can decode the body
         user = json.loads(res.body)
@@ -369,9 +377,10 @@ class BookieAPITest(unittest.TestCase):
                 'new_password': 'not_testing'
         }
 
-        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
-                                params=params,
-                                status=200)
+        res = self.testapp.post(
+            "/api/v1/admin/password?api_key=" + str(API_KEY),
+            params=params,
+            status=200)
 
         # make sure we can decode the body
         user = json.loads(res.body)
@@ -385,9 +394,10 @@ class BookieAPITest(unittest.TestCase):
                 'current_password': 'not_testing',
                 'new_password': 'admin'
         }
-        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
-                                params=params,
-                                status=200)
+        res = self.testapp.post(
+            "/api/v1/admin/password?api_key=" + str(API_KEY),
+            params=params,
+            status=200)
 
     def test_account_password_failure(self):
         """Change a user's password, in bad ways"""
@@ -396,9 +406,10 @@ class BookieAPITest(unittest.TestCase):
                 'new_password': 'not_testing'
         }
 
-        res = self.testapp.post("/api/v1/admin/password?api_key=" + str(API_KEY),
-                                params=params,
-                                status=403)
+        res = self.testapp.post(
+            "/api/v1/admin/password?api_key=" + str(API_KEY),
+            params=params,
+            status=403)
 
         # make sure we can decode the body
         user = json.loads(res.body)
@@ -462,8 +473,9 @@ class BookieAPITest(unittest.TestCase):
     #             'api_key': API_KEY,
     #     }
 
-    #     res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
-    #             status=200)
+    #     res = self.testapp.post('/admin/api/v1/bmarks/add',
+    #         params=test_bmark,
+    #         status=200)
 
     #     ok_('"success": true' in res.body,
     #             "Should have a success of true: " + res.body)
@@ -494,7 +506,8 @@ class BookieAPITest(unittest.TestCase):
     #             'api_key': API_KEY,
     #     }
 
-    #     res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
+    #     res = self.testapp.post('/admin/api/v1/bmarks/add',
+    #         params=test_bmark,
     #             status=200)
 
     #     ok_('"success": true' in res.body,
@@ -516,18 +529,17 @@ class BookieAPITest(unittest.TestCase):
     #             'api_key': API_KEY,
     #     }
 
-    #     res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
+    #     res = self.testapp.post('/admin/api/v1/bmarks/add',
+    #         params=test_bmark,
     #             status=200)
 
     #     test_bmark['tags'] = u'!toread'
 
-    #     res = self.testapp.post('/admin/api/v1/bmarks/add', params=test_bmark,
+    #     res = self.testapp.post('/admin/api/v1/bmarks/add',
+    #         params=test_bmark,
     #                             status=200)
 
     #     ok_('toread' in res.body,
     #             "Should have added the toread tag: " + res.body)
     #     ok_('bookmarks' in res.body,
     #             "Should still have the bookmarks tag: " + res.body)
-
-
-

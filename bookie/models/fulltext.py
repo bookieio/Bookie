@@ -54,6 +54,7 @@ class BmarkSchema(SchemaClass):
     tags = KEYWORD
     readable = TEXT(analyzer=StemmingAnalyzer())
 
+
 def get_fulltext_handler(engine):
     """Based on the engine, figure out the type of fulltext interface"""
     global INDEX_TYPE

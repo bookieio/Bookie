@@ -1,6 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
+PEP8 := bin/pep8
 PIP := bin/pip -q
 MIGRATE := bin/migrate
 NOSE := bin/nosetests
@@ -122,6 +123,7 @@ test:
 builder_test:
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
+
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
@@ -142,6 +144,10 @@ test_indicator:
 .PHONY: test_tagcontrol
 test_tagcontrol:
 	xdg-open http://127.0.0.1:6543/tests/test_tagcontrol
+
+.PHONY: pep8
+pep8:
+	$(PEP8) bookie/ > pep8.out
 
 # JAVASCRIPT
 #

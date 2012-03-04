@@ -14,6 +14,7 @@ class BmarkMock(object):
     def __init__(self):
         self.tags = {}
 
+
 class CommandMock(object):
 
     @staticmethod
@@ -51,7 +52,6 @@ class TestTagCommander(TestCase):
         """Test that the command tags are not left over in bmark object"""
 
         COMMANDLIST['!toread'] = CommandMock
-
 
         bm = BmarkMock()
         bm.tags['!toread'] = True

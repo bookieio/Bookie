@@ -28,11 +28,13 @@ from bookie.models.auth import Activation
 
 LOG = logging.getLogger(__name__)
 
+
 class TestReactivateFunctional(TestCase):
 
     def _reset_admin(self):
         """Reset the admin account"""
-        DBSession.execute("UPDATE users SET activated='1' WHERE username='admin';")
+        DBSession.execute(
+            "UPDATE users SET activated='1' WHERE username='admin';")
         Activation.query.delete()
         transaction.commit()
 
@@ -54,16 +56,18 @@ class TestReactivateFunctional(TestCase):
             content_type='application/json',
             status=406)
         success = json.loads(res.body)['error']
-        ok_(success is not None, "Should not be successful with no email address: " + str(res))
+        ok_(success is not None,
+            "Should not be successful with no email address: " + str(res))
 
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': 'notexist@gmail.com'},
                                 status=404)
         success = json.loads(res.body)
-        ok_('error' in success, "Should not be successful with invalid email address: " + str(res))
+        ok_('error' in success,
+            "Should not be successful with invalid email address: " + str(res))
 
     def test_activate_form(self):
-        """ Functional test to see if we can submit to the api to reset an account
+        """ Functional test to see if we can submit the api to reset an account
 
         Now by doing this we end up marking the account deactivated which
         causes other tests to 403 it up. Need to reinstate the admin account on
@@ -75,7 +79,8 @@ class TestReactivateFunctional(TestCase):
                                status=200)
 
         success = json.loads(res.body)
-        ok_('message' in success, "Should be successful with admin email address: " + str(res))
+        ok_('message' in success,
+            "Should be successful with admin email address: " + str(res))
 
     def test_activate_form_dual(self):
         """Test that we can't resubmit for reset, get prompted to email
@@ -90,15 +95,16 @@ class TestReactivateFunctional(TestCase):
                                status=200)
 
         success = json.loads(res.body)
-        ok_('message' in success, "Should be successful with admin email address")
-
+        ok_('message' in success,
+            "Should be successful with admin email address")
 
         res = self.testapp.post('/api/v1/suspend',
                                params={'email': u'testing@dummy.com'},
                                status=406)
 
         success = json.loads(res.body)
-        ok_('error' in success, "Should not be successful on second try: " + str(res))
+        ok_('error' in success,
+            "Should not be successful on second try: " + str(res))
 
         ok_('already' in str(res),
                 "Should find 'already' in the response: " + str(res))
@@ -117,7 +123,8 @@ class TestReactivateFunctional(TestCase):
                                status=200)
 
         success = json.loads(res.body)
-        ok_('message' in success, "Should be successful with admin email address")
+        ok_('message' in success,
+            "Should be successful with admin email address")
 
         # now let's try to login
         # the migrations add a default admin account
@@ -133,11 +140,12 @@ class TestReactivateFunctional(TestCase):
                 "Login should have failed since we're not active: " + str(res))
 
         act = Activation.query.first()
-        self.testapp.delete("/api/v1/suspend?username={0}&code={1}&password={2}".format(
-                                    user_data['login'],
-                                    act.code,
-                                    'admin'),
-                                status=200)
+        self.testapp.delete(
+            "/api/v1/suspend?username={0}&code={1}&password={2}".format(
+                user_data['login'],
+                act.code,
+                'admin'),
+            status=200)
 
         ok_('activated' in str(res),
                 "Should be prompted to login now: " + str(res))

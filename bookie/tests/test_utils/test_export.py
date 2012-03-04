@@ -18,6 +18,7 @@ from bookie.models import Tag, bmarks_tags
 LOG = logging.getLogger(__name__)
 API_KEY = None
 
+
 class TestExport(unittest.TestCase):
     """Test the web export"""
 
@@ -47,7 +48,8 @@ class TestExport(unittest.TestCase):
         self.testapp = TestApp(app)
         testing.setUp()
         global API_KEY
-        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
         API_KEY = str(res['api_key'])
 
     def tearDown(self):
@@ -64,11 +66,12 @@ class TestExport(unittest.TestCase):
         """Test that we can upload/import our test file"""
         self._get_good_request()
 
-        res = self.testapp.get('/api/v1/admin/bmarks/export?api_key=' + API_KEY,
-                                status=200)
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks/export?api_key=' + API_KEY,
+            status=200)
 
         ok_("google.com" in res.body,
-                msg='Google is in the exported body: ' +  res.body)
+                msg='Google is in the exported body: ' + res.body)
         data = json.loads(res.body)
 
         eq_(1, data['count'],

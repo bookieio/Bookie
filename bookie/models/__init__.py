@@ -57,12 +57,12 @@ def initialize_sql(settings):
     ft.set_index(settings.get('fulltext.engine'),
                  settings.get('fulltext.index'))
 
-
     # setup the User relation, we've got import race conditions, ugh
     from bookie.models.auth import User
     if not hasattr(Bmark, 'user'):
         Bmark.user = relation(User,
                               backref="bmark")
+
 
 def todict(self):
     """Method to turn an SA instance into a dict so we can output to json"""
@@ -153,7 +153,8 @@ class TagMgr(object):
             # then we'll need to bind to bmarks to be able to limit on the
             # username field
             bmark = aliased(Bmark)
-            qry = qry.join((bmark, Tag.bmark)).filter(bmark.username==username)
+            qry = qry.join((bmark, Tag.bmark)).\
+                    filter(bmark.username == username)
 
         if order_by is not None:
             qry = qry.order_by(order_by)
@@ -191,22 +192,24 @@ class TagMgr(object):
                 FROM bmark_tags
                 JOIN tags ON bmark_tags.tag_id = tags.tid
                 WHERE bmark_id IN (
-                                    SELECT bmark_id FROM bmark_tags WHERE tag_id IN (
-                                        SELECT DISTINCT(t.tid) FROM tags t WHERE t.name in ('vagrant', 'tips')
-                                    )
-                                )
+                    SELECT bmark_id FROM bmark_tags WHERE tag_id IN (
+                        SELECT DISTINCT(t.tid) FROM tags t
+                            WHERE t.name in ('vagrant', 'tips')
+                    )
+                )
                 AND tags.name LIKE ('ub%');
             """
             current_tags = DBSession.query(Tag.tid).\
-                                           filter(Tag.name.in_(current)).group_by(Tag.tid)
+                filter(Tag.name.in_(current)).group_by(Tag.tid)
 
             good_bmarks = DBSession.query(Bmark.bid)
 
             if username is not None:
                 good_bmarks = good_bmarks.filter(Bmark.username == username)
 
-            good_bmarks = good_bmarks.filter(Bmark.tags.any(Tag.tid.in_(current_tags))).\
-                                      group_by(Bmark.bid)
+            good_bmarks = good_bmarks.\
+                filter(Bmark.tags.any(Tag.tid.in_(current_tags))).\
+                group_by(Bmark.bid)
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
                               filter(Tag.name.startswith(prefix)).\
@@ -386,7 +389,7 @@ class BmarkMgr(object):
                            filter(Hashed.url == clean_url)
 
         if username:
-            qry = qry.filter(Bmark.username==username)
+            qry = qry.filter(Bmark.username == username)
 
         return qry.one()
 
@@ -414,7 +417,7 @@ class BmarkMgr(object):
         qry = Bmark.query.filter(Bmark.stored > last_hours)
 
         if username:
-            qry = qry.filter(Bmark.username==username)
+            qry = qry.filter(Bmark.username == username)
 
         return qry.order_by(Bmark.stored.desc()).first()
 
@@ -452,18 +455,27 @@ class BmarkMgr(object):
                           offset(offset).\
                           from_self()
             else:
-                bids_we_want = select([bmarks_tags.c.bmark_id.label('good_bmark_id')],
-                                       from_obj=[ bmarks_tags.join('tags',
-                                                                   and_(Tag.name.in_(tags),
-                                                                        bmarks_tags.c.tag_id == Tag.tid)
-                                                                  ).\
-                                                              join('bmarks',
-                                                                   Bmark.bid == bmarks_tags.c.bmark_id)
-                                      ]).\
-                               group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
-                               having(func.count(bmarks_tags.c.tag_id) >= len(tags)).order_by(Bmark.stored.desc())
+                bids_we_want = select([
+                        bmarks_tags.c.bmark_id.label('good_bmark_id')
+                    ],
+                    from_obj=[
+                        bmarks_tags.join('tags',
+                            and_(Tag.name.in_(tags),
+                            bmarks_tags.c.tag_id == Tag.tid)
+                        ).\
+                        join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
+                    ]).\
+                    group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
+                    having(
+                        func.count(bmarks_tags.c.tag_id) >= len(tags)
+                    ).order_by(Bmark.stored.desc())
 
-                qry = qry.join((bids_we_want.limit(limit).offset(offset).alias('bids'), Bmark.bid==bids_we_want.c.good_bmark_id))
+                qry = qry.join(
+                    (
+                        bids_we_want.limit(limit).offset(offset).alias('bids'),
+                        Bmark.bid == bids_we_want.c.good_bmark_id
+                    )
+                )
 
         # now outer join with the tags again so that we have the
         # full list of tags for each bmark we filterd down to
@@ -567,7 +579,7 @@ class BmarkMgr(object):
         qry = DBSession.query(Bmark.hash_id)
 
         if username:
-            qry = qry.filter(Bmark.username==username)
+            qry = qry.filter(Bmark.username == username)
 
         return qry.all()
 

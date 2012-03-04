@@ -31,7 +31,9 @@ class TestFulltext(TestCase):
         testing.setUp()
         global API_KEY
         if API_KEY is None:
-            res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+            res = DBSession.execute(
+                "SELECT api_key FROM users WHERE username = 'admin'").\
+                fetchone()
             API_KEY = res['api_key']
 
     def tearDown(self):
@@ -90,13 +92,16 @@ class TestFulltext(TestCase):
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
         ok_('my google desc' in search_res.body,
-            "Tag search should find our description on the page: " + search_res.body)
+            "Tag search should find our description on the page: " + \
+                search_res.body)
 
-        search_res = self.testapp.get('/api/v1/admin/bmarks/search/extended%20notes')
+        search_res = self.testapp.get(
+            '/api/v1/admin/bmarks/search/extended%20notes')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
         ok_('extended notes' in search_res.body,
-            "Extended search should find our description on the page: " + search_res.body)
+            "Extended search should find our description on the page: " + \
+                search_res.body)
 
     def test_sqlite_update(self):
         """Verify that if we update a bookmark, fulltext is updated
@@ -124,7 +129,7 @@ class TestFulltext(TestCase):
 
         search_res = self.testapp.get(
                         '/admin/results/google',
-                        headers = {
+                        headers={
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'application/json'
                         }

@@ -97,7 +97,6 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
-
     # Always search the fulltext content
     with_content = True
 

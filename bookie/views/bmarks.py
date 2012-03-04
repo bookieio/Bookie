@@ -90,7 +90,7 @@ def edit(request):
                                                    request.user.username)
 
                 if test_exists:
-                    location=request.route_url('user_bmark_edit',
+                    location = request.route_url('user_bmark_edit',
                                                hash_id=new_url_hash,
                                                username=request.user.username)
                     return HTTPFound(location)

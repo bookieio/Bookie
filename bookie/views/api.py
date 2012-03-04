@@ -31,6 +31,15 @@ LOG = logging.getLogger(__name__)
 RESULTS_MAX = 10
 HARD_MAX = 100
 
+
+def _check_with_content(params):
+    """Verify that we should be checking with content"""
+    if 'with_content' in params and params['with_content'] != 'false':
+        return True
+    else:
+        return False
+
+
 @view_config(route_name="api_bmark_hash", renderer="json")
 @api_auth('api_key', UserMgr.get)
 def bmark_get(request):
@@ -58,7 +67,7 @@ def bmark_get(request):
 
     if bookmark is None:
         request.response.status_int = 404
-        ret = { 'error': "Bookmark for hash id {0} not found".format(hash_id) }
+        ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
         ret.update(last_bmark)
         return ret
     else:
@@ -73,6 +82,7 @@ def bmark_get(request):
         ret = {'bmark': return_obj}
         ret.update(last_bmark)
         return ret
+
 
 def _update_mark(mark, params):
     """Update the bookmark found with settings passed in"""
@@ -237,7 +247,7 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = True if 'with_content' in params and params['with_content'] != "false" else False
+    with_content = _check_with_content(params)
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
@@ -303,7 +313,7 @@ def bmark_popular(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = True if 'with_content' in params and params['with_content'] != "false" else False
+    with_content = _check_with_content(params)
 
     if request.user and request.user.username:
         username = request.user.username
@@ -625,10 +635,9 @@ def reset_password(request):
     else:
         request.response.status_int = 403
         return {
-                'username': user_acct.username,
-                'error': "Ooops, there was a typo somewhere. Please check your request"
-               }
-
+            'username': user_acct.username,
+            'error': "There was a typo somewhere. Please check your request"
+        }
 
 
 @view_config(route_name="api_user_suspend", renderer="json")

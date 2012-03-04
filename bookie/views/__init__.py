@@ -5,6 +5,7 @@ from pyramid.view import view_config
 
 from bookie.models.auth import UserMgr
 
+
 @view_config(route_name="home")
 @view_config(route_name="user_home")
 def home(request):

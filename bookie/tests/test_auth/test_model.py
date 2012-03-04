@@ -9,6 +9,7 @@ from bookie.models.auth import UserMgr
 
 from bookie.tests import empty_db
 
+
 class TestPassword(TestCase):
     """Test password checks"""
     pass
@@ -25,9 +26,9 @@ class TestAuthUser(TestCase):
         tst.password = self.test_password
 
         eq_(len(tst.password), 60,
-                "Hashed should be 60 char long: " + tst.password)
+            "Hashed should be 60 char long: " + tst.password)
         eq_('$2a$', tst.password[:4],
-                "Hash should start with the right complexity: " + tst.password[:4])
+            "Hash should start with the right complexity: " + tst.password[:4])
 
     def test_password_match(self):
         """Try to match a given hash"""
@@ -38,7 +39,7 @@ class TestAuthUser(TestCase):
         ok_(tst._password == self.test_hash, "Setting should have hash")
         ok_(tst.password == self.test_hash, "Getting should have hash")
         ok_(tst.validate_password(self.test_password),
-                "The password should check out against the given hash: " + tst.password)
+            "The password should pass against the given hash: " + tst.password)
 
 
 class TestAuthMgr(TestCase):

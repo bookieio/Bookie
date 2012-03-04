@@ -63,7 +63,8 @@ class AuthHelper(object):
 class ReqOrApiAuthorize(object):
     """A context manager that works with either Api key or logged in user"""
 
-    def __init__(self, request, api_key, user_acct, username=None, redirect=None):
+    def __init__(self, request, api_key, user_acct, username=None,
+        redirect=None):
         self.request = request
         self.api_key = api_key
         self.user_acct = user_acct
@@ -180,6 +181,7 @@ class RequestWithUserAttribute(Request):
             LOG.debug(user)
             return user
 
+
 class api_auth():
     """View decorator to set check the client is permitted
 
@@ -249,7 +251,7 @@ class api_auth():
                 return action_(*args, **kwargs)
             else:
                 request.response.status_int = 403
-                return { 'error': "Not authorized for request." }
+                return {'error': "Not authorized for request."}
 
         if request.user is not None:
             if AuthHelper.check_login(request, username):
@@ -262,7 +264,13 @@ class api_auth():
             api_key = request.params.get(self.api_field, None)
             username = request.params.get('username', username)
 
-        elif hasattr(request, 'json_body') and self.api_field in request.json_body:
+        def is_json_auth_request(request):
+            if hasattr(request, 'json_body'):
+                if self.api_field in request.json_body:
+                    return True
+            return False
+
+        if is_json_auth_request(request):
             # we've got a ajax request with post data
             api_key = request.json_body.get(self.api_field, None)
             username = request.json_body.get('username', None)
@@ -271,9 +279,9 @@ class api_auth():
             # now get what this user should be based on the api_key
             request.user = self.user_fetcher(api_key=api_key)
 
-            # if there's a username in the url (rdict) then make sure the user the
-            # api belongs to is the same as the url. You can't currently use the
-            # api to get info for other users.
+            # if there's a username in the url (rdict) then make sure the user
+            # the api belongs to is the same as the url. You can't currently
+            # use the api to get info for other users.
             if request.user and request.user.username == username:
                 return action_(*args, **kwargs)
 
@@ -283,4 +291,4 @@ class api_auth():
 
         # otherwise, we're done, you're not allowed
         request.response.status_int = 403
-        return { 'error': "Not authorized for request." }
+        return {'error': "Not authorized for request."}
