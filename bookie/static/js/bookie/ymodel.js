@@ -28,7 +28,9 @@ YUI.add('bookie-model', function (Y) {
             idAttribute: 'hash_id',
 
             /**
-             * Handle the save() event for objects that don't yet have an id.
+             * Create is only used for objects that don't have an id and most
+             * of the time we instantiate it with a hash_id so this is
+             * really never available.
              *
              * @method _create
              * @param {Object} options
@@ -37,7 +39,7 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             _create: function (options, callback) {
-                console.log('in create...nothing to see here yet');
+                console.log('did you really get this? See my comment');
             },
 
             /**

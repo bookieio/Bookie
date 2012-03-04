@@ -3,6 +3,7 @@ WD := $(shell pwd)
 PY := bin/python
 PIP := bin/pip -q
 MIGRATE := bin/migrate
+NOSE := bin/nosetests
 PASTER := bin/paster
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
@@ -117,7 +118,9 @@ deps: venv
 
 .PHONY: test
 test:
-	nosetests --with-id -x -s bookie/tests
+	$(NOSE) --with-id -x -s bookie/tests
+builder_test:
+	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol
