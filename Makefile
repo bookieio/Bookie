@@ -120,9 +120,12 @@ deps: venv
 .PHONY: test
 test:
 	$(NOSE) --with-id -x -s bookie/tests
+builder_test:
+	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 mysql_test:
 	$(PIP) install mysql-python
 	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
+
 
 
 .PHONY: jstest
