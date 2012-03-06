@@ -4,8 +4,8 @@ Hacking Events
 
 Sprint: PyCon! March 12th-15th
 --------------------------------
-Location: PyCon Sprints!
-Time: All the time!
+:Location: PyCon Sprints!
+:Time: All the time!
 
 Tasks
 ~~~~~~
