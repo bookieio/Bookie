@@ -39,7 +39,7 @@ clean: clean_js clean_css
 .PHONY: clean_all
 clean_all: clean_venv clean_js clean_css clean_chrome
 
-install: bookie.ini all first_bookmark
+install: $(BOOKIE_INI) all first_bookmark
 
 develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
