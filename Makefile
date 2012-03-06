@@ -3,6 +3,7 @@ WD := $(shell pwd)
 PY := bin/python
 PEP8 := bin/pep8
 PIP := bin/pip -q
+PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
 MIGRATE := bin/migrate
 NOSE := bin/nosetests
 PASTER := bin/paster
@@ -111,7 +112,7 @@ bootstrap_upload: bootstrap
 .PHONY: deps
 deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
-	$(PIP) install -r requirements.txt
+	$(PIP_MIR) $(PIP) install -r requirements.txt
 
 # TESTS
 #
@@ -123,10 +124,8 @@ test:
 builder_test:
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 mysql_test:
-	$(PIP) install mysql-python
+	$(PIP_MIR) $(PIP) install mysql-python
 	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
-
-
 
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol
@@ -267,7 +266,7 @@ stop_livereload:
 
 venv: bin/python
 bin/python:
-	virtualenv --no-site-packages .
+	virtualenv .
 
 .PHONY: clean_venv
 clean_venv:
