@@ -9,14 +9,8 @@ PASTER := bin/paster
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
 
-ifdef BOOKIE_INI
-	echo "Using INI $(BOOKIE_INI)"
-else
-	BOOKIE_INI = bookie.ini
-endif
-
+BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
-
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
