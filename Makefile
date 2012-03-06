@@ -8,8 +8,14 @@ NOSE := bin/nosetests
 PASTER := bin/paster
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
-INI = bookie.ini
-SAURL = $(shell grep sqlalchemy.url $(INI) | cut -d "=" -f 2 | tr -d " ")
+
+ifdef BOOKIE_INI
+	echo "Using INI $(BOOKIE_INI)"
+else
+	BOOKIE_INI = bookie.ini
+endif
+
+SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
@@ -45,8 +51,8 @@ develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
 	$(PY) setup.py develop
 
-$(INI):
-	cp sample.ini $(INI)
+$(BOOKIE_INI):
+	cp sample.ini $(BOOKIE_INI)
 
 # DATABASE
 #
@@ -236,7 +242,7 @@ run_combo:
 run_css:
 	sass --watch bookie/static/css:bookie/static/css &
 run_app:
-	$(PASTER) serve --reload --pid-file=paster.pid $(INI) &
+	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
 	livereload
 autojsbuild:
