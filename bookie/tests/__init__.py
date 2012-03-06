@@ -28,6 +28,7 @@ ini.read(test_ini)
 settings = dict(ini.items('app:main'))
 
 BOOKIE_TEST_INI = test_ini
+print "USING TEST INI: ", BOOKIE_TEST_INI
 
 
 def setup_db(settings):
