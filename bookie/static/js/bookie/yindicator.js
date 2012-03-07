@@ -1,18 +1,18 @@
-/*
+/**
  * Hacked up from a stolen version from launchpad. Leaving their copyright.
  * Copyright 2011 Canonical Ltd.  This software is licensed under the
  * GNU Affero General Public License version 3 (see the file LICENSE).
  *
  * Large indicator of pending operations.
  *
+ * @namespace bookie
+ * @module indicator
+ *
  * @example Usage:
  *
  *     Y.bookie.Indicator({
  *         target: Y.one('#id')
  *     });
- *
- * @namespace bookie
- * @module indicator
  *
  */
 YUI.add('bookie-indicator', function (Y) {
