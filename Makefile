@@ -52,7 +52,6 @@ $(BOOKIE_INI):
 # DATABASE
 #
 # Need a series of commands to handle migrations
-
 bookie.db:
 	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
 
@@ -122,9 +121,23 @@ deps: venv
 test:
 	$(NOSE) --with-id -x -s bookie/tests
 builder_test:
+	# we hard code the filename because we don't want to accidentally remove
+	# the main bookie.db file. We're only cleaning tests.
+	if [ -f test_bookie.db ]; then \
+		rm test_bookie.db; \
+	fi
+	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
+	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
+
 mysql_test:
-	$(PIP_MIR) $(PIP) install mysql-python
+	# call this with the overriding BOOKIE_INI setting
+	# first we need to drop the db
+	$(PIP_MIR) $(PIP) install pymysql
+	mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
+	mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
+	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
+	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: jstest
