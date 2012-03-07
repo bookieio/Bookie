@@ -1,7 +1,3 @@
-/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
-         plusplus: false, newcap: false, */
-/*global _: false, window: false, self: false, escape: false, */
-
 /**
  * Javascript implementation of the Bookie API used on the app front end and
  * sample implementation itself.
@@ -23,8 +19,6 @@ YUI.add('bookie-api', function (Y) {
      * This will apply the right callback function provided by the caller,
      * allow callers to use default callbacks, and make sure we parse json
      * back to provide to the caller's callback as data
-     *
-     * @method
      *
      */
     var request_handler = function (url, cfg, arguments) {
@@ -89,6 +83,9 @@ YUI.add('bookie-api', function (Y) {
     };
 
     /**
+     * Base Api object that sets headers and such for all other extending Api
+     * requests.
+     *
      * @class Api
      * @extends Y.Base
      *
@@ -110,6 +107,7 @@ YUI.add('bookie-api', function (Y) {
         },
 
         /**
+         * General constructor
          * @method initializer
          * @constructor
          *

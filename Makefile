@@ -209,7 +209,9 @@ static_upload: js css
 
 js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
-	yuidoc -o jsdoc $(JS_BUILD_PATH)/b/
+	yuidoc -T simple -o jsdoc $(JS_BUILD_PATH)/b/
+	sed -i 's/&#x2F;/\//g' jsdoc/**/*.html
+	sed -i 's/&amp;#x2F;/\//g' jsdoc/**/*.html
 js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
