@@ -1,7 +1,3 @@
-/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
-         plusplus: false, newcap: false, */
-/*global _: false, window: false, self: false, escape: false, */
-
 /**
  * ripped off from
  * https://github.com/yui/yui3-gallery/blob/master/src/gallery-taglist/js/taglist.js
@@ -367,6 +363,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _fetch_suggestions: function (qry, callback) {
+            var tags;
             this.ac.api = new Y.bookie.Api.route.TagComplete(
                 this.get('api_cfg')
             );
@@ -378,11 +375,9 @@ YUI.add('bookie-tagcontrol', function (Y) {
             };
 
             if (this.get('tags')) {
-                var tags = Y.Array.map(this.get('tags'), function (t) {
-                    return t.get('text')
+                tags = Y.Array.map(this.get('tags'), function (t) {
+                    return t.get('text');
                 }).join(' ');
-            } else {
-                tags = undefined;
             }
 
             this.ac.api.call({
@@ -407,7 +402,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             Y.fire('tag:changed', {
                 target: that,
                 tags: Y.Array.map(that.get('tags'), function (t) {
-                    return t.get('text')
+                    return t.get('text');
                 })
             });
         },
@@ -437,7 +432,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }, AJAX_WAITTIME);
 
             if (e.keyCode == keymap.backspace) {
-                if (this.ui.one('input').get('value') == '') {
+                if (this.ui.one('input').get('value') === '') {
                     // remove the last tag we put on the stack
                     var last_tag = this.get('tags').pop();
                     last_tag.destroy();
@@ -497,8 +492,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 t = e.target,
                 tag = t.get('text');
             Y.Array.find(this.get('tags'), function (item, index, list) {
-                this.get('tags')[1];
-
                 if (item.get('text') === tag) {
                     var tlist = this.get('tags');
                     tlist.splice(index, 1);
@@ -709,7 +702,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             with_submit: {
                 value: true
             }
-        },
+        }
     });
 
 }, '0.1.0', {
