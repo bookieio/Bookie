@@ -1,6 +1,3 @@
-/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
-         plusplus: false, newcap: false, */
-/*global _: false, window: false, self: false, escape: false, */
 /**
  * Bookie Model objects
  *
@@ -10,9 +7,8 @@
  */
 YUI.add('bookie-model', function (Y) {
     var _ = Y.substitute,
-        ns = Y.namespace('bookie');
-
-    var TZ = '-05:00';
+        ns = Y.namespace('bookie'),
+        TZ = '-05:00';
 
     /**
      * Representing a single bmark database object
@@ -53,9 +49,10 @@ YUI.add('bookie-model', function (Y) {
              */
             _delete: function (options, callback) {
                // perform a delete api request to the server
-               var delete_cfg = this.api_cfg;
+               var delete_cfg = this.api_cfg,
+                   api = new Y.bookie.Api.route.UserBmarkDelete(delete_cfg);
+
                delete_cfg.hash_id = this.get('hash_id');
-               var api = new Y.bookie.Api.route.UserBmarkDelete(delete_cfg);
                api.call({
                    success: callback
                });
@@ -73,14 +70,15 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             _read: function (options, callback) {
-                var that = this;
+                var that = this,
+                    api;
                 // the bid is required in order to fetch the bookmark from the
                 // api.
                 if (!options.hash_id) {
                     throw "Could not load bookmark without a hash_id property!";
                 }
 
-                var api = new Y.bookie.Api.route.Bmark(Y.merge(this.get('api_cfg'), options));
+                api = new Y.bookie.Api.route.Bmark(Y.merge(this.get('api_cfg'), options));
                 api.call({
                     'success': function (data, request) {
                         that.setAttrs(data.bmark);
@@ -91,7 +89,7 @@ YUI.add('bookie-model', function (Y) {
                             that.set('last', data.last);
                         }
                     },
-                    'error': function (data, status_str, response, arguments) {
+                    'error': function (data, status_str, response, args) {
                         // We might also get a last bookmark data on not
                         // found error condition. If we've got a last record,
                         // go ahead and set it on the current bookmark.
@@ -115,7 +113,9 @@ YUI.add('bookie-model', function (Y) {
             _update: function (options, callback) {
                 // we need to prepare an api request with the data to update
                 var that = this,
-                    data = that.getAttrs();
+                    data = that.getAttrs(),
+                    tmp,
+                    api;
 
                 // remove the api cfg from the data, that doesn't need to get
                 // sent in the url
@@ -123,12 +123,13 @@ YUI.add('bookie-model', function (Y) {
 
                 // the Bookie api expects the tags to be a string, so put
                 // those together and replace the data with it.
-                var tmp = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
+                tmp = Y.Array.reduce(data.tags, '', function (prev, cur, idx, arr) {
                     return [prev, cur].join(' ');
                 });
+
                 data.tags = tmp;
 
-                var api = new Y.bookie.Api.route.UserBmarkSave(
+                api = new Y.bookie.Api.route.UserBmarkSave(
 
                     Y.merge(this.get('api_cfg'), {
                         model: data
@@ -165,7 +166,9 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             remove: function (callback) {
-                this.destroy({delete: true}, callback);
+                this.destroy({
+                    delete: true
+                }, callback);
             },
 
             /**
@@ -202,7 +205,7 @@ YUI.add('bookie-model', function (Y) {
                     default:
                         console.log('Invalid action to Bmark Model ' + action);
                         callback('Invalid action');
-                };
+                }
             }
         },
         {
@@ -391,11 +394,11 @@ YUI.add('bookie-model', function (Y) {
                 'dateinfo': {
                     // we want to return a formatted version of stored
                     getter: function (val) {
-                        var val = this.get('stored');
-                        if (val) {
-                            return (val.getMonth() + 1) + "/" + val.getDate();
+                        var stored = this.get('stored');
+                        if (stored) {
+                            return (stored.getMonth() + 1) + "/" + stored.getDate();
                         } else {
-                            return val;
+                            return stored;
                         }
                     }
                 },
@@ -411,21 +414,21 @@ YUI.add('bookie-model', function (Y) {
                 'prettystored': {
                     // we want to return a formatted version of stored
                     getter: function (val) {
-                        var val = this.get('stored');
-                        if (val) {
+                        var stored = this.get('stored');
+                        if (stored) {
                             return _("{month}/{date}/{year} {hours}:{minutes}", {
-                                     'month': val.getMonth() + 1,
-                                     'date': val.getDate(),
-                                     'year': val.getFullYear(),
-                                     'hours': val.getHours(),
-                                     'minutes': val.getMinutes()
+                                     'month': stored.getMonth() + 1,
+                                     'date': stored.getDate(),
+                                     'year': stored.getFullYear(),
+                                     'hours': stored.getHours(),
+                                     'minutes': stored.getMinutes()
                             });
                         } else {
-                            return val;
+                            return stored;
                         }
                     }
-                },
-           },
+                }
+           }
         }
     );
 
@@ -437,7 +440,7 @@ YUI.add('bookie-model', function (Y) {
      *
      */
     ns.BmarkList = Y.Base.create('bookie-bmark-list', Y.ModelList, [], {
-        model: Y.bookie.Bmark,
+        model: Y.bookie.Bmark
     });
 
 
@@ -611,7 +614,7 @@ YUI.add('bookie-model', function (Y) {
                 username: this.get('api_username'),
                 api_key: this.get('api_key'),
                 last_bmark: this.get('last_bmark')
-            }
+            };
         },
 
         /**
@@ -658,7 +661,7 @@ YUI.add('bookie-model', function (Y) {
                 default:
                     console.log('Invalid action to OptionsModel ' + action);
                     callback('Invalid action');
-            };
+            }
         }
     }, {
         ATTRS: {

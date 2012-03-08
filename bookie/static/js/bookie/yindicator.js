@@ -111,7 +111,7 @@ YUI.add('bookie-indicator', function (Y) {
              */
             target: {
                 value: null
-            },
+            }
         }
     });
 

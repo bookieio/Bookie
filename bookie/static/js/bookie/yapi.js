@@ -21,43 +21,43 @@ YUI.add('bookie-api', function (Y) {
      * back to provide to the caller's callback as data
      *
      */
-    var request_handler = function (url, cfg, arguments) {
+    var request_handler = function (url, cfg, args) {
         // extend with the base handlers for each event we want to use
         // should have cases for zomplete, success, failure
         // Note: complete fires before both success and failure, not usually
         // the event you want
         var request,
-            default_complete = function (id, response, arguments) {
+            default_complete = function (id, response, args) {
                 var data = Y.JSON.parse(response.responseText);
 
-                if (arguments.callbacks.complete !== undefined) {
-                    arguments.callbacks.complete(data, response, arguments);
+                if (args.callbacks.complete !== undefined) {
+                    args.callbacks.complete(data, response, args);
                 } else {
 
                 }
             },
-            default_success = function (id, response, arguments) {
+            default_success = function (id, response, args) {
                 var data = Y.JSON.parse(response.responseText);
 
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback
-                if (arguments.callbacks.success !== undefined) {
-                    arguments.callbacks.success(data, response, arguments);
+                if (args.callbacks.success !== undefined) {
+                    args.callbacks.success(data, response, args);
                 } else {
 
                 }
             },
-            default_failure = function (id, response, arguments) {
+            default_failure = function (id, response, args) {
                 var data = Y.JSON.parse(response.responseText),
                     status_str = response.statusText;
 
                 // hand the callback the issue at hand
-                if (arguments.callbacks.error !== undefined) {
-                    arguments.callbacks.error(
+                if (args.callbacks.error !== undefined) {
+                    args.callbacks.error(
                         data,
                         status_str,
                         response,
-                        arguments
+                        args
                     );
                 } else {
 
@@ -65,7 +65,7 @@ YUI.add('bookie-api', function (Y) {
             };
 
         // bind the callbacks the caller sent us to be used as the callbacks
-        // but keep any other arguments we've already assigned
+        // but keep any other args we've already assigned
         cfg.on = {
             complete: default_complete,
             success: default_success,
@@ -78,7 +78,7 @@ YUI.add('bookie-api', function (Y) {
             cfg.data = Y.JSON.stringify(cfg.data);
         }
 
-        cfg.arguments = arguments;
+        cfg.args = args;
         request = Y.io(url, cfg);
     };
 
@@ -101,9 +101,9 @@ YUI.add('bookie-api', function (Y) {
             on: {
                 start: function () {},
                 complete: function () {},
-                end: function () {},
+                end: function () {}
             },
-            arguments: {}
+            args: {}
         },
 
         /**
@@ -133,7 +133,7 @@ YUI.add('bookie-api', function (Y) {
                 data.username = this.get('username');
                 data.resource = this.get('resource');
             } else {
-                var data = {};
+                data = {};
                 data.username = this.get('username');
                 data.resource = this.get('resource');
             }
@@ -195,9 +195,9 @@ YUI.add('bookie-api', function (Y) {
          *
          */
         call: function (callbacks) {
-            // make sure we stick the callbacks on arguments in the base cfg
+            // make sure we stick the callbacks on args in the base cfg
             // before we build the rest of it
-            var args = this.base_cfg.arguments,
+            var args = this.base_cfg.args,
                 cfg = this.build_cfg();
 
             args.callbacks = callbacks;
@@ -407,7 +407,7 @@ YUI.add('bookie-api', function (Y) {
                     }
                 });
                 Y.bookie.Api.route.TagComplete.superclass.call.apply(this,
-                                                                     arguments);
+                                                                     args);
             }
         }, {
             ATTRS: {
@@ -581,7 +581,7 @@ YUI.add('bookie-api', function (Y) {
 
                 // we have to have a hash_id for our url to be built from
                 this.data = {
-                    hash_id: this.get('hash_id'),
+                    hash_id: this.get('hash_id')
                 };
             }
         }, {
