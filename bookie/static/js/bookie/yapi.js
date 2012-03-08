@@ -1014,6 +1014,26 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+
+    /**
+     * Hook into the ping event and make sure we can hit the server.
+     *
+     * @class Api.route.Ping
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.Ping = Y.Base.create(
+        'bookie-api-route-ping',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+            }
+        }, {
+        }
+    );
+
+
+
 }, '0.1.0', {
     requires: ['base', 'io', 'querystring-stringify-simple', 'json', 'substitute']
 });
