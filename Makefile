@@ -15,7 +15,7 @@ SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 BOOKIE_JS = bookie/static/js/bookie
 BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
-JS_META_SCRIPT = scripts/js/generate_meta.py
+JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
 

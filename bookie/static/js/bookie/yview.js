@@ -21,6 +21,12 @@ YUI.add('bookie-view', function (Y) {
      */
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
         container_html: '<div class="bmark_list"/>',
+
+        /**
+         * @method _get_template
+         * @private
+         *
+         */
         _get_template: function () {
             return Y.one('#bmark_list').get('text');
         },
@@ -72,7 +78,7 @@ YUI.add('bookie-view', function (Y) {
             this.indicator.render();
         },
 
-        /*
+        /**
          * Fetch a dataset based on our current data
          *
          * @method _fetch_dataset
@@ -191,6 +197,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _prev_page
          * @param {Event} e
+         * @private
          *
          */
         _prev_page: function (e) {
@@ -391,6 +398,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _tags_changed
          * @param {Event} e
+         * @private
          *
          */
         _tags_changed: function (e) {
@@ -1196,6 +1204,7 @@ YUI.add('bookie-view', function (Y) {
      *
      */
     ns.AccountInfoView = Y.Base.create('bookie-account-info-view', Y.View, [], {
+
         /**
          * Bind all UI events for the UI.
          *
@@ -1251,6 +1260,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1398,6 +1408,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1473,6 +1484,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _account_reset
          * @param {Event} e
+         * @private
          *
          */
         _account_reset: function (e) {
@@ -1511,6 +1523,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1586,6 +1599,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1607,6 +1621,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _sync_bookmarks
          * @param {Event} e
+         * @private
          *
          */
         _sync_bookmarks: function (e) {
