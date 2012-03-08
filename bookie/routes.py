@@ -77,6 +77,11 @@ def build_routes(config):
     # NEW API
     #
 
+    # ping checks
+    config.add_route('api_ping', '/api/v1/{username}/ping', request_method='GET')
+    config.add_route('api_ping_missing_user', '/api/v1/ping', request_method='GET')
+    config.add_route('api_ping_missing_api', '/ping', request_method='GET')
+
     # auth related
     config.add_route("api_user_account",
                      "/api/v1/{username}/account",

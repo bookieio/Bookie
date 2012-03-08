@@ -421,8 +421,34 @@ class BookieAPITest(unittest.TestCase):
         ok_('typo' in user['error'],
                 "Should have a error key in there: {0}".format(user))
 
+    def test_api_ping_success(self):
+        """We should be able to ping and make sure we auth'd and are ok"""
+        res = self.testapp.get('/api/v1/admin/ping?api_key=' + API_KEY,
+                               status=200)
+        ping = json.loads(res.body)
 
+        ok_(ping['success'],
+            "Should success be true")
 
+    def test_api_ping_failed_nouser(self):
+        """If you don't supply a username, you've failed the ping"""
+        res = self.testapp.get('/api/v1/ping?api_key=' + API_KEY,
+                               status=200)
+        ping = json.loads(res.body)
+
+        ok_(not ping['success'],
+            "Success should be false")
+        eq_(ping['message'], "Missing username in your api url.")
+
+    def test_api_ping_failed_missing_api(self):
+        """If you don't supply a username, you've failed the ping"""
+        res = self.testapp.get('/ping?api_key=' + API_KEY,
+                               status=200)
+        ping = json.loads(res.body)
+
+        ok_(not ping['success'],
+            "Success should be false")
+        eq_(ping['message'], "The API url should be /api/v1")
 
     # def test_paging_results(self):
     #     """Test that we can page results"""

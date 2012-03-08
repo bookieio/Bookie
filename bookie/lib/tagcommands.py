@@ -20,7 +20,7 @@ class Commander(object):
         return [tag for tag in tags.keys() if tag in COMMANDLIST]
 
     def build_commands(self):
-        """See if we have any commands to apply to this bookmark"""
+        """See if we ehave any commands to apply to this bookmark"""
         for tag in self.bmark.tags.keys():
             # if this tag is a command then return true
             if tag in COMMANDLIST:
@@ -61,9 +61,9 @@ class ToRead(Command):
     def run(bmark):
         """Update this bookmark to toread status"""
         if ToRead.read_tag not in bmark.tags:
-
-            bmark.tags[ToRead.read_tag] = \
-                    TagMgr.find(tags=[ToRead.read_tag])[0]
+            res = TagMgr.find(tags=[ToRead.read_tag])
+            if res:
+                bmark.tags[ToRead.read_tag] = res[0]
 
         return bmark
 

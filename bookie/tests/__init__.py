@@ -45,7 +45,7 @@ def empty_db():
     Bmark.query.delete()
     Readable.query.delete()
     # we can't remove the toread tag we have from our commands
-    Tag.query.filter(Tag.name != 'toread').delete()
+    Tag.query.delete()
     Hashed.query.delete()
 
     DBSession.execute(bmarks_tags.delete())

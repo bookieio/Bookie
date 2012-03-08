@@ -40,6 +40,41 @@ def _check_with_content(params):
         return False
 
 
+@view_config(route_name="api_ping", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def ping(request):
+    """Verify that you've setup your api correctly and verified
+
+    """
+    return {
+        'success': True,
+        'message': 'Looks good'
+    }
+
+
+@view_config(route_name="api_ping_missing_user", renderer="json")
+def ping_missing_user(request):
+    """You ping'd but were missing the username in the url for some reason.
+
+    """
+    return {
+        'success': False,
+        'message': 'Missing username in your api url.'
+    }
+
+
+@view_config(route_name="api_ping_missing_api", renderer="json")
+def ping_missing_api(request):
+    """You ping'd but didn't specify the actual api url.
+
+    """
+    return {
+        'success': False,
+        'message': 'The API url should be /api/v1'
+    }
+
+
+
 @view_config(route_name="api_bmark_hash", renderer="json")
 @api_auth('api_key', UserMgr.get)
 def bmark_get(request):
