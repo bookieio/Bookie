@@ -1,6 +1,3 @@
-/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
-         plusplus: false, newcap: false, */
-/*global _: false, window: false, self: false, escape: false, */
 /**
  * Bookie's View objects used to represent pages or parts of page content.
  *
