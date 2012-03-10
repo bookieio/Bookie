@@ -83,7 +83,7 @@
             <div class="buttons add" style="display: inline-block; vertical-align: middle;">
                 <a href="/{{current_user}}/new"
                     class="button">
-                    <span class="icon" data-icon="&"
+                    <span class="icon icon-plus"
                     aria-hidden="true"></span> <span class="desc">Add Bookmark</span>
                 </a>
             </div>
