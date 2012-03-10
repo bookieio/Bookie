@@ -1,3 +1,5 @@
+@import "fontawesome";
+
 // main site colors
 $altcolor: #990000;
 $bluegrey: #363d52; // used in logo
@@ -22,6 +24,15 @@ $links: #003366;
     color: $altcolor;
     vertical-align: top;
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    vertical-align: bottom;
+    font-size: 12px;
+    padding: 0 5px;
+}
+
+em.icon {
+    left: -99999px;
+    position: absolute;
 }
 
 @mixin cabin() {
@@ -446,7 +457,7 @@ fieldset {
     }
 
     .url {
-        padding: .3em 0 0 1em;
+        padding: .3em 0 0 .3em;
     }
 
     .url, .url * {
