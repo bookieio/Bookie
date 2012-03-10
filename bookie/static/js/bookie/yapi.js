@@ -13,6 +13,23 @@ YUI.add('bookie-api', function (Y) {
 
     var _ = Y.substitute;
 
+    var decode_response = function (resp_text) {
+        var data;
+
+        try  {
+            data = Y.JSON.parse(resp_text);
+        } catch (err) {
+            // if we failed to parse the JSON then just get the
+            // response text and send it along.
+            data = {
+                success: true,
+                message: resp_text
+            };
+        }
+
+        return data;
+    }
+
     /**
      * We want to wrap our ajax calls through the IO module.
      *
@@ -28,7 +45,7 @@ YUI.add('bookie-api', function (Y) {
         // the event you want
         var request,
             default_complete = function (id, response, args) {
-                var data = Y.JSON.parse(response.responseText);
+                var data = decode_response(response.responseText);
 
                 if (args.callbacks.complete !== undefined) {
                     args.callbacks.complete(data, response, args);
@@ -37,7 +54,7 @@ YUI.add('bookie-api', function (Y) {
                 }
             },
             default_success = function (id, response, args) {
-                var data = Y.JSON.parse(response.responseText);
+                var data = decode_response(response.responseText);
 
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback
@@ -48,7 +65,7 @@ YUI.add('bookie-api', function (Y) {
                 }
             },
             default_failure = function (id, response, args) {
-                var data = Y.JSON.parse(response.responseText),
+                var data = decode_response(response.responseText),
                     status_str = response.statusText;
 
                 // hand the callback the issue at hand

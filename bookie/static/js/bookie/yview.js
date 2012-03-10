@@ -1592,6 +1592,22 @@ YUI.add('bookie-view', function (Y) {
         },
 
         /**
+         * Use the API ping to check the settings the user wants to set.
+         *
+         * @method _ping_server
+         * @param {Object} api_cfg For the settings to test our Ping agsinst
+         *
+         */
+        _ping_server: function (opts, callbacks) {
+            var api = new Y.bookie.Api.route.Ping({
+                url: opts.api_url,
+                username: opts.api_username,
+                api_key: opts.api_key
+            });
+            api.call(callbacks);
+        },
+
+        /**
          * Display any message based on if the request to change is successful
          * or ended in error.
          *
@@ -1693,27 +1709,50 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         update_options: function (e) {
+            var that = this;
             e.preventDefault();
             var msg_div = Y.one('#options_msg'),
-                opts = this.get('model');
+                opts = this.get('model'),
+                new_opts = {};
 
             msg_div.hide();
 
             // fetch the new values from the form and then update our model
             // with them.
-            opts.set('api_url', Y.one('#api_url').get('value'));
-            opts.set('api_username', Y.one('#api_username').get('value'));
-            opts.set('api_key', Y.one('#api_key').get('value'));
+            new_opts.api_url = Y.one('#api_url').get('value');
+            new_opts.api_username = Y.one('#api_username').get('value');
+            new_opts.api_key = Y.one('#api_key').get('value');
 
-            if (Y.one('#cache_content').get('checked')) {
-                opts.set('cache_content', 'true');
-            } else {
-                opts.set('cache_content', 'false');
-            }
+            callbacks = {
+                success: function (data, response) {
+                    // make sure we were successful
+                    if (data.success) {
+                        opts.set('api_url', Y.one('#api_url').get('value'));
+                        opts.set('api_username', Y.one('#api_username').get('value'));
+                        opts.set('api_key', Y.one('#api_key').get('value'));
 
-            // one updated, now save it
-            opts.save();
-            this._show_message('Saved your settings...', true);
+                        if (Y.one('#cache_content').get('checked')) {
+                            opts.set('cache_content', 'true');
+                        } else {
+                            opts.set('cache_content', 'false');
+                        }
+
+                        // one updated, now save it
+                        opts.save();
+                        that._show_message('Saved your settings...', true);
+                    } else {
+                        that._show_message('I could not Ping the server with your settings. Server said: ' +
+                            data.message, false);
+                    }
+                },
+                error: function (data, status_str, response, args) {
+                    that._show_message('I could not Ping the server with your settings. Server said: ' +
+                        data.message, false);
+                }
+            };
+
+            // Let's do all this based on the status of the ping attempt;
+            this._ping_server(new_opts, callbacks);
         }
     }, {
         ATTRS: {
