@@ -1,35 +1,35 @@
 {
-    "background_page": "background.html",
+    "background_page": "background.html", 
     "browser_action": {
-        "default_icon": "logo.24.png",
-        "default_popup": "popup.html",
+        "default_icon": "logo.24.png", 
+        "default_popup": "popup.html", 
         "default_title": "Post Bookie Bookmark"
-    },
+    }, 
     "content_scripts": [
         {
             "js": [
                 "shortcut.js"
-            ],
+            ], 
             "matches": [
-                "http://*/*",
+                "http://*/*", 
                 "https://*/*"
             ]
         }
-    ],
-    "description": "Bookie Bookmarks",
+    ], 
+    "description": "Bookie Bookmarks", 
     "icons": {
-        "128": "logo.128.png",
-        "16": "logo.16.png",
+        "128": "logo.128.png", 
+        "16": "logo.16.png", 
         "24": "logo.24.png"
-    },
-    "name": "Bookie",
-    "options_page": "options.html",
+    }, 
+    "name": "Bookie", 
+    "options_page": "options.html", 
     "permissions": [
-        "tabs",
-        "notifications",
-        "contextMenus",
-        "https://*/*",
+        "tabs", 
+        "notifications", 
+        "contextMenus", 
+        "https://*/*", 
         "http://*/*"
-    ],
-    "version": "0.4.4"
+    ], 
+    "version": "0.4.5"
 }

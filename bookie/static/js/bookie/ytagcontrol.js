@@ -260,8 +260,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _bind_events: function () {
-            var that = this;
-            // events to watch out for from our little control
+            var that = this,
+                entry_input = this.ui.one('.' + this.getClassName('input'));
+
+            // events to watch out for from our little cont
             // tag:added
             // tag:removed
             // focus out (make last word a tag)
@@ -280,13 +282,17 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // to force adding with
             this.ac.after('select', this._parse_input, this);
 
+            // if the input box loses focus, make sure we don't need to add a
+            // new tag
+            entry_input.on('blur', this._parse_input, this);
+
             this.ui.delegate('tag:donetyping', function (e) {
                 that._fire_changed();
             });
 
             // if you click on anywhere within the ui, focus the input box
             this.ui.on('click', function (e) {
-                this.ui.one('.' + this.getClassName('input')).focus();
+                entry_input.focus();
             }, this);
 
             // if a tag is removed, catch that event and remove it from our
@@ -440,13 +446,16 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 return;
             }
 
+            console.log(e.type);
+
             // continue on with what you were doing
             // these are events and keystrokes we want to throttle
             // external activity for
             if (e.keyCode === keymap.space ||
                     e.keyCode === keymap.enter ||
                     e.keyCode === keymap.tab ||
-                    e.type === 'autocompleteList:select') {
+                    e.type === 'autocompleteList:select' ||
+                    e.type === 'blur') {
                 // then handle the current input as a tag and clear for a
                 // new one
                 that._added_tag();
