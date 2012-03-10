@@ -16,6 +16,7 @@ from bookie.tests import BOOKIE_TEST_INI
 GOOGLE_HASH = 'aa2239c17609b2'
 API_KEY = None
 
+
 class DelPostTest(unittest.TestCase):
     """Test post related calls"""
 
@@ -27,7 +28,8 @@ class DelPostTest(unittest.TestCase):
         testing.setUp()
 
         global API_KEY
-        res = DBSession.execute("SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
         API_KEY = res['api_key']
 
     def tearDown(self):
@@ -88,7 +90,8 @@ class DelPostTest(unittest.TestCase):
 
         res = self.testapp.get('/admin/delapi/posts/add?' + req_params)
         eq_(res.status, "200 OK", msg='Post Add status is 200, ' + res.status)
-        eq_(res.body, failed, msg="Request should return failed msg: " + res.body)
+        eq_(res.body, failed,
+            msg="Request should return failed msg: " + res.body)
 
     def test_post_add_success(self):
         """Basic add of a new post working
@@ -200,14 +203,15 @@ class DelPostTest(unittest.TestCase):
         res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
 
         ok_(res.stored >= now,
-                "Stored time is now or close to now {0}--{1}".format(res.stored, now))
+            "Stored time is about now {0}--{1}".format(res.stored, now))
 
         res.hash_id = u"Somethingnew.com"
         DBSession.flush()
 
         # now hopefully have an updated value
         ok_(res.updated >= now,
-                "Stored time, after update, is now or close to now {0}--{1}".format(res.updated, now))
+            "Stored time, after update, about now {0}--{1}".format(
+                res.updated, now))
 
     def test_remove_bmark(self):
         """Remove a bmark from the system
@@ -292,7 +296,6 @@ class DelPostTest(unittest.TestCase):
         ok_('search' in res.tags, 'Found the search tag in the bmark')
         ok_('updated' in res.tags, 'Found the updated tag in the bmark')
 
-
     def test_tag_with_space(self):
         """Test that we strip out spaces from tags and don't get empty tags
 
@@ -322,25 +325,28 @@ class DelPostTest(unittest.TestCase):
             ok_(tag[0] != " ", "Tag should not start with a space")
             ok_(tag[-1] != " ", "Tag should not end with a space")
 
-
     def test_tag_completion(self):
         """Make sure we can get good completion suggestions"""
         # add the default bookmark which tags tags of python and search
         self._get_good_request()
 
         # now try to get completion suggestions
-        resp = self.testapp.get('/admin/delapi/tags/complete?api_key={0}&tag=py'.format(API_KEY))
+        resp = self.testapp.get(
+            '/admin/delapi/tags/complete?api_key={0}&tag=py'.format(API_KEY))
 
-        eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
-        ok_('python' in resp.body, 
-                "The tag python should be in the response body: " + resp.body)
+        eq_(resp.status,  "200 OK",
+            "Status of a completion request should be 200")
+        ok_('python' in resp.body,
+            "The tag python should be in the response body: " + resp.body)
 
         # now try to get completion suggestions
-        resp = self.testapp.get('/admin/delapi/tags/complete?api_key={0}&tag=test'.format(API_KEY))
+        resp = self.testapp.get(
+            '/admin/delapi/tags/complete?api_key={0}&tag=test'.format(API_KEY))
 
-        eq_(resp.status,  "200 OK", "Status of a completion request should be 200")
-        ok_('python' not in resp.body, 
-                "The tag python should not be in the response body: " + resp.body)
+        eq_(resp.status,  "200 OK",
+            "Status of a completion request should be 200")
+        ok_('python' not in resp.body,
+            "The tag python should not be in the response body: " + resp.body)
 
 
 class DelImportTest(unittest.TestCase):

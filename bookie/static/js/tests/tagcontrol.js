@@ -1,5 +1,6 @@
-// Create a new YUI instance and populate it with the required modules.  
-YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol', function (Y) {
+// Create a new YUI instance and populate it with the required modules.
+YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol',
+    function (Y) {
     //initialize the console
     var yconsole = new Y.Console({
         newestOnTop: false
@@ -80,10 +81,29 @@ YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol', functio
             Y.Assert.areEqual(2, Y.all('.yui3-bookie-tagcontrol-item').size());
         },
 
+        test_view_add_focus: function () {
+            // if we've got focus and lose it, we should get the tag
+            this.t = Y.one('input');
+            this.tc = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc.render();
+
+            // setup a new tag
+            var input = Y.one('.yui3-bookie-tagcontrol-input');
+            input.focus();
+            input.set('value', 'test');
+
+            input.simulate('blur');
+
+            // now let's start checking out some things
+            Y.Assert.areEqual(2, Y.all('.yui3-bookie-tagcontrol-item').size());
+        },
+
         test_original_syncd: function () {
             // make sure that as we add tags, the original input field is kept
             // in sync with our list of tags
-            this.t = Y.one('input'),
+            this.t = Y.one('input');
             this.tc2 = new Y.bookie.TagControl({
                 srcNode: this.t
             });

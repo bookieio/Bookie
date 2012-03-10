@@ -68,7 +68,7 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Our next sprint is taking place at my place **Feb 25th!**
+Our next sprint is taking place at PyCon **March 12-15th!**
 
 .. _events: events.html
 .. _features: features.html

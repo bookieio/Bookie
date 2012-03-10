@@ -15,7 +15,7 @@
         <link
             href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2'
             rel='stylesheet' type='text/css'/>
-        <link rel="stylesheet" type="text/css" href="/static/css/bookie.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/responsive.css"/>
         <script type="text/javascript">
             YUI.GlobalConfig = {
                 combine: true,

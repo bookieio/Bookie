@@ -155,6 +155,9 @@ class ReadUrl(object):
         except httplib.BadStatusLine, exc:
             read.error(STATUS_CODES['905'], str(exc))
 
+        except socket.error, exc:
+            read.error(STATUS_CODES['902'], str(exc))
+
         LOG.debug('is error?')
         LOG.debug(read.status)
 

@@ -19,7 +19,7 @@ class AuthHelper(object):
     @staticmethod
     def check_api(submitted_key, users_key):
         """Verify the api key is valid"""
-        LOG.debug(submitted_key, users_key)
+        LOG.error(submitted_key, users_key)
         if users_key != submitted_key:
             LOG.error('Invalid API Key! {0} v {1}'.format(users_key,
                                                           submitted_key))
@@ -56,14 +56,15 @@ class AuthHelper(object):
         if redirect is None:
             raise HTTPForbidden('Deactivated Account')
         else:
-            LOG.debug('Redirecting to: ' + redirect)
+            LOG.error('Redirecting to: ' + redirect)
             raise HTTPFound(location=request.route_url(redirect))
 
 
 class ReqOrApiAuthorize(object):
     """A context manager that works with either Api key or logged in user"""
 
-    def __init__(self, request, api_key, user_acct, username=None, redirect=None):
+    def __init__(self, request, api_key, user_acct, username=None,
+        redirect=None):
         self.request = request
         self.api_key = api_key
         self.user_acct = user_acct
@@ -81,18 +82,18 @@ class ReqOrApiAuthorize(object):
 
         # if the user account is not activated then no go
         if not self.user_acct.activated:
-            LOG.debug("API call with deactivated account")
+            LOG.error("API call with deactivated account")
             raise HTTPForbidden('Deactivated Account')
 
         if AuthHelper.check_login(self.request, username=self.username):
-            LOG.debug("CHECK LOGIN SUCCESS")
+            LOG.error("CHECK LOGIN SUCCESS")
             return True
 
         if AuthHelper.check_api(self.api_key, self.user_acct.api_key):
-            LOG.debug("CHECK API SUCCESS")
+            LOG.error("CHECK API SUCCESS")
             return True
 
-        LOG.debug("FAILED AUTH CHECKS")
+        LOG.error("FAILED AUTH CHECKS")
         raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -124,7 +125,7 @@ class ApiAuthorize(object):
         """Verify api key set in constructor"""
         # if the user account is not activated then no go
         if not self.user.activated:
-            LOG.debug("API only call with deactivated account")
+            LOG.error("API only call with deactivated account")
             raise HTTPForbidden('Deactivated Account')
 
         if not AuthHelper.check_api(self.check_key, self.user.api_key):
@@ -168,17 +169,18 @@ class RequestWithUserAttribute(Request):
         # <your database connection, however you get it, the below line
         # is just an example>
         # dbconn = self.registry.settings['dbconn']
-        LOG.debug('in Request with Attribute')
+        LOG.error('in Request with Attribute')
         user_id = unauthenticated_userid(self)
-        LOG.debug(user_id)
+        LOG.error(user_id)
         if user_id is not None:
-            LOG.debug('user_id is not none')
+            LOG.error('user_id is not none')
 
             # this should return None if the user doesn't exist
             # in the database
             user = UserMgr.get(user_id=user_id)
-            LOG.debug(user)
+            LOG.error(user)
             return user
+
 
 class api_auth():
     """View decorator to set check the client is permitted
@@ -206,7 +208,7 @@ class api_auth():
         self.user_fetcher = user_fetcher
         self.admin_only = admin_only
         self.anon = anon
-        LOG.debug('API AUTH INIT')
+        LOG.error('API AUTH INIT')
 
     def __call__(self, action_):
         """ Return :meth:`wrap_action` as the decorator for ``action_``. """
@@ -249,7 +251,7 @@ class api_auth():
                 return action_(*args, **kwargs)
             else:
                 request.response.status_int = 403
-                return { 'error': "Not authorized for request." }
+                return {'error': "Not authorized for request."}
 
         if request.user is not None:
             if AuthHelper.check_login(request, username):
@@ -262,7 +264,13 @@ class api_auth():
             api_key = request.params.get(self.api_field, None)
             username = request.params.get('username', username)
 
-        elif hasattr(request, 'json_body') and self.api_field in request.json_body:
+        def is_json_auth_request(request):
+            if hasattr(request, 'json_body'):
+                if self.api_field in request.json_body:
+                    return True
+            return False
+
+        if is_json_auth_request(request):
             # we've got a ajax request with post data
             api_key = request.json_body.get(self.api_field, None)
             username = request.json_body.get('username', None)
@@ -271,9 +279,9 @@ class api_auth():
             # now get what this user should be based on the api_key
             request.user = self.user_fetcher(api_key=api_key)
 
-            # if there's a username in the url (rdict) then make sure the user the
-            # api belongs to is the same as the url. You can't currently use the
-            # api to get info for other users.
+            # if there's a username in the url (rdict) then make sure the user
+            # the api belongs to is the same as the url. You can't currently
+            # use the api to get info for other users.
             if request.user and request.user.username == username:
                 return action_(*args, **kwargs)
 
@@ -283,4 +291,4 @@ class api_auth():
 
         # otherwise, we're done, you're not allowed
         request.response.status_int = 403
-        return { 'error': "Not authorized for request." }
+        return {'error': "Not authorized for request."}

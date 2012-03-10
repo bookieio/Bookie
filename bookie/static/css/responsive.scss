@@ -1,0 +1,223 @@
+@import "base";
+
+/* MOBILE */
+@media all and (max-width: 768px) {
+    body {
+        font-size: 25px;
+        margin: .2em;
+    }
+
+    #body {
+        margin: 0;
+    }
+
+    .readable {
+        font-size: 16px;
+
+        h1 a.bmark {
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        #readable_content {
+            max-width: 98%;
+        }
+    }
+
+    .button span.desc {
+        display: none;
+    }
+
+    span[data-icon="\\"] {
+        display: none;
+    }
+
+
+
+
+    .buttons {
+        width: auto;
+    }
+
+    .button {
+        font-size: 25px;
+        line-height: inherit;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .user {
+        padding-right: .2em;
+    }
+
+    .navigation {
+        float: none;
+        width: 100%;
+
+        .button {
+            &.nav_button {
+                padding: .3em;
+                border-radius: 0;
+                margin-top: 0;
+            }
+        }
+    }
+
+    .controls {
+        clear: both;
+        margin: 1em 0;
+        padding: .5em 0;
+
+        div {
+            float: none;
+        }
+
+    }
+
+    .filter_control {
+        clear: both;
+        margin-top: 1em;
+        display: block;
+
+        input[type="submit"] {
+            display: none;
+        }
+
+        .yui3-bookie-tagcontrol-tags {
+            border: 2px solid #bbb;
+            box-shadow: 2px 2px 0 0 #666;
+
+        }
+
+    }
+
+    .data_list {
+        margin-top: 2em;
+
+        .bmark {
+            &:hover {
+                background-color: #FFF;
+
+            }
+
+            a {
+                font-size: 24px;
+            }
+
+            .description {
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .url, .url * {
+                opacity: 1;
+            }
+
+            .icon {
+                opacity: .7;
+            }
+
+            .tags {
+                display: block;
+                float: none;
+                padding-left: 0;
+                text-align: left;
+                max-width: 100%;
+
+                .tag {
+                    font-size: 20px;
+                }
+            }
+
+            .url {
+                display: none;
+            }
+
+            /* We float this right because you'll only have this if you don't
+             * have the name of the user that owns it. So you'll either get
+             * edit controls or the user it belongs to
+             */
+            .actions {
+                clear: both;
+                float: right;
+                padding-top: .3em;
+                padding-right: .3em;
+
+                .icon {
+                    font-size: 25px;
+                }
+
+                .readable {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    .form {
+        margin: 1em 0;
+        padding: .2em;
+
+        ul {
+            margin: 0;
+        }
+        li {
+            padding: .5em 0;
+        }
+
+        label {
+            text-align: left;
+            display: block;
+            margin: .3em 0;
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        input[type=text], input[type="url"], input[type="password"], textarea {
+            display: block;
+            width: 100%;
+            padding: 5px;
+            border: 1px solid $darkgrey;
+        }
+
+        input[type=submit] {
+            padding: 5px;
+            min-width: 5em;
+        }
+    }
+
+    /* Update the tagcontol with some more touch friendly buttons */
+    ul.yui3-bookie-tagcontrol-tags {
+        width: 95%;
+    }
+
+    li.yui3-bookie-tagcontrol-item {
+        padding: .2em .3em;
+    }
+
+    form ul .yui3-bookie-tagcontrol {
+        display: block;
+        ul {
+            width: 98%;
+        }
+    }
+
+    .yui3-bookie-tagcontrol li.yui3-aclist-item {
+        font-size: 26px;
+        padding-bottom: .5em;
+        margin: 5px 2px;
+    }
+
+    .account_info {
+        display: none;
+    }
+
+    .tabs .user_import {
+        display: none;
+    }
+}

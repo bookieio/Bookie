@@ -36,7 +36,8 @@ ACTIVATION_AGE = timedelta(days=3)
 def get_random_word(wordLen):
     word = ''
     for i in xrange(wordLen):
-        word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/&=')
+        word += random.choice(('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs'
+                               'tuvwxyz0123456789/&='))
     return word
 
 
@@ -263,7 +264,9 @@ class User(Base):
     def safe_data(self):
         """Return safe data to be sharing around"""
         hide = ['_password', 'password', 'is_admin', 'api_key']
-        return dict([(key, val) for key, val in dict(self).iteritems() if key not in hide])
+        return dict(
+            [(k, v) for k, v in dict(self).iteritems() if k not in hide]
+        )
 
     def deactivate(self):
         """In case we need to disable the login"""

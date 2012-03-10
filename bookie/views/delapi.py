@@ -129,7 +129,9 @@ def posts_get(request):
         if 'url' in params and params['url']:
             url = request.params['url']
             LOG.debug(url)
-            bmark = BmarkMgr.get_by_url(url=url, username=request.user.username)
+            bmark = BmarkMgr.get_by_url(
+                url=url,
+                username=request.user.username)
 
             if not bmark:
                 return HTTPNotFound()

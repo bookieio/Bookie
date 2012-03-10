@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js"></script>
+    <script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui-min.js"></script>
     <script src="/static/js/bookie/ytagcontrol.js"></script>
     <title>TagControl Tests</title>
 </head>

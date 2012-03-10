@@ -1,6 +1,3 @@
-/*jslint eqeqeq: false, browser: true, debug: true, onevar: true,
-         plusplus: false, newcap: false, */
-/*global _: false, window: false, self: false, escape: false, */
 /**
  * Bookie's View objects used to represent pages or parts of page content.
  *
@@ -21,6 +18,12 @@ YUI.add('bookie-view', function (Y) {
      */
     ns.BmarkListView = Y.Base.create('bookie-list-view', Y.View, [], {
         container_html: '<div class="bmark_list"/>',
+
+        /**
+         * @method _get_template
+         * @private
+         *
+         */
         _get_template: function () {
             return Y.one('#bmark_list').get('text');
         },
@@ -39,7 +42,7 @@ YUI.add('bookie-view', function (Y) {
         _init_pager: function () {
             this.pagers = [
                 new Y.bookie.PagerView(),
-                new Y.bookie.PagerView(),
+                new Y.bookie.PagerView()
             ];
 
             // bind the pager event
@@ -72,7 +75,7 @@ YUI.add('bookie-view', function (Y) {
             this.indicator.render();
         },
 
-        /*
+        /**
          * Fetch a dataset based on our current data
          *
          * @method _fetch_dataset
@@ -191,6 +194,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _prev_page
          * @param {Event} e
+         * @private
          *
          */
         _prev_page: function (e) {
@@ -231,17 +235,16 @@ YUI.add('bookie-view', function (Y) {
          */
         render: function () {
             var that = this,
+                pager_html;
+                idx = 0,
                 // Render this view's HTML into the container element.
                 html = this.get('container').set(
                     'innerHTML',
                     this.cTemplate(this.getAttrs())
                 );
-
             // start the request for our models
             this._fetch_dataset();
-
-            var pager_html = html.all('.paging');
-            var idx = 0;
+            pager_html = html.all('.paging'),
             pager_html.each(function (n) {
                 var p = that.pagers[idx];
                 n.appendChild(p.render());
@@ -391,6 +394,7 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _tags_changed
          * @param {Event} e
+         * @private
          *
          */
         _tags_changed: function (e) {
@@ -402,7 +406,7 @@ YUI.add('bookie-view', function (Y) {
 
             // and finally fetch the results
             this._fetch_dataset();
-        },
+        }
     }, {
         ATTRS: {
             api_callable: {
@@ -499,7 +503,7 @@ YUI.add('bookie-view', function (Y) {
 
             // and finally fetch the results
             this._fetch_dataset();
-        },
+        }
     }, {
         ATTRS: {
             api_callable: {
@@ -544,7 +548,7 @@ YUI.add('bookie-view', function (Y) {
             search_form: {
                 value: '#bmark_search'
             }
-        },
+        }
     });
 
 
@@ -947,7 +951,8 @@ YUI.add('bookie-view', function (Y) {
          */
         _show_api_key: function (e) {
             var key_div = Y.one('#api_key'),
-                key_container = Y.one('#api_key_container');
+                key_container = Y.one('#api_key_container'),
+                api;
 
             e.preventDefault();
 
@@ -956,7 +961,7 @@ YUI.add('bookie-view', function (Y) {
                 key_container.hide(true);
                 this._api_visible = false;
             } else {
-                var api = new Y.bookie.Api.route.UserApiKey(this.get('api_cfg'));
+                api = new Y.bookie.Api.route.UserApiKey(this.get('api_cfg'));
                 this._api_visible = true;
                 // make an ajax request to get the api key for this user and then
                 // show it in the container for it
@@ -1074,7 +1079,8 @@ YUI.add('bookie-view', function (Y) {
          */
         _change_password: function (e) {
             var that = this,
-                api_cfg = this.get('api_cfg');
+                api_cfg = this.get('api_cfg'),
+                api = new Y.bookie.Api.route.UserPasswordChange(api_cfg);
 
             e.preventDefault();
 
@@ -1087,13 +1093,12 @@ YUI.add('bookie-view', function (Y) {
                 new_password: Y.one('#new_password').get('value')
             });
 
-            var api = new Y.bookie.Api.route.UserPasswordChange(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message(data.message, true);
                     that._reset_password();
                 },
-                error: function (data, status_str, response, arguments) {
+                error: function (data, status_str, response, args) {
                     that._show_message(data.error, false);
                     that._reset_password();
                 }
@@ -1196,6 +1201,7 @@ YUI.add('bookie-view', function (Y) {
      *
      */
     ns.AccountInfoView = Y.Base.create('bookie-account-info-view', Y.View, [], {
+
         /**
          * Bind all UI events for the UI.
          *
@@ -1221,7 +1227,8 @@ YUI.add('bookie-view', function (Y) {
          */
         _update_account: function (e) {
             var that = this,
-                api_cfg = this.get('api_cfg');
+                api_cfg = this.get('api_cfg'),
+                api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
 
             e.preventDefault();
             Y.one('#account_msg').hide();
@@ -1232,12 +1239,11 @@ YUI.add('bookie-view', function (Y) {
                 email: Y.one('#email').get('value')
             });
 
-            var api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message('Account updated...', true);
                 },
-                error: function (data, status_str, response, arguments) {
+                error: function (data, status_str, response, args) {
                     console.log(data);
                     console.log(response);
                 }
@@ -1251,6 +1257,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1366,7 +1373,8 @@ YUI.add('bookie-view', function (Y) {
          */
         _forgotten: function (e) {
             var that = this,
-                api_cfg = this.get('api_cfg');
+                api_cfg = this.get('api_cfg'),
+                api = new Y.bookie.Api.route.SuspendUser(api_cfg);
 
             e.preventDefault();
 
@@ -1378,13 +1386,12 @@ YUI.add('bookie-view', function (Y) {
                 email: Y.one('#email').get('value')
             });
 
-            var api = new Y.bookie.Api.route.SuspendUser(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._clear();
                     that._show_message(data.message, true);
                 },
-                error: function (data, status_str, response, arguments) {
+                error: function (data, status_str, response, args) {
                     console.log(data);
                     console.log(response);
                 }
@@ -1398,6 +1405,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1473,11 +1481,13 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _account_reset
          * @param {Event} e
+         * @private
          *
          */
         _account_reset: function (e) {
             var that = this,
-                api_cfg = this.get('api_cfg');
+                api_cfg = this.get('api_cfg'),
+                api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);
 
             e.preventDefault();
 
@@ -1491,12 +1501,11 @@ YUI.add('bookie-view', function (Y) {
                 password: Y.one('#new_password').get('value')
             });
 
-            var api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message(data.message, true);
                 },
-                error: function (data, status_str, response, arguments) {
+                error: function (data, status_str, response, args) {
                     that._show_message(data.error, false);
                     console.log(data);
                     console.log(response);
@@ -1511,6 +1520,7 @@ YUI.add('bookie-view', function (Y) {
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1580,12 +1590,29 @@ YUI.add('bookie-view', function (Y) {
         },
 
         /**
+         * Use the API ping to check the settings the user wants to set.
+         *
+         * @method _ping_server
+         * @param {Object} api_cfg For the settings to test our Ping agsinst
+         *
+         */
+        _ping_server: function (opts, callbacks) {
+            var api = new Y.bookie.Api.route.Ping({
+                url: opts.api_url,
+                username: opts.api_username,
+                api_key: opts.api_key
+            });
+            api.call(callbacks);
+        },
+
+        /**
          * Display any message based on if the request to change is successful
          * or ended in error.
          *
          * @method _show_message
          * @param {String} msg
          * @param {Boolean} success
+         * @private
          *
          */
         _show_message: function (msg, success) {
@@ -1607,17 +1634,19 @@ YUI.add('bookie-view', function (Y) {
          *
          * @method _sync_bookmarks
          * @param {Event} e
+         * @private
          *
          */
         _sync_bookmarks: function (e) {
-            var opts = this.get('model');
-            var ind = new Y.bookie.Indicator({
-                target: Y.one('#sync')
-            });
+            var opts = this.get('model'),
+                api,
+                ind = new Y.bookie.Indicator({
+                    target: Y.one('#sync')
+                });
             ind.render();
             ind.show();
 
-            var api = new Y.bookie.Api.route.Sync({
+            api = new Y.bookie.Api.route.Sync({
                 url: opts.get('api_url'),
                 username: opts.get('api_username'),
                 api_key: opts.get('api_key')
@@ -1678,27 +1707,50 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         update_options: function (e) {
+            var that = this;
             e.preventDefault();
+            var msg_div = Y.one('#options_msg'),
+                opts = this.get('model'),
+                new_opts = {};
 
-            var msg_div = Y.one('#options_msg');
             msg_div.hide();
 
-            var opts = this.get('model');
             // fetch the new values from the form and then update our model
             // with them.
-            opts.set('api_url', Y.one('#api_url').get('value'));
-            opts.set('api_username', Y.one('#api_username').get('value'));
-            opts.set('api_key', Y.one('#api_key').get('value'));
+            new_opts.api_url = Y.one('#api_url').get('value');
+            new_opts.api_username = Y.one('#api_username').get('value');
+            new_opts.api_key = Y.one('#api_key').get('value');
 
-            if (Y.one('#cache_content').get('checked')) {
-                opts.set('cache_content', 'true');
-            } else {
-                opts.set('cache_content', 'false');
-            }
+            callbacks = {
+                success: function (data, response) {
+                    // make sure we were successful
+                    if (data.success) {
+                        opts.set('api_url', Y.one('#api_url').get('value'));
+                        opts.set('api_username', Y.one('#api_username').get('value'));
+                        opts.set('api_key', Y.one('#api_key').get('value'));
 
-            // one updated, now save it
-            opts.save()
-            this._show_message('Saved your settings...', true);
+                        if (Y.one('#cache_content').get('checked')) {
+                            opts.set('cache_content', 'true');
+                        } else {
+                            opts.set('cache_content', 'false');
+                        }
+
+                        // one updated, now save it
+                        opts.save();
+                        that._show_message('Saved your settings...', true);
+                    } else {
+                        that._show_message('I could not Ping the server with your settings. Server said: ' +
+                            data.message, false);
+                    }
+                },
+                error: function (data, status_str, response, args) {
+                    that._show_message('I could not Ping the server with your settings. Server said: ' +
+                        data.message, false);
+                }
+            };
+
+            // Let's do all this based on the status of the ping attempt;
+            this._ping_server(new_opts, callbacks);
         }
     }, {
         ATTRS: {

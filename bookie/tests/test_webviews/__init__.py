@@ -16,6 +16,7 @@ from bookie.models import bmarks_tags
 
 LOG = logging.getLogger(__name__)
 
+
 class BookieViewsTest(unittest.TestCase):
     """Test the normal web views user's user"""
 
@@ -28,7 +29,7 @@ class BookieViewsTest(unittest.TestCase):
                          username="admin",
                          desc=u"Bookie Website",
                          ext=u"Bookie Documentation Home",
-                         tags = u"bookmarks")
+                         tags=u"bookmarks")
 
         bmark_us.stored = datetime.now()
         bmark_us.updated = datetime.now()

@@ -17,28 +17,28 @@
     </div>
 
     <div class="actions">
-        <span aria-hidden="true" class="icon" title="{{prettystored}}" data-icon="\"></span>
+        <span aria-hidden="true" class="icon icon-calendar" title="{{prettystored}}"></span>
         <em class="icon">Date Stored</em>
 
         <a href="/bmark/readable/{{hash_id}}"
            title="View readable content"
            alt="View readable content"
            class="readable">
-           <span aria-hidden="true" class="icon" data-icon="E"></span>
+           <span aria-hidden="true" class="icon icon-eye-open"></span>
            <em class="icon">View readable content</em>
-        </a> 
+        </a>
 
         {{#if owner}}
             <a href="/{{username}}/edit/{{hash_id}}"
                 title="Edit the bookmark" alt="Edit the bookmark"
                 class="edit">
-                <span aria-hidden="true" class="icon" data-icon="p"></span>
+                <span aria-hidden="true" class="icon icon-pencil"></span>
                 <em class="icon">Edit bookmark</em>
             </a>
 
             <a href="#" title="Delete the bookmark" alt="Delete the bookmark"
                class="delete">
-                <span aria-hidden="true" class="icon" data-icon="*"></span>
+                <span aria-hidden="true" class="icon icon-remove"></span>
                 <em class="icon">Delete bookmark</em>
             </a>
        {{/if}}
@@ -51,7 +51,7 @@
     <div class="url" title="{{url}}">
         <a href="/bmark/readable/{{hash_id}}"
            title="View readable content" alt="View readable content">
-           <span aria-hidden="true" class="icon" data-icon="E"></span>
+           <span aria-hidden="true" class="icon icon-eye-open"></span>
            <em class="icon">View readable content</em>
         </a> {{url}}
     </div>
@@ -61,14 +61,15 @@
 <script type="text/template" id="previous_control">
     {{#if show_previous}}
         <a href="#" class="button previous"><span aria-hidden="true"
-        class="icon" data-icon="["></span><span class="desc">Prev</span></a>
+        class="icon icon-arrow-left"></span><span class="desc">Prev</span></a>
     {{/if}}
 </script>
 
 <script type="text/template" id="next_control">
     {{#if show_next}}
-        <a href="#" class="button next"><span class="desc">Next</span><span class="icon"
-        aria-hidden="true" data-icon="]"></span></a>
+        <a href="#" class="button next"><span class="desc">Next</span><span
+        class="icon icon-arrow-right"
+        aria-hidden="true"></span></a>
     {{/if}}
 </script>
 
@@ -82,7 +83,7 @@
             <div class="buttons add" style="display: inline-block; vertical-align: middle;">
                 <a href="/{{current_user}}/new"
                     class="button">
-                    <span class="icon" data-icon="&"
+                    <span class="icon icon-plus"
                     aria-hidden="true"></span> <span class="desc">Add Bookmark</span>
                 </a>
             </div>

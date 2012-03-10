@@ -2,6 +2,27 @@
 Hacking Events
 =============================
 
+Sprint: PyCon! March 12th-15th
+--------------------------------
+:Location: PyCon Sprints!
+:Time: All the time!
+
+Tasks
+~~~~~~
+- Get 0.4 out the door, this means FF extension completed and do a release
+- Start 0.5 release, possible items include:
+
+    - Signup system with throttled registrations/waiting list + api/ui for it
+    - In place editing
+    - Easy reader UI for !toread bmarks
+    - Look at adding smarter tag suggestions (js page parser + smarter server
+      side)
+    - Celery/out of process worker system for things
+    - Rework the url parsing worker for the celery backend, requests, async
+    - get yeti and browser functional tests running SST?
+    - better mobile/responsive UI bits
+    - Stats stats and more stats API/UI
+
 Sprint: Feb 25th
 -----------------
 Location: My Place

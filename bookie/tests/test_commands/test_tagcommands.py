@@ -5,6 +5,9 @@ from bookie.lib.tagcommands import COMMANDLIST
 from bookie.lib.tagcommands import Commander
 from bookie.lib.tagcommands import IsRead
 from bookie.lib.tagcommands import ToRead
+from bookie.models import DBSession
+
+from bookie.tests import empty_db
 
 
 # tags act as a dict on the Bmark object, so we're just mocking things
@@ -13,6 +16,7 @@ class BmarkMock(object):
 
     def __init__(self):
         self.tags = {}
+
 
 class CommandMock(object):
 
@@ -29,11 +33,13 @@ class TestTagCommander(TestCase):
         self.saved_commandlist = COMMANDLIST
         for key in COMMANDLIST.keys():
             del(COMMANDLIST[key])
+        DBSession.execute("INSERT INTO tags (name) VALUES ('toread')")
 
     def tearDown(self):
         """Make sure we clear the commands we put in there"""
         for key in self.saved_commandlist:
             COMMANDLIST[key] = self.saved_commandlist[key]
+        empty_db()
 
     def test_command_finds_commands(self):
         """Verify we find commands that we know about"""
@@ -52,7 +58,6 @@ class TestTagCommander(TestCase):
 
         COMMANDLIST['!toread'] = CommandMock
 
-
         bm = BmarkMock()
         bm.tags['!toread'] = True
         commander = Commander(bm)
@@ -70,11 +75,13 @@ class TestToRead(TestCase):
         self.saved_commandlist = COMMANDLIST
         for key in COMMANDLIST.keys():
             del(COMMANDLIST[key])
+        DBSession.execute("INSERT INTO tags (name) VALUES ('toread')")
 
     def tearDown(self):
         """Make sure we clear the commands we put in there"""
         for key in self.saved_commandlist:
             COMMANDLIST[key] = self.saved_commandlist[key]
+        empty_db()
 
     def test_toread_command(self):
         """If marked toread, then should end up with tag 'toread' on it"""

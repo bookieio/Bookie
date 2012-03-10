@@ -1,5 +1,6 @@
 """Create routes here and gets returned into __init__ main()"""
 
+
 def build_routes(config):
     """Add any routes to the config"""
 
@@ -30,10 +31,10 @@ def build_routes(config):
     config.add_route("user_bmark_recent_tags", "{username}/recent/*tags")
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
-    config.add_route("user_bmark_edit_error", "{username}/edit_error/{hash_id}")
+    config.add_route("user_bmark_edit_error",
+        "{username}/edit_error/{hash_id}")
     config.add_route("user_bmark_new", "{username}/new")
     config.add_route("user_bmark_new_error", "{username}/new_error")
-
 
     # config.add_route("bmark_delete", "/bmark/delete")
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -63,7 +64,6 @@ def build_routes(config):
                      xhr=True)
     config.add_route("user_search_results_rest", "{username}/results*terms")
 
-
     config.add_route("redirect", "redirect/{hash_id}")
     config.add_route("user_redirect", "{username}/redirect/{hash_id}")
 
@@ -76,6 +76,11 @@ def build_routes(config):
     #
     # NEW API
     #
+
+    # ping checks
+    config.add_route('api_ping', '/api/v1/{username}/ping', request_method='GET')
+    config.add_route('api_ping_missing_user', '/api/v1/ping', request_method='GET')
+    config.add_route('api_ping_missing_api', '/ping', request_method='GET')
 
     # auth related
     config.add_route("api_user_account",
@@ -112,14 +117,14 @@ def build_routes(config):
     config.add_route('api_bmarks_user_tags', 'api/v1/{username}/bmarks/*tags')
 
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
-    config.add_route('api_bmarks_popular_user', 'api/v1/{username}/bmarks/popular')
-
-
-
+    config.add_route('api_bmarks_popular_user',
+        'api/v1/{username}/bmarks/popular')
 
     # user bookmark api calls
-    config.add_route("api_bmark_add", "/api/v1/{username}/bmark", request_method="POST")
-    config.add_route("api_bmark_update", "/api/v1/{username}/bmark/{hash_id}", request_method="POST")
+    config.add_route("api_bmark_add", "/api/v1/{username}/bmark",
+        request_method="POST")
+    config.add_route("api_bmark_update", "/api/v1/{username}/bmark/{hash_id}",
+        request_method="POST")
     config.add_route("api_extension_sync", "/api/v1/{username}/extension/sync")
 
     config.add_route("api_bmark_hash",
@@ -133,7 +138,6 @@ def build_routes(config):
                      "/api/v1/{username}/tags/complete")
     config.add_route("api_tag_complete",
                      "/api/v1/tags/complete")
-
 
     # admin api calls
     config.add_route("api_admin_readable_todo",

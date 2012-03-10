@@ -186,7 +186,7 @@ YUI({
                 API_CFG = {
                     url: 'http://127.0.0.1:6543/api/v1',
                     username: 'admin',
-                    api_key: '2dcf75460cb5',
+                    api_key: '2dcf75460cb5'
                 },
                 api = new Y.bookie.Api.route.TagComplete(API_CFG);
 
@@ -255,7 +255,7 @@ YUI({
                 API_CFG = {
                     url: 'http://127.0.0.1:6543/api/v1',
                     username: 'admin',
-                    api_key: '2dcf75460cb5',
+                    api_key: '7745ac02c6dc'
                 },
                 api = new Y.bookie.Api.route.UserApiKey(API_CFG);
 
@@ -263,6 +263,95 @@ YUI({
             this.wait(1000);
         },
 
+        testApiPing: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(true, data.success);
+                            Y.Assert.areEqual("Looks good", data.message);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    api_key: '7745ac02c6dc'
+                },
+                api = new Y.bookie.Api.route.Ping(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
+        testApiPingFailsMissingv1: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(false, data.success);
+                            Y.Assert.areEqual("The API url should be /api/v1", data.message);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/',
+                    username: 'admin',
+                    api_key: '7745ac02c6dc'
+                },
+                api = new Y.bookie.Api.route.Ping(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
+        testApiPingFailsNoAuth: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('200', request.status);
+                            Y.Assert.areEqual(false, data.success);
+                            Y.Assert.areEqual("Missing username in your api url.", data.message);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    api_key: '7745ac02c6dc'
+                },
+                api = new Y.bookie.Api.route.Ping(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        },
+
+        testApiPingFailsBadAuth: function () {
+            var that = this,
+                callbacks = {
+                    success: function (data, request) {
+                        console.log('should not be success, but 403');
+                    },
+                    error: function (data, status_str, response, args) {
+                        that.resume(function () {
+                            Y.Assert.areEqual('Not authorized for request.',
+                                data.error);
+                            Y.Assert.areEqual('Forbidden', status_str);
+                        });
+                    }
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    api_key: 'badauthkey'
+                },
+                api = new Y.bookie.Api.route.Ping(API_CFG);
+
+            api.call(callbacks);
+            this.wait(1000);
+        }
     });
 
     Y.Test.Runner.add(api_test);
