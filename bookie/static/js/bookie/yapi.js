@@ -78,7 +78,7 @@ YUI.add('bookie-api', function (Y) {
             cfg.data = Y.JSON.stringify(cfg.data);
         }
 
-        cfg.args = args;
+        cfg.arguments = args;
         request = Y.io(url, cfg);
     };
 
@@ -201,7 +201,6 @@ YUI.add('bookie-api', function (Y) {
                 cfg = this.build_cfg();
 
             args.callbacks = callbacks;
-
             request_handler(this.build_url(cfg.data),
                             cfg,
                             args);
@@ -406,8 +405,7 @@ YUI.add('bookie-api', function (Y) {
                         current: current_tags
                     }
                 });
-                Y.bookie.Api.route.TagComplete.superclass.call.apply(this,
-                                                                     args);
+                Y.bookie.Api.route.TagComplete.superclass.call.apply(this, arguments);
             }
         }, {
             ATTRS: {
@@ -1029,6 +1027,11 @@ YUI.add('bookie-api', function (Y) {
             initializer: function (cfg) {
             }
         }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/ping'
+                }
+            }
         }
     );
 
