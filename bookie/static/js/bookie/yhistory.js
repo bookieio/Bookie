@@ -5,7 +5,7 @@
  * @module history
  *
  */
-YUI.add('bookie-history', function (Y) {
+YUI.add('bookie-history-module', function (Y) {
     var ns = Y.namespace('bookie');
 
     ns.BmarkListHistory = Y.Base.create('bookie-history', Y.Base, [], {

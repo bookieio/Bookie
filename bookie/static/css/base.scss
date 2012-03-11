@@ -1,4 +1,231 @@
+@import "fontawesome";
 
+// main site colors
+$altcolor: #990000;
+$bluegrey: #363d52; // used in logo
+$lightgrey: #CCCCCC;
+$darkgrey: #333333;
+$hover_row: rgba(155, 175, 235, 0.2);
+
+// button colors
+$button_back: #EEEEEE;
+$button_border: #bbbbbb;
+$button_shadow: #535353;
+$text-shadow: #ffffff;
+
+// calendar colors
+$calendar_back: #FF0000;
+$calendar_grad: #FF4444;
+
+// bmark colors
+$links: #003366;
+
+.icon {
+    color: $altcolor;
+    vertical-align: top;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    vertical-align: bottom;
+    font-size: 12px;
+    padding: 0 5px;
+}
+
+em.icon {
+    left: -99999px;
+    position: absolute;
+}
+
+@mixin cabin() {
+    font-family: 'Cabin', sans-serif;
+}
+
+@mixin cabin_sketch() {
+    font-family: 'Cabin Sketch',arial,helvetica,clean,sans-serif;
+}
+
+@mixin monospace() {
+    font-family: Courier New, Courier, monospaced;
+}
+
+@mixin center() {
+    text-align: center;
+}
+
+@mixin right() {
+    text-align: right;
+}
+
+
+@mixin button_base {
+    color: $darkgrey;
+    background: $button_back;
+    border: 1px solid $button_border;
+    box-shadow: 1px 1px 0 0 $button_shadow;
+}
+
+@mixin button_base_hover {
+   background: darken($button_back, 5%);
+   -moz-box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
+   -webkit-box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
+   box-shadow: 1px 1px 0 0 darken($button_shadow, 5%);
+   color: darken($darkgrey, 5%);
+   cursor: pointer;
+}
+
+
+body {
+    @include cabin;
+}
+
+a {
+    color: $links;
+    text-decoration: none;
+}
+
+#body {
+    margin: 1em;
+}
+
+#readable_content {
+    font-family: Garamond, serif;
+    font-size: 1.5em;
+    padding: 1em;
+    max-width: 40em;
+
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+    -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.1);;
+
+    h1 {
+        border-bottom: 1px solid $darkgrey;
+    }
+
+    code, pre {
+        @include monospace;
+    }
+
+    a {
+        color: lighten($links, 20%);
+        text-decoration: none;
+    }
+}
+
+.center {
+    @include center;
+}
+
+.right {
+    @include right;
+}
+
+.heading {
+    width: 100%;
+
+}
+
+.logo {
+    width: auto;
+    display: inline;
+}
+
+.navigation {
+    display: inline;
+    float: right;
+
+    a {
+        text-decoration: none;
+    }
+}
+
+.logo {
+    @include cabin_sketch;
+    padding-left: .1em;
+    font-size: 2em;
+    text-decoration: none;
+    color: $bluegrey;
+    text-shadow: 1px 1px 0 $lightgrey;
+
+    .alt_logo {
+        color: $darkgrey;
+        font-size: .6em;
+        text-shadow: 2px 2px 2px $lightgrey;
+        @include cabin;
+    }
+}
+
+.footer {
+    color: #666666;
+    margin-top: 5em;
+    font-size: .8em;
+    margin-bottom: 1em;
+
+    a {
+        color: #666666;
+        text-decoration: none;
+    }
+
+    .body {
+        padding-right: 1em;
+    }
+}
+
+.button {
+    @include center;
+    @include button_base;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    font: 12px arial,helvetica,clean,sans-serif;
+    font-weight: bold;
+    line-height: 2.0;
+    padding: 2px 4px 3px;
+    text-shadow: 0 1px 0 $text-shadow;
+    text-decoration: none;
+
+    &:hover {
+        @include button_base_hover;
+    }
+
+    &.nav_button {
+        padding: 8px 10px 9px;
+        width: 150px;
+        vertical-align: bottom;
+
+        &:active {
+            @include button_base_hover;
+            color: black;
+        }
+    }
+
+    .icon {
+        color: $darkgrey;
+        vertical-align: middle;
+    }
+}
+
+.user {
+    float: right;
+    opacity: .5;
+    display: inline-block;
+    width: 9em;
+    overflow: hidden;
+    text-align: right;
+    padding-right: 1em;
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.superblytagitems {
+    li {
+        margin: 3px 3px 0px 3px;
+    }
+}
+
+a.button_minimal {
+    text-decoration: none;
+}
 
 form {
 
@@ -512,5 +739,4 @@ form ul .yui3-bookie-tagcontrol {
 
 .yui3-bookie-indicator-hidden {
     visibility: hidden;
-    }
 }
