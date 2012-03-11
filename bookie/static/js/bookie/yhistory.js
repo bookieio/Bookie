@@ -31,7 +31,6 @@ YUI.add('bookie-history-module', function (Y) {
                 this.set('terms', e.tags);
             }, this);
 
-
             // watch the history for pop states such as when a user hits back,
             // etc
             Y.on('history:change', function (ev) {
@@ -48,7 +47,6 @@ YUI.add('bookie-history-module', function (Y) {
                     });
                 }
 
-                debugger;
                 // if we've popped the state, such as with a back button, then
                 // update the history state to be the prev state.
                 if (ev.src === Y.HistoryHTML5.SRC_POPSTATE) {
@@ -67,7 +65,6 @@ YUI.add('bookie-history-module', function (Y) {
          *
          */
         _build_url: function () {
-            debugger;
             var terms = this.get('terms').join('/');
             var pager = this.get('pager');
             var qs = Y.QueryString.stringify({
@@ -87,8 +84,6 @@ YUI.add('bookie-history-module', function (Y) {
          *
          */
         _update: function (ev) {
-
-            debugger;
             this.history.add({
                 pager: this.get('pager').getAttrs(),
                 terms: this.get('terms')
@@ -162,5 +157,5 @@ YUI.add('bookie-history-module', function (Y) {
     });
 
 }, '0.1', {
-    requires: ['history', 'querystring']
+    requires: ['history', 'querystring', 'base']
 });

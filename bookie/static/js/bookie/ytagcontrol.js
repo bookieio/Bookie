@@ -446,8 +446,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 return;
             }
 
-            console.log(e.type);
-
             // continue on with what you were doing
             // these are events and keystrokes we want to throttle
             // external activity for
