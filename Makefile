@@ -176,16 +176,17 @@ js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 .PHONY: clean_js
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
-	rm $(CHROME_BUILD)/y*.js
+	rm $(CHROME_BUILD)/*.js
 	rm -rf jsdoc
 
-$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/y*-min.js
+$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
+	rm $(JS_BUILD_PATH)/b/meta.js || true
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
 		-x -min.js$
-$(JS_BUILD_PATH)/b/y%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/y%.js
+$(JS_BUILD_PATH)/b/%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
-$(JS_BUILD_PATH)/b/y%.js: $(BOOKIE_JS)/y%.js
+$(JS_BUILD_PATH)/b/%.js: $(BOOKIE_JS)/%.js
 	cp $? $(JS_BUILD_PATH)/b/
 	cp $? $(CHROME_BUILD)
 $(JS_BUILD_PATH)/b:
