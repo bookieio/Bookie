@@ -38,7 +38,7 @@ all: deps develop bookie.db db_up js chrome_css
 clean: clean_js clean_css
 
 .PHONY: clean_all
-clean_all: clean_venv clean_js clean_css clean_chrome
+clean_all: clean_venv clean_js clean_css clean_chrome clean_downloadcache
 
 install: $(BOOKIE_INI) all first_bookmark
 
@@ -176,7 +176,6 @@ js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
 .PHONY: clean_js
 clean_js:
 	rm -rf $(JS_BUILD_PATH)/*
-	rm -rf /tmp/yui
 	rm $(CHROME_BUILD)/y*.js
 	rm -rf jsdoc
 
@@ -191,13 +190,19 @@ $(JS_BUILD_PATH)/b/y%.js: $(BOOKIE_JS)/y%.js
 	cp $? $(CHROME_BUILD)
 $(JS_BUILD_PATH)/b:
 	mkdir -p $(JS_BUILD_PATH)/b
-$(JS_BUILD_PATH)/y:
+
+$(JS_BUILD_PATH)/y: download-cache/yui
 	mkdir -p $(JS_BUILD_PATH)/y
-	mkdir /tmp/yui
-	git clone --depth 1 $(YUIGIT) /tmp/yui
-	cd /tmp/yui && git checkout $(YUITAG)
-	cp -r /tmp/yui/build/* $(JS_BUILD_PATH)/y
-	rm -rf /tmp/yui
+	cp -r download-cache/yui/build/* $(JS_BUILD_PATH)/y
+
+download-cache/yui:
+	mkdir -p download-cache/yui
+	git clone --depth 1 $(YUIGIT) download-cache/yui
+	cd download-cache/yui && git checkout $(YUITAG)
+
+.PHONY: clean_downloadcache
+clean_downloadcache:
+	rm -rf download-cache
 
 static_upload: js css
 	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
