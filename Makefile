@@ -147,19 +147,22 @@ jstest_index:
 	xdg-open http://127.0.0.1:6543/tests/index
 .PHONY: test_api
 test_api:
-	xdg-open http://127.0.0.1:6543/tests/test_api
-.PHONY: test_model
-test_model:
-	xdg-open http://127.0.0.1:6543/tests/test_model
-.PHONY: test_view
-test_view:
-	xdg-open http://127.0.0.1:6543/tests/test_view
+	xdg-open file://$(WD)/bookie/static/js/tests/test_api.html
+.PHONY: test_history
+test_history:
+	xdg-open file://$(WD)/bookie/static/js/tests/test_history.html
 .PHONY: test_indicator
 test_indicator:
-	xdg-open http://127.0.0.1:6543/tests/test_indicator
+	xdg-open file://$(WD)/bookie/static/js/tests/test_indicator.html
+.PHONY: test_model
+test_model:
+	xdg-open file://$(WD)/bookie/static/js/tests/test_model.html
 .PHONY: test_tagcontrol
 test_tagcontrol:
-	xdg-open http://127.0.0.1:6543/tests/test_tagcontrol
+	xdg-open file://$(WD)/bookie/static/js/tests/test_tagcontrol.html
+.PHONY: test_view
+test_view:
+	xdg-open file://$(WD)/bookie/static/js/tests/test_view.html
 
 .PHONY: pep8
 pep8:
