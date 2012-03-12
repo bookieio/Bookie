@@ -8,7 +8,15 @@
 YUI.add('bookie-history-module', function (Y) {
     var ns = Y.namespace('bookie');
 
+    /**
+     * Manage out interaction with the HTML5 history implementation.
+     *
+     * @class BmarkListHistory
+     * @extends Y.Base
+     *
+     */
     ns.BmarkListHistory = Y.Base.create('bookie-history', Y.Base, [], {
+
         /**
          * Watch for any changes that should effect the history.
          *
@@ -78,6 +86,7 @@ YUI.add('bookie-history-module', function (Y) {
          *
          * @method _update
          * @param {Event} ev
+         * @private
          *
          */
         _update: function (ev) {
