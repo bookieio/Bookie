@@ -234,7 +234,7 @@ YUI.add('bookie-view', function (Y) {
          */
         render: function () {
             var that = this,
-                pager_html;
+                pager_html,
                 idx = 0,
                 // Render this view's HTML into the container element.
                 html = this.get('container').set(
@@ -243,7 +243,7 @@ YUI.add('bookie-view', function (Y) {
                 );
             // start the request for our models
             this._fetch_dataset();
-            pager_html = html.all('.paging'),
+            pager_html = html.all('.paging');
             pager_html.each(function (n) {
                 var p = that.pagers[idx];
                 n.appendChild(p.render());
