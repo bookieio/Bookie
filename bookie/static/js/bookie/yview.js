@@ -40,14 +40,30 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _init_pager: function () {
-            this.pagers = [
+            var that = this;
+            that.pagers = [
                 new Y.bookie.PagerView(),
                 new Y.bookie.PagerView()
             ];
 
+            that.set('pager', new Y.bookie.PagerModel());
+
+            // If the pager is ever updated, make sure we watch it for changes
+            // again.
+            that.after('pagerChange', function (ev) {
+                // Setup an event to watch out pagerModel.
+                // Now that we've incremented the page let's fetch a new set of
+                // results.
+                that.get('pager').after('pageChange', function (ev) {
+                    if (ev.newVal !== ev.prevVal) {
+                        that._fetch_dataset();
+                    }
+                }, that);
+            }, this);
+
             // bind the pager event
-            Y.on('pager:next', this._next_page, this);
-            Y.on('pager:previous', this._prev_page, this);
+            Y.on('pager:next', that._next_page, that);
+            Y.on('pager:previous', that._prev_page, that);
         },
 
         /**
@@ -85,6 +101,7 @@ YUI.add('bookie-view', function (Y) {
         _fetch_dataset: function () {
             var that = this,
                 pager = this.get('pager');
+
 
             // make sure we update the api paging information with the latest
             // from our pager
@@ -138,10 +155,6 @@ YUI.add('bookie-view', function (Y) {
         _next_page: function (e) {
             var pager = this.get('pager');
             pager.next();
-
-            // now that we've incremented the page let's fetch a new set of
-            // results
-            this._fetch_dataset();
         },
 
         /**
@@ -156,6 +169,7 @@ YUI.add('bookie-view', function (Y) {
          */
         _update_pagerview: function () {
             var pager = this.get('pager');
+
 
             // if the current data count is < the pager page count, hide next
             if (this.models.length < pager.get('count')) {
@@ -197,18 +211,8 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _prev_page: function (e) {
-            var pager = this.get('pager'),
-                old_page = pager.get('page');
-
+            var pager = this.get('pager');
             pager.previous();
-
-            // only update the view if we did change pages (e.g. not on page
-            // 1 already)
-            if (old_page !== pager.get('page')) {
-                // now that we've incremented the page let's fetch a new set
-                // of results
-                this._fetch_dataset();
-            }
         },
 
         /**

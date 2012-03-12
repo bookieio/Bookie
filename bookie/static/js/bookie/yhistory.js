@@ -36,23 +36,22 @@ YUI.add('bookie-history-module', function (Y) {
                 // if we've got an empty history, then set the current passed
                 // info as the initial state (chrome popevent on page load for
                 // instance)
-                if (!this.history.get('pager')) {
-                    this.history.replace({
-                        pager: this.get('pager').getAttrs(),
-                        terms: this.get('terms')
-                    }, {
-                        title: 'Viewing page: ' + this.get('pager').get('page') + 1,
-                        url  : this._build_url()
-                    });
-                }
-
-                // if we've popped the state, such as with a back button, then
-                // update the history state to be the prev state.
                 if (ev.src === Y.HistoryHTML5.SRC_POPSTATE) {
-                    this._update();
-                }
-            }, this);
+                    if (!this.history.get('pager') && !Y.Lang.isValue(ev.newval)) {
+                        this.get('pager').set('page', 0);
+                    } else {
+                        // ok so now we need to replace the information based
+                        // on the newVal page and terms list
+                        if (ev.newVal.pager.page !== this.get('pager').get('page')) {
+                            this.get('pager').set('page', ev.newVal.pager.page);
+                        }
 
+                        // if the terms list is different update that as well
+                        // @todo
+                    }
+                }
+
+            }, this);
         },
 
         /**
@@ -82,13 +81,23 @@ YUI.add('bookie-history-module', function (Y) {
          *
          */
         _update: function (ev) {
-            this.history.add({
-                pager: this.get('pager').getAttrs(),
-                terms: this.get('terms')
-            }, {
-                title: 'Viewing page: ' + this.get('pager').get('page') + 1,
-                url  : this._build_url()
-            });
+            // COMPLETE HACK ALERT @todo
+            // The issue is that when we catch pop events we often have to
+            // catch/update the pager's page manaully. This fires a change
+            // event and a pop state ends up running an add event because of
+            // the code below.
+            // Since most progressions are up pages/back pages, we're going to
+            // attempt to only add to the history if this was a valid add
+            // event, the new page is > prev page.
+            if (ev.newVal > ev.prevVal) {
+                this.history.add({
+                    pager: this.get('pager').getAttrs(),
+                    terms: this.get('terms')
+                }, {
+                    title: 'Viewing page: ' + this.get('pager').get('page') + 1,
+                    url  : this._build_url()
+                });
+            }
         },
 
         /**
