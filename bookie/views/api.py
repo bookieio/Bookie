@@ -275,7 +275,6 @@ def bmark_remove(request):
 @api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request):
     """Get a list of the bmarks for the api call"""
-    LOG.debug('BMARK RECENT')
     rdict = request.matchdict
     params = request.params
 
@@ -302,6 +301,12 @@ def bmark_recent(request):
     # string in a query string
     if not tags and 'tag_filter' in params:
         tags = params.get('tag_filter').split()
+
+    # @todo fix this!
+    # if we allow showing of content the query hangs and fails on the
+    # postgres side. Need to check the query and figure out what's up.
+    # see bug #142
+    with_content = False
 
     recent_list = BmarkMgr.find(limit=count,
                            order_by=Bmark.stored.desc(),
