@@ -292,6 +292,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
             // if you click on anywhere within the ui, focus the input box
             this.ui.on('click', function (e) {
+                entry_input.blur();
                 entry_input.focus();
             }, this);
 
