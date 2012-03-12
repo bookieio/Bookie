@@ -9,6 +9,18 @@ YUI({
     });
     yconsole.render('#log');
 
+
+    function generate_random_string() {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+        var string_length = 8;
+        var randomstring = '';
+        for (var i=0; i<string_length; i++) {
+            var rnum = Math.floor(Math.random() * chars.length);
+            randomstring += chars.substring(rnum,rnum+1);
+        }
+        return randomstring;
+    }
+
     var A = Y.Assert,
         model_test = new Y.Test.Case({
             name: "Model Tests",
@@ -30,7 +42,7 @@ YUI({
             test_model: function () {
                 return new Y.bookie.Bmark({
                     'bid': 1,
-                    'hash_id': "testhash",
+                    'hash_id': generate_random_string(),
                     'description': "description",
                     'extended': "longer description",
                     'stored': "2011-11-10 20:57:40.273044",
@@ -136,7 +148,9 @@ YUI({
                 ]
 
                 var bmarks = new Y.bookie.BmarkList();
-                bmarks.add(json_bmarks);
+                Y.Array.each(json_bmarks, function (b) {
+                    bmarks.add(b);
+                });
 
                 A.areEqual(3, bmarks.size(),
                     "The model list should be 3 long");
@@ -221,7 +235,7 @@ YUI({
                 // We should have some sane defaults for our config
                 var m = new Y.bookie.OptionsModel();
 
-                A.areEqual('https://bmark.us', m.get('api_url'));
+                A.areEqual('https://bmark.us/api/v1', m.get('api_url'));
                 A.areEqual('username', m.get('api_username'));
                 A.areEqual('XXXXXX', m.get('api_key'));
                 A.areEqual('true', m.get('cache_content'));
@@ -233,7 +247,7 @@ YUI({
                 var m = new Y.bookie.OptionsModel();
                 m.save();
 
-                A.areEqual('https://bmark.us', localStorage.getItem('api_url'));
+                A.areEqual('https://bmark.us/api/v1', localStorage.getItem('api_url'));
                 A.areEqual('username', localStorage.getItem('api_username'));
                 A.areEqual('XXXXXX', localStorage.getItem('api_key'));
                 A.areEqual('true', localStorage.getItem('cache_content'));
