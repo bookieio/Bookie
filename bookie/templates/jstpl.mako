@@ -109,13 +109,3 @@
         <input name="tag_filter" id="tag_filter" value=""/>
     </div>
 </script>
-
-
-<script type="text/template" id="bmark_search">
-    <form id="bmark_search" name="bmark_search">
-            <input type="text" id="search_phrase" value="{{phrase}}"/>
-            <input type="hidden" id="with_content" name="with_content"
-            value="true" />
-            <input type="submit"/>
-    </form>
-</script>

@@ -99,7 +99,6 @@ YUI.add('bookie-view', function (Y) {
                         new_nodes = new Y.NodeList();
 
                     // build models out of our data
-
                     that.models = Y.Array.map(data[that.get('results_key')],
                         function (bmark) {
                             var b = new Y.bookie.Bmark(bmark),
@@ -411,6 +410,7 @@ YUI.add('bookie-view', function (Y) {
         ATTRS: {
             api_callable: {
                 readonly: true,
+
                 // then there's a user in our resource path, make the api call a
                 // UserBmarksAll vs BmarksAll
                 getter: function () {
@@ -444,59 +444,18 @@ YUI.add('bookie-view', function (Y) {
      * @extends BmarkListView
      *
      */
-    ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.BmarkListView, [], {
-
+    ns.SearchingBmarkListView = Y.Base.create('tagcontrol-bookie-list-view', ns.TagControlBmarkListView, [], {
         /**
-         * Standard initializer, note that this ends up being "appended" not
-         * replacing the parent's initializer method.
+         * Handle when tags in the control are changed.
          *
-         * @method initializer
-         * @param {Object} cfg
-         * @event tag:add Handle a tag:add event so that we can help add it to
-         *     the search in question.
-         *
-         */
-        initializer: function (cfg) {
-            // if there are tags added/removed form the TagControl, then make
-            // sure we update the list accordingly
-            Y.one('body').delegate('submit', this._search, 'form#bmark_search', this);
-
-            if (cfg.phrase) {
-                this.set('phrase', cfg.phrase.split(' '));
-                this.api.set('phrase', this.get('phrase'));
-            }
-
-            // if the tag:add event is fired, then we want to add that tag to
-            // our search and reseach
-            Y.on('tag:add', function (e) {
-                // the tag will be in the event
-                var input = Y.one('#search_phrase'),
-                    current = Y.one('#search_phrase').get('value');
-
-                input.set('value', [current, e.tag].join(' '));
-
-                // total hack to reuse the _search method
-                this._search({preventDefault: function () {}});
-            }, this);
-        },
-
-        /**
-         * Update our result set from a search of the user.
-         *
-         * @method _search
+         * @method _tags_changed
          * @param {Event} e
          * @private
          *
          */
-        _search: function (e) {
-            e.preventDefault();
-            var phrase = Y.one('#search_phrase').get('value');
-
-            // update our data base don the current form information
-            this.set('phrase', phrase.split(' '));
-
-            // then make sure our api calls are updated with that data
-            this.api.set('phrase', this.get('phrase'));
+        _tags_changed: function (e) {
+            // update the api data with the tags list
+            this.api.set('phrase', e.tags);
 
             // update the pager back to page 1
             this.get('pager').set('page', 0);
@@ -504,6 +463,7 @@ YUI.add('bookie-view', function (Y) {
             // and finally fetch the results
             this._fetch_dataset();
         }
+
     }, {
         ATTRS: {
             api_callable: {
@@ -520,33 +480,30 @@ YUI.add('bookie-view', function (Y) {
                 }
             },
 
-            filter_control: {
-                getter: function () {
-                    var phrase = this.get('phrase');
-                    return Y.Handlebars.compile(
-                        Y.one('#bmark_search').get('text')
-                    )({
-                        phrase: phrase ? phrase.join(' ') : ''
-                    });
-                }
-            },
-
-            results_key: {
-                value: 'search_results',
-                readonly: true
+            /**
+             * The list of phrase bits to search on split on list.
+             *
+             * @attribute phrase
+             * @default []
+             * @type Array
+             *
+             */
+            phrase: {
+                value: []
             },
 
             /**
-             * Where is the search form input we're getting input to search
-             * against from?
+             * Where in the results can we find out bmarks?
              *
-             * @attribute search_form
-             * @default '#bmark_search'
+             * @attribute results_key
+             * @readonly
+             * @default 'search_results'
              * @type String
              *
              */
-            search_form: {
-                value: '#bmark_search'
+            results_key: {
+                value: 'search_results',
+                readonly: true
             }
         }
     });

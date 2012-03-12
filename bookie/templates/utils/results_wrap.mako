@@ -8,9 +8,8 @@
 <%def name="add_js()">
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('node', 'console', 'bookie-view', 'bookie-model',  function (Y) {
-            // set the phrase to the input
-
+        YUI().use('node', 'console', 'bookie-view', 'bookie-model',
+            'bookie-history-module', function (Y) {
             <%
                 # we might have a user from the resource path that we want to keep tabs on
                 resource_username = username if username else False
@@ -19,9 +18,9 @@
             ${api_setup(request.user)}
 
             % if username:
-                resource_username = '${username}';
+                var resource_username = '${username}';
             % else:
-                resource_username = undefined;
+                var resource_username = undefined;
             % endif
 
             % if count or page:
@@ -33,14 +32,34 @@
                 api_cfg: api_cfg,
                 current_user: username,
                 resource_user: resource_username,
-                phrase: '${phrase}'
+                phrase: '${phrase}'.split(' ')
             });
 
             if (pager) {
                 listview.set('pager', pager);
             }
 
+            if ('${phrase}' !== '') {
+                listview.api.set('phrase', '${phrase}'.split(' '));
+            } else {
+                tags = [];
+            }
+
+            // bind up the history tracker
+            var hist = new Y.bookie.BmarkListHistory({
+                pager: pager,
+                terms: '${phrase}'.split(' '),
+                route: '/results'
+            });
             Y.one('.bmarks').appendChild(listview.render());
+
+            var tagcontrol = new Y.bookie.TagControl({
+               api_cfg: api_cfg,
+               srcNode: Y.one('#tag_filter'),
+               initial_tags: '${phrase}'.split(' '),
+            });
+            tagcontrol.render();
+
         });
     </script>
 </%def>

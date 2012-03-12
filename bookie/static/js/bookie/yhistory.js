@@ -21,7 +21,6 @@ YUI.add('bookie-history-module', function (Y) {
             // whole
             this.get('pager').after('countChange', this._update, this);
             this.get('pager').after('pageChange', this._update, this);
-            this.get('pager').after('with_contentChange', this._update, this);
             this.after('termsChange', this._update, this);
 
             // also watch for new tags being added
@@ -69,8 +68,7 @@ YUI.add('bookie-history-module', function (Y) {
             var pager = this.get('pager');
             var qs = Y.QueryString.stringify({
                 count: pager.get('count'),
-                page: pager.get('page'),
-                with_content: pager.get('with_content')
+                page: pager.get('page')
             });
 
             return this.get('route') + '/' + terms + '?' + qs;
@@ -142,7 +140,7 @@ YUI.add('bookie-history-module', function (Y) {
              * instance, if we've loaded the /recent url, we'll need to append
              * our history params to the /recent url to build:
              *
-             * /recent/term1?count=50&page=2&with_content=true
+             * /recent/term1?count=50&page=2
              *
              * @attribute route
              * @default undefined
