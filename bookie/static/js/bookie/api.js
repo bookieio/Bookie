@@ -15,7 +15,6 @@ YUI.add('bookie-api', function (Y) {
 
     var decode_response = function (resp_text) {
         var data;
-
         try  {
             data = Y.JSON.parse(resp_text);
         } catch (err) {
