@@ -1064,6 +1064,47 @@ YUI.add('bookie-api', function (Y) {
         }
     );
 
+    /**
+     * Invite a user to the system.
+     *
+     * @class Api.route.Invite
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.Invite = Y.Base.create(
+        'bookie-api-route-invite',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+                // force this to a POST request by overriding our base_cfg
+                // we extend.
+                this.base_cfg.method = 'POST';
+                this.data = {
+                    email: this.get('email')
+                };
+            }
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/invite'
+                },
+
+                /**
+                 * You must supply the email address of the user we're
+                 * inviting.
+                 *
+                 * @attribute email
+                 * @default undefined
+                 * @type String
+                 * @required
+                 *
+                 */
+                email: {
+                    required: true
+                }
+            }
+        }
+    );
 
 
 }, '0.1.0', {

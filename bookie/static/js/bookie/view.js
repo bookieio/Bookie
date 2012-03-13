@@ -1007,12 +1007,28 @@ YUI.add('bookie-view', function (Y) {
         template: Y.one('#account_invites').get('text'),
 
         events: {
-            '#invite_header': {
-                click: '_toggle_container'
+            '#send_invite': {
+                click: 'invite'
             },
             '.invite_container form': {
-                submit: 'invite'
+                submit: 'kill'
             }
+        },
+
+        _resetui: function (success) {
+            var email = Y.one('#invite_email').set('value', '');
+
+            if (success) {
+                // decrement the UI counter so they appear to have fewer invites
+                // get the current value
+                debugger;
+                var cont = Y.one('.invite_count'),
+                    ct = parseInt(cont.get('text'), 10);
+
+                cont.set('text', (ct - 1));
+            }
+
+            this.ind.hide();
         },
 
         /**
@@ -1037,6 +1053,11 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        kill: function (ev) {
+            // make sure we don't fire the form submit
+            ev.preventDefault();
+        },
+
         /**
          * General initializer
          *
@@ -1046,6 +1067,38 @@ YUI.add('bookie-view', function (Y) {
          */
         initializer: function (cfg) {
             this.ctpl = Y.Handlebars.compile(this.template);
+
+            // hook up the heading which isn't part of our view since it's
+            // above us
+            Y.one('#invite_heading').on('click', this._toggle_container, this);
+        },
+
+        invite: function (ev) {
+            ev.preventDefault();
+            // we should be handling the api call here
+            var that = this,
+                email = Y.one('#invite_email').get('value'),
+                api_cfg = this.get('api_cfg');
+
+            this.ind = new Y.bookie.Indicator({
+                target: Y.one('#invite_container')
+            });
+            this.ind.render();
+            this.ind.show();
+
+            api_cfg.email = email;
+
+            api = new Y.bookie.Api.route.Invite(api_cfg);
+            api.call({
+                success: function (data, request) {
+                    that._show_message(data.message, true);
+                    that._resetui(true);
+                },
+                error: function (data, status_str, response, args) {
+                    that._show_message(data.error, false);
+                    that._resetui(false);
+                }
+            });
         },
 
         render: function () {
@@ -1054,8 +1107,29 @@ YUI.add('bookie-view', function (Y) {
                 this.ctpl(this.get('user'))
             );
             return html;
-        }
+        },
 
+        /**
+         * Display any message based on if the invite is successful or ended
+         * in error.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
+        _show_message: function (msg, success) {
+            var msg_div = Y.one('#invite_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        }
     }, {
         ATTRS: {
             /**

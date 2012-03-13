@@ -6,6 +6,8 @@
 %>
 ${account_nav()}
 
+<%include file="../jstpl.mako"/>
+
 <div class="form yui3-g">
     <div class="yui3-u-1-4 account_info">
         <div class="heading">${user.username}</div>
@@ -55,6 +57,7 @@ ${account_nav()}
         <a href="" id="invite_heading" class="heading">You have invites!</a>
         <div id="invite_container" style="display: none; opacty: 0;">
         </div>
+        <div id="invite_msg" class="error"></div>
     </div>
 % endif
 
@@ -103,13 +106,25 @@ ${password_reset(reset=False)}
     <script type="text/javascript">
         YUI().use('node', 'bookie-view', 'console', function (Y) {
             Y.on('domready', function () {
-                var account_view = new Y.bookie.AccountView({
-                    api_cfg: {
-                        url: APP_URL + '/api/v1',
-                        username: '${request.user.username}',
-                        api_key: '${request.user.api_key}',
-                    }
+                var api_cfg = {
+                    url: APP_URL + '/api/v1',
+                    username: '${request.user.username}',
+                    api_key: '${request.user.api_key}',
+                },
+                account_view = new Y.bookie.AccountView({
+                    api_cfg: api_cfg
                 });
+
+                % if user.has_invites():
+                    var invite_view = new Y.bookie.InviteView({
+                        api_cfg: api_cfg,
+                        user: {
+                            invite_ct: ${user.invite_ct}
+                        }
+                    });
+
+                    Y.one('#invite_container').appendChild(invite_view.render());
+                % endif
             });
         });
     </script>

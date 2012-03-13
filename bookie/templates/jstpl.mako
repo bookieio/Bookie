@@ -112,14 +112,14 @@
 
 <script type="text/template" id="account_invites">
     <p>Please, invite others to join Bookie and Bmark.us.</p>
-    <form>
+    <form id="#invite_form">
         <ul>
             <li>
                 <label>Email Address</label>
                 <input type="text" id="invite_email" name="invite_email" />
-                <input type="submit" name="submit" value="Send" />
+                <input type="submit" id="send_invite" name="send_invite" value="Send" />
             </li>
         </ul>
     </form>
-    <div class="details">You have {{invite_ct}} invites left.</div>
+    <div class="details">You have <span class="invite_count">{{invite_ct}}</span> invites left.</div>
 </script>

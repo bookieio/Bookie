@@ -207,7 +207,7 @@ $(JS_BUILD_PATH)/y: download-cache/yui
 	mkdir -p $(JS_BUILD_PATH)/y
 	cp -r download-cache/yui/build/* $(JS_BUILD_PATH)/y
 
-bookie/static/js/tests/jstpl.html:
+bookie/static/js/tests/jstpl.html: bookie/templates/jstpl.mako
 	cp bookie/templates/jstpl.mako bookie/static/js/tests/jstpl.html
 
 download-cache/yui:

@@ -353,6 +353,36 @@ YUI({
             Y.io = gen_fakeio(test_func);
             api.call({});
             Y.Assert.isTrue(hit);
+        },
+
+        testInviteUser: function () {
+            var that = this,
+                hit = false,
+                test_func = function (url, cfg) {
+                    debugger;
+                    Y.Assert.areEqual('POST', cfg.method);
+                    Y.Assert.areEqual(
+                        'http://127.0.0.1:6543/api/v1/admin/invite',
+                        url);
+                    // in post requests, the data is json-stringified so we
+                    // have to compare strings
+                    Y.Assert.areEqual(
+                        Y.JSON.stringify({
+                        email: 'testing@me.com',
+                        username: 'admin'
+                    }), cfg.data);
+                    hit = true;
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    email: 'testing@me.com'
+                },
+                api = new Y.bookie.Api.route.Invite(API_CFG);
+
+            Y.io = gen_fakeio(test_func);
+            api.call({});
+            Y.Assert.isTrue(hit);
         }
 
     });
