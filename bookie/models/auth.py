@@ -100,6 +100,7 @@ class Activation(Base):
     valid_until = Column(DateTime,
                     default=lambda: datetime.now + ACTIVATION_AGE)
     created_by = Column('created_by', Unicode(255))
+    invited_by = Column('invited_by', Unicode(255))
 
     def __init__(self, created_system):
         """Create a new activation"""
@@ -208,10 +209,16 @@ class User(Base):
     last_login = Column(DateTime)
     signup = Column(DateTime, default=datetime.now)
     api_key = Column(Unicode(12))
+    invite_ct = Column(Integer, default=0)
 
     activation = relation(Activation,
                     uselist=False,
                     backref='user')
+
+    def __init__(self):
+        """By default a user starts out deactivated"""
+        self.activation = Activation('signup')
+        self.activated = False
 
     def _set_password(self, password):
         """Hash password on the fly."""
