@@ -18,6 +18,7 @@ JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
+JSTESTURL = http://127.0.0.1:8000/tests
 
 EXTENSION = $(WD)/extensions/
 CHROME = /usr/bin/google-chrome
@@ -140,6 +141,9 @@ mysql_test:
 	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
+.PHONY: jstestserver
+jstestserver:
+	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
@@ -147,22 +151,22 @@ jstest_index:
 	xdg-open http://127.0.0.1:6543/tests/index
 .PHONY: test_api
 test_api:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_api.html
+	xdg-open $(JSTESTURL)/test_api.html
 .PHONY: test_history
 test_history:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_history.html
+	xdg-open $(JSTESTURL)test_history.html
 .PHONY: test_indicator
 test_indicator:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_indicator.html
+	xdg-open $(JSTESTURL)/test_indicator.html
 .PHONY: test_model
 test_model:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_model.html
+	xdg-open $(JSTESTURL)/test_model.html
 .PHONY: test_tagcontrol
 test_tagcontrol:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_tagcontrol.html
+	xdg-open $(JSTESTURL)/test_tagcontrol.html
 .PHONY: test_view
 test_view:
-	xdg-open file://$(WD)/bookie/static/js/tests/test_view.html
+	xdg-open $(JSTESTURL)/test_view.html
 
 .PHONY: pep8
 pep8:
@@ -174,7 +178,7 @@ pep8:
 # and syncing things over to the chrome extension directory.
 
 .PHONY: js
-js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y
+js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y bookie/static/js/tests/jstpl.html
 
 .PHONY: clean_js
 clean_js:
@@ -198,6 +202,9 @@ $(JS_BUILD_PATH)/b:
 $(JS_BUILD_PATH)/y: download-cache/yui
 	mkdir -p $(JS_BUILD_PATH)/y
 	cp -r download-cache/yui/build/* $(JS_BUILD_PATH)/y
+
+bookie/static/js/tests/jstpl.html:
+	cp bookie/templates/jstpl.mako bookie/static/js/tests/jstpl.html
 
 download-cache/yui:
 	mkdir -p download-cache/yui

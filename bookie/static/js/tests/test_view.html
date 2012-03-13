@@ -7,7 +7,38 @@
     <script src="../bookie/indicator.js"></script>
     <script src="../bookie/model.js"></script>
     <script src="../bookie/view.js"></script>
+
+    <script type="text/javascript">
+    YUI().use('io-base', 'node', function(Y) {
+        var cfg,
+            request;
+        // Create a configuration object for the synchronous transaction.
+        cfg = {
+            sync: true,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        /*
+         * var request will contain the following fields, when the
+         * transaction is complete:
+         * - id
+         * - status
+         * - statusText
+         * - getResponseHeader()
+         * - getAllResponseHeaders()
+         * - responseText
+         * - responseXML
+         * - arguments
+         */
+        request = Y.io('jstpl.html', cfg);
+        Y.one('body').append(request.responseText);
+    });
+    </script>
+
     <title>View Tests</title>
+
 </head>
 <body class="yui3-skin-sam">
     <div class="view"></div>

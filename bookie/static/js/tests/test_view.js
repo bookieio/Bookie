@@ -114,7 +114,9 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
         },
 
         test_remove_event: function () {
-            var model = new Y.bookie.Bmark(),
+            var model = new Y.bookie.Bmark({
+                    url: 'http://google.com'
+                }),
                 hit = false,
                 test = this;
 
@@ -150,7 +152,9 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
         },
 
         test_missing_edit_when_not_logged_in: function () {
-            var model = new Y.bookie.Bmark(),
+            var model = new Y.bookie.Bmark({
+                    url: 'http://google.com'
+                }),
                 username = null;
 
             var testview = new Y.bookie.BmarkView({
