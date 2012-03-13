@@ -1,14 +1,12 @@
 // Create a new YUI instance and populate it with the required modules.
-YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-event-simulate', function (Y) {
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
-    bookmark = {
+YUI.add('bookie-test-view', function (Y) {
+    var ns = Y.namespace('bookie.test.view');
+    ns.suite = new Y.Test.Suite('View Tests');
 
-    },
-    bmarklist = [
+    var bookmark = {
+
+        },
+        bmarklist = [
         {
             "username": "admin",
             "updated": "",
@@ -58,11 +56,11 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
             "bid": 15, "total_clicks": 0, "stored": "2011-03-15 17:39:56",
             "inserted_by": "importer",
             "tag_str": "",
-            "clicks": 0, "hash_id": "af0b78fb818196"},
+            "clicks": 0, "hash_id": "af0b78fb818196"}
         ];
 
 
-    var view_test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: "View Tests",
 
         setUp: function () {
@@ -172,16 +170,13 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
                 "There shouldn't be any edit points for anon users");
 
         }
-    });
-
-    Y.Test.Runner.add(view_test);
-
+    }));
 
     /**
      * Verify that our paging html is functioning correctly
      *
      */
-    var paging_test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: "Paging Tests",
 
         setUp: function () {
@@ -250,11 +245,9 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
             Y.Assert.isTrue(hit, 'Hit should now be true.');
         }
 
-    });
+    }));
 
-    Y.Test.Runner.add(paging_test);
-
-    var bmark_list_view_test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: "Bmark List Tests",
 
         setUp: function () {
@@ -278,11 +271,9 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
             Y.Assert.areEqual(1, list.size(),
                 "Should find one bmark_list container");
         }
-    });
+    }));
 
-    Y.Test.Runner.add(bmark_list_view_test);
-
-    var options_view_test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: 'Options View',
         setUp: function () {
 
@@ -296,8 +287,11 @@ YUI().use('console', 'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-
             Y.Assert.isObject(Y.bookie.OptionsView,
                 'We should be able to find the OptionsView object');
         }
-    });
-    Y.Test.Runner.add(bmark_list_view_test);
+    }));
 
-    Y.Test.Runner.run();
+
+}, '0.4', {
+    requires: [
+        'test', 'bookie-api', 'bookie-view', 'bookie-model', 'node-event-simulate'
+    ]
 });

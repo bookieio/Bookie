@@ -109,3 +109,17 @@
         <input name="tag_filter" id="tag_filter" value=""/>
     </div>
 </script>
+
+<script type="text/template" id="account_invites">
+    <p>Please, invite others to join Bookie and Bmark.us.</p>
+    <form>
+        <ul>
+            <li>
+                <label>Email Address</label>
+                <input type="text" id="invite_email" name="invite_email" />
+                <input type="submit" name="submit" value="Send" />
+            </li>
+        </ul>
+    </form>
+    <div class="details">You have {{invite_ct}} invites left.</div>
+</script>

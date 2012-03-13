@@ -50,6 +50,14 @@ ${account_nav()}
     </div>
 </div>
 
+% if user.has_invites():
+    <div class="form">
+        <a href="" id="invite_heading" class="heading">You have invites!</a>
+        <div id="invite_container" style="display: none; opacty: 0;">
+        </div>
+    </div>
+% endif
+
 <div class="form">
     <a href="" id="show_key" class="heading">View API Key</a>
     <div id="api_key_container" style="display: none; opacity: 0;">

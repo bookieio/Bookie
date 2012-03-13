@@ -995,6 +995,100 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
+   /**
+     * Generate the html view for a User's invite setup.
+     *
+     * @class InviteView
+     * @extends Y.View
+     *
+     */
+    ns.InviteView = Y.Base.create('bookie-invite-view', Y.View, [], {
+        _visible: false,
+        template: Y.one('#account_invites').get('text'),
+
+        events: {
+            '#invite_header': {
+                click: '_toggle_container'
+            },
+            '.invite_container form': {
+                submit: 'invite'
+            }
+        },
+
+        /**
+         * Handle displaying the API key for a user. This requires making an
+         * API request since we don't dump the API key by default into the
+         * page html to help prevent it leaking out.
+         *
+         * @method _show_api_key
+         * @param {Event} e
+         *
+         */
+        _toggle_container: function (ev) {
+            var container = Y.one('#invite_container');
+            ev.preventDefault();
+            // if the api key is showing and they click this, hide it
+            if(this._visible) {
+                container.hide(true);
+                this._visible = false;
+            } else {
+                container.show(true);
+                this._visible = true;
+            }
+        },
+
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param {Object} cfg
+         *
+         */
+        initializer: function (cfg) {
+            this.ctpl = Y.Handlebars.compile(this.template);
+        },
+
+        render: function () {
+            var html = this.get('container').set(
+                'innerHTML',
+                this.ctpl(this.get('user'))
+            );
+            return html;
+        }
+
+    }, {
+        ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
+            api_cfg: {
+                required: true
+            },
+
+            container: {
+                valueFn: function () {
+                    return Y.Node.create('<div/>');
+                }
+            },
+
+            /**
+             * We mostly need this so we know who the user is and how many
+             * invites they have to keep tabs in the client side UI.
+             *
+             * @attribute user
+             * @default undefined
+             * @type Object
+             *
+             */
+            user: {
+                required: true
+            }
+        }
+    });
+
     /**
      * Handle the display of the password reset view.
      *
@@ -1465,13 +1559,11 @@ YUI.add('bookie-view', function (Y) {
                 api_cfg.new_username = new_username.get('value');
             }
 
-            debugger;
-
             // add the password data to the cfg passed to the api
             api_cfg = Y.merge(api_cfg, {
                 username: Y.one('#username').get('value'),
                 code: Y.one('#code').get('value'),
-                password: Y.one('#new_password').get('value'),
+                password: Y.one('#new_password').get('value')
             });
 
             api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);

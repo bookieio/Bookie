@@ -45,8 +45,26 @@
     <div class="pager_test"></div>
     <div class="data_list"></div>
     <div class="bmarks"></div>
+    <div class="invites"></div>
     <div id="#log"></div>
     <script src="test_view.js"></script>
+    <script src="test_view_account.js"></script>
+
+    <script type="text/javascript">
+        YUI().use('console', 'test', 'bookie-test-view', 'bookie-test-view-account', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+
+            //initialize the console
+            var yconsole = new Y.Console({
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.view.suite);
+            Y.Test.Runner.add(Y.bookie.test.view.account.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
 </body>
 
 </html>

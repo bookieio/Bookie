@@ -18,7 +18,7 @@ JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
-JSTESTURL = http://127.0.0.1:8000/tests
+JSTESTURL = http://127.0.0.1:9000/tests
 
 EXTENSION = $(WD)/extensions/
 CHROME = /usr/bin/google-chrome
@@ -147,7 +147,7 @@ mysql_test:
 
 .PHONY: jstestserver
 jstestserver:
-	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer
+	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer 9000
 .PHONY: jstest
 jstest: test_api test_model test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
