@@ -21,10 +21,15 @@
 
 <%def name="password_reset(reset)">
     <%
-        if reset:
+        if user.activation and user.activation.created_by == 'invite':
+            title = "Please activate your new Bookie account"
+            submit = "Activate"
+        elif reset:
             title = "Reactivate account by resetting your password"
+            submit = "Reset"
         else:
             title = "Change password"
+            submit = "Change"
     %>
     <div class="form">
         <a href="#" id="show_password" class="heading">${title}</a>
@@ -43,6 +48,12 @@
                         </li>
                     % endif
 
+                    % if user.activation and user.activation.created_by == 'invite':
+                        <li>
+                            <label>Choose Username</label>
+                            <input type="text" id="new_username" name="new_username" />
+                        </li>
+                    % endif
 
                     <li>
                         <label>New Password</label>
@@ -51,7 +62,7 @@
 
                     <li>
                         <label></label>
-                        <input type="button" id="submit_password_change" value="Change" class="button" />
+                        <input type="button" id="submit_password_change" value="${submit}" class="button" />
                     </li>
                 </ul>
             </form>

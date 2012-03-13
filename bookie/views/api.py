@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from pyramid.settings import asbool
 from pyramid.view import view_config
+from sqlalchemy.exc import IntegrityError
 from StringIO import StringIO
 
 from bookie.lib.access import api_auth
@@ -12,6 +13,7 @@ from bookie.lib.access import ReqOrApiAuthorize
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog
 from bookie.lib.message import ReactivateMsg
+from bookie.lib.message import InvitationMsg
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 
@@ -72,7 +74,6 @@ def ping_missing_api(request):
         'success': False,
         'message': 'The API url should be /api/v1'
     }
-
 
 
 @view_config(route_name="api_bmark_hash", renderer="json")
@@ -757,6 +758,7 @@ def account_activate(request):
     username = params.get('username', None)
     activation = params.get('code', None)
     password = params.get('password', None)
+    new_username = params.get('new_username', None)
 
     if username is None and activation is None and password is None:
         # then try to get the same fields out of a json body
@@ -764,6 +766,7 @@ def account_activate(request):
         username = json_body.get('username', None)
         activation = json_body.get('code', None)
         password = json_body.get('password', None)
+        new_username = json_body.get('new_username', None)
 
     if not UserMgr.acceptable_password(password):
         request.response.status_int = 406
@@ -776,6 +779,20 @@ def account_activate(request):
     if res:
         # success so respond nicely
         AuthLog.reactivate(username, success=True, code=activation)
+
+        # if there's a new username and it's not the same as our current
+        # username, update it
+        if new_username and new_username != username:
+            try:
+                user = UserMgr.get(username=username)
+                user.username = new_username
+            except IntegrityError, exc:
+                request.response.status_int = 500
+                return {
+                    'error': 'There was an issue setting your new username',
+                    'exc': str(exc)
+                }
+
         return {
             'message': "Account activated, please log in.",
             'username': username,
@@ -786,6 +803,71 @@ def account_activate(request):
         return {
             'error': "There was an issue attempting to activate this account.",
         }
+
+
+@view_config(route_name="api_user_invite", renderer="json")
+@api_auth('api_key', UserMgr.get)
+def invite_user(request):
+    """Invite a new user into the system.
+
+    :param username: user that is requested we invite someone
+    :param email: email address of the new user
+
+    """
+    params = request.params
+
+    username = params.get('username', None)
+    email = params.get('email', None)
+    user = request.user
+
+    if not email:
+        # try to get it from the json body
+        email = request.json_body.get('email', None)
+
+    if not email:
+        # if still no email, I give up!
+        request.response.status_int = 406
+        return {
+            'username': user.username,
+            'error': "Please submit an email address"
+        }
+
+    # first see if the user is already in the system
+    exists = UserMgr.get(email=email)
+    if exists:
+        request.response.status_int = 406
+        return {
+                'username': exists.username,
+                'error': "This user is already a Bookie user!"
+               }
+
+    new_user = user.invite(email)
+    if new_user:
+        LOG.error(new_user.username)
+        # then this user is able to invite someone
+        # log it
+        AuthLog.reactivate(new_user.username)
+
+        # and then send an email notification
+        # @todo the email side of things
+        settings = request.registry.settings
+        msg = InvitationMsg(new_user.email,
+                            "Enable your Bookie account",
+                            settings)
+
+        msg.send(request.route_url('reset',
+                             username=new_user.username,
+                             reset_key=new_user.activation.code))
+        return {
+            'message': 'You have invited: ' + new_user.email
+        }
+    else:
+        # you have no invites
+        request.response.status_int = 406
+        return {
+                'username': user.username,
+                'error': "You have no invites left at this time."
+               }
 
 
 @view_config(route_name="api_admin_readable_todo", renderer="json")

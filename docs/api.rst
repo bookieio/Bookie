@@ -1026,6 +1026,43 @@ Example
     }
 
 
+/:username/invite
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usage
+''''''
+*POST* `/api/v1/admin/invite`
+
+Allows a user to create an invitation to another user in the system.
+
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: email *required* - the email address of the new user to invite
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 406: No email address submitted in the request so we can't invite anyone
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/invite?api_key=12345...&email=testing@dummy.com')
+    >>> {
+        "message":  """done""",
+    }
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/invite?api_key=12345...')
+    >>> {
+        "error":  "Please submit an email address",
+    }
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/invite?api_key=12345...&email=testing@dummy.com')
+    >>> {
+        "error":  "This user has already been invited to the system.",
+        "email": "testing@dummy.com"
+    }
+
 
 Admin only calls
 ---------------------

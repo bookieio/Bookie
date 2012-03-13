@@ -325,7 +325,36 @@ YUI({
             Y.io = gen_fakeio(test_func);
             api.call({});
             Y.Assert.isTrue(hit);
+        },
+
+        testUnSuspendUser: function () {
+            var that = this,
+                hit = false,
+                test_func = function (url, cfg) {
+                    Y.Assert.areEqual('DELETE', cfg.method);
+                    Y.Assert.areEqual(
+                        'http://127.0.0.1:6543/api/v1/suspend',
+                        url);
+                    Y.ObjectAssert.areEqual({
+                        username: 'admin',
+                        password: 'test',
+                        code: '123456'
+                    }, cfg.data);
+                    hit = true;
+                },
+                API_CFG = {
+                    url: 'http://127.0.0.1:6543/api/v1',
+                    username: 'admin',
+                    code: '123456',
+                    password: 'test'
+                },
+                api = new Y.bookie.Api.route.UnSuspendUser(API_CFG);
+
+            Y.io = gen_fakeio(test_func);
+            api.call({});
+            Y.Assert.isTrue(hit);
         }
+
     });
 
     Y.Test.Runner.add(api_test);

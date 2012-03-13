@@ -1041,7 +1041,7 @@ YUI.add('bookie-view', function (Y) {
         _change_password: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg'),
-                api = new Y.bookie.Api.route.UserPasswordChange(api_cfg);
+                api;
 
             e.preventDefault();
 
@@ -1054,6 +1054,7 @@ YUI.add('bookie-view', function (Y) {
                 new_password: Y.one('#new_password').get('value')
             });
 
+            api = new Y.bookie.Api.route.UserPasswordChange(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message(data.message, true);
@@ -1189,7 +1190,7 @@ YUI.add('bookie-view', function (Y) {
         _update_account: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg'),
-                api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
+                api;
 
             e.preventDefault();
             Y.one('#account_msg').hide();
@@ -1200,6 +1201,7 @@ YUI.add('bookie-view', function (Y) {
                 email: Y.one('#email').get('value')
             });
 
+            api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message('Account updated...', true);
@@ -1335,7 +1337,7 @@ YUI.add('bookie-view', function (Y) {
         _forgotten: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg'),
-                api = new Y.bookie.Api.route.SuspendUser(api_cfg);
+                api;
 
             e.preventDefault();
 
@@ -1347,6 +1349,7 @@ YUI.add('bookie-view', function (Y) {
                 email: Y.one('#email').get('value')
             });
 
+            api = new Y.bookie.Api.route.SuspendUser(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._clear();
@@ -1448,20 +1451,30 @@ YUI.add('bookie-view', function (Y) {
         _account_reset: function (e) {
             var that = this,
                 api_cfg = this.get('api_cfg'),
-                api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);
+                api,
+                new_username = Y.one('#new_username'),
+                change_to;
 
             e.preventDefault();
 
             // hide the current message window
             Y.one('#password_msg').hide();
 
+            // check if there's a new username we should be grabbing as well
+            if (new_username) {
+                api_cfg.new_username = new_username.get('value');
+            }
+
+            debugger;
+
             // add the password data to the cfg passed to the api
             api_cfg = Y.merge(api_cfg, {
                 username: Y.one('#username').get('value'),
                 code: Y.one('#code').get('value'),
-                password: Y.one('#new_password').get('value')
+                password: Y.one('#new_password').get('value'),
             });
 
+            api = new Y.bookie.Api.route.UnSuspendUser(api_cfg);
             api.call({
                 success: function (data, request) {
                     that._show_message(data.message, true);

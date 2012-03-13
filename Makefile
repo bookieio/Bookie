@@ -70,6 +70,10 @@ db_down: bookie.db
 db_new: bookie.db
 	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
 
+.PHONY: db_version
+db_version: bookie.db
+	$(MIGRATE) version --url=$(SAURL) --repository=migrations
+
 .PHONY: first_bookmark
 first_bookmark:
 	$(PY) scripts/admin/first_bookmark.py

@@ -103,6 +103,9 @@ def reset(request):
     username = rdict.get('username', None)
     activation_key = rdict.get('reset_key', None)
 
+    LOG.error("CHECKING")
+    LOG.error(username)
+
     # this can only be visited if user is visiting the reset with the right key
     # for the username in the url
     user = ActivationMgr.get_user(username, activation_key)
@@ -111,6 +114,8 @@ def reset(request):
         # just 404 if we don't have an activation code for this user
         raise HTTPNotFound()
 
+    LOG.error(user.username)
+    LOG.error(user.email)
     return {
         'user': user,
     }

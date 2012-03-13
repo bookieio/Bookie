@@ -27,7 +27,7 @@ YUI.add('bookie-api', function (Y) {
         }
 
         return data;
-    }
+    };
 
     /**
      * We want to wrap our ajax calls through the IO module.
@@ -849,6 +849,7 @@ YUI.add('bookie-api', function (Y) {
                 // we have to have current_password, new_password
                 this.data = {
                     username: this.get('username'),
+                    new_username: this.get('new_username'),
                     code: this.get('code'),
                     password: this.get('password')
                 };
@@ -864,6 +865,18 @@ YUI.add('bookie-api', function (Y) {
                  */
                 username: {
                     required: true
+                },
+
+                /**
+                 * When invited, a new user can choose an email address when
+                 * activating your account.
+                 *
+                 * @attribute new_username
+                 * @default undefined
+                 * @type String
+                 *
+                 */
+                new_username: {
                 },
 
                 /**

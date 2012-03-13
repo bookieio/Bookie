@@ -101,6 +101,9 @@ def build_routes(config):
     config.add_route("api_user_suspend",
                      "api/v1/suspend",
                      request_method="POST")
+    config.add_route("api_user_invite",
+                     "api/v1/{username}/invite",
+                     request_method="POST")
 
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")

@@ -100,7 +100,6 @@ class Activation(Base):
     valid_until = Column(DateTime,
                     default=lambda: datetime.now + ACTIVATION_AGE)
     created_by = Column('created_by', Unicode(255))
-    invited_by = Column('invited_by', Unicode(255))
 
     def __init__(self, created_system):
         """Create a new activation"""
@@ -210,6 +209,7 @@ class User(Base):
     signup = Column(DateTime, default=datetime.now)
     api_key = Column(Unicode(12))
     invite_ct = Column(Integer, default=0)
+    invited_by = Column('invited_by', Unicode(255))
 
     activation = relation(Activation,
                     uselist=False,
@@ -288,6 +288,31 @@ class User(Base):
         # if we reactivate then reinit this
         self.activation = Activation(creator)
         self.activated = False
+
+    def has_invites(self):
+        """Does the user have any invitations left"""
+        return self.invite_ct > 0
+
+    def invite(self, email):
+        """Invite a user"""
+        if not self.has_invites():
+            return False
+        if not email:
+            raise ValueError('You must supply an email address to invite')
+        else:
+            # get this invite party started, create a new useracct
+            new_user = User()
+            new_user.email = email
+            new_user.username = email
+            new_user.invited_by = self.username
+
+            # they need to be deactivated
+            new_user.reactivate('invite')
+
+            # decrement the invite counter
+            self.invite_ct = self.invite_ct - 1
+            DBSession.add(new_user)
+            return new_user
 
     @staticmethod
     def gen_api_key():
