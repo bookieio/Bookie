@@ -1,6 +1,7 @@
 <%inherit file="/main_wrap.mako" />
 <%namespace file="../accounts/func.mako" import="password_reset"/>
 <%def name="title()">Activate your account</%def>
+<%include file="../jstpl.mako"/>
 
 <input type="hidden" id="username" value="${user.username}" />
 <input type="hidden" id="code" value="${user.activation.code}" />
