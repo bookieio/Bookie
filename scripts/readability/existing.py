@@ -4,10 +4,13 @@
 """
 import argparse
 import logging
+import threading
+import time
 import transaction
 
 from ConfigParser import ConfigParser
 from os import path
+from Queue import Queue
 
 from bookie.lib.readable import ReadUrl
 
@@ -16,8 +19,11 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
 
-PER_TRANS = 10
+PER_TRANS = 24
 LOG = logging.getLogger(__name__)
+
+# Set up some global variables
+num_fetch_threads = 8
 
 
 def parse_args():
@@ -51,6 +57,16 @@ def parse_args():
 
     args = parser.parse_args()
     return args
+
+
+def fetch_content(i, q):
+    """Our threaded worker to fetch the url contents"""
+    while True:
+        hash_id, url = q.get()
+        print 'Q' + str(i) + ' getting content for ' + hash_id + ' ' + url
+        read = ReadUrl.parse(url)
+        parsed[hash_id] = read
+        q.task_done()
 
 
 if __name__ == "__main__":
@@ -88,6 +104,8 @@ if __name__ == "__main__":
 
         all = False
         while(not all):
+            # start the queue up we'll use to thread the url fetching
+            enclosure_queue = Queue()
 
             if args.new_only:
                 # we take off the offset because each time we run, we should have
@@ -112,11 +130,31 @@ if __name__ == "__main__":
 
             ct = ct + len(url_list)
 
+            # build a list of urls to pass to the threads
+            urls = dict([(bmark.hash_id, bmark.hashed.url) for bmark in url_list])
+            parsed = {}
+
+            # Set up some threads to fetch the enclosures
+            for i in range(num_fetch_threads):
+                # Download the feed(s) and put the enclosure URLs into
+                # the queue.
+                worker = threading.Thread(target=fetch_content, args=(i, enclosure_queue,))
+                worker.setDaemon(True)
+                worker.start()
+
+            for hash_id, url in urls.iteritems():
+                enclosure_queue.put((hash_id, url))
+
+            # Now wait for the queue to be empty, indicating that we have
+            # processed all of the downloads.
+            enclosure_queue.join()
+
+            # Set up some threads to fetch the enclosures
             for bmark in url_list:
                 hashed = bmark.hashed
-                print hashed.url
 
-                read = ReadUrl.parse(hashed.url)
+                read = parsed[bmark.hash_id]
+
                 if not read.is_image():
                     if not bmark.readable:
                         bmark.readable = Readable()

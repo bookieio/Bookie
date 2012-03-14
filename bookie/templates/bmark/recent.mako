@@ -28,6 +28,7 @@ import json
                 var route = '/recent'
             % endif
 
+            var pager = new Y.bookie.PagerModel();
             % if count or page:
                 ${pager_setup(count=count, page=page)}
             % endif
