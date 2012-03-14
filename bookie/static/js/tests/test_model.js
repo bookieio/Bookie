@@ -15,7 +15,7 @@ YUI.add('bookie-test-model', function (Y) {
             'dateinfo': "",
             'prettystored': ""
         });
-    };
+    }
 
     function generate_random_string() {
         var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
@@ -96,7 +96,7 @@ YUI.add('bookie-test-model', function (Y) {
             bmark.destroy = function (opts, callback) {
                 hit = true;
                 A.isTrue(opts.delete, "Delete should be true in the options");
-            }
+            };
 
             bmark.remove();
 
@@ -111,7 +111,7 @@ YUI.add('bookie-test-model', function (Y) {
             bmark.sync = function (action, opts, callback) {
                 hit = true;
                 A.areEqual(action, 'delete', 'Delete should be true in the options');
-            }
+            };
 
             bmark.remove();
             A.isTrue(hit, "We should have hit the sync with delete");
@@ -140,8 +140,8 @@ YUI.add('bookie-test-model', function (Y) {
             var json_bmarks = [
                 test_model(),
                 test_model(),
-                test_model(),
-            ]
+                test_model()
+            ];
 
             var bmarks = new Y.bookie.BmarkList();
             Y.Array.each(json_bmarks, function (b) {
@@ -154,7 +154,7 @@ YUI.add('bookie-test-model', function (Y) {
             Y.ObjectAssert.areEqual([1, 1, 1], bmarks.get('bid'),
                 "We should get a list of ids from the models");
 
-        },
+        }
     }));
 
 

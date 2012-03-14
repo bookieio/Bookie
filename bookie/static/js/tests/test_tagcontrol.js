@@ -1,5 +1,5 @@
-YUI.add('bookie-test-model', function (Y) {
-    var ns = Y.namespace('bookie.test.model'),
+YUI.add('bookie-test-tagcontrol', function (Y) {
+    var ns = Y.namespace('bookie.test.tagcontrol'),
         A = Y.Assert;
 
     ns.suite = new Y.Test.Suite('Indicator Tests');

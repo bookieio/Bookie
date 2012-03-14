@@ -130,7 +130,7 @@ YUI.add('bookie-test-indicator', function (Y) {
             var final_xy = this.indicator.get('boundingBox').getXY();
             Y.Assert.areEqual(expected_xy[0], final_xy[0]);
             Y.Assert.areEqual(expected_xy[1], final_xy[1]);
-        },
+        }
     }));
 
 }, '0.4', {
