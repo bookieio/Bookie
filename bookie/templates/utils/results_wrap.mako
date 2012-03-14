@@ -23,8 +23,10 @@
                 var resource_username = undefined;
             % endif
 
+            var pager = new Y.bookie.PagerModel();
             % if count or page:
                 ${pager_setup(count=count, page=page)}
+
             % endif
 
             // we want to call the all url route for this view

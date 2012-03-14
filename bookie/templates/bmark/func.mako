@@ -38,7 +38,6 @@
 
 
 <%def name="pager_setup(page=0, count=50)">
-    var pager = new Y.bookie.PagerModel();
     % if count:
         pager.set('count', ${count});
     % endif
