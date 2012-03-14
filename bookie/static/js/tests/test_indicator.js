@@ -1,15 +1,8 @@
-/* Copyright (c) 2011, Canonical Ltd. All rights reserved. */
+YUI.add('bookie-test-indicator', function (Y) {
+    var ns = Y.namespace('bookie.test.indicator');
+    ns.suite = new Y.Test.Suite('Indicator Tests');
 
-YUI().use('console', 'test', 'bookie-indicator', function (Y) {
-
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
-
-    var tests = new Y.Test.Case({
-
+    ns.suite.add(new Y.Test.Case({
         name: 'indicator_tests',
 
         setUp: function () {
@@ -138,11 +131,10 @@ YUI().use('console', 'test', 'bookie-indicator', function (Y) {
             Y.Assert.areEqual(expected_xy[0], final_xy[0]);
             Y.Assert.areEqual(expected_xy[1], final_xy[1]);
         },
+    }));
 
-
-    });
-
-    Y.Test.Runner.add(tests);
-    Y.Test.Runner.run();
-
+}, '0.4', {
+    requires: [
+        'test', 'bookie-indicator'
+    ]
 });
