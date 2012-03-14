@@ -1,8 +1,8 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
-PY := bin/python
+PY := $(shell which python)
 PEP8 := bin/pep8
-PIP := bin/pip -q
+PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
 MIGRATE := bin/migrate
 NOSE := bin/nosetests
@@ -20,7 +20,7 @@ YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
 JSTESTURL = http://127.0.0.1:9000/tests
 
-EXTENSION = $(WD)/extensions/
+EXTENSION = $(WD)/extensions
 CHROME = /usr/bin/google-chrome
 CHROME_BUILD = $(EXTENSION)/chrome_ext/lib
 CHROME_EXT_PATH = $(EXTENSION)/chrome_ext
@@ -190,6 +190,9 @@ clean_js:
 	rm $(CHROME_BUILD)/*.js
 	rm -rf jsdoc
 
+$(CHROME_BUILD):
+	mkdir -p $(CHROME_BUILD)
+
 $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
 	rm $(JS_BUILD_PATH)/b/meta.js || true
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
@@ -197,9 +200,11 @@ $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
 		-x -min.js$
 $(JS_BUILD_PATH)/b/%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
+$(BOOKIE_JS)/%.js: $(CHROME_BUILD)
+
 $(JS_BUILD_PATH)/b/%.js: $(BOOKIE_JS)/%.js
 	cp $? $(JS_BUILD_PATH)/b/
-	cp $? $(CHROME_BUILD)
+	cp $? $(CHROME_BUILD)/
 $(JS_BUILD_PATH)/b:
 	mkdir -p $(JS_BUILD_PATH)/b
 
@@ -237,8 +242,8 @@ js_doc_upload: js_doc
 
 css:
 	sass --update bookie/static/css:bookie/static/css
-chrome_css: css
-	cp $(BASECSS) $(CHROME_BUILD)
+chrome_css:  $(CHROME_BUILD) css
+	cp $(BASECSS) $(CHROME_BUILD)/
 	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
 clean_css:
 	rm $(BOOKIE_CSS)/*.css
@@ -259,10 +264,10 @@ chrome_upload: chrome
 
 .PHONY: clean_chrome
 clean_chrome:
-	if [ -f $(CHROME_BUILD_FILE)]; then \
+	if [ -f $(CHROME_BUILD_FILE) ]; then \
 		rm $(CHROME_BUILD_FILE); \
 	fi
-	if [ -f $(CHROME_DEV_FILE)]; then \
+	if [ -f $(CHROME_DEV_FILE) ]; then \
 		rm $(CHROME_DEV_FILE); \
 	fi
 
