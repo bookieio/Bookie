@@ -9,5 +9,18 @@
     <title>Model Tests</title>
 </head>
 <body class="yui3-skin-sam">
+
+    <script type="text/javascript">
+        YUI().use('console', 'test', 'bookie-test-model', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Console({
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.model.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
 </body>
 </html>
