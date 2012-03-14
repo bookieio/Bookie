@@ -75,7 +75,7 @@ db_version: bookie.db
 	$(MIGRATE) version --url=$(SAURL) --repository=migrations
 
 .PHONY: first_bookmark
-first_bookmark:
+first_bookmark: develop
 	$(PY) scripts/admin/first_bookmark.py
 
 # DOCS
