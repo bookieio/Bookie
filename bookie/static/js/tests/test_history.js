@@ -1,23 +1,18 @@
 // Create a new YUI instance and populate it with the required modules.
-YUI({
-    logInclude: { TestRunner: true},
-    filter: 'raw'
-}).use('console', 'test', 'bookie-history-module', function (Y) {
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
+YUI.add('bookie-test-history', function (Y) {
+    var ns = Y.namespace('bookie.test.history');
+    ns.suite = new Y.Test.Suite('History Tests');
 
-    var test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: "History Tests",
 
         testHistoryExists: function () {
             Y.Assert.isObject(Y.bookie.BmarkListHistory,
                               "Should find an objcet for History module");
         },
-    });
-
-    Y.Test.Runner.add(test);
-    Y.Test.Runner.run();
+    }));
+}, '0.4', {
+    requires: [
+        'test', 'bookie-history-module'
+    ]
 });
