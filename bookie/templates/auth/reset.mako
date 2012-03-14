@@ -3,10 +3,7 @@
 <%def name="title()">Activate your account</%def>
 <%include file="../jstpl.mako"/>
 
-<input type="hidden" id="username" value="${user.username}" />
-<input type="hidden" id="code" value="${user.activation.code}" />
-
-${password_reset(reset=True)}
+${password_reset(user, reset=True)}
 
 <%def name="add_js()">
     <script type="text/javascript">

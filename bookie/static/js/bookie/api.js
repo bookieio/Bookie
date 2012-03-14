@@ -849,22 +849,26 @@ YUI.add('bookie-api', function (Y) {
                 // we have to have current_password, new_password
                 this.data = {
                     username: this.get('username'),
-                    new_username: this.get('new_username'),
                     code: this.get('code'),
                     password: this.get('password')
                 };
+
+                if (this.get('new_username')) {
+                    this.data.new_username = this.get('new_username');
+                }
             }
         }, {
             ATTRS: {
                 /**
                  * @attribute username
-                 * @default undefined
+                 * @default false
                  * @type String
                  * @required
                  *
                  */
                 username: {
-                    required: true
+                    required: true,
+                    value: false
                 },
 
                 /**

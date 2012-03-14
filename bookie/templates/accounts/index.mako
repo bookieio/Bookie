@@ -76,7 +76,7 @@ ${account_nav()}
     </div>
 </div>
 
-${password_reset(reset=False)}
+${password_reset(user, reset=False)}
 
 <div class="form">
     <div class="heading">Bookmarklet</div>

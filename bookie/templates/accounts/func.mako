@@ -19,7 +19,7 @@
     % endif
 </%def>
 
-<%def name="password_reset(reset)">
+<%def name="password_reset(user, reset)">
     <%
         if user.activation and user.activation.created_by == 'invite':
             title = "Please activate your new Bookie account"
@@ -33,6 +33,11 @@
     %>
     <div class="form">
         <a href="#" id="show_password" class="heading">${title}</a>
+
+        % if reset:
+            <input type="hidden" id="username" value="${user.username}" />
+            <input type="hidden" id="code" value="${user.activation.code}" />
+        % endif
 
         <div id="password_change"
             % if not reset:
