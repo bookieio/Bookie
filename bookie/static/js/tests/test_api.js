@@ -1,21 +1,15 @@
 // Create a new YUI instance and populate it with the required modules.
-YUI({
-    logInclude: { TestRunner: true},
-    filter: 'raw'
-}).use('console', 'test', 'bookie-api', function (Y) {
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
+YUI.add('bookie-test-api', function (Y) {
+    var ns = Y.namespace('bookie.test.api');
+    ns.suite = new Y.Test.Suite('Account API Tests');
 
-    gen_fakeio = function (test_function) {
+    var gen_fakeio = function (test_function) {
         return function (url, cfg) {
             test_function(url, cfg);
         };
     };
 
-    var api_test = new Y.Test.Case({
+    ns.suite.add(new Y.Test.Case({
         name: "API Tests",
 
         setUp: function () {
@@ -359,7 +353,6 @@ YUI({
             var that = this,
                 hit = false,
                 test_func = function (url, cfg) {
-                    debugger;
                     Y.Assert.areEqual('POST', cfg.method);
                     Y.Assert.areEqual(
                         'http://127.0.0.1:6543/api/v1/admin/invite',
@@ -384,9 +377,10 @@ YUI({
             api.call({});
             Y.Assert.isTrue(hit);
         }
+    }));
 
-    });
-
-    Y.Test.Runner.add(api_test);
-    Y.Test.Runner.run();
+}, '0.4', {
+    requires: [
+        'test', 'bookie-api'
+    ]
 });
