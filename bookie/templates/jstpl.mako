@@ -28,7 +28,7 @@
            <em class="icon">View readable content</em>
         </a>
 
-        {{#if owner}}Uncaught TypeError: Cannot call method 'on' of null
+        {{#if owner}}
             <a href="/{{username}}/edit/{{hash_id}}"
                 title="Edit the bookmark" alt="Edit the bookmark"
                 class="edit">
