@@ -1007,11 +1007,14 @@ YUI.add('bookie-view', function (Y) {
         template: Y.one('#account_invites').get('text'),
 
         events: {
-            '#send_invite': {
+            'input#send_invite': {
                 click: 'invite'
             },
             '.invite_container form': {
                 submit: 'kill'
+            },
+            '#invite_heading': {
+                click: '_toggle_container'
             }
         },
 
@@ -1041,14 +1044,14 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _toggle_container: function (ev) {
-            var container = Y.one('#invite_container');
+            var body = this.get('container').one('#invite_body');
             ev.preventDefault();
             // if the api key is showing and they click this, hide it
             if(this._visible) {
-                container.hide(true);
+                body.hide(true);
                 this._visible = false;
             } else {
-                container.show(true);
+                body.show(true);
                 this._visible = true;
             }
         },
@@ -1067,10 +1070,6 @@ YUI.add('bookie-view', function (Y) {
          */
         initializer: function (cfg) {
             this.ctpl = Y.Handlebars.compile(this.template);
-
-            // hook up the heading which isn't part of our view since it's
-            // above us
-            Y.one('#invite_heading').on('click', this._toggle_container, this);
         },
 
         invite: function (ev) {
@@ -1081,7 +1080,7 @@ YUI.add('bookie-view', function (Y) {
                 api_cfg = this.get('api_cfg');
 
             this.ind = new Y.bookie.Indicator({
-                target: Y.one('#invite_container')
+                target: this.get('container')
             });
             this.ind.render();
             this.ind.show();
@@ -1102,11 +1101,7 @@ YUI.add('bookie-view', function (Y) {
         },
 
         render: function () {
-            var html = this.get('container').set(
-                'innerHTML',
-                this.ctpl(this.get('user'))
-            );
-            return html;
+            return this.ctpl(this.get('user'));
         },
 
         /**
@@ -1144,7 +1139,7 @@ YUI.add('bookie-view', function (Y) {
 
             container: {
                 valueFn: function () {
-                    return Y.Node.create('<div/>');
+                    return Y.one('#invite_container');
                 }
             },
 

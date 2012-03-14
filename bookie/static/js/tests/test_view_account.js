@@ -21,14 +21,12 @@ YUI.add('bookie-test-view-account', function (Y) {
         testInviteUI: function () {
 
         }
-
-
     }));
 
     ns.suite.add(new Y.Test.Case({
         name: 'Test the invite bits',
         setUp: function () {
-            this.c = new Y.Node.create('<div class="invite_container"/>');
+            this.c = new Y.Node.create('<div id="invite_container"/>');
             Y.one('.invites').append(this.c);
         },
 
@@ -48,22 +46,27 @@ YUI.add('bookie-test-view-account', function (Y) {
             this.c.appendChild(v.render());
 
             Y.Assert.isTrue(
-                Y.one('.invite_container').get('innerHTML').search('invite_email') !== -1,
+                Y.one('#invite_container').get('innerHTML').search('invite_email') !== -1,
                 'We should have the invite email input on the page from our template'
             );
         },
 
         'submitting invite should fire api call': function () {
-            var called = false,
-                v = new Y.bookie.InviteView({
-                    api_cfg: {},
-                    user: {
-                        invite_ct: 10
-                    }
-                });
-            v.invite = function (ev) {
+            var called = false;
+                old_invite = Y.bookie.InviteView.prototype.invite;
+
+            Y.bookie.InviteView.prototype.invite = function (ev) {
                 called = true;
             };
+
+            v = new Y.bookie.InviteView({
+                api_cfg: {
+
+                },
+                user: {
+                    invite_ct: 10
+                }
+            });
 
             this.c.appendChild(v.render());
             var input = Y.one('#send_invite');
@@ -71,6 +74,9 @@ YUI.add('bookie-test-view-account', function (Y) {
 
             Y.Assert.isTrue(called,
                 'should have fired our hook by submitting the invite form.');
+
+            // restore the invite method
+            Y.bookie.InviteView.prototype.invite = old_invite;
         }
     }));
 

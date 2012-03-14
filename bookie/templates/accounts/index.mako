@@ -53,12 +53,8 @@ ${account_nav()}
 </div>
 
 % if user.has_invites():
-    <div class="form">
-        <a href="" id="invite_heading" class="heading">You have invites!</a>
-        <div id="invite_container" style="display: none; opacty: 0;">
-        </div>
-        <div id="invite_msg" class="error"></div>
-    </div>
+<div id="invite_container">
+</div>
 % endif
 
 <div class="form">
@@ -123,7 +119,7 @@ ${password_reset(reset=False)}
                         }
                     });
 
-                    Y.one('#invite_container').appendChild(invite_view.render());
+                    Y.one('#invite_container').setContent(invite_view.render());
                 % endif
             });
         });

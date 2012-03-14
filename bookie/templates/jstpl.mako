@@ -28,7 +28,7 @@
            <em class="icon">View readable content</em>
         </a>
 
-        {{#if owner}}
+        {{#if owner}}Uncaught TypeError: Cannot call method 'on' of null
             <a href="/{{username}}/edit/{{hash_id}}"
                 title="Edit the bookmark" alt="Edit the bookmark"
                 class="edit">
@@ -111,15 +111,25 @@
 </script>
 
 <script type="text/template" id="account_invites">
-    <p>Please, invite others to join Bookie and Bmark.us.</p>
-    <form id="#invite_form">
-        <ul>
-            <li>
-                <label>Email Address</label>
-                <input type="text" id="invite_email" name="invite_email" />
-                <input type="submit" id="send_invite" name="send_invite" value="Send" />
-            </li>
-        </ul>
-    </form>
-    <div class="details">You have <span class="invite_count">{{invite_ct}}</span> invites left.</div>
+    <div class="form">
+        <a href="" id="invite_heading" class="heading">You have invites!</a>
+        <div id="invite_body" style="display: none; opacty: 0;">
+            <p>Please, invite others to join Bookie and Bmark.us.</p>
+            <form id="#invite_form">
+                <ul>
+                    <li>
+                        <label>Email Address</label>
+                        <input type="text" id="invite_email" name="invite_email" />
+                        <input type="submit" id="send_invite" name="send_invite" value="Send" />
+                    </li>
+                </ul>
+            </form>
+            <div class="details">
+                <p>
+                    You have <span class="invite_count">{{invite_ct}}</span> invites left.
+                </p>
+            </div>
+        </div>
+        <div id="invite_msg" class="error"></div>
+    </div>
 </script>
