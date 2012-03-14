@@ -1004,7 +1004,9 @@ YUI.add('bookie-view', function (Y) {
      */
     ns.InviteView = Y.Base.create('bookie-invite-view', Y.View, [], {
         _visible: false,
-        template: Y.one('#account_invites').get('text'),
+        _get_template: function () {
+            return Y.one('#account_invites').get('text');
+        },
 
         events: {
             'input#send_invite': {
@@ -1069,7 +1071,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         initializer: function (cfg) {
-            this.ctpl = Y.Handlebars.compile(this.template);
+            this.ctpl = Y.Handlebars.compile(this._get_template());
         },
 
         invite: function (ev) {
