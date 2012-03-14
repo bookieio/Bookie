@@ -1026,7 +1026,6 @@ YUI.add('bookie-view', function (Y) {
             if (success) {
                 // decrement the UI counter so they appear to have fewer invites
                 // get the current value
-                debugger;
                 var cont = Y.one('.invite_count'),
                     ct = parseInt(cont.get('text'), 10);
 
