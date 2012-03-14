@@ -1,7 +1,3 @@
-For eaiser user install see:
+See:
 
-http://docs.bmark.us/started.html
-
-For full developer install see:
-
-http://docs.bmark.us/install.html
+http://docs.bmark.us/en/latest/install.html
