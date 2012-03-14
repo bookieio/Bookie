@@ -305,6 +305,7 @@ class User(Base):
             new_user.email = email
             new_user.username = email
             new_user.invited_by = self.username
+            new_user.api_key = User.gen_api_key()
 
             # they need to be deactivated
             new_user.reactivate('invite')

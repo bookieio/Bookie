@@ -27,7 +27,21 @@ class TestInviteSetup(TestCase):
 
     def testInviteCreatesUser(self):
         """We should get a new user when inviting something"""
+        me = User()
+        me.username = 'me'
+        me.invite_ct = 2
+        you = me.invite('you.com')
 
+        eq_('you.com', you.username,
+            'The email should be the username')
+        eq_('you.com', you.email,
+            'The email should be the email')
+        ok_(len(you.api_key,
+            'The api key should be generated for the user')
+        ok_(not you.activated,
+            'The new user should not be activated')
+        eq_(1, me.invite_ct,
+            'My invite count should be deprecated')
 
 
 class TestSigningUpUser(TestCase):
