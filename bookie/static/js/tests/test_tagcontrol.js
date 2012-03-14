@@ -1,13 +1,10 @@
-// Create a new YUI instance and populate it with the required modules.
-YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol',
-    function (Y) {
-    //initialize the console
-    var yconsole = new Y.Console({
-        newestOnTop: false
-    });
-    yconsole.render('#log');
+YUI.add('bookie-test-model', function (Y) {
+    var ns = Y.namespace('bookie.test.model'),
+        A = Y.Assert;
 
-    var view_test = new Y.Test.Case({
+    ns.suite = new Y.Test.Suite('Indicator Tests');
+
+    ns.suite.add(new Y.Test.Case({
         name: "Init Tests",
 
         setUp: function () {
@@ -174,11 +171,10 @@ YUI().use('console', 'test', 'node-event-simulate', 'bookie-tagcontrol',
             Y.Assert.areEqual(3, Y.all('.yui3-bookie-tagcontrol-item').size());
             Y.Assert.areEqual(2, this.tc.get('tags').length);
         }
-    });
+    }));
 
-    Y.Test.Runner.add(view_test);
-
-    // more tests here for things like the ajax autocomplete bits
-
-    Y.Test.Runner.run();
+}, '0.4', {
+    requires: [
+        'test', 'node-event-simulate', 'bookie-tagcontrol'
+    ]
 });

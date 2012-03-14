@@ -9,6 +9,19 @@
     <div id="container"></div>
     <div id="log"></div>
     <script src="test_tagcontrol.js"></script>
+
+    <script type="text/javascript">
+        YUI().use('console', 'test', 'bookie-test-tagcontrol', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Console({
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.tagcontrol.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
 </body>
 
 </html>
