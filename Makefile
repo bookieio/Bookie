@@ -193,7 +193,7 @@ clean_js:
 $(CHROME_BUILD):
 	mkdir -p $(CHROME_BUILD)
 
-$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/%-min.js
+$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
 	rm $(JS_BUILD_PATH)/b/meta.js || true
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
