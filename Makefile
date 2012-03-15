@@ -53,7 +53,7 @@ $(BOOKIE_INI):
 # DATABASE
 #
 # Need a series of commands to handle migrations
-bookie.db: develop
+bookie.db:
 	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
 
 .PHONY: db_up
