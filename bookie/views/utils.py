@@ -33,6 +33,13 @@ def import_bmarks(request):
             files = post.get('import_file', None)
 
             if files is not None:
+                # save the file off to the temp storage
+
+                # mark the system that there's a pending import that needs to
+                # be completed
+
+
+
                 # upload is there for use
                 # process the file using the import script
                 importer = Importer(files.file, username=username)

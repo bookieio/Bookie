@@ -39,3 +39,12 @@ def count_tags():
     initialize_sql(ini_items)
     StatBookmarkMgr.count_total_tags()
     trans.commit()
+
+@task(ignore_result=True)
+def importer_depth():
+    trans = transaction.begin()
+    initialize_sql(ini_items)
+    StatBookmarkMgr.count_importer_depth()
+    trans.commit()
+
+

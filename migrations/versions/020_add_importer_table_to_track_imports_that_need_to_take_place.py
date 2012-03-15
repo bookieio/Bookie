@@ -4,20 +4,21 @@ from migrate import *
 
 
 def upgrade(migrate_engine):
-    """Add the stats bookmark table"""
+    """Add the importer table"""
     meta = MetaData(migrate_engine)
 
-    stats = Table('stats_bookmarks', meta,
+    importer = Table('import_queue', meta,
         Column('id', Integer, autoincrement=True, primary_key=True),
+        Column('username', Unicode(255)),
+        Column('file_path', Unicode(100), nullable=False),
         Column('tstamp', DateTime, default=datetime.now),
-        Column('attrib', Unicode(100), nullable=False),
-        Column('data', Integer, nullable=False, default=0)
+        Column('completed', DateTime),
     )
-    stats.create()
+    importer.create()
 
 
 def downgrade(migrate_engine):
-    """Bye stats bookmark table"""
+    """Bye importer table"""
     meta = MetaData(migrate_engine)
-    stats = Table('stats_bookmarks', meta)
+    stats = Table('importer', meta)
     stats.drop()

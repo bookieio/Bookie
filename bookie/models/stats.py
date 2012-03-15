@@ -30,8 +30,10 @@ from bookie.models import Base
 from bookie.models import DBSession
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
+from bookie.models.queue import ImportQueueMgr
 
 
+IMPORTER_CT = 'importer_queue'
 TOTAL_CT = 'user_bookmarks'
 UNIQUE_CT = 'unique_bookmarks'
 TAG_CT = 'total_tags'
@@ -59,6 +61,13 @@ class StatBookmarkMgr(object):
         """Count the total number of tags in the system"""
         total = TagMgr.count()
         stat = StatBookmark(attrib=TAG_CT, data=total)
+        DBSession.add(stat)
+
+    @staticmethod
+    def count_importer_depth():
+        """Mark how deep the importer queue is at the moment"""
+        total = ImportQueueMgr.size()
+        stat = StatBookmark(attrib=IMPORTER_CT, data=total)
         DBSession.add(stat)
 
 

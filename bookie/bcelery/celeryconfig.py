@@ -16,6 +16,7 @@ BROKER_TRANSPORT = "sqlalchemy"
 BROKER_HOST = "sqlite:///../../bookie.db"
 # BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
+
 ## Worker settings
 ## If you're doing mostly I/O you can have more processes,
 ## but if mostly spending CPU, try to keep it close to the
@@ -25,8 +26,12 @@ CELERYD_CONCURRENCY = 1
 
 # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
 CELERYBEAT_SCHEDULE = {
-    "runs-every-30-seconds": {
+    "tasks.hourly_stats": {
         "task": "tasks.hourly_stats",
-        "schedule": timedelta(seconds=30),
+        "schedule": timedelta(seconds=60*60),
+    },
+    "tasks.importer_depth": {
+        "task": "tasks.importer_depth",
+        "schedule": timedelta(seconds=60*1),
     },
 }
