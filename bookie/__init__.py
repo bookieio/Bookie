@@ -11,6 +11,12 @@ from pyramid.security import Allow
 from pyramid.security import Everyone
 from pyramid.security import ALL_PERMISSIONS
 
+from bookie.bcelery import celeryconfig
+from celery import Celery
+celery = Celery()
+celery.config_from_object(celeryconfig)
+Task = celery.create_task_cls()
+
 
 class RootFactory(object):
     __acl__ = [(Allow, Everyone, ALL_PERMISSIONS)]

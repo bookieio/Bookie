@@ -137,8 +137,7 @@ def build_routes(config):
                      "/api/v1/tags/complete")
 
     # admin api calls
-    config.add_route("api_admin_readable_todo",
-                     "/api/v1/a/readable/todo")
+    config.add_route("api_admin_readable_todo", "/api/v1/a/readable/todo")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

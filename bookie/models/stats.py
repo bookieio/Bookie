@@ -33,25 +33,28 @@ from bookie.models import TagMgr
 
 
 TOTAL_CT = 'user_bookmarks'
-UNIQUE_CT = 'user_bookmarks'
+UNIQUE_CT = 'unique_bookmarks'
 TAG_CT = 'total_tags'
 
 
 class StatBookmarkMgr(object):
     """Handle our agg stuff for the stats on bookmarks"""
 
+    @staticmethod
     def count_unique_bookmarks():
         """Count the unique number of bookmarks in the system"""
         total = BmarkMgr.count(distinct=True)
         stat = StatBookmark(attrib=UNIQUE_CT, data=total)
         DBSession.add(stat)
 
+    @staticmethod
     def count_total_bookmarks():
         """Count the total number of bookmarks in the system"""
         total = BmarkMgr.count()
         stat = StatBookmark(attrib=TOTAL_CT, data=total)
         DBSession.add(stat)
 
+    @staticmethod
     def count_total_tags():
         """Count the total number of tags in the system"""
         total = TagMgr.count()
