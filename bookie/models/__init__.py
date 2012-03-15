@@ -240,9 +240,10 @@ class TagMgr(object):
         tag_list = list(set(tag_suggest))
         return tag_list
 
+    @staticmethod
     def count():
         """Count how many tags we have in the system"""
-        return Tag.query(Tag.tid).count()
+        return DBSession.query(Tag.tid).count()
 
 
 class Tag(Base):
@@ -650,9 +651,7 @@ class Bmark(Base):
 
     hashed = relation(Hashed,
                       backref="bmark",
-                      uselist=False,
-                      cascade="all, delete, delete-orphan",
-                      single_parent=True,
+                      uselist=False
                       )
 
     readable = relation(Readable,
