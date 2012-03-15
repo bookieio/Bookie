@@ -1,6 +1,6 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
-PY := $(shell which python)
+PY := bin/python
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
