@@ -33,7 +33,7 @@ RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
 .PHONY: all
-all: deps develop bookie.db db_up js chrome_css
+all: deps develop bookie.db db_up $(CHROME_BUILD) chrome_css js
 
 .PHONY: clean
 clean: clean_js clean_css
@@ -193,13 +193,14 @@ clean_js:
 $(CHROME_BUILD):
 	mkdir -p $(CHROME_BUILD)
 
-$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
+$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/%-min.js
 	rm $(JS_BUILD_PATH)/b/meta.js || true
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
 		-x -min.js$
 $(JS_BUILD_PATH)/b/%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
+
 $(BOOKIE_JS)/%.js: $(CHROME_BUILD)
 
 $(JS_BUILD_PATH)/b/%.js: $(BOOKIE_JS)/%.js
