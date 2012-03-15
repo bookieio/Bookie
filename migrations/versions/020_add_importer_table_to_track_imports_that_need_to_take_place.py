@@ -12,6 +12,7 @@ def upgrade(migrate_engine):
         Column('username', Unicode(255)),
         Column('file_path', Unicode(100), nullable=False),
         Column('tstamp', DateTime, default=datetime.now),
+        Column('status', Integer),
         Column('completed', DateTime),
     )
     importer.create()
@@ -20,5 +21,5 @@ def upgrade(migrate_engine):
 def downgrade(migrate_engine):
     """Bye importer table"""
     meta = MetaData(migrate_engine)
-    stats = Table('importer', meta)
+    stats = Table('import_queue', meta)
     stats.drop()

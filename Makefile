@@ -96,18 +96,6 @@ docs_open: docs
 tags:
 	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
 
-# BOOTSTRAP
-#
-# I don't know that we'll be using this much longer. I want to get things into
-# the Makefile and more repeatable with clean/all setups.
-
-.PHONY: bootstrap
-bootstrap:
-	scripts/bootstrap/gen_bootstrap.py > scripts/bootstrap/bootstrap.py
-
-.PHONY: bootstrap_upload
-bootstrap_upload: bootstrap
-	cd scripts/bootstrap && $(S3) bootstrap.py
 
 # DEPS
 #

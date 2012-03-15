@@ -99,7 +99,9 @@ def edit(request):
             desc = params.get('description', None)
             bmark = Bmark(url, request.user.username, desc=desc)
 
-        tag_suggest = TagMgr.suggestions(url=bmark.hashed.url)
+        tag_suggest = TagMgr.suggestions(
+            url=bmark.hashed.url,
+            username=request.user.userame)
 
         return {
                 'new': new,
