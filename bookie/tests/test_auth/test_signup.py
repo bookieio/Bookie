@@ -12,10 +12,12 @@ from bookie.models import DBSession
 from bookie.models.auth import Activation
 from bookie.models.auth import User
 
+from bookie.tests import TestDBBase
+from bookie.tests import gen_random_word
 
 LOG = logging.getLogger(__name__)
 
-class TestInviteSetup(TestCase):
+class TestInviteSetup(TestDBBase):
     """Verify we have/can work with the invite numbers"""
 
     def testHasNoInvites(self):
@@ -29,6 +31,7 @@ class TestInviteSetup(TestCase):
         """We should get a new user when inviting something"""
         me = User()
         me.username = 'me'
+        me.email = 'me.com'
         me.invite_ct = 2
         you = me.invite('you.com')
 
@@ -36,20 +39,20 @@ class TestInviteSetup(TestCase):
             'The email should be the username')
         eq_('you.com', you.email,
             'The email should be the email')
-        ok_(len(you.api_key,
+        ok_(len(you.api_key),
             'The api key should be generated for the user')
         ok_(not you.activated,
             'The new user should not be activated')
         eq_(1, me.invite_ct,
             'My invite count should be deprecated')
 
-
-class TestSigningUpUser(TestCase):
+class TestSigningUpUser(TestDBBase):
     """Start out by verifying a user starts out in the right state"""
 
     def testInitialUserInactivated(self):
         """A new user signup should be a deactivated user"""
         u = User()
+        u.email = gen_random_word(10)
         DBSession.add(u)
 
         eq_(False, u.activated,

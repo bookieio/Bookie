@@ -240,6 +240,10 @@ class TagMgr(object):
         tag_list = list(set(tag_suggest))
         return tag_list
 
+    def count():
+        """Count how many tags we have in the system"""
+        return Tag.query(Tag.tid).count()
+
 
 class Tag(Base):
     """Bookmarks can have many many tags"""
@@ -582,6 +586,20 @@ class BmarkMgr(object):
             qry = qry.filter(Bmark.username == username)
 
         return qry.all()
+
+    @staticmethod
+    def count(username=None, distinct=False):
+        """How many bookmarks are there
+
+        :param username: should we limit to a username?
+
+        """
+        qry = DBSession.query(Bmark.hash_id)
+        if username:
+            qry = qry.filter(Bmark.username == username)
+        if distinct:
+            qry = qry.distinct()
+        return qry.count()
 
 
 class BmarkTools(object):

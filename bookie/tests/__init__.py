@@ -1,5 +1,6 @@
 import ConfigParser
 import os
+import random
 import shutil
 import transaction
 import unittest
@@ -39,9 +40,28 @@ except:
     pass
 
 
+def gen_random_word(wordLen):
+    word = ''
+    for i in xrange(wordLen):
+        word += random.choice(('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs'
+                               'tuvwxyz0123456789/&='))
+    return word
+
+
+class TestDBBase(unittest.TestCase):
+    def setUp(self):
+        """Setup Tests"""
+        testing.setUp()
+        self.trans = transaction.begin()
+
+    def tearDown(self):
+        """Tear down each test"""
+        testing.tearDown()
+        self.trans.abort()
+
+
 def empty_db():
     """On teardown, remove all the db stuff"""
-
     Bmark.query.delete()
     Readable.query.delete()
     # we can't remove the toread tag we have from our commands
