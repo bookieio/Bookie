@@ -53,25 +53,25 @@ $(BOOKIE_INI):
 # DATABASE
 #
 # Need a series of commands to handle migrations
-bookie.db:
+bookie.db: develop
 	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
 
 .PHONY: db_up
-db_up: bookie.db
+db_up: develop bookie.db
 	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 
 # make db_down ver=10
 .PHONY: db_down
-db_down: bookie.db
+db_down: develop bookie.db
 	$(MIGRATE) downgrade --url=$(SAURL) --repository=migrations $(ver)
 
 # make db_new desc="This is a new migration"
 .PHONY: db_new
-db_new: bookie.db
+db_new: develop bookie.db
 	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
 
 .PHONY: db_version
-db_version: bookie.db
+db_version: develop bookie.db
 	$(MIGRATE) version --url=$(SAURL) --repository=migrations
 
 .PHONY: first_bookmark
