@@ -1,6 +1,6 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
-PY := $(shell which python)
+PY := bin/python
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
@@ -33,7 +33,7 @@ RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
 .PHONY: all
-all: deps develop bookie.db db_up js chrome_css
+all: deps develop bookie.db db_up $(CHROME_BUILD) chrome_css js
 
 .PHONY: clean
 clean: clean_js clean_css
@@ -57,21 +57,21 @@ bookie.db:
 	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
 
 .PHONY: db_up
-db_up: bookie.db
+db_up: develop bookie.db
 	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 
 # make db_down ver=10
 .PHONY: db_down
-db_down: bookie.db
+db_down: develop bookie.db
 	$(MIGRATE) downgrade --url=$(SAURL) --repository=migrations $(ver)
 
 # make db_new desc="This is a new migration"
 .PHONY: db_new
-db_new: bookie.db
+db_new: develop bookie.db
 	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
 
 .PHONY: db_version
-db_version: bookie.db
+db_version: develop bookie.db
 	$(MIGRATE) version --url=$(SAURL) --repository=migrations
 
 .PHONY: first_bookmark
@@ -116,7 +116,7 @@ bootstrap_upload: bootstrap
 .PHONY: deps
 deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
-	$(PIP_MIR) $(PIP) install -r requirements.txt
+	$(PIP_MIR) $(PIP) install -q -r requirements.txt
 
 # TESTS
 #
@@ -193,13 +193,14 @@ clean_js:
 $(CHROME_BUILD):
 	mkdir -p $(CHROME_BUILD)
 
-$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
+$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/%-min.js
 	rm $(JS_BUILD_PATH)/b/meta.js || true
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
 		-x -min.js$
 $(JS_BUILD_PATH)/b/%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/%.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
+
 $(BOOKIE_JS)/%.js: $(CHROME_BUILD)
 
 $(JS_BUILD_PATH)/b/%.js: $(BOOKIE_JS)/%.js
