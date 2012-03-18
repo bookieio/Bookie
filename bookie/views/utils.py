@@ -14,6 +14,7 @@ from bookie.models import DBSession
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
 from bookie.models.queue import ImportQueue
+from bookie.models.queue import ImportQueueMgr
 
 LOG = logging.getLogger(__name__)
 
@@ -28,6 +29,17 @@ def import_bmarks(request):
     with ReqAuthorize(request):
         data = {}
         post = request.POST
+
+        # we can't let them submit multiple times, check if this user has an
+        # import in process
+        if ImportQueueMgr.get(username=username):
+            # they have an import, get the information about it and shoot to
+            # the template
+            return {
+                'existing': True,
+                'import_stats': ImportQueueMgr.get_details(username=username)
+            }
+
         if post:
             # we have some posted values
             files = post.get('import_file', None)
@@ -59,8 +71,11 @@ def import_bmarks(request):
 
             return data
         else:
+            # we need to see if they've got
             # just display the form
-            return {}
+            return {
+                'existing': False
+            }
 
 
 @view_config(route_name="search", renderer="/utils/search.mako")

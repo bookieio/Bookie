@@ -8,7 +8,6 @@ import unittest
 from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import raises
-from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark
@@ -227,9 +226,8 @@ class ImportViews(TestViewBase):
                             },
                             status=302)
 
-    def test_import_upload(self):
-        """After we upload a file, we should have an importer queue."""
-        self._login()
+    def _upload(self):
+        """Make an upload to the importer"""
         loc = os.path.dirname(__file__)
         del_file = open(os.path.join(loc, 'delicious.html'))
         res = self.app.post(
@@ -239,6 +237,12 @@ class ImportViews(TestViewBase):
                            'delicious.html',
                            del_file.read())],
         )
+        return res
+
+    def test_import_upload(self):
+        """After we upload a file, we should have an importer queue."""
+        self._login()
+        res = self._upload()
 
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
@@ -253,15 +257,7 @@ class ImportViews(TestViewBase):
     def test_skip_running(self):
         """Verify that if running, it won't get returned again"""
         self._login()
-        loc = os.path.dirname(__file__)
-        del_file = open(os.path.join(loc, 'delicious.html'))
-        res = self.app.post(
-            '/admin/import',
-            params={'api_key': self.api_key},
-            upload_files=[('import_file',
-                           'delicious.html',
-                           del_file.read())],
-        )
+        res = self._upload()
 
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
@@ -274,3 +270,28 @@ class ImportViews(TestViewBase):
 
         imp = ImportQueueMgr.get_ready()
         ok_(not imp, 'We should get no results back')
+
+    def test_one_import(self):
+        """You should be able to only get one import running at a time"""
+        self._login()
+
+        # prep the db with 2 other imports ahead of this user's
+        DBSession.execute("""
+            INSERT INTO import_queue
+                (username, file_path) VALUES ('testing', 'something.txt')
+        """);
+        DBSession.execute("""
+            INSERT INTO import_queue
+                (username, file_path) VALUES ('testing', 'something.txt')
+        """);
+
+        res = self._upload()
+        res.follow()
+
+        # now let's hit the import page, we sholdn't get a form, but instead a
+        # message about our import
+        res = self.app.get('/admin/import')
+
+        ok_('form' not in res.body, "We shouldn't have a form")
+        ok_('Waiting' in res.body, "We want to display a waiting message.")
+        ok_('2 other imports' in res.body, "We want to display a count message.")

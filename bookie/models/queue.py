@@ -17,17 +17,30 @@ class ImportQueueMgr(object):
     """All the static methods for ImportQueue"""
 
     @staticmethod
-    def get(id):
+    def get(id=None, username=None):
         """Get the import item"""
-        return ImportQueue.query.get(id)
+        if (id):
+            return ImportQueue.query.get(id)
+        elif (username):
+            qry = ImportQueue.query.filter(ImportQueue.username==username)
+            return qry.first()
 
     @staticmethod
-    def size():
-        """How deep is the queue at the moment"""
-        qry = ImportQueue.query.filter(ImportQueue.completed != None)
-        return qry.count()
+    def get_details(id=None, username=None):
+        """Get some details about a import
 
+        We want to offer things like where they are in queue and maybe the
+        import record itself
 
+        """
+        your_import = ImportQueueMgr.get(id=id, username=username)
+        place_qry = ImportQueue.query.filter(ImportQueue.status==NEW)
+        place_qry = place_qry.filter(ImportQueue.id < your_import.id)
+
+        return {
+            'place': place_qry.count(),
+            'import': your_import
+        }
 
     @staticmethod
     def get_ready(limit=10):
@@ -35,6 +48,11 @@ class ImportQueueMgr(object):
         qry = ImportQueue.query.filter(ImportQueue.status == 0)
         return qry.limit(limit).all()
 
+    @staticmethod
+    def size():
+        """How deep is the queue at the moment"""
+        qry = ImportQueue.query.filter(ImportQueue.completed != None)
+        return qry.count()
 
 class ImportQueue(Base):
     """Track imports we need to do"""
