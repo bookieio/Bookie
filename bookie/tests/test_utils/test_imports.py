@@ -12,6 +12,7 @@ from nose.tools import raises
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
+from bookie.models.queue import ImportQueue
 from bookie.models.queue import ImportQueueMgr
 from bookie.lib.urlhash import generate_hash
 
@@ -275,15 +276,13 @@ class ImportViews(TestViewBase):
         """You should be able to only get one import running at a time"""
         self._login()
 
-        # prep the db with 2 other imports ahead of this user's
-        DBSession.execute("""
-            INSERT INTO import_queue
-                (username, file_path) VALUES ('testing', 'something.txt')
-        """);
-        DBSession.execute("""
-            INSERT INTO import_queue
-                (username, file_path) VALUES ('testing', 'something.txt')
-        """);
+        # Prep the db with 2 other imports ahead of this user's.
+        # We have to commit these since the request takes place in a new
+        # session/transaction.
+        DBSession.add(ImportQueue(username='testing', file_path='testing.txt'))
+        DBSession.add(ImportQueue(username='testing2', file_path='testing2.txt'))
+        DBSession.flush()
+        transaction.commit()
 
         res = self._upload()
         res.follow()
@@ -292,6 +291,6 @@ class ImportViews(TestViewBase):
         # message about our import
         res = self.app.get('/admin/import')
 
-        ok_('form' not in res.body, "We shouldn't have a form")
-        ok_('Waiting' in res.body, "We want to display a waiting message.")
-        ok_('2 other imports' in res.body, "We want to display a count message.")
+        ok_('<form' not in res.body, "We shouldn't have a form")
+        ok_('waiting in the queue' in res.body, "We want to display a waiting message.")
+        ok_('2 other imports' in res.body, "We want to display a count message." + res.body)

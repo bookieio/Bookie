@@ -8,14 +8,14 @@ ${account_nav()}
 <div class="yui3-g">
     <div class="yui3-u-3-4">
 
-
-
         <div class="block">
             <div class="head"></div>
             <div class="body">
                 <div class="form">
 
                     <div class="heading">Import Bookmarks</div>
+
+                    % if not existing:
                     <form class="" action="${request.route_url('user_import',
                                                                 username=request.user.username)}"
                         method="POST" enctype=multipart/form-data>
@@ -40,6 +40,17 @@ ${account_nav()}
                             </div>
                         % endif
                     </form>
+
+                    % else:
+                        <div class="import_details">You already have an import
+                        waiting in the queue.</div>
+                        <div>There are currently
+                            ${import_stats['place']} other imports ahead of you.
+                        </div>
+
+                    % endif
+
+
                 </div>
             </div>
             <div class="head"></div>
@@ -47,11 +58,11 @@ ${account_nav()}
     </div>
     <div class="yui3-u-1-4">
         <div class="note">
-            <p>Use the <em>Import Bookmarks</em> tool to import your bookmarks from Delicious 
+            <p>Use the <em>Import Bookmarks</em> tool to import your bookmarks from Delicious
             or Google Bookmarks.</p>
             <p>You will need an html export file from either of these services.</p>
             <h2>Delicious</h2>
-            <p>To get an html file from Delicious, click on <em>Settings</em> and then click on 
+            <p>To get an html file from Delicious, click on <em>Settings</em> and then click on
             the <em>Export / Backup Bookmarks</em> link under the <em>Bookmarks</em> heading.</p>
             <h2>Google Bookmarks</h2>
             <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>

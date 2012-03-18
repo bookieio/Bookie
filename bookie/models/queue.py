@@ -51,7 +51,7 @@ class ImportQueueMgr(object):
     @staticmethod
     def size():
         """How deep is the queue at the moment"""
-        qry = ImportQueue.query.filter(ImportQueue.completed != None)
+        qry = ImportQueue.query.filter(ImportQueue.completed is None)
         return qry.count()
 
 class ImportQueue(Base):
