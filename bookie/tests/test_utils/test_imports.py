@@ -249,3 +249,28 @@ class ImportViews(TestViewBase):
         ok_(imp, 'We should have a record')
         eq_(imp.file_path, 'delicious.html')
         eq_(imp.status, 0, 'start out as default status of 0')
+
+    def test_skip_running(self):
+        """Verify that if running, it won't get returned again"""
+        self._login()
+        loc = os.path.dirname(__file__)
+        del_file = open(os.path.join(loc, 'delicious.html'))
+        res = self.app.post(
+            '/admin/import',
+            params={'api_key': self.api_key},
+            upload_files=[('import_file',
+                           'delicious.html',
+                           del_file.read())],
+        )
+
+        eq_(res.status, "302 Found",
+            msg='Import status is 302 redirect by home, ' + res.status)
+
+        # now verify that we've got our record
+        imp = ImportQueueMgr.get_ready()
+        imp = imp[0]
+        imp.status=2
+        DBSession.flush()
+
+        imp = ImportQueueMgr.get_ready()
+        ok_(not imp, 'We should get no results back')
