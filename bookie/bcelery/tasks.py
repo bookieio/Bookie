@@ -61,23 +61,25 @@ def importer_depth():
 def importer_process():
     trans = transaction.begin()
     initialize_sql(ini_items)
-    imports = ImportQueueMgr.get(limit=2)
+    imports = ImportQueueMgr.get_ready(limit=1)
 
     for i in imports:
-        subtask(importer_process_worker, args=(i,)).delay()
-        i.mark_running()
+        subtask(importer_process_worker, args=(i.id,)).delay()
 
     trans.commit()
 
 @task(ignore_result=True)
-def importer_process_worker(import_job):
+def importer_process_worker(iid):
     """Do the real work"""
     trans = transaction.begin()
     initialize_sql(ini_items)
+    import_job = ImportQueueMgr.get(iid)
     try:
         # process the file using the import script
+        import_job.mark_running()
+        import_file = open('/tmp/' + import_job.file_path)
         importer = Importer(
-            import_job.file_path,
+            import_file,
             import_job.username)
         importer.process()
         import_job.mark_done()

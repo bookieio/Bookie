@@ -34,4 +34,8 @@ CELERYBEAT_SCHEDULE = {
         "task": "tasks.importer_depth",
         "schedule": timedelta(seconds=60*1),
     },
+    "tasks.importer": {
+        "task": "tasks.importer_process",
+        "schedule": timedelta(seconds=60*1),
+    },
 }

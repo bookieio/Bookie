@@ -13,11 +13,15 @@ from pyramid import testing
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
+from bookie.models.queue import ImportQueueMgr
 from bookie.lib.urlhash import generate_hash
 
 from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
 from bookie.lib.importer import GBookmarkImporter
+
+from bookie.tests import TestViewBase
+
 
 LOG = logging.getLogger(__name__)
 
@@ -210,31 +214,12 @@ class ImportGoogleTest(unittest.TestCase):
         _google_data_test()
 
 
-class ImportViews(unittest.TestCase):
+class ImportViews(TestViewBase):
     """Test the web import"""
 
-    def setUp(self):
-        from pyramid.paster import get_app
-        from bookie.tests import BOOKIE_TEST_INI
-        app = get_app(BOOKIE_TEST_INI, 'main')
-        from webtest import TestApp
-        self.testapp = TestApp(app)
-        testing.setUp()
-
-    def tearDown(self):
-        """We need to empty the bmarks table on each run"""
-        testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
-
-    def test_delicious_import(self):
-        """Test that we can upload/import our test file"""
-        # first let's login to the site so we can get in
-        self.testapp.post('/login',
+    def _login(self):
+        """Make the login call to the app"""
+        self.app.post('/login',
                             params={
                                 "login": "admin",
                                 "password": "admin",
@@ -242,64 +227,98 @@ class ImportViews(unittest.TestCase):
                             },
                             status=302)
 
-        session = DBSession()
+    def test_import_upload(self):
+        """After we upload a file, we should have an importer queue."""
+        self._login()
         loc = os.path.dirname(__file__)
         del_file = open(os.path.join(loc, 'delicious.html'))
-        res = DBSession.execute(
-            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
-        API_KEY = res['api_key']
-
-        post = {
-            'api_key': API_KEY,
-        }
-
-        res = self.testapp.post('/admin/import',
-                                params=post,
-                                upload_files=[('import_file',
-                                               'delicious.html',
-                                               del_file.read())],
+        res = self.app.post(
+            '/admin/import',
+            params={'api_key': self.api_key},
+            upload_files=[('import_file',
+                           'delicious.html',
+                           del_file.read())],
         )
 
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
-        session.flush()
+        # now verify that we've got our record
+        imp = ImportQueueMgr.get_ready()
+        imp = imp[0]
+        ok_(imp, 'We should have a record')
+        eq_(imp.file_path, 'delicious.html')
+        eq_(imp.status, 0, 'start out as default status of 0')
 
-        # test all the data we want to test after the import
-        _delicious_data_test()
+    # def test_delicious_import(self):
+    #     """Test that we can upload/import our test file"""
+    #     # first let's login to the site so we can get in
+    #     self.testapp.post('/login',
+    #                         params={
+    #                             "login": "admin",
+    #                             "password": "admin",
+    #                             "form.submitted": "Log In",
+    #                         },
+    #                         status=302)
 
-    def test_google_import(self):
-        """Test that we can upload our google file"""
-        self.testapp.post('/login',
-                            params={
-                                "login": "admin",
-                                "password": "admin",
-                                "form.submitted": "Log In",
-                            },
-                            status=302)
+    #     session = DBSession()
+    #     loc = os.path.dirname(__file__)
+    #     del_file = open(os.path.join(loc, 'delicious.html'))
+    #     res = DBSession.execute(
+    #         "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+    #     API_KEY = res['api_key']
 
-        session = DBSession()
-        loc = os.path.dirname(__file__)
-        del_file = open(os.path.join(loc, 'googlebookmarks.html'))
-        res = DBSession.execute(
-            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
-        API_KEY = res['api_key']
+    #     post = {
+    #         'api_key': API_KEY,
+    #     }
 
-        post = {
-            'api_key': API_KEY,
-        }
+    #     res = self.testapp.post('/admin/import',
+    #                             params=post,
+    #                             upload_files=[('import_file',
+    #                                            'delicious.html',
+    #                                            del_file.read())],
+    #     )
 
-        res = self.testapp.post('/admin/import',
-                                params=post,
-                                upload_files=[('import_file',
-                                               'googlebookmarks.html',
-                                               del_file.read())],
-        )
+    #     eq_(res.status, "302 Found",
+    #         msg='Import status is 302 redirect by home, ' + res.status)
 
-        eq_(res.status, "302 Found",
-            msg='Import status is 302 redirect by home, ' + res.status)
+    #     session.flush()
 
-        session.flush()
+    #     # test all the data we want to test after the import
+    #     _delicious_data_test()
 
-        # test all the data we want to test after the import
-        _google_data_test()
+    # def test_google_import(self):
+    #     """Test that we can upload our google file"""
+    #     self.testapp.post('/login',
+    #                         params={
+    #                             "login": "admin",
+    #                             "password": "admin",
+    #                             "form.submitted": "Log In",
+    #                         },
+    #                         status=302)
+
+    #     session = DBSession()
+    #     loc = os.path.dirname(__file__)
+    #     del_file = open(os.path.join(loc, 'googlebookmarks.html'))
+    #     res = DBSession.execute(
+    #         "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+    #     API_KEY = res['api_key']
+
+    #     post = {
+    #         'api_key': API_KEY,
+    #     }
+
+    #     res = self.testapp.post('/admin/import',
+    #                             params=post,
+    #                             upload_files=[('import_file',
+    #                                            'googlebookmarks.html',
+    #                                            del_file.read())],
+    #     )
+
+    #     eq_(res.status, "302 Found",
+    #         msg='Import status is 302 redirect by home, ' + res.status)
+
+    #     session.flush()
+
+    #     # test all the data we want to test after the import
+    #     _google_data_test()
