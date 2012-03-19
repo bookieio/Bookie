@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from sqlalchemy import Column
@@ -6,6 +7,8 @@ from sqlalchemy import Integer
 from sqlalchemy import Unicode
 
 from bookie.models import Base
+
+LOG = logging.getLogger(__name__)
 
 NEW = 0
 RUNNING = 1
@@ -17,13 +20,17 @@ class ImportQueueMgr(object):
     """All the static methods for ImportQueue"""
 
     @staticmethod
-    def get(id=None, username=None):
+    def get(id=None, username=None, status=None):
         """Get the import item"""
         if (id):
-            return ImportQueue.query.get(id)
+            qry = ImportQueue.query.filter(ImportQueue.id==id)
         elif (username):
             qry = ImportQueue.query.filter(ImportQueue.username==username)
-            return qry.first()
+
+        if status is not None:
+            qry = qry.filter(ImportQueue.status==status)
+
+        return qry.first()
 
     @staticmethod
     def get_details(id=None, username=None):
@@ -51,7 +58,7 @@ class ImportQueueMgr(object):
     @staticmethod
     def size():
         """How deep is the queue at the moment"""
-        qry = ImportQueue.query.filter(ImportQueue.completed is None)
+        qry = ImportQueue.query.filter(ImportQueue.status == NEW)
         return qry.count()
 
 class ImportQueue(Base):

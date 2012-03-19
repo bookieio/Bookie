@@ -19,10 +19,7 @@ class AuthHelper(object):
     @staticmethod
     def check_api(submitted_key, users_key):
         """Verify the api key is valid"""
-        LOG.error(submitted_key, users_key)
         if users_key != submitted_key:
-            LOG.error('Invalid API Key! {0} v {1}'.format(users_key,
-                                                          submitted_key))
             return False
         else:
             return True
@@ -35,7 +32,6 @@ class AuthHelper(object):
 
         """
         if request.user is None:
-            LOG.error('Invalid Request: Not Logged in!')
             return False
 
         # if we have a username we're told to check against, make sure the
@@ -56,7 +52,6 @@ class AuthHelper(object):
         if redirect is None:
             raise HTTPForbidden('Deactivated Account')
         else:
-            LOG.error('Redirecting to: ' + redirect)
             raise HTTPFound(location=request.route_url(redirect))
 
 
@@ -82,18 +77,14 @@ class ReqOrApiAuthorize(object):
 
         # if the user account is not activated then no go
         if not self.user_acct.activated:
-            LOG.error("API call with deactivated account")
             raise HTTPForbidden('Deactivated Account')
 
         if AuthHelper.check_login(self.request, username=self.username):
-            LOG.error("CHECK LOGIN SUCCESS")
             return True
 
         if AuthHelper.check_api(self.api_key, self.user_acct.api_key):
-            LOG.error("CHECK API SUCCESS")
             return True
 
-        LOG.error("FAILED AUTH CHECKS")
         raise HTTPForbidden('Invalid Authorization')
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -125,7 +116,6 @@ class ApiAuthorize(object):
         """Verify api key set in constructor"""
         # if the user account is not activated then no go
         if not self.user.activated:
-            LOG.error("API only call with deactivated account")
             raise HTTPForbidden('Deactivated Account')
 
         if not AuthHelper.check_api(self.check_key, self.user.api_key):
@@ -169,16 +159,11 @@ class RequestWithUserAttribute(Request):
         # <your database connection, however you get it, the below line
         # is just an example>
         # dbconn = self.registry.settings['dbconn']
-        LOG.error('in Request with Attribute')
         user_id = unauthenticated_userid(self)
-        LOG.error(user_id)
         if user_id is not None:
-            LOG.error('user_id is not none')
-
             # this should return None if the user doesn't exist
             # in the database
             user = UserMgr.get(user_id=user_id)
-            LOG.error(user)
             return user
 
 
@@ -208,7 +193,6 @@ class api_auth():
         self.user_fetcher = user_fetcher
         self.admin_only = admin_only
         self.anon = anon
-        LOG.error('API AUTH INIT')
 
     def __call__(self, action_):
         """ Return :meth:`wrap_action` as the decorator for ``action_``. """

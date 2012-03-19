@@ -16,41 +16,36 @@ ${account_nav()}
                     <div class="heading">Import Bookmarks</div>
 
                     % if not existing:
-                    <form class="" action="${request.route_url('user_import',
-                                                                username=request.user.username)}"
-                        method="POST" enctype=multipart/form-data>
-                        <fieldset>
-                            <ul>
-                                <li>
-                                    <label for="import_file">Import File</label>
-                                    <input type="file" name="import_file" id="import_file" />
-                                </li>
-                                <li>
-                                    <label>&nbsp;</label>
-                                    <input type="submit" name="upload" value="Upload" id="upload" class="button" />
-                                </li>
-                            </ul>
-                        </fieldset>
-
-                        % if error:
-                            <div class="error">
-                                % for err in error:
-                                    ${err}
-                                % endfor
-                            </div>
-                        % endif
-                    </form>
-
+                        <form class="" action="${request.route_url('user_import',
+                                                                    username=request.user.username)}"
+                            method="POST" enctype=multipart/form-data>
+                            <fieldset>
+                                <ul>
+                                    <li>
+                                        <label for="import_file">Import File</label>
+                                        <input type="file" name="import_file" id="import_file" />
+                                    </li>
+                                    <li>
+                                        <label>&nbsp;</label>
+                                        <input type="submit" name="upload" value="Upload" id="upload" class="button" />
+                                    </li>
+                                </ul>
+                            </fieldset>
+                            % if error:
+                                <div class="error">
+                                    % for err in error:
+                                        ${err}
+                                    % endfor
+                                </div>
+                            % endif
+                        </form>
                     % else:
                         <div class="import_details">You already have an import
                         waiting in the queue.</div>
-                        <div>There are currently
-                            ${import_stats['place']} other imports ahead of you.
+                        <div>There are currently <em>
+                            ${import_stats['place']} other imports</em> ahead of you.
                         </div>
-
                     % endif
-
-
                 </div>
             </div>
             <div class="head"></div>

@@ -5,6 +5,7 @@ import StringIO
 import transaction
 import unittest
 
+from datetime import datetime
 from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import raises
@@ -243,6 +244,12 @@ class ImportViews(TestViewBase):
     def test_import_upload(self):
         """After we upload a file, we should have an importer queue."""
         self._login()
+
+        # verify we get the form
+        res = self.app.get('/admin/import')
+        ok_('<form' in res.body,
+            'Should have a form in the body for submitting the upload')
+
         res = self._upload()
 
         eq_(res.status, "302 Found",
@@ -287,10 +294,31 @@ class ImportViews(TestViewBase):
         res = self._upload()
         res.follow()
 
-        # now let's hit the import page, we sholdn't get a form, but instead a
+        # now let's hit the import page, we shouldn't get a form, but instead a
         # message about our import
         res = self.app.get('/admin/import')
 
         ok_('<form' not in res.body, "We shouldn't have a form")
         ok_('waiting in the queue' in res.body, "We want to display a waiting message.")
         ok_('2 other imports' in res.body, "We want to display a count message." + res.body)
+
+    def test_completed_dont_count(self):
+        """Once completed, we should get the form again"""
+        self._login()
+
+        # add out completed one
+        q = ImportQueue(
+            username='admin',
+            file_path='testing.txt'
+        )
+        q.completed = datetime.now()
+        q.status = 2
+        DBSession.add(q)
+        transaction.commit()
+
+        # now let's hit the import page, we shouldn't get a form, but instead a
+        # message about our import
+        res = self.app.get('/admin/import')
+
+        ok_('<form' in res.body, "We should have a form")
+

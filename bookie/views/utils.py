@@ -13,6 +13,7 @@ from bookie.models import Bmark
 from bookie.models import DBSession
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
+from bookie.models.queue import NEW
 from bookie.models.queue import ImportQueue
 from bookie.models.queue import ImportQueueMgr
 
@@ -32,7 +33,7 @@ def import_bmarks(request):
 
         # we can't let them submit multiple times, check if this user has an
         # import in process
-        if ImportQueueMgr.get(username=username):
+        if ImportQueueMgr.get(username=username, status=NEW):
             # they have an import, get the information about it and shoot to
             # the template
             return {
