@@ -24,7 +24,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import joinedload
-from sqlalchemy.orm import joinedload_all
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -35,7 +34,6 @@ from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
-
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -239,6 +237,11 @@ class TagMgr(object):
 
         tag_list = list(set(tag_suggest))
         return tag_list
+
+    @staticmethod
+    def count():
+        """Count how many tags we have in the system"""
+        return DBSession.query(Tag.tid).count()
 
 
 class Tag(Base):
@@ -583,6 +586,20 @@ class BmarkMgr(object):
 
         return qry.all()
 
+    @staticmethod
+    def count(username=None, distinct=False):
+        """How many bookmarks are there
+
+        :param username: should we limit to a username?
+
+        """
+        qry = DBSession.query(Bmark.hash_id)
+        if username:
+            qry = qry.filter(Bmark.username == username)
+        if distinct:
+            qry = qry.distinct()
+        return qry.count()
+
 
 class BmarkTools(object):
     """Some stupid tools to help work with bookmarks"""
@@ -632,9 +649,7 @@ class Bmark(Base):
 
     hashed = relation(Hashed,
                       backref="bmark",
-                      uselist=False,
-                      cascade="all, delete, delete-orphan",
-                      single_parent=True,
+                      uselist=False
                       )
 
     readable = relation(Readable,

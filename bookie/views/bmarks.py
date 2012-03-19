@@ -7,20 +7,25 @@ from pyramid.view import view_config
 
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
-from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
-from bookie.models import Hashed
 from bookie.models import TagMgr
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
 
 
-@view_config(route_name="bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="bmark_recent_tags", renderer="/bmark/recent.mako")
-@view_config(route_name="user_bmark_recent", renderer="/bmark/recent.mako")
-@view_config(route_name="user_bmark_recent_tags",
+@view_config(
+    route_name="bmark_recent",
+    renderer="/bmark/recent.mako")
+@view_config(
+    route_name="bmark_recent_tags",
+    renderer="/bmark/recent.mako")
+@view_config(
+    route_name="user_bmark_recent",
+    renderer="/bmark/recent.mako")
+@view_config(
+    route_name="user_bmark_recent_tags",
     renderer="/bmark/recent.mako")
 def recent(request):
     """Testing a JS driven ui with backbone/etc"""
@@ -50,8 +55,12 @@ def recent(request):
     return ret
 
 
-@view_config(route_name="user_bmark_edit", renderer="/bmark/edit.mako")
-@view_config(route_name="user_bmark_new", renderer="/bmark/edit.mako")
+@view_config(
+    route_name="user_bmark_edit",
+    renderer="/bmark/edit.mako")
+@view_config(
+    route_name="user_bmark_new",
+    renderer="/bmark/edit.mako")
 def edit(request):
     """Manual add a bookmark to the user account
 
@@ -99,7 +108,10 @@ def edit(request):
             desc = params.get('description', None)
             bmark = Bmark(url, request.user.username, desc=desc)
 
-        tag_suggest = TagMgr.suggestions(url=bmark.hashed.url)
+        tag_suggest = TagMgr.suggestions(
+            url=bmark.hashed.url,
+            username=request.user.userame
+        )
 
         return {
                 'new': new,
@@ -147,7 +159,9 @@ def edit_error(request):
                                            username=request.user.username))
 
 
-@view_config(route_name="bmark_readable", renderer="/bmark/readable.mako")
+@view_config(
+    route_name="bmark_readable",
+    renderer="/bmark/readable.mako")
 def readable(request):
     """Display a readable version of this url if we can"""
     rdict = request.matchdict

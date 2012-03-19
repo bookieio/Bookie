@@ -5,7 +5,6 @@
 import argparse
 import logging
 import threading
-import time
 import transaction
 
 from ConfigParser import ConfigParser
@@ -16,7 +15,6 @@ from bookie.lib.readable import ReadUrl
 
 from bookie.models import initialize_sql
 from bookie.models import Bmark
-from bookie.models import Hashed
 from bookie.models import Readable
 
 PER_TRANS = 24

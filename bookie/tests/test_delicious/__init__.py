@@ -235,10 +235,6 @@ class DelPostTest(unittest.TestCase):
         eq_(res.status, "200 OK", 'Post Delete status is 200, ' + res.status)
         ok_('done' in res.body, "Request should return done msg: " + res.body)
 
-        # now make sure our hashed object is gone as well.
-        res = Hashed.query.get(GOOGLE_HASH)
-        ok_(not res, "We didn't get our hash object")
-
     def test_get_post_byurl(self):
         """Verify we can fetch a post back via a url
 

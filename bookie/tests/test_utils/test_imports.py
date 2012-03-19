@@ -5,19 +5,24 @@ import StringIO
 import transaction
 import unittest
 
+from datetime import datetime
 from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import raises
-from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
+from bookie.models.queue import ImportQueue
+from bookie.models.queue import ImportQueueMgr
 from bookie.lib.urlhash import generate_hash
 
 from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
 from bookie.lib.importer import GBookmarkImporter
+
+from bookie.tests import TestViewBase
+
 
 LOG = logging.getLogger(__name__)
 
@@ -210,31 +215,12 @@ class ImportGoogleTest(unittest.TestCase):
         _google_data_test()
 
 
-class ImportViews(unittest.TestCase):
+class ImportViews(TestViewBase):
     """Test the web import"""
 
-    def setUp(self):
-        from pyramid.paster import get_app
-        from bookie.tests import BOOKIE_TEST_INI
-        app = get_app(BOOKIE_TEST_INI, 'main')
-        from webtest import TestApp
-        self.testapp = TestApp(app)
-        testing.setUp()
-
-    def tearDown(self):
-        """We need to empty the bmarks table on each run"""
-        testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
-
-    def test_delicious_import(self):
-        """Test that we can upload/import our test file"""
-        # first let's login to the site so we can get in
-        self.testapp.post('/login',
+    def _login(self):
+        """Make the login call to the app"""
+        self.app.post('/login',
                             params={
                                 "login": "admin",
                                 "password": "admin",
@@ -242,64 +228,97 @@ class ImportViews(unittest.TestCase):
                             },
                             status=302)
 
-        session = DBSession()
+    def _upload(self):
+        """Make an upload to the importer"""
         loc = os.path.dirname(__file__)
         del_file = open(os.path.join(loc, 'delicious.html'))
-        res = DBSession.execute(
-            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
-        API_KEY = res['api_key']
-
-        post = {
-            'api_key': API_KEY,
-        }
-
-        res = self.testapp.post('/admin/import',
-                                params=post,
-                                upload_files=[('import_file',
-                                               'delicious.html',
-                                               del_file.read())],
+        res = self.app.post(
+            '/admin/import',
+            params={'api_key': self.api_key},
+            upload_files=[('import_file',
+                           'delicious.html',
+                           del_file.read())],
         )
+        return res
+
+    def test_import_upload(self):
+        """After we upload a file, we should have an importer queue."""
+        self._login()
+
+        # verify we get the form
+        res = self.app.get('/admin/import')
+        ok_('<form' in res.body,
+            'Should have a form in the body for submitting the upload')
+
+        res = self._upload()
 
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
-        session.flush()
+        # now verify that we've got our record
+        imp = ImportQueueMgr.get_ready()
+        imp = imp[0]
+        ok_(imp, 'We should have a record')
+        eq_(imp.file_path, 'delicious.html')
+        eq_(imp.status, 0, 'start out as default status of 0')
 
-        # test all the data we want to test after the import
-        _delicious_data_test()
-
-    def test_google_import(self):
-        """Test that we can upload our google file"""
-        self.testapp.post('/login',
-                            params={
-                                "login": "admin",
-                                "password": "admin",
-                                "form.submitted": "Log In",
-                            },
-                            status=302)
-
-        session = DBSession()
-        loc = os.path.dirname(__file__)
-        del_file = open(os.path.join(loc, 'googlebookmarks.html'))
-        res = DBSession.execute(
-            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
-        API_KEY = res['api_key']
-
-        post = {
-            'api_key': API_KEY,
-        }
-
-        res = self.testapp.post('/admin/import',
-                                params=post,
-                                upload_files=[('import_file',
-                                               'googlebookmarks.html',
-                                               del_file.read())],
-        )
+    def test_skip_running(self):
+        """Verify that if running, it won't get returned again"""
+        self._login()
+        res = self._upload()
 
         eq_(res.status, "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
-        session.flush()
+        # now verify that we've got our record
+        imp = ImportQueueMgr.get_ready()
+        imp = imp[0]
+        imp.status=2
+        DBSession.flush()
 
-        # test all the data we want to test after the import
-        _google_data_test()
+        imp = ImportQueueMgr.get_ready()
+        ok_(not imp, 'We should get no results back')
+
+    def test_one_import(self):
+        """You should be able to only get one import running at a time"""
+        self._login()
+
+        # Prep the db with 2 other imports ahead of this user's.
+        # We have to commit these since the request takes place in a new
+        # session/transaction.
+        DBSession.add(ImportQueue(username='testing', file_path='testing.txt'))
+        DBSession.add(ImportQueue(username='testing2', file_path='testing2.txt'))
+        DBSession.flush()
+        transaction.commit()
+
+        res = self._upload()
+        res.follow()
+
+        # now let's hit the import page, we shouldn't get a form, but instead a
+        # message about our import
+        res = self.app.get('/admin/import')
+
+        ok_('<form' not in res.body, "We shouldn't have a form")
+        ok_('waiting in the queue' in res.body, "We want to display a waiting message.")
+        ok_('2 other imports' in res.body, "We want to display a count message." + res.body)
+
+    def test_completed_dont_count(self):
+        """Once completed, we should get the form again"""
+        self._login()
+
+        # add out completed one
+        q = ImportQueue(
+            username='admin',
+            file_path='testing.txt'
+        )
+        q.completed = datetime.now()
+        q.status = 2
+        DBSession.add(q)
+        transaction.commit()
+
+        # now let's hit the import page, we shouldn't get a form, but instead a
+        # message about our import
+        res = self.app.get('/admin/import')
+
+        ok_('<form' in res.body, "We should have a form")
+

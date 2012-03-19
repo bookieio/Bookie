@@ -1,6 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
+CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
@@ -96,18 +97,6 @@ docs_open: docs
 tags:
 	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
 
-# BOOTSTRAP
-#
-# I don't know that we'll be using this much longer. I want to get things into
-# the Makefile and more repeatable with clean/all setups.
-
-.PHONY: bootstrap
-bootstrap:
-	scripts/bootstrap/gen_bootstrap.py > scripts/bootstrap/bootstrap.py
-
-.PHONY: bootstrap_upload
-bootstrap_upload: bootstrap
-	cd scripts/bootstrap && $(S3) bootstrap.py
 
 # DEPS
 #
@@ -274,6 +263,8 @@ clean_chrome:
 
 
 run: run_combo run_app
+run_celery:
+	$(CELERY) --pidfile celeryd.pid &
 run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
@@ -288,16 +279,19 @@ autojsbuild:
 
 stop: stop_combo stop_app
 stop_dev: stop stop_css
+stop_celery:
+	kill -9 `cat celeryd.pid` || true
+	rm celeryd.pid || true
 stop_combo:
-	kill -9 `cat combo.pid`
-	rm combo.pid
+	kill -9 `cat combo.pid` || true
+	rm combo.pid || true
 stop_css:
 	killall -9 scss
 stop_app:
-	kill -9 `cat paster.pid`
-	rm paster.pid
+	kill -9 `cat paster.pid` || true
+	rm paster.pid || true
 stop_livereload:
-	killall livereload
+	killall livereload || true
 
 
 # INSTALL

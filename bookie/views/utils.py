@@ -3,17 +3,19 @@ import logging
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
-from pyramid.settings import asbool
 from pyramid.view import view_config
 from sqlalchemy.orm import contains_eager
 
 from bookie.lib.access import ReqAuthorize
-from bookie.lib.importer import Importer
 from bookie.lib.applog import BmarkLog
 
 from bookie.models import Bmark
+from bookie.models import DBSession
 from bookie.models import Hashed
 from bookie.models.fulltext import get_fulltext_handler
+from bookie.models.queue import NEW
+from bookie.models.queue import ImportQueue
+from bookie.models.queue import ImportQueueMgr
 
 LOG = logging.getLogger(__name__)
 
@@ -28,15 +30,32 @@ def import_bmarks(request):
     with ReqAuthorize(request):
         data = {}
         post = request.POST
+
+        # we can't let them submit multiple times, check if this user has an
+        # import in process
+        if ImportQueueMgr.get(username=username, status=NEW):
+            # they have an import, get the information about it and shoot to
+            # the template
+            return {
+                'existing': True,
+                'import_stats': ImportQueueMgr.get_details(username=username)
+            }
+
         if post:
             # we have some posted values
             files = post.get('import_file', None)
 
             if files is not None:
-                # upload is there for use
-                # process the file using the import script
-                importer = Importer(files.file, username=username)
-                importer.process()
+                # save the file off to the temp storage
+                out = open('/tmp/' + files.filename, 'w')
+                out.write(files.file.read())
+                out.close()
+                file_path = files.filename
+
+                # mark the system that there's a pending import that needs to
+                # be completed
+                q = ImportQueue(username, file_path)
+                DBSession.add(q)
 
                 # @todo get a count of the imported bookmarks and setup a flash
                 # message. Forward to / and display the import message
@@ -46,7 +65,6 @@ def import_bmarks(request):
                                                             username=username))
             else:
                 msg = request.session.pop_flash()
-
                 if msg:
                     data['error'] = msg
                 else:
@@ -54,8 +72,11 @@ def import_bmarks(request):
 
             return data
         else:
+            # we need to see if they've got
             # just display the form
-            return {}
+            return {
+                'existing': False
+            }
 
 
 @view_config(route_name="search", renderer="/utils/search.mako")

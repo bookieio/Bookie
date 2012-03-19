@@ -8,8 +8,6 @@ from sqlalchemy.exc import IntegrityError
 from StringIO import StringIO
 
 from bookie.lib.access import api_auth
-from bookie.lib.access import ApiAuthorize
-from bookie.lib.access import ReqOrApiAuthorize
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog
 from bookie.lib.message import ReactivateMsg

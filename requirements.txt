@@ -1,8 +1,9 @@
 argparse
 BeautifulSoup==3.2.0
+celery==2.5.1
 Chameleon==1.3.0-rc1
 colorama
-http://uploads.mitechie.com/dist/convoy-0.2.0.tar.gz
+convoy==0.2.2
 git+git://github.com/dcramer/decruft.git#egg=decruft
 Jinja2==2.5.5
 Mako==0.4.1
