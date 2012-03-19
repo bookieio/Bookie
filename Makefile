@@ -264,7 +264,7 @@ clean_chrome:
 
 run: run_combo run_app
 run_celery:
-	$(CELERY)
+	$(CELERY) --pidfile celeryd.pid &
 run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
@@ -279,16 +279,19 @@ autojsbuild:
 
 stop: stop_combo stop_app
 stop_dev: stop stop_css
+stop_celery:
+	kill -9 `cat celeryd.pid` || true
+	rm celeryd.pid || true
 stop_combo:
-	kill -9 `cat combo.pid`
-	rm combo.pid
+	kill -9 `cat combo.pid` || true
+	rm combo.pid || true
 stop_css:
-	killall -9 sass
+	killall -9 sass || true
 stop_app:
-	kill -9 `cat paster.pid`
-	rm paster.pid
+	kill -9 `cat paster.pid` || true
+	rm paster.pid || true
 stop_livereload:
-	killall livereload
+	killall livereload || true
 
 
 # INSTALL
