@@ -242,7 +242,7 @@ js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css:
-	sass --update bookie/static/css:bookie/static/css
+	scss --update bookie/static/css:bookie/static/css
 chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
 	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
@@ -278,7 +278,7 @@ run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
-	sass --watch bookie/static/css:bookie/static/css &
+	scss --watch bookie/static/css:bookie/static/css &
 run_app:
 	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
@@ -292,7 +292,7 @@ stop_combo:
 	kill -9 `cat combo.pid`
 	rm combo.pid
 stop_css:
-	killall -9 sass
+	killall -9 scss
 stop_app:
 	kill -9 `cat paster.pid`
 	rm paster.pid
