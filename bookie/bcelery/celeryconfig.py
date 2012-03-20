@@ -1,6 +1,31 @@
 """Celery config for Bookie Instance"""
+import ConfigParser
 import tasks
+
 from datetime import timedelta
+from os import environ
+from os import path
+
+def load_config():
+    selected_ini = environ.get('BOOKIE_INI', None)
+
+    if selected_ini is None:
+        msg = "Please set the BOOKIE_INI env variable!"
+        raise Exception(msg)
+
+    ini = ConfigParser()
+    ini_path = path.join(
+        path.dirname(
+            path.dirname(
+                path.dirname(__file__)
+            )
+        ),
+        selected_ini
+    )
+    ini.readfp(open(ini_path))
+    return ini
+
+INI = load_config()
 
 # List of modules to import when celery starts.
 CELERY_IMPORTS = ("bookie.bcelery.tasks", )
