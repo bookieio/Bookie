@@ -187,14 +187,16 @@ $(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
 	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
 		-o $(JS_BUILD_PATH)/b/meta.js \
 		-x -min.js$
-$(JS_BUILD_PATH)/b/%-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/%.js
+
+$(JS_BUILD_PATH)/b/*-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/*.js
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
 
-$(BOOKIE_JS)/%.js: $(CHROME_BUILD)
+$(BOOKIE_JS)/*.js: $(CHROME_BUILD)
 
-$(JS_BUILD_PATH)/b/%.js: $(BOOKIE_JS)/%.js
+$(JS_BUILD_PATH)/b/*.js: $(BOOKIE_JS)/*.js
 	cp $? $(JS_BUILD_PATH)/b/
 	cp $? $(CHROME_BUILD)/
+
 $(JS_BUILD_PATH)/b:
 	mkdir -p $(JS_BUILD_PATH)/b
 
