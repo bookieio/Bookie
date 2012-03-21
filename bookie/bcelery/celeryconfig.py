@@ -1,6 +1,31 @@
 """Celery config for Bookie Instance"""
-import tasks
+import ConfigParser
 from datetime import timedelta
+from os import environ
+from os import path
+
+import tasks
+
+def load_config():
+    selected_ini = environ.get('BOOKIE_INI', None)
+
+    if selected_ini is None:
+        msg = "Please set the BOOKIE_INI env variable!"
+        raise Exception(msg)
+
+    ini = ConfigParser()
+    ini_path = path.join(
+        path.dirname(
+            path.dirname(
+                path.dirname(__file__)
+            )
+        ),
+        selected_ini
+    )
+    ini.readfp(open(ini_path))
+    return ini
+
+INI = load_config()
 
 # List of modules to import when celery starts.
 CELERY_IMPORTS = ("bookie.bcelery.tasks", )
@@ -28,14 +53,14 @@ CELERYD_CONCURRENCY = 1
 CELERYBEAT_SCHEDULE = {
     "tasks.hourly_stats": {
         "task": "tasks.hourly_stats",
-        "schedule": timedelta(seconds=60*60),
+        "schedule": timedelta(seconds=60 * 60),
     },
     "tasks.importer_depth": {
         "task": "tasks.importer_depth",
-        "schedule": timedelta(seconds=60*1),
+        "schedule": timedelta(seconds=60 * 1),
     },
     "tasks.importer": {
         "task": "tasks.importer_process",
-        "schedule": timedelta(seconds=60*1),
+        "schedule": timedelta(seconds=60 * 1),
     },
 }

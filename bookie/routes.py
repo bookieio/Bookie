@@ -54,7 +54,7 @@ def build_routes(config):
     # matches based on the header
     # HTTP_X_REQUESTED_WITH
     # ajax versions are used in the mobile search interface
-    config.add_route("search_results_ajax", "results/*terms", xhr=True)
+    config.add_route("search_results_ajax", "results/*terms", xhr=Tru e)
     config.add_route("search_results_rest", "results/*terms")
     config.add_route("user_search_results_ajax",
                      "{username}/results*terms",
@@ -72,9 +72,15 @@ def build_routes(config):
     #
 
     # ping checks
-    config.add_route('api_ping', '/api/v1/{username}/ping', request_method='GET')
-    config.add_route('api_ping_missing_user', '/api/v1/ping', request_method='GET')
-    config.add_route('api_ping_missing_api', '/ping', request_method='GET')
+    config.add_route('api_ping',
+        '/api/v1/{username}/ping',
+        request_method='GET')
+    config.add_route('api_ping_missing_user',
+        '/api/v1/ping',
+        request_method='GET')
+    config.add_route('api_ping_missing_api',
+        '/ping',
+        request_method='GET')
 
     # auth related
     config.add_route("api_user_account",

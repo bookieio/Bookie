@@ -144,4 +144,3 @@ Please click the link below to activate your account.
 
 ---
 The Bookie Team""".format(message_data)
-
