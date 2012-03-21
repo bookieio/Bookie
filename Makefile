@@ -175,9 +175,9 @@ js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y bookie/static/js/tests/jstpl.h
 
 .PHONY: clean_js
 clean_js:
-	rm -rf $(JS_BUILD_PATH)/*
-	rm $(CHROME_BUILD)/*.js
-	rm -rf jsdoc
+	rm -rf $(JS_BUILD_PATH)/* || true
+	rm $(CHROME_BUILD)/*.js || true
+	rm -rf jsdoc || true
 
 $(CHROME_BUILD):
 	mkdir -p $(CHROME_BUILD)
@@ -214,7 +214,7 @@ download-cache/yui:
 
 .PHONY: clean_downloadcache
 clean_downloadcache:
-	rm -rf download-cache
+	rm -rf download-cache || true
 
 static_upload: js css
 	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
@@ -238,8 +238,8 @@ chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
 	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
 clean_css:
-	rm $(BOOKIE_CSS)/*.css
-	rm $(CHROME_BUILD)/*.css
+	rm $(BOOKIE_CSS)/*.css || true
+	rm $(CHROME_BUILD)/*.css || true
 
 # CHROME
 #
