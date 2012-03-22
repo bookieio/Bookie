@@ -259,7 +259,7 @@ class ImportViews(TestViewBase):
         imp = ImportQueueMgr.get_ready()
         imp = imp[0]
         ok_(imp, 'We should have a record')
-        eq_(imp.file_path, 'delicious.html')
+        ok_(imp.file_path.endswith('admin.delicious.html'))
         eq_(imp.status, 0, 'start out as default status of 0')
 
     def test_skip_running(self):

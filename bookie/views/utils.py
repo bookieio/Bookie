@@ -1,5 +1,8 @@
 """View callables for utilities like bookmark imports, etc"""
 import logging
+import os
+import random
+import string
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
@@ -47,14 +50,25 @@ def import_bmarks(request):
 
             if files is not None:
                 # save the file off to the temp storage
-                out = open('/tmp/' + files.filename, 'w')
+                out_dir = "{storage_dir}/{randdir}".format(
+                    storage_dir=request.registry.settings.get('import_files',
+                        '/tmp/bookie'),
+                    randdir=random.choice(string.letters),
+                )
+
+                # make sure the directory exists
+                # we create it with parents as well just in case
+                if not os.path.isdir(out_dir):
+                    os.makedirs(out_dir)
+
+                out_fname = "{0}/{1}.{2}".format(out_dir, username, files.filename)
+                out = open(out_fname, 'w')
                 out.write(files.file.read())
                 out.close()
-                file_path = files.filename
 
                 # mark the system that there's a pending import that needs to
                 # be completed
-                q = ImportQueue(username, file_path)
+                q = ImportQueue(username, out_fname)
                 DBSession.add(q)
 
                 # @todo get a count of the imported bookmarks and setup a flash
