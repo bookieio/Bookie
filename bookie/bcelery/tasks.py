@@ -3,6 +3,7 @@ import transaction
 from celery.task import task
 from celery.task import subtask
 from ConfigParser import ConfigParser
+from os import getcwd
 from os import path
 
 from bookie.lib.importer import Importer
@@ -20,6 +21,9 @@ ini_path = path.join(
         )
     ), 'bookie.ini')
 ini.readfp(open(ini_path))
+# set the here var so we can use it to get the path for things
+ini.set('app:main', 'here', getcwd())
+
 ini_items = dict(ini.items("app:main"))
 importer_processors = 2
 
@@ -84,7 +88,7 @@ def importer_process_worker(iid):
     try:
         # process the file using the import script
         import_job.mark_running()
-        import_file = open('/tmp/' + import_job.file_path)
+        import_file = open(import_job.file_path)
         importer = Importer(
             import_file,
             import_job.username)

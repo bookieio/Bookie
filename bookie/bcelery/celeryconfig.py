@@ -2,6 +2,7 @@
 """Celery config for Bookie Instance"""
 from ConfigParser import ConfigParser
 from datetime import timedelta
+from os import getcwd
 from os import environ
 from os import path
 
@@ -28,6 +29,9 @@ def load_config():
     return ini
 
 INI = load_config()
+# set the here var so we can use it to get the path for things
+INI.set('app:main', 'here', getcwd())
+
 # we have to go up two dirs to get to the ini file, so any string with
 # {here} needs to be adjusted those two dirs
 HERE = '../../'
