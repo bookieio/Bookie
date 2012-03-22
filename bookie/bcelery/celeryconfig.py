@@ -1,10 +1,12 @@
+#!/usr/bin/env python
 """Celery config for Bookie Instance"""
-import ConfigParser
+from ConfigParser import ConfigParser
 from datetime import timedelta
 from os import environ
 from os import path
 
 import tasks
+
 
 def load_config():
     selected_ini = environ.get('BOOKIE_INI', None)
@@ -26,28 +28,32 @@ def load_config():
     return ini
 
 INI = load_config()
+# we have to go up two dirs to get to the ini file, so any string with
+# {here} needs to be adjusted those two dirs
+HERE = '../../'
 
 # List of modules to import when celery starts.
 CELERY_IMPORTS = ("bookie.bcelery.tasks", )
 CELERY_ENABLE_UTC = True
 
-
 ## Result store settings.
-CELERY_RESULT_BACKEND = "database"
-CELERY_RESULT_DBURI = "sqlite:///../../bookie.db"
+CELERY_RESULT_BACKEND = INI.get('celeryd', 'result_backend')
+CELERY_RESULT_DBURI = INI.get('celeryd', 'result_dburi').format(here=HERE)
 
 ## Broker settings.
-BROKER_TRANSPORT = "sqlalchemy"
-BROKER_HOST = "sqlite:///../../bookie.db"
+BROKER_TRANSPORT = INI.get('celeryd', 'broker_transport')
+BROKER_HOST = INI.get('celeryd', 'broker_host').format(here=HERE)
 # BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
+print BROKER_TRANSPORT
+print CELERY_RESULT_DBURI
 
 ## Worker settings
 ## If you're doing mostly I/O you can have more processes,
 ## but if mostly spending CPU, try to keep it close to the
 ## number of CPUs on your machine. If not set, the number of CPUs/cores
 ## available will be used.
-CELERYD_CONCURRENCY = 1
+CELERYD_CONCURRENCY = INI.get('celeryd', 'concurrency')
 
 # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
 CELERYBEAT_SCHEDULE = {

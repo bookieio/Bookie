@@ -266,7 +266,7 @@ clean_chrome:
 
 run: run_combo run_app
 run_celery:
-	$(CELERY) --pidfile celeryd.pid &
+	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid --loglevel=DEBUG &
 run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
