@@ -4,8 +4,6 @@ import random
 import shutil
 import transaction
 import unittest
-
-from pyramid.config import Configurator
 from pyramid import testing
 
 # tools we use to empty tables
@@ -93,7 +91,6 @@ class TestViewBase(unittest.TestCase):
         session.execute(bmarks_tags.delete())
         session.flush()
         transaction.commit()
-
 
 
 def empty_db():

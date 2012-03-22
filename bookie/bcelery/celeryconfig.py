@@ -1,10 +1,10 @@
 """Celery config for Bookie Instance"""
 import ConfigParser
-import tasks
-
 from datetime import timedelta
 from os import environ
 from os import path
+
+import tasks
 
 def load_config():
     selected_ini = environ.get('BOOKIE_INI', None)
@@ -53,14 +53,14 @@ CELERYD_CONCURRENCY = 1
 CELERYBEAT_SCHEDULE = {
     "tasks.hourly_stats": {
         "task": "tasks.hourly_stats",
-        "schedule": timedelta(seconds=60*60),
+        "schedule": timedelta(seconds=60 * 60),
     },
     "tasks.importer_depth": {
         "task": "tasks.importer_depth",
-        "schedule": timedelta(seconds=60*1),
+        "schedule": timedelta(seconds=60 * 1),
     },
     "tasks.importer": {
         "task": "tasks.importer_process",
-        "schedule": timedelta(seconds=60*1),
+        "schedule": timedelta(seconds=60 * 1),
     },
 }

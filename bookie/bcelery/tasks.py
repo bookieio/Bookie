@@ -13,10 +13,15 @@ from bookie.models.queue import ImportQueueMgr
 
 
 ini = ConfigParser()
-ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), 'bookie.ini')
+ini_path = path.join(
+    path.dirname(
+        path.dirname(
+            path.dirname(__file__)
+        )
+    ), 'bookie.ini')
 ini.readfp(open(ini_path))
 ini_items = dict(ini.items("app:main"))
-importer_processors=2
+importer_processors = 2
 
 
 @task(ignore_result=True)
@@ -57,6 +62,7 @@ def importer_depth():
     StatBookmarkMgr.count_importer_depth()
     trans.commit()
 
+
 @task(ignore_result=True)
 def importer_process():
     trans = transaction.begin()
@@ -67,6 +73,7 @@ def importer_process():
         subtask(importer_process_worker, args=(i.id,)).delay()
 
     trans.commit()
+
 
 @task(ignore_result=True)
 def importer_process_worker(iid):
