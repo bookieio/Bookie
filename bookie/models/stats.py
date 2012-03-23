@@ -43,6 +43,20 @@ class StatBookmarkMgr(object):
     """Handle our agg stuff for the stats on bookmarks"""
 
     @staticmethod
+    def get_stat(start, end, *stats):
+        """Fetch the records from the stats table for these guys"""
+        qry = StatBookmark.query
+        qry = qry.filter(StatBookmark.tstamp > start)
+        qry = qry.filter(StatBookmark.tstamp <= end)
+
+        if stats:
+            qry = qry.filter(StatBookmark.attrib.in_(stats))
+
+        # order things up by their date so they're grouped together
+        qry.order_by(StatBookmark.tstamp)
+        return qry.all()
+
+    @staticmethod
     def count_unique_bookmarks():
         """Count the unique number of bookmarks in the system"""
         total = BmarkMgr.count(distinct=True)

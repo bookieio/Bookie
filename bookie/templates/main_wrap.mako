@@ -92,10 +92,8 @@
                 <div class="right body">
                     <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
+                    <a href="${request.route_url('dashboard')}">Dashboard</a> |
                     <a href="http://docs.bmark.us/changes.html">Changes</a> |
-                    % if False and request.user:
-                        <a href="${request.route_url('user_mobile', username=request.user.username) }">Mobile</a>
-                    % endif
                 </div>
             </div>
         </div>

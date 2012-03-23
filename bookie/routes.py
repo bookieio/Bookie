@@ -5,6 +5,7 @@ def build_routes(config):
     """Add any routes to the config"""
 
     config.add_route("home", "/")
+    config.add_route("dashboard", "/dashboard")
 
     # auth routes
     config.add_route("login", "login")
