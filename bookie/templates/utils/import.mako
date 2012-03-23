@@ -1,3 +1,6 @@
+<%
+    from bookie.models.queue import RUNNING
+%>
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Import Bookmarks</%def>
 <%namespace file="../accounts/func.mako" import="account_nav"/>
@@ -40,11 +43,12 @@ ${account_nav()}
                             % endif
                         </form>
                     % else:
-                        <div class="import_details">You already have an import
-                        waiting in the queue.</div>
-                        <div>There are currently <em>
-                            ${import_stats['place']} other imports</em> ahead of you.
-                        </div>
+                        <div class="import_details">You already have an import waiting in the queue.</div>
+                        % if import_stats['import'].status == RUNNING:
+                            <div>Your import is currently running!</div>
+                        % else:
+                            <div>There are currently <strong>${import_stats['place']} other imports</strong> ahead of you.</div>
+                        % endif
                     % endif
                 </div>
             </div>

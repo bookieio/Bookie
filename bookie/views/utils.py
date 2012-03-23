@@ -71,11 +71,7 @@ def import_bmarks(request):
                 q = ImportQueue(username, out_fname)
                 DBSession.add(q)
 
-                # @todo get a count of the imported bookmarks and setup a flash
-                # message. Forward to / and display the import message
-
-                # request.session.flash("Error something")
-                return HTTPFound(location=request.route_url('user_home',
+                return HTTPFound(location=request.route_url('user_import',
                                                             username=username))
             else:
                 msg = request.session.pop_flash()

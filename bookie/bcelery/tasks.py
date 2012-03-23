@@ -69,25 +69,31 @@ def importer_depth():
 
 @task(ignore_result=True)
 def importer_process():
-    trans = transaction.begin()
+    """Check for new imports that need to be scheduled to run"""
     initialize_sql(ini_items)
     imports = ImportQueueMgr.get_ready(limit=1)
 
     for i in imports:
+        # we need to mark that it's running to prevent it getting picked up
+        # again
+        trans = transaction.begin()
+        i.mark_running()
+        trans.commit()
         subtask(importer_process_worker, args=(i.id,)).delay()
-
-    trans.commit()
 
 
 @task(ignore_result=True)
 def importer_process_worker(iid):
-    """Do the real work"""
+    """Do the real import work
+
+    :param iid: import id we need to pull and work on
+
+    """
     trans = transaction.begin()
     initialize_sql(ini_items)
     import_job = ImportQueueMgr.get(iid)
     try:
         # process the file using the import script
-        import_job.mark_running()
         import_file = open(import_job.file_path)
         importer = Importer(
             import_file,
