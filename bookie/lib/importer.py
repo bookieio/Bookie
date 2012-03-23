@@ -2,7 +2,9 @@
 import time
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
+from bookie.lib.urlhash import generate_hash
 from bookie.models import BmarkMgr
+
 
 IMPORTED = "importer"
 
@@ -14,6 +16,9 @@ class Importer(object):
         """work on getting an importer instance"""
         self.file_handle = import_io
         self.username = username
+
+        # we need to get our list of hashes to make sure we check for dupes
+        self.hash_list = set(BmarkMgr.hash_list(username=username))
 
     def __new__(cls, *args, **kwargs):
         """Overriding new we return a subclass based on the file content"""
@@ -44,13 +49,21 @@ class Importer(object):
         :param mark: Instance of Bmark that we're storing to db
 
         """
-        BmarkMgr.store(url,
-                       self.username,
-                       desc,
-                       ext,
-                       tags,
-                       dt=dt,
-                       inserted_by=IMPORTED)
+        # we should make sure that this url isn't already bookmarked before
+        # adding it...if the hash matches, you must skip!
+        check_hash = generate_hash(url)
+        if check_hash not in self.hash_list:
+            BmarkMgr.store(url,
+                           self.username,
+                           desc,
+                           ext,
+                           tags,
+                           dt=dt,
+                           inserted_by=IMPORTED)
+
+            # add this hash to the list so that we can skip dupes in the same
+            # import set
+            self.hash_list.add(check_hash)
 
 
 class DelImporter(Importer):
