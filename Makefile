@@ -1,7 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B
+CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B --loglevel=INFO
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
@@ -266,7 +266,7 @@ clean_chrome:
 
 run: run_combo run_app
 run_celery:
-	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid --loglevel=DEBUG &
+	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
 run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
