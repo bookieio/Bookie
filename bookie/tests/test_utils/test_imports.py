@@ -171,6 +171,19 @@ class ImportDeliciousTest(unittest.TestCase):
         # now let's do some db sanity checks
         _delicious_data_test()
 
+    def test_dupe_imports(self):
+        """If we import twice, we shouldn't end up with duplicate bmarks"""
+        good_file = self._get_del_file()
+        imp = Importer(good_file, username="admin")
+        imp.process()
+
+        good_file = self._get_del_file()
+        imp = Importer(good_file, username="admin")
+        imp.process()
+
+        # now let's do some db sanity checks
+        _delicious_data_test()
+
 
 class ImportGoogleTest(unittest.TestCase):
     """Test the Bookie importer for google bookmarks"""
