@@ -59,14 +59,14 @@ CELERYD_CONCURRENCY = INI.get('celeryd', 'concurrency')
 CELERYBEAT_SCHEDULE = {
     "tasks.hourly_stats": {
         "task": "tasks.hourly_stats",
-        "schedule": timedelta(seconds=60 * 1),
+        "schedule": timedelta(seconds=60 * 60),
     },
     "tasks.importer_depth": {
         "task": "tasks.importer_depth",
-        "schedule": timedelta(seconds=60 * 1),
+        "schedule": timedelta(seconds=60 * 5),
     },
     "tasks.importer": {
         "task": "tasks.importer_process",
-        "schedule": timedelta(seconds=60 * 1),
+        "schedule": timedelta(seconds=60 * 3),
     },
 }

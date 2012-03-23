@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
+from sqlalchemy import or_
 from sqlalchemy import Unicode
 
 from bookie.models import Base
@@ -58,7 +59,9 @@ class ImportQueueMgr(object):
     @staticmethod
     def size():
         """How deep is the queue at the moment"""
-        qry = ImportQueue.query.filter(ImportQueue.status == NEW)
+        qry = ImportQueue.query.filter(or_(
+            ImportQueue.status != COMPLETE,
+            ImportQueue.status != ERROR))
         return qry.count()
 
 class ImportQueue(Base):
