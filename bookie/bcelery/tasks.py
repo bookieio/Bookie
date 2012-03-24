@@ -3,6 +3,7 @@ import transaction
 from celery.task import task
 from celery.task import subtask
 from ConfigParser import ConfigParser
+from os import environ
 from os import getcwd
 from os import path
 
@@ -14,12 +15,13 @@ from bookie.models.queue import ImportQueueMgr
 
 
 ini = ConfigParser()
+selected_ini = environ.get('BOOKIE_INI', None)
 ini_path = path.join(
     path.dirname(
         path.dirname(
             path.dirname(__file__)
         )
-    ), 'bookie.ini')
+    ), selected_ini)
 ini.readfp(open(ini_path))
 # Set the here var so we can use it to get the path for things.
 ini.set('app:main', 'here', getcwd())
