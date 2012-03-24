@@ -52,7 +52,7 @@ def dashboard(request):
 
     final_stats = []
     for d in dates:
-        final_stats.push(unsorted_stats[d])
+        final_stats.append(unsorted_stats[d])
 
     # check the queue depth over the last while
     start = end - timedelta(hours=12)
