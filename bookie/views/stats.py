@@ -33,18 +33,26 @@ def dashboard(request):
     check_stats = StatBookmarkMgr.get_stat(start, end,
         TAG_CT, TOTAL_CT, UNIQUE_CT)
 
+
     stats_summary = defaultdict(dict)
 
     for stat in check_stats:
-        dt = stat.tstamp.strftime('%m-%d %H:%M')
+        dt = stat.tstamp.strftime('%m%d %H:%M')
         attrib = stat.attrib
         val = stat.data
         stats_summary[dt][attrib] = val
 
-    final_stats = []
+    unsorted_stats = {}
     for date, data in stats_summary.iteritems():
         data.update({'date': date})
-        final_stats.append(data)
+        unsorted_stats[date] = (data)
+
+    dates = unsorted_stats.keys()
+    dates.sort()
+
+    final_stats = []
+    for d in dates:
+        final_stats.push(unsorted_stats[d])
 
     # check the queue depth over the last while
     start = end - timedelta(hours=12)

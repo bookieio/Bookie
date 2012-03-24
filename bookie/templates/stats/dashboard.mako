@@ -2,7 +2,7 @@
 <%def name="title()">Bookie Dashboard</%def>
 
 <h2>Number of items in the system</h2>
-<div id="count_chart" style="height: 250px; width: 600px"></div>
+<div id="count_chart" style="height: 250px; width: 1200px"></div>
 
 <h2>Average import queue depth</h2>
 <div id="import_queue" style="height: 125px; width: 1200px"></div>
