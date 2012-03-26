@@ -110,7 +110,7 @@ def edit(request):
 
         tag_suggest = TagMgr.suggestions(
             url=bmark.hashed.url,
-            username=request.user.userame
+            username=request.user.username
         )
 
         return {

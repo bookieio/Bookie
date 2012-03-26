@@ -1,6 +1,7 @@
 <%
     date_fmt = "%m/%d/%Y"
     combo = request.registry.settings['combo_server']
+    cache_buster = request.registry.settings['combo_cache_id']
 %>
 <html>
     <head>
@@ -19,15 +20,15 @@
         <script type="text/javascript">
             YUI.GlobalConfig = {
                 combine: true,
-                base: '${combo}/combo?y/',
-                comboBase: '${combo}/combo?',
+                base: '${combo}${cache_buster}/combo?y/',
+                comboBase: '${combo}${cache_buster}/combo?',
                 maxURLLength: 1500,
                 root: 'y/',
                 groups: {
                     bookie: {
                         combine: true,
-                        base: '${combo}/combo?b',
-                        comboBase: '${combo}/combo?',
+                        base: '${combo}${cache_buster}/combo?b',
+                        comboBase: '${combo}${cache_buster}/combo?',
                         root: 'b/',
                         filter: 'raw',
                         // comes from including bookie/meta.js

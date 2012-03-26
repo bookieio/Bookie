@@ -92,6 +92,16 @@ class TestViewBase(unittest.TestCase):
         session.flush()
         transaction.commit()
 
+    def _login_admin(self):
+        """Make the login call to the app"""
+        self.app.post('/login',
+            params={
+                "login": "admin",
+                "password": "admin",
+                "form.submitted": "Log In",
+            },
+            status=302)
+
 
 def empty_db():
     """On teardown, remove all the db stuff"""
