@@ -13,6 +13,7 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import bmarks_tags
+from bookie.tests import TestViewBase
 
 LOG = logging.getLogger(__name__)
 
@@ -87,3 +88,14 @@ class BookieViewsTest(unittest.TestCase):
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
+
+
+class TestNewBookmark(TestViewBase):
+    """Test the new bookmark real views"""
+
+    def test_renders(self):
+        """Verify that we can call the /new url"""
+        self._login_admin()
+        res = self.app.get('/admin/new')
+        ok_('Add Bookmark' in res.body,
+            "Should see the add bookmark title")
