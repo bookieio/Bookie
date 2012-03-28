@@ -3,17 +3,22 @@ import transaction
 from celery.task import task
 from celery.task import subtask
 from ConfigParser import ConfigParser
+from datetime import datetime
 from os import environ
 from os import getcwd
 from os import path
 
 from bookie.lib.importer import Importer
+from bookie.lib.rrdstats import SystemCounts
 
 from bookie.models import initialize_sql
+from bookie.models import BmarkMgr
+from bookie.models import TagMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 
+HERE = path.join(path.dirname(__file__), '../../')
 ini = ConfigParser()
 selected_ini = environ.get('BOOKIE_INI', None)
 ini_path = path.join(
@@ -42,6 +47,7 @@ def hourly_stats():
     subtask(count_total).delay()
     subtask(count_unique).delay()
     subtask(count_tags).delay()
+    subtask(count_rrd).delay()
 
 
 @task(ignore_result=True)
@@ -69,6 +75,33 @@ def count_tags():
     initialize_sql(ini_items)
     StatBookmarkMgr.count_total_tags()
     trans.commit()
+
+@task(ignore_result=True)
+def count_rrd():
+    """Add these counts to the rrd graph"""
+    rrd = SystemCounts(
+        ini.get('app:main', 'rrd_data').format(here=HERE),
+        ini.get('app:main', 'rrd_graphs').format(here=HERE))
+    logger = count_rrd.get_logger()
+    logger.error(BmarkMgr.count())
+    logger.error(BmarkMgr.count(distinct=True))
+    logger.error(TagMgr.count())
+    rrd.mark(
+        datetime.now(),
+        BmarkMgr.count(),
+        BmarkMgr.count(distinct=True),
+        TagMgr.count()
+    )
+    rrd.update()
+
+
+@task(ignore_result=True)
+def generate_count_rrd():
+    """Update the png for the counts."""
+    rrd = SystemCounts(
+        ini.get('app:main', 'rrd_data').format(here=HERE),
+        ini.get('app:main', 'rrd_graphs').format(here=HERE))
+    rrd.output()
 
 
 @task(ignore_result=True)

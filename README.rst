@@ -23,6 +23,6 @@ If you're on Ubuntu, you should be able to get started with:
 
 ::
 
-    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git python-virtualenv
+    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git python-virtualenv rrdtool
     $ git clone git@github.com:mitechie/Bookie.git && cd Bookie && make install && make run
     $ google-chrome (or other browser) http://127.0.0.1:6543
