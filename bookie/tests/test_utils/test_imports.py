@@ -231,16 +231,6 @@ class ImportGoogleTest(unittest.TestCase):
 class ImportViews(TestViewBase):
     """Test the web import"""
 
-    def _login(self):
-        """Make the login call to the app"""
-        self.app.post('/login',
-                            params={
-                                "login": "admin",
-                                "password": "admin",
-                                "form.submitted": "Log In",
-                            },
-                            status=302)
-
     def _upload(self):
         """Make an upload to the importer"""
         loc = os.path.dirname(__file__)
@@ -256,7 +246,7 @@ class ImportViews(TestViewBase):
 
     def test_import_upload(self):
         """After we upload a file, we should have an importer queue."""
-        self._login()
+        self._login_admin()
 
         # verify we get the form
         res = self.app.get('/admin/import')
@@ -277,7 +267,7 @@ class ImportViews(TestViewBase):
 
     def test_skip_running(self):
         """Verify that if running, it won't get returned again"""
-        self._login()
+        self._login_admin()
         res = self._upload()
 
         eq_(res.status, "302 Found",
@@ -294,7 +284,7 @@ class ImportViews(TestViewBase):
 
     def test_one_import(self):
         """You should be able to only get one import running at a time"""
-        self._login()
+        self._login_admin()
 
         # Prep the db with 2 other imports ahead of this user's.
         # We have to commit these since the request takes place in a new
@@ -317,7 +307,7 @@ class ImportViews(TestViewBase):
 
     def test_completed_dont_count(self):
         """Once completed, we should get the form again"""
-        self._login()
+        self._login_admin()
 
         # add out completed one
         q = ImportQueue(
