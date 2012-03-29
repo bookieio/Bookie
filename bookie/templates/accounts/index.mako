@@ -118,8 +118,7 @@ ${password_reset(user, reset=False)}
                             invite_ct: ${user.invite_ct}
                         }
                     });
-
-                    Y.one('#invite_container').setContent(invite_view.render());
+                    invite_view.render();
                 % endif
             });
         });

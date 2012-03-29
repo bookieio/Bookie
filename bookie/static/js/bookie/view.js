@@ -1012,10 +1012,10 @@ YUI.add('bookie-view', function (Y) {
             'input#send_invite': {
                 click: 'invite'
             },
-            '.invite_container form': {
+            'form': {
                 submit: 'kill'
             },
-            '#invite_heading': {
+            '.heading': {
                 click: '_toggle_container'
             }
         },
@@ -1102,7 +1102,7 @@ YUI.add('bookie-view', function (Y) {
         },
 
         render: function () {
-            return this.ctpl(this.get('user'));
+            this.get('container').setContent(this.ctpl(this.get('user')));
         },
 
         /**
@@ -1139,9 +1139,7 @@ YUI.add('bookie-view', function (Y) {
             },
 
             container: {
-                valueFn: function () {
-                    return Y.one('#invite_container');
-                }
+                value: '#invite_container'
             },
 
             /**

@@ -112,7 +112,11 @@
 
 <script type="text/template" id="account_invites">
     <div class="form">
-        <a href="" id="invite_heading" class="heading">You have invites!</a>
+        <a href="" id="invite_heading" class="heading">
+            <span aria-hidden="true" class="icon icon-envelope" title="You have invites!"></span>
+            <em class="icon">Invite</em>
+            You have invites!
+        </a>
         <div id="invite_body" style="display: none; opacty: 0;">
             <p>Please, invite others to join Bookie and Bmark.us.</p>
             <form id="#invite_form">

@@ -46,5 +46,3 @@
         pager.set('page', ${page});
     % endif
 </%def>
-
-

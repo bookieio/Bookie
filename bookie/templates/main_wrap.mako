@@ -57,17 +57,45 @@
                 <span class="alt_logo">&nbsp;&#45; bookmark your web</span>
             </div>
             <div class="navigation">
-                <span class="item"><a href="/recent" class="button nav_button">All</a></span>
+                <span class="item">
+                    <a href="/recent" class="button nav_button">
+                        <span aria-hidden="true" class="icon icon-tags" title="All Bookmarks"></span>
+                        <em class="icon">All Bookmarks</em>
+                        All
+                    </a>
+                </span>
 
                 % if request.user:
-                    <span class="item"><a href="/${request.user.username}/recent" class="button nav_button">Mine</a></span>
+                    <span class="item">
+                        <a href="/${request.user.username}/recent" class="button nav_button">
+                            <span aria-hidden="true" class="icon icon-tag"
+                            title="My Bookmarks"></span>
+                            <em class="icon">My Bookmarks</em>
+                            Mine
+                        </a>
+                    </span>
                 % endif
 
-                <span class="item"><a href="/search" class="button nav_button">Search</a></span>
+                <span class="item">
+                    <a href="/search" class="button nav_button">
+                        <span aria-hidden="true" class="icon icon-search" title="Search"></span>
+                        <em class="icon">Search</em>
+                        Search
+                    </a>
+                </span>
 
                 % if request.user and request.user.username:
                     <span class="item">
-                        <a href="${request.route_url('user_account', username=request.user.username)}" class="button nav_button">Account
+                        <a href="${request.route_url('user_account', username=request.user.username)}" class="button nav_button">
+                            % if request.user.has_invites():
+                                <span aria-hidden="true" class="icon icon-envelope" title="You have invites!"></span>
+                                <em class="icon">Invite</em>
+                            % else:
+                                <span aria-hidden="true" class="icon icon-user" title="Account Details"></span>
+                                <em class="icon">Account Details</em>
+
+                            % endif
+                            Account
                     </a></span>
                 % else:
                     <span class="item"><a href="/login" class="button nav_button">Login</a></span>

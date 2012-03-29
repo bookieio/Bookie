@@ -35,6 +35,10 @@ em.icon {
     position: absolute;
 }
 
+.navigation .icon {
+    padding: 0;
+}
+
 @mixin cabin() {
     font-family: 'Cabin', sans-serif;
 }
@@ -131,6 +135,10 @@ a {
 .navigation {
     display: inline;
     float: right;
+
+    span {
+        margin: 0 .3em;
+    }
 
     a {
         text-decoration: none;
@@ -309,6 +317,11 @@ form {
         text-decoration: none;
         margin-bottom: .3em;
         color: black;
+
+        .icon {
+            color: black;
+            font-size: 16px;
+        }
 
         &:hover {
             cursor: hand;
