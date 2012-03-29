@@ -57,7 +57,8 @@ class SystemCounts(object):
             start=int(time.mktime(start_date.timetuple())))
         if not os.path.exists(self.datafile):
             # make sure we create the directory
-            os.makedirs(os.path.dirname(self.datafile))
+            if not os.path.exists(os.path.dirname(self.datafile)):
+                os.makedirs(os.path.dirname(self.datafile))
             self.myRRD.create()
 
     def __init__(self, data_root, output_root):
@@ -113,8 +114,7 @@ class SystemCounts(object):
             color=ca)
         g.data.extend([def1, def2, def3, line3, line2, line1])
 
-        if not os.path.exists(self.outputfile):
-            # make sure we create the directory
+        if not os.path.exists(os.path.dirname(self.outputfile)):
             os.makedirs(os.path.dirname(self.outputfile))
 
         g.write()
@@ -123,6 +123,96 @@ class SystemCounts(object):
         """Update the database with some data"""
         timestamp = time.mktime(tstamp.timetuple())
         self.myRRD.bufferValue(int(timestamp), bmarks, uniques, tags)
+
+    def update(self):
+        """Update the underlying rrd data"""
+        try:
+            self.myRRD.update(debug=False)
+        except ExternalCommandError, exc:
+            print "ERROR", str(exc)
+
+
+class ImportQueueDepth(object):
+    """Handle the rrd for the depth of the import queue"""
+    _datafile = 'import_queue_depth.rrd'
+    _outputfile = 'import_queue_depth.png'
+
+    @property
+    def datafile(self):
+        return os.path.join(self.data_root, self._datafile)
+
+    @property
+    def outputfile(self):
+        return os.path.join(self.output_root, self._outputfile)
+
+    def _boostrap(self):
+        """Put together out bits"""
+        self.dss = []
+        self.ds1 = DS(dsName='depth', dsType='GAUGE', heartbeat=60 * 5)
+        self.dss.extend([self.ds1])
+
+        self.rras = []
+        rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=2016)
+        self.rras.append(rra1)
+
+        self.myRRD = RRD(self.datafile,
+            ds=self.dss,
+            rra=self.rras,
+            start=int(time.mktime(start_date.timetuple())))
+        if not os.path.exists(self.datafile):
+            # make sure we create the directory
+            if not os.path.exists(os.path.dirname(self.datafile)):
+                os.makedirs(os.path.dirname(self.datafile))
+            self.myRRD.create()
+
+    def __init__(self, data_root, output_root):
+        """Bootstrap, does the data file exist, etc"""
+        self.data_root = data_root
+        self.output_root = output_root
+        self._boostrap()
+
+    def output(self, months=3):
+        """Render out the image of the rrd"""
+        def1 = DEF(rrdfile=self.datafile,
+            vname='queue',
+            dsName=self.ds1.name)
+        line1 = LINE(defObj=def1,
+            color='#01FF13',
+            legend='Queue Depth',
+            stack=True)
+        # area1 = AREA(defObj=def1, color='#FFA902', legend='Bookmarks')
+
+        # Let's configure some custom colors for the graph
+        ca = ColorAttributes()
+        ca.back = '#333333'
+        ca.canvas = '#333333'
+        ca.shadea = '#000000'
+        ca.shadeb = '#111111'
+        ca.mgrid = '#CCCCCC'
+        ca.axis = '#FFFFFF'
+        ca.frame = '#AAAAAA'
+        ca.font = '#FFFFFF'
+        ca.arrow = '#FFFFFF'
+
+        # Now that we've got everything set up, let's make a graph
+        start_date = time.mktime((today - timedelta(days=7)).timetuple())
+        end_date = time.mktime(today.timetuple())
+        g = Graph(self.outputfile,
+            start=int(start_date),
+            end=int(end_date),
+            vertical_label='count',
+            color=ca)
+        g.data.extend([def1, line1])
+
+        if not os.path.exists(os.path.dirname(self.datafile)):
+            os.makedirs(os.path.dirname(self.datafile))
+
+        g.write()
+
+    def mark(self, tstamp, depth):
+        """Update the database with some data"""
+        timestamp = time.mktime(tstamp.timetuple())
+        self.myRRD.bufferValue(int(timestamp), depth)
 
     def update(self):
         """Update the underlying rrd data"""

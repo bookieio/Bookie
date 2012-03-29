@@ -10,6 +10,7 @@ from os import path
 
 from bookie.lib.importer import Importer
 from bookie.lib.rrdstats import SystemCounts
+from bookie.lib.rrdstats import ImportQueueDepth
 
 from bookie.models import initialize_sql
 from bookie.models import BmarkMgr
@@ -82,10 +83,6 @@ def count_rrd():
     rrd = SystemCounts(
         ini.get('app:main', 'rrd_data').format(here=HERE),
         ini.get('app:main', 'rrd_graphs').format(here=HERE))
-    logger = count_rrd.get_logger()
-    logger.error(BmarkMgr.count())
-    logger.error(BmarkMgr.count(distinct=True))
-    logger.error(TagMgr.count())
     rrd.mark(
         datetime.now(),
         BmarkMgr.count(),
@@ -106,19 +103,34 @@ def generate_count_rrd():
 
 @task(ignore_result=True)
 def importer_depth():
-    """Log how deep the import queue is
-
-    The import queue is currently time based, so we want to make sure we
-    monitor how deep the queue is at any given time.
-
-    The queue is currently handled via scheduled tasks so if it backs up we
-    might want to process it more frequently.
-
-    """
+    """Update the RRD data for the import queue depth."""
     trans = transaction.begin()
     initialize_sql(ini_items)
     StatBookmarkMgr.count_importer_depth()
     trans.commit()
+    subtask(importer_depth_rrd).delay()
+
+
+@task(ignore_result=True)
+def importer_depth_rrd():
+    """Add these counts to the rrd graph"""
+    rrd = ImportQueueDepth(
+        ini.get('app:main', 'rrd_data').format(here=HERE),
+        ini.get('app:main', 'rrd_graphs').format(here=HERE))
+    rrd.mark(
+        datetime.now(),
+        ImportQueueMgr.size()
+    )
+    rrd.update()
+
+
+@task(ignore_result=True)
+def generate_importer_depth_rrd():
+    """Update the png for the counts."""
+    rrd = ImportQueueDepth(
+        ini.get('app:main', 'rrd_data').format(here=HERE),
+        ini.get('app:main', 'rrd_graphs').format(here=HERE))
+    rrd.output()
 
 
 @task(ignore_result=True)
