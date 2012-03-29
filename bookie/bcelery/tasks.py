@@ -19,7 +19,7 @@ from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 
-HERE = path.join(path.dirname(__file__), '../../')
+HERE = path.abspath(path.join(path.dirname(__file__), '../../'))
 ini = ConfigParser()
 selected_ini = environ.get('BOOKIE_INI', None)
 ini_path = path.join(
@@ -30,7 +30,7 @@ ini_path = path.join(
     ), selected_ini)
 ini.readfp(open(ini_path))
 # Set the here var so we can use it to get the path for things.
-ini.set('app:main', 'here', getcwd())
+ini.set('app:main', 'here', HERE)
 ini_items = dict(ini.items("app:main"))
 importer_processors = 2
 

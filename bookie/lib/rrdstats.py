@@ -204,8 +204,8 @@ class ImportQueueDepth(object):
             color=ca)
         g.data.extend([def1, line1])
 
-        if not os.path.exists(os.path.dirname(self.datafile)):
-            os.makedirs(os.path.dirname(self.datafile))
+        if not os.path.exists(os.path.dirname(self.outputfile)):
+            os.makedirs(os.path.dirname(self.outputfile))
 
         g.write()
 
