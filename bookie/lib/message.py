@@ -142,5 +142,24 @@ Please click the link below to activate your account.
 
 {0}
 
+We currently support importing from Google Bookmarks and Delicious exports.
+Importing from a Chrome or Firefox export does work, however it reads the
+folder names in as tags. So be aware of that.
+
+Get the Chrome extension from the Chrome web store:
+https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega
+
+If you have any issues feel free to join #bookie on freenode.net or report
+the issue or idea on http://github.com/mitechie/Bookie/issues.
+
+We also encourage you to sign up for our mailing list at:
+https://groups.google.com/forum/#!forum/bookie_bookmarks
+
+and our Twitter account:
+http://twitter.com/BookieBmarks
+
+Bookie is open source. Check out the source at:
+https://github.com/mitechie/Bookie
+
 ---
 The Bookie Team""".format(message_data)

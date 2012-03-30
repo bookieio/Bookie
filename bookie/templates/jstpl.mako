@@ -137,3 +137,24 @@
         <div id="invite_msg" class="error"></div>
     </div>
 </script>
+
+<script type="text/template" id="new_user">
+    <div id="new_user_welcome">
+        <h3 class="heading">Welcome to Bookie!</h3>
+
+        <p>You don't appear to have any bookmarks in Bookie yet.</p>
+        <p>
+            <span aria-hidden="true" class="icon icon-share" title="import your bookmarks"></span>
+            <em class="icon">import your bookmarks</em>
+            You can import your bookmarks from Delicious or Google Bookmarks by going to
+            the <a href="/{{username}}/import">import page</a>.
+        </p>
+
+        <p>
+        <img src="/static/images/logo.128.svg" style="height: 32px; padding: 0
+        5px;" alt="Google Chrome Extension"/> You might want to get a hold of the <a
+        href="https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega">extension
+        for Google Chrome</a> which will help you save pages to your Bookie
+        account.</p>
+    </div>
+</script>

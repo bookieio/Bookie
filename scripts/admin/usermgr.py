@@ -69,6 +69,8 @@ def _init_sql(args):
     ini = ConfigParser()
     ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)
     ini.readfp(open(ini_path))
+    here = path.abspath(path.join(path.dirname(__file__), '../../'))
+    ini.set('app:main', 'here', here)
     initialize_sql(dict(ini.items("app:main")))
 
 

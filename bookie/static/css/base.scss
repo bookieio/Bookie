@@ -114,6 +114,16 @@ a {
     }
 }
 
+#new_user_welcome {
+    font-size: larger;
+
+    .icon {
+        font-size: 32px;
+        color: #000;
+    }
+}
+
+
 .center {
     @include center;
 }

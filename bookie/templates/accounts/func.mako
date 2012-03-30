@@ -32,7 +32,12 @@
             submit = "Change"
     %>
     <div class="form">
-        <a href="#" id="show_password" class="heading">${title}</a>
+        <a href="#" id="show_password" class="heading">
+            <span aria-hidden="true" class="icon icon-lock" title="Change
+            password"></span>
+            <em class="icon">change password</em>
+            ${title}
+        </a>
 
         % if reset:
             <input type="hidden" id="username" value="${user.username}" />

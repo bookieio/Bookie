@@ -115,25 +115,36 @@ YUI.add('bookie-view', function (Y) {
                     var data_node = Y.one('.data_list'),
                         new_nodes = new Y.NodeList();
 
-                    // build models out of our data
-                    that.models = Y.Array.map(data[that.get('results_key')],
-                        function (bmark) {
-                            var b = new Y.bookie.Bmark(bmark),
-                                n = new Y.bookie.BmarkView({
-                                    model: b,
-                                    current_user: that.get('current_user'),
-                                    resource_user: that.get('resource_user')
-                                    }
-                                );
+                    if (data.count === 0) {
+                        // if there are no results, show the default new user view
+                        that.models = [];
+                        var tpl = Y.one('#new_user').get('text'),
+                            welcome = Y.Handlebars.compile(tpl);
+                        data_node.setContent(welcome({
+                            username: that.get('resource_user')
+                        }));
+                    } else {
+                        // build models out of our data
+                        that.models = Y.Array.map(data[that.get('results_key')],
+                            function (bmark) {
+                                var b = new Y.bookie.Bmark(bmark),
+                                    n = new Y.bookie.BmarkView({
+                                        model: b,
+                                        current_user: that.get('current_user'),
+                                        resource_user: that.get('resource_user')
+                                        }
+                                    );
 
-                            b.api_cfg = that.get('api_cfg');
-                            new_nodes.push(n.render());
-                            return b;
-                        }
-                    );
+                                b.api_cfg = that.get('api_cfg');
+                                new_nodes.push(n.render());
+                                return b;
+                            }
+                        );
 
-                    // now set the html
-                    data_node.setContent(new_nodes);
+                        // now set the html
+                        data_node.setContent(new_nodes);
+
+                    }
 
                     // update the pagers
                     that._update_pagerview();

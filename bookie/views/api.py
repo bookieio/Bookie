@@ -814,7 +814,6 @@ def invite_user(request):
     """
     params = request.params
 
-    username = params.get('username', None)
     email = params.get('email', None)
     user = request.user
 
@@ -835,9 +834,9 @@ def invite_user(request):
     if exists:
         request.response.status_int = 406
         return {
-                'username': exists.username,
-                'error': "This user is already a Bookie user!"
-               }
+            'username': exists.username,
+            'error': "This user is already a Bookie user!"
+        }
 
     new_user = user.invite(email)
     if new_user:
@@ -854,8 +853,8 @@ def invite_user(request):
                             settings)
 
         msg.send(request.route_url('reset',
-                             username=new_user.username,
-                             reset_key=new_user.activation.code))
+            username=new_user.username,
+            reset_key=new_user.activation.code))
         return {
             'message': 'You have invited: ' + new_user.email
         }
@@ -863,9 +862,9 @@ def invite_user(request):
         # you have no invites
         request.response.status_int = 406
         return {
-                'username': user.username,
-                'error': "You have no invites left at this time."
-               }
+            'username': user.username,
+            'error': "You have no invites left at this time."
+        }
 
 
 @view_config(route_name="api_admin_readable_todo", renderer="json")
