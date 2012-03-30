@@ -1150,7 +1150,9 @@ YUI.add('bookie-view', function (Y) {
             },
 
             container: {
-                value: '#invite_container'
+                valueFn: function () {
+                    return Y.one('#invite_container');
+                }
             },
 
             /**
