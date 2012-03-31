@@ -802,13 +802,16 @@ YUI.add('bookie-view', function (Y) {
         remove: function () {
             var that = this;
             this.get('model').remove();
-
             this.get('container').transition({
                 easing: 'ease',
                 duration: 0.4,
                 opacity: 0
             }, function () {
-                that.destroy();
+                that.destroy({
+                    // we need to pass remove so that the node is actually
+                    // removed during the destroy process
+                    remove: true
+                });
             });
         },
 
@@ -870,13 +873,12 @@ YUI.add('bookie-view', function (Y) {
             container: {
                 valueFn: function () {
                     var container = Y.Node.create(this.container_html);
-                    container.set(
+                    container.setAttribute(
                         'data-bid',
                         this.get('model').get('bid')
                     );
                     return container;
                 }
-
             }
         }
     });
