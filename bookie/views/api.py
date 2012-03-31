@@ -252,9 +252,7 @@ def bmark_remove(request):
     try:
         bmark = BmarkMgr.get_by_hash(rdict['hash_id'],
                                     username=user.username)
-
         DBSession.delete(bmark)
-
         return {
             'message': "done",
         }
