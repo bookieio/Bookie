@@ -76,6 +76,15 @@ YUI().add('bookie-chrome', function (Y) {
             this.indicator.show();
             var model = this.get('model');
 
+            // we need to make sure the tag control is up to date so that we
+            // don't miss any tags. If the user starts typing a tag, and then
+            // stops and clicks save, the tag control will not have added the
+            // phrase entered as a tag and it gets lost.
+            Y.fire('tag:update', {
+                type: 'blur',
+                target: ''
+            });
+
             // we need to set the content to be part of the model for this
             // request so we can pass it along, even though the content
             // isn't really valid for it.

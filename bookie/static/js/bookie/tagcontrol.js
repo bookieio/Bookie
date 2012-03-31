@@ -175,7 +175,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
         tpl: {
             main: '<div><ul><li><input/></li></ul></div>',
-            submit_button: '<input type="submit" name="filter" value="Go"/>'
+            submit_button: '<input type="submit" name="filter" value="Go" class="submit"/>'
         },
 
         /**
@@ -263,6 +263,11 @@ YUI.add('bookie-tagcontrol', function (Y) {
             var that = this,
                 entry_input = this.ui.one('.' + this.getClassName('input'));
 
+            // If we see a tag:update event, make sure we parse the input. We
+            // can use this in our views to catch blur events since blur
+            // fails for us.
+            Y.on('tag:update', this._parse_input, this);
+
             // events to watch out for from our little cont
             // tag:added
             // tag:removed
@@ -282,10 +287,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // to force adding with
             this.ac.after('select', this._parse_input, this);
 
-            // if the input box loses focus, make sure we don't need to add a
-            // new tag
-            entry_input.on('blur', this._parse_input, this);
-
             this.ui.delegate('tag:donetyping', function (e) {
                 that._fire_changed();
             });
@@ -300,6 +301,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // knowledge. This event is coming from the tag itself.
             Y.on('tag:removed', this._remove_tag, this);
 
+
             // if someone wants to tell us to add a tag, catch this event
             Y.on('tag:add', function (e) {
                 this.add(e.tag);
@@ -312,7 +314,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.one('input').on('valueChange', function (e) {
                 this._update_input_width(e.newVal);
             }, this);
-
         },
 
         /**
@@ -358,6 +359,15 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // if we want a submit button, dump that into play
             if (this.get('with_submit')) {
                 this.ui.appendChild(this.tpl.submit_button);
+                // Bind the event to the submit button.
+                // We fake out the event so that it triggers parsing the text
+                // as a tag.
+                this.ui.one('.submit').on('click', function (ev) {
+                    Y.fire('tag:update', {
+                        type: 'blur',
+                        target: ''
+                    });
+                }, this);
             }
         },
 
