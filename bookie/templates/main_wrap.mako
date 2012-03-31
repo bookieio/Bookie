@@ -98,7 +98,13 @@
                             Account
                     </a></span>
                 % else:
-                    <span class="item"><a href="/login" class="button nav_button">Login</a></span>
+                    <span class="item">
+                        <a href="/login" class="button nav_button">
+                            <span aria-hidden="true" class="icon icon-user" title="Login"></span>
+                            <em class="icon">Login</em>
+                            Login
+                        </a>
+                    </span>
                 % endif
 
                 <!--<span class="item">-->
