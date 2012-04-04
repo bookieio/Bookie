@@ -13,10 +13,13 @@ S3 := s3cp.py --bucket files.bmark.us --public
 
 BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
+
 BOOKIE_JS = bookie/static/js/bookie
-BOOKIE_CSS = bookie/static/css
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
+DEV_JS_FILES := $(wildcard $(BOOKIE_JS)/*.js)
+BUILD_JS_FILES := $(patsubst $(BOOKIE_JS)/%.js,$(JS_BUILD_PATH)/b/%.js,$(DEV_JS_FILES))
+BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-min.js,$(BUILD_JS_FILES))
 YUIGIT = git://github.com/yui/yui3.git
 YUITAG = v3.5.0pr2
 JSTESTURL = http://127.0.0.1:9000/tests
@@ -30,6 +33,7 @@ CHROME_FILESERVE = /home/bmark.us/www/bookie_chrome.crx
 CHROME_BUILD_FILE = $(EXTENSION)/chrome_ext.crx
 CHROME_DEV_FILE = $(EXTENSION)/chrome_ext.zip
 
+BOOKIE_CSS = bookie/static/css
 RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
@@ -171,31 +175,13 @@ pep8:
 # and syncing things over to the chrome extension directory.
 
 .PHONY: js
-js: $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/y bookie/static/js/tests/jstpl.html
+js: js_dirs jsmin bookie/static/js/tests/jstpl.html $(JS_BUILD_PATH)/b/meta.js
 
-.PHONY: clean_js
-clean_js:
-	rm -rf $(JS_BUILD_PATH)/* || true
-	rm $(CHROME_BUILD)/*.js || true
-	rm -rf jsdoc || true
+.PHONY: js_dirs
+js_dirs: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/y $(CHROME_BUILD)
 
 $(CHROME_BUILD):
 	mkdir -p $(CHROME_BUILD)
-
-$(JS_BUILD_PATH)/b/meta.js: $(JS_BUILD_PATH)/b/*-min.js
-	rm $(JS_BUILD_PATH)/b/meta.js || true
-	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
-		-o $(JS_BUILD_PATH)/b/meta.js \
-		-x -min.js$
-
-$(JS_BUILD_PATH)/b/*-min.js: $(JS_BUILD_PATH)/b $(JS_BUILD_PATH)/b/*.js
-	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
-
-$(BOOKIE_JS)/*.js: $(CHROME_BUILD)
-
-$(JS_BUILD_PATH)/b/*.js: $(BOOKIE_JS)/*.js
-	cp $? $(JS_BUILD_PATH)/b/
-	cp $? $(CHROME_BUILD)/
 
 $(JS_BUILD_PATH)/b:
 	mkdir -p $(JS_BUILD_PATH)/b
@@ -206,6 +192,35 @@ $(JS_BUILD_PATH)/y: download-cache/yui
 
 bookie/static/js/tests/jstpl.html: bookie/templates/jstpl.mako
 	cp bookie/templates/jstpl.mako bookie/static/js/tests/jstpl.html
+
+download-cache/yui:
+	mkdir -p download-cache/yui
+	git clone --depth 1 $(YUIGIT) download-cache/yui
+	cd download-cache/yui && git checkout $(YUITAG)
+
+.PHONY: jsmin
+jsmin: $(BUILD_JS_FILES)
+	rm $(JS_BUILD_PATH)/b/meta.js || true
+	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
+
+$(JS_BUILD_PATH)/b/meta.js: $(BUILD_JS_FILES)
+	$(JS_META_SCRIPT) -n YUI_MODULES -s $(JS_BUILD_PATH)/b/ \
+		-o $(JS_BUILD_PATH)/b/meta.js \
+		-x -min.js$
+
+$(BUILD_JSMIN_FILES): $(BUILD_JS_FILES)
+	rm $(JS_BUILD_PATH)/b/meta.js || true
+	scripts/js/jsmin_all.py $@
+
+$(BUILD_JS_FILES): $(DEV_JS_FILES)
+	cp $(BOOKIE_JS)/$(@F) $@
+	cp $(BOOKIE_JS)/$(@F) $(CHROME_BUILD)/$(@F)
+
+.PHONY: clean_js
+clean_js:
+	rm -rf $(JS_BUILD_PATH)/* || true
+	rm $(CHROME_BUILD)/*.js || true
+	rm -rf jsdoc || true
 
 download-cache/yui:
 	mkdir -p download-cache/yui
