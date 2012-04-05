@@ -274,6 +274,12 @@ YUI().add('bookie-chrome', function (Y) {
 
             // setup the form with the current model data
             this._init_form();
+        },
+
+        render: function () {
+            // We need to make sure we hit the container so that our events
+            // are bound to our container since it's not lazy loaded via YUI.
+            this.get('container');
         }
 
     }, {

@@ -91,8 +91,10 @@
                 <button id="sync_button" class="button">Sync</button>
         </div>
     </body>
-    <script src="combo.js"></script>
+    <script src="lib/combo1.js"></script>
+    <script src="lib/combo2.js"></script>
     <script src="lib/api.js"></script>
+    <script src="lib/hash.js"></script>
     <script src="lib/indicator.js"></script>
     <script src="lib/model.js"></script>
     <script src="lib/tagcontrol.js"></script>
@@ -118,6 +120,7 @@
                     modules: YUI_MODULES,
                 }
             }
+
         };
 
         YUI().use('bookie-model', 'bookie-view', function (Y) {
@@ -126,6 +129,7 @@
             var view = new Y.bookie.OptionsView({
                 model: options
             });
+            view.render();
         });
     </script>
 </html>

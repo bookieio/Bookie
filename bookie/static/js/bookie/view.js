@@ -1712,7 +1712,7 @@ YUI.add('bookie-view', function (Y) {
     /**
      * View control for the options html pane in the extension.
      *
-     * @class OptionsView
+     * @class jptionsView
      * @extends Y.View
      *
      */
@@ -1846,6 +1846,11 @@ YUI.add('bookie-view', function (Y) {
             this._init_form();
         },
 
+        render: function () {
+            // We need to make sure we hit the container so our events get
+            // paste the lazy loading stage.
+            this.get('container');
+        },
 
         /**
          * Handle updating the options model with our selected information
