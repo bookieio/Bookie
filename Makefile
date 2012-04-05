@@ -21,7 +21,7 @@ DEV_JS_FILES := $(wildcard $(BOOKIE_JS)/*.js)
 BUILD_JS_FILES := $(patsubst $(BOOKIE_JS)/%.js,$(JS_BUILD_PATH)/b/%.js,$(DEV_JS_FILES))
 BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-min.js,$(BUILD_JS_FILES))
 YUIGIT = git://github.com/yui/yui3.git
-YUITAG = v3.5.0pr2
+YUITAG = v3.5.0pr4
 JSTESTURL = http://127.0.0.1:9000/tests
 
 EXTENSION = $(WD)/extensions
