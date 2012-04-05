@@ -25,7 +25,7 @@ YUI.add('bookie-test-api', function (Y) {
                 hit = false,
                 test_func = function (url, cfg) {
                     Y.Assert.areEqual('GET', cfg.method);
-                    Y.Assert.areEqual('http://127.0.0.1:6543/api/v1/bmarks/',
+                    Y.Assert.areEqual('http://127.0.0.1:6543/api/v1/bmarks',
                         url);
                     Y.ObjectAssert.areEqual({
                         count: 10,
@@ -52,7 +52,7 @@ YUI.add('bookie-test-api', function (Y) {
                 test_func = function (url, cfg) {
                     Y.Assert.areEqual('GET', cfg.method);
                     Y.Assert.areEqual(
-                        'http://127.0.0.1:6543/api/v1/bmarks/search/',
+                        'http://127.0.0.1:6543/api/v1/bmarks/search',
                         url);
                     Y.ObjectAssert.areEqual({
                         count: 10,
@@ -254,7 +254,9 @@ YUI.add('bookie-test-api', function (Y) {
                         'http://127.0.0.1:6543/api/v1/admin/api_key',
                         url);
                     Y.ObjectAssert.areEqual({
-                        username: "admin"
+                        username: "admin",
+                        api_key: "7745ac02c6dc",
+                        resource: undefined
                     }, cfg.data);
                     hit = true;
                 },
@@ -279,6 +281,8 @@ YUI.add('bookie-test-api', function (Y) {
                         'http://127.0.0.1:6543/api/v1/admin/ping',
                         url);
                     Y.ObjectAssert.areEqual({
+                        api_key: "7745ac02c6dc",
+                        resource: undefined,
                         username: "admin"
                     }, cfg.data);
                     hit = true;
@@ -304,6 +308,9 @@ YUI.add('bookie-test-api', function (Y) {
                         'http://127.0.0.1:6543/api/v1/admin/bmark/6c4370829d7ebc',
                         url);
                     Y.ObjectAssert.areEqual({
+                        api_key: "2dcf75460cb5",
+                        hash_id: "6c4370829d7ebc",
+                        resource: undefined,
                         username: "admin"
                     }, cfg.data);
                     hit = true;
@@ -332,7 +339,8 @@ YUI.add('bookie-test-api', function (Y) {
                     Y.ObjectAssert.areEqual({
                         username: 'admin',
                         password: 'test',
-                        code: '123456'
+                        code: '123456',
+                        resource: undefined
                     }, cfg.data);
                     hit = true;
                 },

@@ -353,15 +353,16 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/bmarks',
                     getter: function () {
-                        if (this.get('tags')) {
-                            return [
+                        var url;
+                        if (this.get('tags').length) {
+                            url = [
                                 '/bmarks',
                                 this.get('tags').join('/')
                             ].join('/');
                         } else {
-                            return '/bmarks';
+                            url = '/bmarks';
                         }
-
+                        return url;
                     }
                 }
             }
@@ -965,7 +966,7 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/bmarks/search',
                     getter: function () {
-                        if (this.get('phrase')) {
+                        if (this.get('phrase').length) {
                             return [
                                 '/bmarks/search',
                                 this.get('phrase').join('/')
@@ -1031,7 +1032,7 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/{username}/bmarks/search',
                     getter: function () {
-                        if (this.get('phrase')) {
+                        if (this.get('phrase').length) {
                             return [
                                 '/{username}/bmarks/search',
                                 this.get('phrase').join('/')
