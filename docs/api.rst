@@ -1070,6 +1070,119 @@ These are calls meant to help the admin with the system. Their documented for
 the project's need.
 
 
+/a/accounts/invites
+~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+*GET* `/api/v1/a/accounts/invites`
+
+Return a list of the users and the number of invites they have.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/accounts/invites?api_key=12345...')
+    >>>{
+            "users": [
+                [
+                    "admin",
+                    11
+                ],
+                [
+                    "user2",
+                    0
+                ]
+            ]
+        }
+
+Usage
+'''''
+*POST* `/api/v1/a/accounts/invites/:username/:count`
+
+Set the invite_ct for the specified user to the specified count
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned.
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/accounts/invites/admin/10?api_key=12345...')
+    >>>{
+           "count": 1,
+           "users": [
+               {
+                   "activated": false,
+                   "api_key": "12345",
+                   "email": "testing@someting.com",
+                   "id": 2,
+                   "invite_ct": 0,
+                   "invited_by": "admin",
+                   "is_admin": false,
+                   "last_login": "",
+                   "name": null,
+                   "password": null,
+                   "signup": "2010-04-07 17:50:18",
+                   "username": "admin"
+               }
+           ]
+       }
+
+
+/a/accounts/inactive
+~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+*GET* `/api/v1/a/accounts/inactive`
+
+Return the account info for users that are not set to active. Useful to see
+new signups that haven't activated or users with password/reset issues. New
+users will have their email address as their username since they've not set
+one yet.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned.
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/accounts/invites?api_key=12345...')
+    >>>{
+           "count": 1,
+           "users": [
+               {
+                   "activated": false,
+                   "api_key": "12345",
+                   "email": "newuser@something.com",
+                   "id": 2,
+                   "invite_ct": 0,
+                   "invited_by": "admin",
+                   "is_admin": false,
+                   "last_login": "",
+                   "name": null,
+                   "password": null,
+                   "signup": "2011-04-07 17:50:18",
+                   "username": "newuser@something.com"
+               }
+           ]
+       }
+
+
 /admin/readable/todo
 ~~~~~~~~~~~~~~~~~~~~
 GET `/api/v1/admin/readable/todo`
@@ -1144,6 +1257,8 @@ GET `/api/v1/admin/stats/bmarks`
 
     requests.get('http://127.0.0.1:6543/api/v1/admin/stats/bmarks?api_key=12345...')
     >>> ...
+
+
 
 
 Delicious API
