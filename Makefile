@@ -4,7 +4,7 @@ PY := bin/python
 CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B --loglevel=INFO
 PEP8 := bin/pep8
 PIP := bin/pip
-PIP_MIR = PIP_FIND_LINKS='http://mypipi http://simple.crate.io/'
+PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 MIGRATE := bin/migrate
 NOSE := bin/nosetests
 PASTER := bin/paster
@@ -248,7 +248,8 @@ js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css:
-	scss --update bookie/static/css:bookie/static/css
+	pyscss -o bookie/static/css/base.css bookie/static/css/base.scss
+	pyscss -I bookie/static/css/ -o bookie/static/css/responsive.css bookie/static/css/responsive.scss
 chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
 	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
@@ -290,7 +291,7 @@ run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
-	scss --watch bookie/static/css:bookie/static/css &
+	pyscss --watch bookie/static/css &
 run_app:
 	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
@@ -319,7 +320,6 @@ stop_livereload:
 #
 # Crap to help us install and setup Bookie
 # We need a virtualenv
-
 venv: bin/python
 bin/python:
 	virtualenv .
