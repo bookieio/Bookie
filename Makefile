@@ -59,8 +59,8 @@ $(BOOKIE_INI):
 #
 # Need a series of commands to handle migrations
 bookie.db: db_setup
-bookie_test.db: BOOKIE_INI='test.ini'
-bookie_test.db: db_setup db_up
+test_bookie.db: BOOKIE_INI='test.ini'
+test_bookie.db: db_setup db_up
 
 .PHONY: db_up
 db_up: develop bookie.db

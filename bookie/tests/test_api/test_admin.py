@@ -11,6 +11,8 @@ from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
+LOG = logging.getLogger(__name__)
+
 
 class AdminApiTest(unittest.TestCase):
     """Test the bookie admin api calls."""
@@ -49,3 +51,19 @@ class AdminApiTest(unittest.TestCase):
         # by default we shouldn't have any inactive users
         data = json.loads(res.body)
         eq_(0, data['count'], "Count should be 0 to start.")
+
+    def test_invite_ct(self):
+        """Test we can call and get the invite counts."""
+        # for now just make sure we can get a 200 call on it.
+        params = {
+            'api_key': self.api_key
+        }
+        res = self.testapp.get('/api/v1/a/accounts/invites',
+                                params=params,
+                                status=200)
+        # we should get back tuples of username/count
+        data = json.loads(res.body)['users']
+        ok_('admin' in data[0][0], "There should be the admin user." + res.body)
+        eq_(0, data[0][1], "The admin user shouldn't have any invites." + res.body)
+
+
