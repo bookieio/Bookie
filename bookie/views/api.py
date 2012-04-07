@@ -869,9 +869,8 @@ def invite_user(request):
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
-    url_list = Hashed.query.outerjoin(Readable).\
+    url_list = Bmark.query.outerjoin(Readable, Readable.bid == Bmark.bid).\
                 filter(Readable.imported == None).all()
-
     ret = {
         'urls': [dict(h) for h in url_list]
     }

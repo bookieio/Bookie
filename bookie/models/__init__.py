@@ -265,8 +265,8 @@ class Readable(Base):
     __tablename__ = 'bmark_readable'
 
     bid = Column(Integer,
-                     ForeignKey('bmarks.bid'),
-                     primary_key=True)
+                 ForeignKey('bmarks.bid'),
+                 primary_key=True)
     hash_id = Column(Unicode(22),
                      ForeignKey('bmarks.hash_id'),
                      index=True)
