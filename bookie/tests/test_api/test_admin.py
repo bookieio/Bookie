@@ -66,4 +66,22 @@ class AdminApiTest(unittest.TestCase):
         ok_('admin' in data[0][0], "There should be the admin user." + res.body)
         eq_(0, data[0][1], "The admin user shouldn't have any invites." + res.body)
 
+    def test_set_invite_ct(self):
+        """Test we can set the invite count for the user"""
+        # for now just make sure we can get a 200 call on it.
+        params = {
+            'api_key': self.api_key
+        }
+        res = self.testapp.post('/api/v1/a/accounts/invites/admin/10',
+                                params=params,
+                                status=200)
+        # we should get back tuples of username/count
+        data = json.loads(res.body)
+        eq_('admin', data.get('username'), "The admin user data is returned to us." + res.body)
+        eq_(10, int(data.get('invite_ct')), "The admin user now has 10 invites." + res.body)
 
+        # and of course when we're done we need to unset it back to 0 or else
+        # the test above blows up...sigh.
+        res = self.testapp.post('/api/v1/a/accounts/invites/admin/0',
+                                params=params,
+                                status=200)
