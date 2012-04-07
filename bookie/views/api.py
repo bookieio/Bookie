@@ -874,5 +874,55 @@ def to_readable(request):
     ret = {
         'urls': [dict(h) for h in url_list]
     }
-
     return ret
+
+
+@view_config(route_name="api_admin_accounts_inactive", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def accounts_inactive(request):
+    """Return a list of the accounts that aren't activated."""
+    user_list = UserMgr.get_list(active=False)
+    ret = {
+        'count': len(user_list),
+        'users': [dict(h) for h in user_list],
+    }
+    return ret
+
+
+@view_config(route_name="api_admin_accounts_invites", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def accounts_invites(request):
+    """Return a list of the accounts that aren't activated."""
+    user_list = UserMgr.get_list()
+    ret = {
+        'users': [(u.username, u.invite_ct) for u in user_list],
+    }
+    return ret
+
+
+@view_config(route_name="api_admin_accounts_invites_add", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def accounts_invites_add(request):
+    """Set the number of invites a user has available.
+
+    :matchdict username: The user to give these invites to.
+    :matchdict count: The number of invites to give them.
+    """
+    rdict = request.matchdict
+    username = rdict.get('username', None)
+    count = rdict.get('count', None)
+
+    if username is not None and count is not None:
+        user = UserMgr.get(username=username)
+
+        if user:
+            user.invite_ct = count
+            return dict(user)
+        else:
+            request.response.status_int = 404
+            ret = {'error': "Invalid user account."}
+            return ret
+    else:
+        request.response.status_int = 400
+        ret = {'error': "Bad request, missing parameters"}
+        return ret

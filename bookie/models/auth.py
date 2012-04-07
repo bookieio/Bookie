@@ -122,12 +122,12 @@ class UserMgr(object):
     """ Wrapper for static/combined operations of User object"""
 
     @staticmethod
-    def get_list(ignore_activated=False):
+    def get_list(active=None):
         """Get a list of all of the user accounts"""
         user_query = User.query.order_by(User.username)
 
-        if not ignore_activated:
-            user_query = user_query.filter(User.activated == True)
+        if active is not None:
+            user_query = user_query.filter(User.activated == active)
 
         return user_query.all()
 

@@ -145,6 +145,17 @@ def build_routes(config):
 
     # admin api calls
     config.add_route("api_admin_readable_todo", "/api/v1/a/readable/todo")
+    config.add_route(
+        "api_admin_accounts_inactive",
+        "/api/v1/a/accounts/inactive")
+    config.add_route(
+        "api_admin_accounts_invites_add",
+        "/api/v1/a/accounts/invites/{username}/{count}",
+        request_method="POST")
+    config.add_route(
+        "api_admin_accounts_invites",
+        "/api/v1/a/accounts/invites",
+        request_method="GET")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")
