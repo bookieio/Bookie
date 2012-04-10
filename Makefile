@@ -248,7 +248,7 @@ js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css:
-	pyscss -o bookie/static/css/base.css bookie/static/css/base.scss
+	pyscss -I bookie/static/css/ -o bookie/static/css/base.css bookie/static/css/base.scss
 	pyscss -I bookie/static/css/ -o bookie/static/css/responsive.css bookie/static/css/responsive.scss
 chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
