@@ -51,11 +51,15 @@
     <script src="test_view_account.js"></script>
 
     <script type="text/javascript">
-        YUI().use('console', 'test', 'bookie-test-view', 'bookie-test-view-account', function (Y) {
+        YUI().use('test-console', 'test', 'bookie-test-view', 'bookie-test-view-account', function (Y) {
             // RUN ALL THE TESTS!!!!!
 
             //initialize the console
-            var yconsole = new Y.Console({
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
                 newestOnTop: false
             });
             yconsole.render('#log');

@@ -142,7 +142,7 @@ mysql_test:
 jstestserver:
 	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer 9000
 .PHONY: jstest
-jstest: test_api test_model test_view test_indicator test_tagcontrol
+jstest: test_api test_history test_model test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
 jstest_index:
 	xdg-open http://127.0.0.1:6543/tests/index

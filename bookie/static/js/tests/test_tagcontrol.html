@@ -11,9 +11,13 @@
     <script src="test_tagcontrol.js"></script>
 
     <script type="text/javascript">
-        YUI().use('console', 'test', 'bookie-test-tagcontrol', function (Y) {
+        YUI().use('test-console', 'test', 'bookie-test-tagcontrol', function (Y) {
             // RUN ALL THE TESTS!!!!!
-            var yconsole = new Y.Console({
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
                 newestOnTop: false
             });
             yconsole.render('#log');

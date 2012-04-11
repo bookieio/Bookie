@@ -2,7 +2,7 @@ YUI.add('bookie-test-model', function (Y) {
     var ns = Y.namespace('bookie.test.model'),
         A = Y.Assert;
 
-    ns.suite = new Y.Test.Suite('Indicator Tests');
+    ns.suite = new Y.Test.Suite('Model Tests');
 
     function test_model() {
         return new Y.bookie.Bmark({
