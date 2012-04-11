@@ -20,9 +20,8 @@ JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
 DEV_JS_FILES := $(wildcard $(BOOKIE_JS)/*.js)
 BUILD_JS_FILES := $(patsubst $(BOOKIE_JS)/%.js,$(JS_BUILD_PATH)/b/%.js,$(DEV_JS_FILES))
 BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-min.js,$(BUILD_JS_FILES))
-YUIGIT = git://github.com/yui/yui3.git
-YUITAG = v3.5.0pr4
-JSTESTURL = http://127.0.0.1:9000/tests
+YUIRELEASES := http://yui.zenfs.com/releases/yui3/
+YUI := yui_3.5.0.zip
 
 EXTENSION = $(WD)/extensions
 CHROME = /usr/bin/google-chrome
@@ -195,8 +194,8 @@ bookie/static/js/tests/jstpl.html: bookie/templates/jstpl.mako
 
 download-cache/yui:
 	mkdir -p download-cache/yui
-	git clone --depth 1 $(YUIGIT) download-cache/yui
-	cd download-cache/yui && git checkout $(YUITAG)
+	wget $(YUIRELEASES)$(YUI) -O /tmp/$(YUI)
+	unzip /tmp/$(YUI) -d download-cache
 
 .PHONY: jsmin
 jsmin: $(BUILD_JS_FILES)
@@ -221,11 +220,6 @@ clean_js:
 	rm -rf $(JS_BUILD_PATH)/* || true
 	rm $(CHROME_BUILD)/*.js || true
 	rm -rf jsdoc || true
-
-download-cache/yui:
-	mkdir -p download-cache/yui
-	git clone --depth 1 $(YUIGIT) download-cache/yui
-	cd download-cache/yui && git checkout $(YUITAG)
 
 .PHONY: clean_downloadcache
 clean_downloadcache:
