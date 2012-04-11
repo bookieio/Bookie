@@ -22,6 +22,7 @@ BUILD_JS_FILES := $(patsubst $(BOOKIE_JS)/%.js,$(JS_BUILD_PATH)/b/%.js,$(DEV_JS_
 BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-min.js,$(BUILD_JS_FILES))
 YUIRELEASES := http://yui.zenfs.com/releases/yui3/
 YUI := yui_3.5.0.zip
+JSTESTURL = http://127.0.0.1:9000/tests
 
 EXTENSION = $(WD)/extensions
 CHROME = /usr/bin/google-chrome
