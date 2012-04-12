@@ -20,8 +20,8 @@ JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
 DEV_JS_FILES := $(wildcard $(BOOKIE_JS)/*.js)
 BUILD_JS_FILES := $(patsubst $(BOOKIE_JS)/%.js,$(JS_BUILD_PATH)/b/%.js,$(DEV_JS_FILES))
 BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-min.js,$(BUILD_JS_FILES))
-YUIGIT = git://github.com/yui/yui3.git
-YUITAG = v3.5.0pr4
+YUIRELEASES := http://yui.zenfs.com/releases/yui3/
+YUI := yui_3.5.0.zip
 JSTESTURL = http://127.0.0.1:9000/tests
 
 EXTENSION = $(WD)/extensions
@@ -147,7 +147,7 @@ mysql_test:
 jstestserver:
 	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer 9000
 .PHONY: jstest
-jstest: test_api test_model test_view test_indicator test_tagcontrol
+jstest: test_api test_history test_model test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
 jstest_index:
 	xdg-open http://127.0.0.1:6543/tests/index
@@ -200,8 +200,8 @@ bookie/static/js/tests/jstpl.html: bookie/templates/jstpl.mako
 
 download-cache/yui:
 	mkdir -p download-cache/yui
-	git clone --depth 1 $(YUIGIT) download-cache/yui
-	cd download-cache/yui && git checkout $(YUITAG)
+	wget $(YUIRELEASES)$(YUI) -O /tmp/$(YUI)
+	unzip /tmp/$(YUI) -d download-cache
 
 .PHONY: jsmin
 jsmin: $(BUILD_JS_FILES)
@@ -227,11 +227,6 @@ clean_js:
 	rm $(CHROME_BUILD)/*.js || true
 	rm -rf jsdoc || true
 
-download-cache/yui:
-	mkdir -p download-cache/yui
-	git clone --depth 1 $(YUIGIT) download-cache/yui
-	cd download-cache/yui && git checkout $(YUITAG)
-
 .PHONY: clean_downloadcache
 clean_downloadcache:
 	rm -rf download-cache || true
@@ -253,7 +248,7 @@ js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css:
-	pyscss -o bookie/static/css/base.css bookie/static/css/base.scss
+	pyscss -I bookie/static/css/ -o bookie/static/css/base.css bookie/static/css/base.scss
 	pyscss -I bookie/static/css/ -o bookie/static/css/responsive.css bookie/static/css/responsive.scss
 chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
