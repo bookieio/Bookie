@@ -49,7 +49,7 @@ YUI.add('bookie-model', function (Y) {
              */
             _delete: function (options, callback) {
                // perform a delete api request to the server
-               var delete_cfg = this.api_cfg,
+               var delete_cfg = this.get('api_cfg'),
                    api;
 
                delete_cfg.hash_id = this.get('hash_id');
