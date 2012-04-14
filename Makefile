@@ -8,6 +8,7 @@ PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 MIGRATE := bin/migrate
 NOSE := bin/nosetests
 PASTER := bin/paster
+PYSCSS := bin/pyscss
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
 
@@ -248,8 +249,8 @@ js_doc_upload: js_doc
 	scp -r jsdoc/* jsdoc jsdoc.bmark.us:/home/bmark.us/jsdocs/
 
 css:
-	pyscss -I bookie/static/css/ -o bookie/static/css/base.css bookie/static/css/base.scss
-	pyscss -I bookie/static/css/ -o bookie/static/css/responsive.css bookie/static/css/responsive.scss
+	$(PYSCSS) -I bookie/static/css/ -o bookie/static/css/base.css bookie/static/css/base.scss
+	$(PYSCSS) -I bookie/static/css/ -o bookie/static/css/responsive.css bookie/static/css/responsive.scss
 chrome_css:  $(CHROME_BUILD) css
 	cp $(BASECSS) $(CHROME_BUILD)/
 	wget "https://bmark.us/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css" -O $(CHROME_BUILD)/combo.css
@@ -291,7 +292,7 @@ run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
-	pyscss --watch bookie/static/css &
+	$(PYSCSS) --watch bookie/static/css &
 run_app:
 	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
 run_livereload:
