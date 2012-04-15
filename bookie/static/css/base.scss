@@ -60,7 +60,6 @@ em.icon {
     text-align: right;
 }
 
-
 @mixin button_base {
     color: $darkgrey;
     background: $button_back;
@@ -85,6 +84,17 @@ body {
 a {
     color: $links;
     text-decoration: none;
+}
+
+
+pre {
+    background: lightyellow none repeat scroll 0 0;
+    border:1px inset orange;
+    margin:10px;
+    overflow:auto;
+    padding:6px;
+    text-align:left;
+    white-space: pre-wrap;
 }
 
 #body {
