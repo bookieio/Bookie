@@ -1,5 +1,5 @@
 #readable_content {
-    font-family: Garamond, serif;
+    font-family: Liberation Sans, sans-serif;
     font-size: 1.2em;
     line-height: 1.3em;
     margin: auto;
@@ -15,7 +15,7 @@
     }
 
     code, pre {
-        @include monospace;
+        font-family: Liberation Mono, monospaced;
         white-space: pre-wrap;
     }
 
