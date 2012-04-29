@@ -95,7 +95,7 @@ YUI.add('bookie-api', function (Y) {
         }
 
         cfg.arguments = args;
-        request = Y.io(url, cfg);
+        Y.io(url, cfg);
     };
 
     /**
@@ -1113,5 +1113,5 @@ YUI.add('bookie-api', function (Y) {
 
 
 }, '0.1.0', {
-    requires: ['base', 'io', 'querystring-stringify-simple', 'json', 'substitute']
+    requires: ['base', 'io', 'io-xdr', 'querystring-stringify-simple', 'json', 'substitute']
 });

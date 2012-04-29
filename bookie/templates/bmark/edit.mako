@@ -79,6 +79,7 @@
             </li>
         </ul>
     </form>
+    <div id="readable_content" style="display: none;"></div>
     </div>
 </div>
 
@@ -86,7 +87,7 @@
 <%def name="add_js()">
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('node', 'console', 'bookie-view',  function (Y) {
+        YUI().use('node', 'console', 'bookie-view', 'bookie-readable', 'bookie-indicator',  function (Y) {
             ${api_setup(request.user)}
             var tagcontrol = new Y.bookie.TagControl({
                api_cfg: api_cfg,
@@ -105,6 +106,35 @@
                 });
                 target.remove();
             });
+
+            % if new and bmark.hashed.url:
+            // Start out testing to see if we can load the readable content
+            // for the url via our bookie-readable js module
+            var readable_target = Y.one('#readable_content');
+            readable_target.show();
+            var readable = new Y.bookie.readable.Api({
+                url: '${bmark.hashed.url}'
+            });
+
+            var indicator = new Y.bookie.Indicator({
+                target: readable_target
+            });
+            indicator.render();
+            indicator.show();
+
+            readable.call({
+                success: function (data, response, args) {
+                    readable_target.setContent(data.content)
+                    indicator.hide();
+                },
+
+                error: function (data, status_str, response, args) {
+                    console.log(data);
+                    console.log(status_str);
+                    console.log(response);
+                }
+            });
+            % endif
         });
     </script>
 </%def>
