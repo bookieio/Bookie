@@ -9,11 +9,11 @@
 
 YUI.add('bookie-api', function (Y) {
 
-    Y.namespace('bookie');
+    ns = Y.namespace('bookie');
 
     var _ = Y.substitute;
 
-    var decode_response = function (resp_text) {
+    ns.decode_response = function (resp_text) {
         var data;
         try  {
             data = Y.JSON.parse(resp_text);
@@ -37,14 +37,14 @@ YUI.add('bookie-api', function (Y) {
      * back to provide to the caller's callback as data
      *
      */
-    var request_handler = function (url, cfg, args) {
+    ns.request_handler = function (url, cfg, args) {
         // extend with the base handlers for each event we want to use
         // should have cases for zomplete, success, failure
         // Note: complete fires before both success and failure, not usually
         // the event you want
         var request,
             default_complete = function (id, response, args) {
-                var data = decode_response(response.responseText);
+                var data = ns.decode_response(response.responseText);
 
                 if (args.callbacks.complete !== undefined) {
                     args.callbacks.complete(data, response, args);
@@ -53,7 +53,7 @@ YUI.add('bookie-api', function (Y) {
                 }
             },
             default_success = function (id, response, args) {
-                var data = decode_response(response.responseText);
+                var data = ns.decode_response(response.responseText);
 
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback
@@ -64,7 +64,7 @@ YUI.add('bookie-api', function (Y) {
                 }
             },
             default_failure = function (id, response, args) {
-                var data = decode_response(response.responseText),
+                var data = ns.decode_response(response.responseText),
                     status_str = response.statusText;
 
                 // hand the callback the issue at hand
@@ -217,7 +217,7 @@ YUI.add('bookie-api', function (Y) {
                 cfg = this.build_cfg();
 
             args.callbacks = callbacks;
-            request_handler(this.build_url(cfg.data),
+            ns.request_handler(this.build_url(cfg.data),
                             cfg,
                             args);
         }
