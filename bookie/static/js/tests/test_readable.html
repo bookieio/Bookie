@@ -1,0 +1,28 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script src="../build/y/yui/yui.js"></script>
+    <script src="../bookie/readable.js"></script>
+    <script src="test_readable.js"></script>
+    <title>Readable Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+    <script type="text/javascript">
+        YUI().use('test-console', 'bookie-test-readable', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.readable.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

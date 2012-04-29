@@ -164,6 +164,9 @@ test_indicator:
 .PHONY: test_model
 test_model:
 	xdg-open $(JSTESTURL)/test_model.html
+.PHONY: test_readable
+test_readable:
+	xdg-open $(JSTESTURL)/test_readable.html
 .PHONY: test_tagcontrol
 test_tagcontrol:
 	xdg-open $(JSTESTURL)/test_tagcontrol.html
