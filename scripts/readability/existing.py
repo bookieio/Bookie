@@ -1,4 +1,4 @@
-"""Run readability on all of the existing urls in the databse
+"""Run readability on all of the existing urls in the database
 
 
 """

@@ -128,7 +128,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * YUI object init method
          *
          * @constructor
-         * @event tag:added
+         * @event tag:add
          * @param {Object} cfg
          * @param {Boolean} silent
          *
@@ -146,7 +146,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
             }
 
             if (!this.get('silent')) {
-                Y.fire('tag:added', {
+                Y.fire('tag:add', {
                     target: this
                 });
             }
@@ -268,8 +268,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // fails for us.
             Y.on('tag:update', this._parse_input, this);
 
-            // events to watch out for from our little cont
-            // tag:added
+            // events to watch out for from our little container
+            // tag:add
             // tag:removed
             // focus out (make last word a tag)
             this.ui.delegate(
