@@ -127,6 +127,7 @@ YUI.add('bookie-view', function (Y) {
                         // build models out of our data
                         that.models = Y.Array.map(data[that.get('results_key')],
                             function (bmark) {
+                                bmark.api_cfg = that.get('api_cfg');
                                 var b = new Y.bookie.Bmark(bmark),
                                     n = new Y.bookie.BmarkView({
                                         model: b,
