@@ -124,6 +124,8 @@ deps: venv
 .PHONY: test
 test:
 	$(NOSE) --with-id -x -s bookie/tests
+
+.PHONY: builder_test
 builder_test:
 	# we hard code the filename because we don't want to accidentally remove
 	# the main bookie.db file. We're only cleaning tests.
@@ -134,6 +136,7 @@ builder_test:
 	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
+.PHONY: mysql_test
 mysql_test:
 	# call this with the overriding BOOKIE_INI setting
 	# first we need to drop the db
