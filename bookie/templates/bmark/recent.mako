@@ -22,10 +22,10 @@ import json
 
             % if username:
                 var resource_username = '${username}';
-                var route = '/recent/' + resource_username;
+                var route = resource_username + '/recent/';
             % else:
                 var resource_username = undefined;
-                var route = '/recent'
+                var route = '/recent';
             % endif
 
             var pager = new Y.bookie.PagerModel();
