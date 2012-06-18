@@ -3,6 +3,7 @@
     combo = request.registry.settings['combo_server']
     cache_buster = request.registry.settings['combo_cache_id']
 %>
+<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
