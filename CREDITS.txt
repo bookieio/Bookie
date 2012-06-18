@@ -7,3 +7,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Ben Rousch
 - Dave Brondsema
 - Morgan Goose
+- Jay Wren
