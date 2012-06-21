@@ -623,7 +623,7 @@ class Bmark(Base):
     __tablename__ = "bmarks"
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
-    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
+    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'))
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)

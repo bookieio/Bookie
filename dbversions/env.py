@@ -9,10 +9,10 @@ from bookie.models import Base
 from bookie.models import initialize_sql
 
 
-def load_bookie_ini():
+def load_bookie_ini(ini_file):
     """Load the settings for the bookie.ini file."""
     ini = ConfigParser()
-    ini_path = path.join(path.dirname(path.dirname(__file__)), 'bookie.ini')
+    ini_path = path.join(path.dirname(path.dirname(__file__)), ini_file)
     ini.readfp(open(ini_path))
     here = path.abspath(path.join(path.dirname(__file__), '../'))
     ini.set('app:main', 'here', here)
@@ -22,7 +22,9 @@ def load_bookie_ini():
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-bookie_config = load_bookie_ini()
+
+bookie_ini = config.get_main_option('app.ini', 'bookie.ini')
+bookie_config = load_bookie_ini(bookie_ini)
 sa_url = bookie_config.get('app:main', 'sqlalchemy.url')
 config.set_main_option('sqlalchemy.url', sa_url)
 
@@ -40,7 +42,6 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
 
 
 def run_migrations_offline():

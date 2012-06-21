@@ -37,7 +37,7 @@ class TestBmarkMgrStats(TestDBBase):
             )
             DBSession.add(b)
 
-        # add in our dupes
+        # Add in our dupes
         c = Bmark(
             url=common,
             username=gen_random_word(10)

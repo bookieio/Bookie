@@ -11,7 +11,6 @@ revision = '5920b225d05d'
 down_revision = None
 
 from alembic import op
-from datetime import datetime
 import sqlalchemy as sa
 
 
@@ -32,8 +31,6 @@ def upgrade():
         sa.Column('api_key', sa.Unicode(length=12), nullable=True),
         sa.Column('invite_ct', sa.Integer(), nullable=True),
         sa.Column('invited_by', sa.Unicode(length=255), nullable=True),
-        sa.CheckConstraint('TODO'),
-        sa.CheckConstraint('TODO'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('email'),
         sa.UniqueConstraint('username')
@@ -67,7 +64,6 @@ def upgrade():
         sa.ForeignKeyConstraint(['hash_id'], ['url_hash.hash_id'], ),
         sa.ForeignKeyConstraint(['username'], ['users.username'], ),
         sa.PrimaryKeyConstraint('bid'),
-        sa.UniqueConstraint('hash_id')
     )
 
     op.create_table(u'activations',
@@ -100,6 +96,27 @@ def upgrade():
         sa.ForeignKeyConstraint(['hash_id'], ['bmarks.hash_id'], ),
         sa.PrimaryKeyConstraint('bid')
     )
+
+    op.create_table('logging',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('user', sa.Unicode(255), nullable=False),
+        sa.Column('component', sa.Unicode(50), nullable=False),
+        sa.Column('status', sa.Unicode(10), nullable=False),
+        sa.Column('message', sa.Unicode(255), nullable=False),
+        sa.Column('payload', sa.UnicodeText),
+        sa.Column('tstamp', sa.DateTime),
+        sa.PrimaryKeyConstraint('id'),
+    )
+
+    op.create_table('import_queue',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('username', sa.Unicode(255)),
+        sa.Column('file_path', sa.Unicode(100), nullable=False),
+        sa.Column('tstamp', sa.DateTime),
+        sa.Column('status', sa.Integer),
+        sa.Column('completed', sa.DateTime),
+        sa.PrimaryKeyConstraint('id'),
+    )
     ### end Alembic commands ###
 
 
@@ -112,4 +129,5 @@ def downgrade():
     op.drop_table('url_hash')
     op.drop_table('tags')
     op.drop_table('users')
+    op.drop_table('logging')
     ### end Alembic commands ###

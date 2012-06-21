@@ -59,31 +59,30 @@ $(BOOKIE_INI):
 # DATABASE
 #
 # Need a series of commands to handle migrations
-bookie.db: db_setup
-test_bookie.db: BOOKIE_INI='test.ini'
-test_bookie.db: db_setup db_up
+bookie.db: develop
+	bin/alembic upgrade head
 
+test_bookie.db:
+	bin/alembic -c test_alembic.ini upgrade head
+
+# The upgade/etc commands are only for the live db. Test databases are
+# expected to be torn down and resetup each time.
 .PHONY: db_up
-db_up: develop bookie.db
-	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
+db_up: bookie.db
+	bin/alembic upgrade head
 
-# make db_down ver=10
 .PHONY: db_down
-db_down: develop bookie.db
-	$(MIGRATE) downgrade --url=$(SAURL) --repository=migrations $(ver)
+db_down: bookie.db
+	bin/alembic downgrade
 
 # make db_new desc="This is a new migration"
 .PHONY: db_new
-db_new: develop bookie.db
-	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
+db_new: bookie.db
+	bin/alembic revision -m "$(desc)"
 
 .PHONY: db_version
-db_version: develop bookie.db
-	$(MIGRATE) version --url=$(SAURL) --repository=migrations
-
-.PHONY: db_setup
-db_setup: develop
-	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
+db_version: bookie.db
+	bin/alembic current
 
 .PHONY: first_bookmark
 first_bookmark: develop
@@ -125,15 +124,12 @@ deps: venv
 test:
 	$(NOSE) --with-id -x -s bookie/tests
 
+.PHONY: clean_testdb
+clean_testdb:
+	- rm test_bookie.db
+
 .PHONY: builder_test
-builder_test:
-	# we hard code the filename because we don't want to accidentally remove
-	# the main bookie.db file. We're only cleaning tests.
-	if [ -f test_bookie.db ]; then \
-		rm test_bookie.db; \
-	fi
-	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
-	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
+builder_test: clean_testdb test_bookie.db
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: mysql_test
