@@ -14,6 +14,7 @@ from bookie.models import Tag
 from bookie.models import bmarks_tags
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
+from bookie.tests import empty_db
 
 API_KEY = None
 
@@ -39,14 +40,7 @@ class TestFulltext(TestCase):
     def tearDown(self):
         """Tear down each test"""
         testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        Hashed.query.delete()
-        Readable.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def _get_good_request(self, new_tags=None):
         """Return the basics for a good add bookmark request"""

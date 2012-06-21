@@ -105,13 +105,13 @@ class TestViewBase(unittest.TestCase):
 
 def empty_db():
     """On teardown, remove all the db stuff"""
-    Bmark.query.delete()
+    DBSession.execute(bmarks_tags.delete())
     Readable.query.delete()
-    # we can't remove the toread tag we have from our commands
+    Bmark.query.delete()
     Tag.query.delete()
+    # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
 
-    DBSession.execute(bmarks_tags.delete())
     DBSession.flush()
     transaction.commit()
 

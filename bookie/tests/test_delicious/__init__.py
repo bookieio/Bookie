@@ -12,6 +12,7 @@ from bookie.models import Hashed
 from bookie.models import Readable
 from bookie.models import Tag, bmarks_tags
 from bookie.tests import BOOKIE_TEST_INI
+from bookie.tests import empty_db
 
 GOOGLE_HASH = 'aa2239c17609b2'
 API_KEY = None
@@ -35,15 +36,7 @@ class DelPostTest(unittest.TestCase):
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
-
-        Bmark.query.delete()
-        Readable.query.delete()
-        Tag.query.delete()
-        Hashed.query.delete()
-
-        DBSession.execute(bmarks_tags.delete())
-        DBSession.flush()
-        transaction.commit()
+        empty_db()
 
     def _get_good_request(self, content=False):
         """Return the basics for a good add bookmark request"""
@@ -205,7 +198,7 @@ class DelPostTest(unittest.TestCase):
         ok_(res.stored >= now,
             "Stored time is about now {0}--{1}".format(res.stored, now))
 
-        res.hash_id = u"Somethingnew.com"
+        res.description = u"Some new description."
         DBSession.flush()
 
         # now hopefully have an updated value
