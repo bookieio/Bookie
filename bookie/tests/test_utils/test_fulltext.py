@@ -7,13 +7,9 @@ from pyramid import testing
 from unittest import TestCase
 
 from bookie.models import DBSession
-from bookie.models import Bmark
-from bookie.models import Hashed
-from bookie.models import Readable
-from bookie.models import Tag
-from bookie.models import bmarks_tags
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
+from bookie.tests import empty_db
 
 API_KEY = None
 
@@ -39,21 +35,14 @@ class TestFulltext(TestCase):
     def tearDown(self):
         """Tear down each test"""
         testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        Hashed.query.delete()
-        Readable.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def _get_good_request(self, new_tags=None):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
                 'url': u'http://google.com',
-                'description': u'This is my google desc',
+                'description': u'This is my google desc SEE',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'api_key': API_KEY,
@@ -80,7 +69,7 @@ class TestFulltext(TestCase):
     def test_sqlite_save(self):
         """Verify that if we store a bookmark we get the fulltext storage"""
         # first let's add a bookmark we can search on
-        res = self._get_good_request()
+        self._get_good_request()
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/google')
         ok_(search_res.status == '200 OK',
@@ -91,6 +80,7 @@ class TestFulltext(TestCase):
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/python')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
+
         ok_('my google desc' in search_res.body,
             "Tag search should find our description on the page: " + \
                 search_res.body)

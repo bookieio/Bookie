@@ -1,3 +1,4 @@
+alembic == 0.3.4
 argparse
 BeautifulSoup==3.2.0
 celery==2.5.1
@@ -40,10 +41,9 @@ rope==0.9.3
 ropemode==0.1-rc2
 ropevim==0.3-rc
 requests
-sqlalchemy-migrate<0.8
 transaction==1.1.1
 translationstring==0.4
-unidecode==0.04.7
+Unidecode==0.04.7
 unittest2==0.5.1
 virtualenv==1.5.2
 wsgiref==0.1.2
@@ -56,5 +56,5 @@ zope.interface==3.8.0
 zope.schema==3.7.1
 zope.sqlalchemy==0.6.1
 shortuuid
-whoosh
-pyrrd
+Whoosh
+PyRRD

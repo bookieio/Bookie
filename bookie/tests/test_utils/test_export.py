@@ -14,6 +14,8 @@ from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag, bmarks_tags
 
+from bookie.tests import empty_db
+
 
 LOG = logging.getLogger(__name__)
 API_KEY = None
@@ -55,12 +57,7 @@ class TestExport(unittest.TestCase):
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
-        session = DBSession
-        Bmark.query.delete()
-        Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def test_export(self):
         """Test that we can upload/import our test file"""

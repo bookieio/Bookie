@@ -241,7 +241,7 @@ class TagMgr(object):
     @staticmethod
     def count():
         """Count how many tags we have in the system"""
-        return DBSession.query(Tag.tid).count()
+        return Tag.query.count()
 
 
 class Tag(Base):
@@ -303,52 +303,6 @@ def sync_readable_content(mapper, connection, target):
 
 event.listen(Readable, 'after_insert', sync_readable_content)
 event.listen(Readable, 'after_update', sync_readable_content)
-
-
-class ReadableFTSExtension(MapperExtension):
-    """This is a mapper to handle inserting into fulltext index
-
-    Since the sqlite fulltext is a separate table, we need to insert/update
-    into that fulltext index whenever we add/change a bookmark
-
-    """
-    @classmethod
-    def _clean_content(cls, content):
-        return u' '.join(BeautifulSoup(content).findAll(text=True))
-
-    def before_insert(self, mapper, connection, instance):
-        from fulltext import get_writer
-        # we need to update the fulltext instance for this bmark instance
-        # we only do this for sqlite connections, else just pass
-        instance.clean_content = self._clean_content(instance.content)
-        b = instance.bmark
-
-        writer = get_writer()
-        writer.update_document(
-            bid=unicode(b.bid),
-            description=b.description if b.description else u"",
-            extended=b.extended if b.extended else u"",
-            tags=b.tag_str if b.tag_str else u"",
-            readable=instance.clean_content,
-        )
-        writer.commit()
-
-    def before_update(self, mapper, connection, instance):
-        from fulltext import get_writer
-        # we need to update the fulltext instance for this bmark instance
-        # we only do this for sqlite connections, else just pass
-        instance.clean_content = self._clean_content(instance.content)
-        b = instance.bmark
-
-        writer = get_writer()
-        writer.update_document(
-            bid=unicode(b.bid),
-            description=b.description if b.description else u"",
-            extended=b.extended if b.extended else u"",
-            tags=b.tag_str if b.tag_str else u"",
-            readable=instance.clean_content,
-        )
-        writer.commit()
 
 
 class HashedMgr(object):
@@ -623,7 +577,7 @@ class Bmark(Base):
     __tablename__ = "bmarks"
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
-    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'), unique=True)
+    hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'))
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.now)

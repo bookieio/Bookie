@@ -29,6 +29,11 @@ INDEX_TYPE = None
 WIX = None
 
 
+def _reset_index():
+    """Used by the test suite to reset the fulltext index."""
+    WIX = create_in(INDEX_NAME, BmarkSchema)
+
+
 def set_index(index_type, index_path):
     global INDEX_NAME
     global INDEX_TYPE
@@ -83,8 +88,6 @@ class WhooshFulltext(object):
 
             if content:
                 fields.append('readable')
-
-            LOG.debug(fields)
 
             parser = qparser.MultifieldParser(fields,
                                                schema=WIX.schema,

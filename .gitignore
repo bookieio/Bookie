@@ -30,3 +30,12 @@ parts
 *.db
 .coverage
 .noseids
+/include
+/bin
+/man
+/lib
+/local
+ropevim.vim
+*.pid
+/download-cache
+/extensions/chrome_ext/lib

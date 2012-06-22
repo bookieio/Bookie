@@ -13,6 +13,7 @@ from bookie.models import Hashed
 from bookie.models import Readable
 from bookie.models import Tag, bmarks_tags
 from bookie.models.queue import ImportQueue
+from bookie.models.fulltext import _reset_index
 
 global_config = {}
 
@@ -105,15 +106,18 @@ class TestViewBase(unittest.TestCase):
 
 def empty_db():
     """On teardown, remove all the db stuff"""
-    Bmark.query.delete()
+    DBSession.execute(bmarks_tags.delete())
     Readable.query.delete()
-    # we can't remove the toread tag we have from our commands
+    Bmark.query.delete()
     Tag.query.delete()
+    # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
 
-    DBSession.execute(bmarks_tags.delete())
     DBSession.flush()
     transaction.commit()
+
+    # Clear the fulltext index as well.
+    _reset_index()
 
 # unit tests we want to make sure get run
 # from bookie.lib.test_tagcommands import *

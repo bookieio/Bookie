@@ -5,7 +5,6 @@ CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B --loglevel=INFO
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
-MIGRATE := bin/migrate
 NOSE := bin/nosetests
 PASTER := bin/paster
 PYSCSS := bin/pyscss
@@ -59,31 +58,30 @@ $(BOOKIE_INI):
 # DATABASE
 #
 # Need a series of commands to handle migrations
-bookie.db: db_setup
-test_bookie.db: BOOKIE_INI='test.ini'
-test_bookie.db: db_setup db_up
+bookie.db: develop
+	bin/alembic upgrade head
 
+test_bookie.db: develop
+	bin/alembic -c test_alembic.ini upgrade head
+
+# The upgade/etc commands are only for the live db. Test databases are
+# expected to be torn down and resetup each time.
 .PHONY: db_up
-db_up: develop bookie.db
-	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
+db_up: bookie.db
+	bin/alembic upgrade head
 
-# make db_down ver=10
 .PHONY: db_down
-db_down: develop bookie.db
-	$(MIGRATE) downgrade --url=$(SAURL) --repository=migrations $(ver)
+db_down: bookie.db
+	bin/alembic downgrade
 
 # make db_new desc="This is a new migration"
 .PHONY: db_new
-db_new: develop bookie.db
-	$(MIGRATE) script --url=$(SAURL) --repository=migrations "$(desc)"
+db_new: bookie.db
+	bin/alembic revision -m "$(desc)"
 
 .PHONY: db_version
-db_version: develop bookie.db
-	$(MIGRATE) version --url=$(SAURL) --repository=migrations
-
-.PHONY: db_setup
-db_setup: develop
-	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
+db_version: bookie.db
+	bin/alembic current
 
 .PHONY: first_bookmark
 first_bookmark: develop
@@ -123,29 +121,23 @@ deps: venv
 
 .PHONY: test
 test:
-	$(NOSE) --with-id -x -s bookie/tests
+	$(NOSE) --with-id -xv -s bookie/tests
+
+.PHONY: clean_testdb
+clean_testdb:
+	- rm test_bookie.db
 
 .PHONY: builder_test
-builder_test:
-	# we hard code the filename because we don't want to accidentally remove
-	# the main bookie.db file. We're only cleaning tests.
-	if [ -f test_bookie.db ]; then \
-		rm test_bookie.db; \
-	fi
-	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
-	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
+builder_test: clean_testdb test_bookie.db
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: mysql_test
 mysql_test:
-	# call this with the overriding BOOKIE_INI setting
-	# first we need to drop the db
-	$(PIP_MIR) $(PIP) install pymysql
+	$(PIP_MIR) $(PIP) install PyMySQL
 	mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
 	mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
-	$(MIGRATE) version_control --url=$(SAURL) --repository=migrations
-	$(MIGRATE) upgrade --url=$(SAURL) --repository=migrations
-	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
+	bin/alembic -c test_alembic_mysql.ini upgrade head
+	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: jstestserver
 jstestserver:

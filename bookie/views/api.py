@@ -18,7 +18,6 @@ from bookie.lib.tagcommands import Commander
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
-from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr

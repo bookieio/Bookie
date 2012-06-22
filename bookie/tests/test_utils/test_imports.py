@@ -22,6 +22,7 @@ from bookie.lib.importer import DelImporter
 from bookie.lib.importer import GBookmarkImporter
 
 from bookie.tests import TestViewBase
+from bookie.tests import empty_db
 
 
 LOG = logging.getLogger(__name__)
@@ -135,12 +136,7 @@ class ImportDeliciousTest(unittest.TestCase):
 
     def tearDown(self):
         """Regular tear down method"""
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def test_is_delicious_file(self):
         """Verify that this is a delicious file"""
@@ -197,12 +193,7 @@ class ImportGoogleTest(unittest.TestCase):
 
     def tearDown(self):
         """Regular tear down method"""
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def test_is_google_file(self):
         """Verify that this is a delicious file"""
