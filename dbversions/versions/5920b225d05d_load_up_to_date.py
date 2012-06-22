@@ -117,6 +117,14 @@ def upgrade():
         sa.Column('completed', sa.DateTime),
         sa.PrimaryKeyConstraint('id'),
     )
+
+    op.create_table('stats_bookmarks',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('tstamp', sa.DateTime),
+        sa.Column('attrib', sa.Unicode(100), nullable=False),
+        sa.Column('data', sa.Integer),
+        sa.PrimaryKeyConstraint('id'),
+    )
     ### end Alembic commands ###
 
 
@@ -130,4 +138,6 @@ def downgrade():
     op.drop_table('tags')
     op.drop_table('users')
     op.drop_table('logging')
+    op.drop_table('import_queue')
+    op.drop_table('stats_bookmarks')
     ### end Alembic commands ###

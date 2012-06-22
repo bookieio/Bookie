@@ -41,7 +41,6 @@ rope==0.9.3
 ropemode==0.1-rc2
 ropevim==0.3-rc
 requests
-sqlalchemy-migrate<0.8
 transaction==1.1.1
 translationstring==0.4
 unidecode==0.04.7
