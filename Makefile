@@ -137,7 +137,7 @@ mysql_test:
 	mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
 	mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
 	bin/alembic -c test_alembic_mysql.ini upgrade head
-	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) -xv --with-coverage --with-id 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 --cover-package=bookie --cover-erase --with-xunit bookie/tests
+	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: jstestserver
 jstestserver:

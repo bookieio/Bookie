@@ -8,13 +8,11 @@ from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models import Bmark, NoResultFound
-from bookie.models import Hashed
-from bookie.models import Readable
 from bookie.models import Tag, bmarks_tags
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
-GOOGLE_HASH = 'aa2239c17609b2'
+GOOGLE_HASH = '5d763daa480fbc'
 API_KEY = None
 
 
@@ -42,7 +40,7 @@ class DelPostTest(unittest.TestCase):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
+                'url': u'http://googles.com',
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
@@ -107,13 +105,14 @@ class DelPostTest(unittest.TestCase):
         self._get_good_request()
 
         try:
+
             res = Bmark.query.filter(Bmark.hash_id == GOOGLE_HASH).one()
             ok_(res, 'We found a result in the db for this bookmark')
             ok_('extended' in res.extended,
                     'Extended value was set to bookmark')
 
             # make sure our hash was stored correctly
-            ok_(res.hashed.url == 'http://google.com',
+            ok_(res.hashed.url == 'http://googles.com',
                     "The hashed object got the url")
 
             ok_(res.hashed.clicks == 0, "No clicks on the url yet")
@@ -144,7 +143,7 @@ class DelPostTest(unittest.TestCase):
         yesterday = today - timedelta(days=1)
         dt = yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
         prms = {
-                'url': u'http://google.com',
+                'url': u'http://googles.com',
                 'description': u'This is my google desc',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
@@ -218,7 +217,7 @@ class DelPostTest(unittest.TestCase):
 
         # now send in the delete squad
         prms = {
-            'url': u'http://google.com',
+            'url': u'http://googles.com',
             'api_key': API_KEY
         }
 
@@ -239,7 +238,7 @@ class DelPostTest(unittest.TestCase):
         """
         self._get_good_request()
         prms = {
-                'url': u'http://google.com',
+                'url': u'http://googles.com',
                 'api_key': API_KEY
         }
 
@@ -264,7 +263,7 @@ class DelPostTest(unittest.TestCase):
         # now build a new version of the request we can check
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
+                'url': u'http://googles.com',
                 'description': u'This is my updated google desc',
                 'extended': 'updated extended notes about it in full form',
                 'tags': u'python search updated',
@@ -294,7 +293,7 @@ class DelPostTest(unittest.TestCase):
         # now build a new version of the request we can check
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
+                'url': u'http://googles.com',
                 'description': u'This is my updated google desc',
                 'extended': 'updated extended notes about it in full form',
                 'tags': u'python  search updated ',

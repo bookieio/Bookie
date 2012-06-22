@@ -14,6 +14,7 @@ from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import bmarks_tags
 from bookie.tests import TestViewBase
+from bookie.tests import empty_db
 
 LOG = logging.getLogger(__name__)
 
@@ -48,13 +49,7 @@ class BookieViewsTest(unittest.TestCase):
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        Hashed.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def test_bookmark_recent(self):
         """Verify we can call the /recent url """

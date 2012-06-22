@@ -42,7 +42,7 @@ class TestFulltext(TestCase):
         session = DBSession()
         prms = {
                 'url': u'http://google.com',
-                'description': u'This is my google desc',
+                'description': u'This is my google desc SEE',
                 'extended': u'And some extended notes about it in full form',
                 'tags': u'python search',
                 'api_key': API_KEY,
@@ -80,6 +80,7 @@ class TestFulltext(TestCase):
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/python')
         ok_(search_res.status == '200 OK',
                 "Status is 200: " + search_res.status)
+
         ok_('my google desc' in search_res.body,
             "Tag search should find our description on the page: " + \
                 search_res.body)

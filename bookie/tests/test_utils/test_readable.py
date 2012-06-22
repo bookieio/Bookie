@@ -17,6 +17,7 @@ from bookie.models import Hashed
 from bookie.models import Tag
 from bookie.models import Readable
 from bookie.models import bmarks_tags
+from bookie.tests import empty_db
 
 
 LOG = logging.getLogger(__file__)
@@ -120,14 +121,7 @@ class TestReadableFulltext(TestCase):
     def tearDown(self):
         """Tear down each test"""
         testing.tearDown()
-        session = DBSession()
-        Bmark.query.delete()
-        Tag.query.delete()
-        Readable.query.delete()
-        Hashed.query.delete()
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def _get_good_request(self):
         """Return the basics for a good add bookmark request"""

@@ -13,6 +13,7 @@ from bookie.models import Hashed
 from bookie.models import Readable
 from bookie.models import Tag, bmarks_tags
 from bookie.models.queue import ImportQueue
+from bookie.models.fulltext import _reset_index
 
 global_config = {}
 
@@ -114,6 +115,9 @@ def empty_db():
 
     DBSession.flush()
     transaction.commit()
+
+    # Clear the fulltext index as well.
+    _reset_index()
 
 # unit tests we want to make sure get run
 # from bookie.lib.test_tagcommands import *
