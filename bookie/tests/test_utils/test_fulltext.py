@@ -7,11 +7,6 @@ from pyramid import testing
 from unittest import TestCase
 
 from bookie.models import DBSession
-from bookie.models import Bmark
-from bookie.models import Hashed
-from bookie.models import Readable
-from bookie.models import Tag
-from bookie.models import bmarks_tags
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
 from bookie.tests import empty_db
@@ -74,7 +69,7 @@ class TestFulltext(TestCase):
     def test_sqlite_save(self):
         """Verify that if we store a bookmark we get the fulltext storage"""
         # first let's add a bookmark we can search on
-        res = self._get_good_request()
+        self._get_good_request()
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/google')
         ok_(search_res.status == '200 OK',

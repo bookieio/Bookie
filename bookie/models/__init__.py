@@ -241,7 +241,7 @@ class TagMgr(object):
     @staticmethod
     def count():
         """Count how many tags we have in the system"""
-        return DBSession.query(Tag.tid).count()
+        return Tag.query.count()
 
 
 class Tag(Base):
