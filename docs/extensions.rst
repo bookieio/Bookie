@@ -11,7 +11,6 @@ Provides Bookie bookmarks into Google Chrome
 
 .. image:: http://files.bmark.us/bmark.us_chrome_ext.png
     :width: 400
-    :scale: 100
 
 Features
 ----------

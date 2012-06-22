@@ -10,7 +10,6 @@ Bookie is a young open source project to help replace Delicious.
 
 .. image:: http://files.bmark.us/bmark.us_screenshot.png
     :width: 500
-    :scale: 100
 
 
 Latest Release
