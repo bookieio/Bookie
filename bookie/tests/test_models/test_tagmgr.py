@@ -1,5 +1,6 @@
 """Test the basics including the bmark and tags"""
 from nose.tools import eq_
+from nose.tools import ok_
 from pyramid import testing
 
 from bookie.models import DBSession
@@ -9,6 +10,7 @@ from bookie.models import TagMgr
 from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
+from bookie.tests.factory import make_tag
 
 
 class TestTagMgrStats(TestDBBase):
@@ -37,3 +39,26 @@ class TestTagMgrStats(TestDBBase):
 
         ct = TagMgr.count()
         eq_(5, ct, 'We should have a total of 5: ' + str(ct))
+
+    def test_basic_complete(self):
+        """Tags should provide completion options."""
+        # Generate demo tag into the system
+        tags = [make_tag() for i in range(5)]
+        [DBSession.add(t) for t in tags]
+
+        test_str = tags[0].name[0:2]
+        suggestions = TagMgr.complete(test_str)
+
+        ok_(tags[0] in suggestions,
+            "The sample tag was found in the completion set")
+
+    def test_case_insensitive(self):
+        """Suggestion does not care about case of the prefix."""
+        # Generate demo tag into the system
+        tags = [make_tag() for i in range(5)]
+        [DBSession.add(t) for t in tags]
+
+        test_str = tags[0].name[0:4].upper()
+        suggestions = TagMgr.complete(test_str)
+        ok_(tags[0] in suggestions,
+            "The sample tag was found in the completion set")

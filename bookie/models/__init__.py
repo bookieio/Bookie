@@ -173,6 +173,7 @@ class TagMgr(object):
         complete
 
         """
+        prefix = prefix.lower()
         if current == None:
             qry = Tag.query.filter(Tag.name.startswith(prefix))
 
@@ -252,7 +253,7 @@ class Tag(Base):
     name = Column(Unicode(255), unique=True)
 
     def __init__(self, tag_name):
-        self.name = tag_name
+        self.name = tag_name.lower()
 
 
 class ReadableMgr(object):
