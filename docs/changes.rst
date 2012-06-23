@@ -15,6 +15,15 @@ code.
 We also spent time getting most of the fabric tasks moved over to the Makefile
 to help aid in running and managing the installation.
 
+Celery has been introduced as a background task processor and we track stats
+for the system in there. Long running tasks, such as imports, and handled
+through the Celery background system.
+
+The database migrations have been collapsed and ported over to run under
+alembic vs sqlalchemy-migrate. This really cleans up a lot of the old
+migrations where we used per-database fulltext support instead of Whoosh.
+
+
 What's new in 0.3
 ==================
 The main goals of 0.3 were to add a full JSON API and to add authentication so

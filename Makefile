@@ -152,7 +152,7 @@ test_api:
 	xdg-open $(JSTESTURL)/test_api.html
 .PHONY: test_history
 test_history:
-	xdg-open $(JSTESTURL)test_history.html
+	xdg-open $(JSTESTURL)/test_history.html
 .PHONY: test_indicator
 test_indicator:
 	xdg-open $(JSTESTURL)/test_indicator.html

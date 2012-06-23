@@ -15,7 +15,7 @@ Bookie is a young open source project to help replace Delicious.
 Latest Release
 ---------------
 :Stable: v0.3_
-:Development: v0.4_ *eta March 2012*
+:Development: v0.4_ *How about rolling release?*
 
 .. _v0.3: https://github.com/mitechie/Bookie/tree/master
 .. _v0.4: https://github.com/mitechie/Bookie/tree/develop
@@ -67,7 +67,7 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Our next sprint is taking place at PyCon **March 12-15th!**
+Our next sprint is **TBD**
 
 .. _events: events.html
 .. _features: features.html
