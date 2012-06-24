@@ -8,8 +8,7 @@ import socket
 import urllib2
 
 from BaseHTTPServer import BaseHTTPRequestHandler as HTTPH
-from decruft import Document
-from decruft import page_parser
+from breadability.readable import Article
 from urlparse import urlparse
 
 LOG = logging.getLogger(__name__)
@@ -21,6 +20,7 @@ class DictObj(dict):
             return self.__getitem__(name)
         except KeyError:
             return super(DictObj, self).__getattr__(name)
+
 
 STATUS_CODES = DictObj({
     '1': 1,    # used for manual parsed
@@ -86,18 +86,17 @@ class ReadContent(object):
     """Handle some given content and parse the readable out of it"""
 
     @staticmethod
-    def parse(content, content_type=None):
+    def parse(content, content_type=None, url=None):
         """Handle the parsing out of the html content given"""
         read = Readable()
+        document = Article(content.read(), url=url)
 
-        try:
-            read.set_content(Document(content.read()).summary(),
-                             content_type=content_type,)
-
+        if not document.readable:
+            read.error(STATUS_CODES['900'], "Could not parse content.")
+        else:
+            read.set_content(document.readable,
+                         content_type=content_type,)
             read.status = STATUS_CODES['1']
-        except page_parser.Unparseable, exc:
-            read.error(STATUS_CODES['900'], str(exc))
-
         return read
 
 
@@ -165,10 +164,13 @@ class ReadUrl(object):
         # for example: don't parse images
         if not read.is_error() and not read.is_image():
             try:
-                read.set_content(Document(fh.read()).summary())
+                document = Article(fh.read(), url=clean_url)
 
-            except page_parser.Unparseable, exc:
-                read.error(STATUS_CODES['900'], str(exc))
+                if not document.readable:
+                    read.error(STATUS_CODES['900'], "Could not parse document.")
+                else:
+                    read.set_content(document.readable)
+
             except socket.error, exc:
                 read.error(STATUS_CODES['902'], str(exc))
             except httplib.IncompleteRead, exc:

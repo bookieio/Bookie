@@ -73,7 +73,9 @@ def posts_add(request):
         if 'content' in request.params:
             content = StringIO(request.params['content'])
             content.seek(0)
-            parsed = ReadContent.parse(content, content_type="text/html")
+            parsed = ReadContent.parse(content,
+                                       content_type="text/html",
+                                       url=mark.hashed.url)
 
             mark.readable = Readable()
             mark.readable.content = parsed.content

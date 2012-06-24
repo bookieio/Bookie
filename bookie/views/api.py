@@ -219,7 +219,9 @@ def bmark_add(request):
         if 'content' in params:
             content = StringIO(params['content'])
             content.seek(0)
-            parsed = ReadContent.parse(content, content_type="text/html")
+            parsed = ReadContent.parse(content,
+                                       content_type="text/html",
+                                       url=mark.hashed.url)
 
             mark.readable = Readable()
             mark.readable.content = parsed.content
