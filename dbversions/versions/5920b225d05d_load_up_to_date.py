@@ -63,6 +63,7 @@ def upgrade():
         sa.Column('tag_str', sa.UnicodeText(), nullable=True),
         sa.ForeignKeyConstraint(['hash_id'], ['url_hash.hash_id'], ),
         sa.ForeignKeyConstraint(['username'], ['users.username'], ),
+        sa.UniqueConstraint('username', 'hash_id'),
         sa.PrimaryKeyConstraint('bid'),
     )
 
