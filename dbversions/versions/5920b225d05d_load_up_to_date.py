@@ -84,20 +84,6 @@ def upgrade():
         sa.PrimaryKeyConstraint('bmark_id', 'tag_id')
     )
 
-    op.create_table('bmark_readable',
-        sa.Column('bid', sa.Integer(), nullable=False),
-        sa.Column('hash_id', sa.Unicode(length=22), nullable=True),
-        sa.Column('content', sa.UnicodeText(), nullable=True),
-        sa.Column('clean_content', sa.UnicodeText(), nullable=True),
-        sa.Column('imported', sa.DateTime(), nullable=True),
-        sa.Column('content_type', sa.Unicode(length=255), nullable=True),
-        sa.Column('status_code', sa.Integer(), nullable=True),
-        sa.Column('status_message', sa.Unicode(length=255), nullable=True),
-        sa.ForeignKeyConstraint(['bid'], ['bmarks.bid'], ),
-        sa.ForeignKeyConstraint(['hash_id'], ['bmarks.hash_id'], ),
-        sa.PrimaryKeyConstraint('bid')
-    )
-
     op.create_table('logging',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user', sa.Unicode(255), nullable=False),
@@ -125,6 +111,18 @@ def upgrade():
         sa.Column('attrib', sa.Unicode(100), nullable=False),
         sa.Column('data', sa.Integer),
         sa.PrimaryKeyConstraint('id'),
+    )
+
+    op.create_table('bmark_readable',
+        sa.Column('bid', sa.Integer(), nullable=False, index=True),
+        sa.Column('hash_id', sa.Unicode(length=22), nullable=True),
+        sa.Column('content', sa.UnicodeText(), nullable=True),
+        sa.Column('clean_content', sa.UnicodeText(), nullable=True),
+        sa.Column('imported', sa.DateTime(), nullable=True),
+        sa.Column('content_type', sa.Unicode(length=255), nullable=True),
+        sa.Column('status_code', sa.Integer(), nullable=True),
+        sa.Column('status_message', sa.Unicode(length=255), nullable=True),
+        sa.PrimaryKeyConstraint('bid')
     )
     ### end Alembic commands ###
 

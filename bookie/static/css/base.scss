@@ -384,6 +384,10 @@ fieldset {
             }
         }
 
+        .description * {
+            vertical-align: middle;
+        }
+
         .tags {
             float: right;
         }

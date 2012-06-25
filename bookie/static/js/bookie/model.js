@@ -249,6 +249,14 @@ YUI.add('bookie-model', function (Y) {
                     value: ''
                 },
 
+                'domain': {
+                    getter: function () {
+                        var url = this.get('url');
+                        var domain = url.replace('http://','').replace('https://','').split(/[/?#]/)[0];
+                        return domain;
+                    }
+                },
+
                 /**
                  * @attribute hash_id
                  * @default undefined

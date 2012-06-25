@@ -8,6 +8,7 @@
     <div class="description">
         <a href="/redirect/{{hash_id}}"
             title="{{extended}}">
+            <img class="favicon" src="http://s2.googleusercontent.com/s2/favicons?domain={{domain}}" />
             {{#if description}}
                 {{description}}
             {{else}}

@@ -50,7 +50,9 @@ class AdminApiTest(unittest.TestCase):
                                 status=200)
         # by default we shouldn't have any inactive users
         data = json.loads(res.body)
-        eq_(0, data['count'], "Count should be 0 to start.")
+        users = [u for u in data['users']]
+        for u in users:
+            eq_(0, u['invite_ct'], "Count should be 0 to start.")
 
     def test_invite_ct(self):
         """Test we can call and get the invite counts."""
@@ -63,8 +65,15 @@ class AdminApiTest(unittest.TestCase):
                                 status=200)
         # we should get back tuples of username/count
         data = json.loads(res.body)['users']
-        ok_('admin' in data[0][0], "There should be the admin user." + res.body)
-        eq_(0, data[0][1], "The admin user shouldn't have any invites." + res.body)
+        found = False
+        invite_count = None
+        for user, count in data:
+            if user == u'admin':
+                found = True
+                invite_count = count
+
+        ok_(found, "There should be the admin user." + res.body)
+        eq_(0, invite_count, "The admin user shouldn't have any invites." + res.body)
 
     def test_set_invite_ct(self):
         """Test we can set the invite count for the user"""

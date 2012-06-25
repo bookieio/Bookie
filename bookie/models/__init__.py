@@ -30,7 +30,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Query
 from sqlalchemy.orm.exc import NoResultFound
 
-from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_

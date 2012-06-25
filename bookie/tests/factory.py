@@ -26,6 +26,6 @@ def random_string(length=None):
 
 def make_tag(name=None):
     if not name:
-        name = random_string()
+        name = random_string(255)
 
     return Tag(name)
