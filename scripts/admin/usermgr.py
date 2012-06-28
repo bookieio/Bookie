@@ -13,6 +13,7 @@ from bookie.models.auth import get_random_word
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
 
+
 def parse_args():
     """Handle arguments building and processing"""
     desc = "Update existing bookbmarks with the readability parsed"
@@ -64,10 +65,12 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 def _init_sql(args):
     """Init the sql session for things to work out"""
     ini = ConfigParser()
-    ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)
+    ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))),
+                         args.ini)
     ini.readfp(open(ini_path))
     here = path.abspath(path.join(path.dirname(__file__), '../../'))
     ini.set('app:main', 'here', here)
