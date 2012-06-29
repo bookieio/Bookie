@@ -122,6 +122,7 @@ def upgrade():
         sa.Column('content_type', sa.Unicode(length=255), nullable=True),
         sa.Column('status_code', sa.Integer(), nullable=True),
         sa.Column('status_message', sa.Unicode(length=255), nullable=True),
+        sa.ForeignKeyConstraint(['bid'], ['bmarks.bid'], ),
         sa.PrimaryKeyConstraint('bid')
     )
     ### end Alembic commands ###

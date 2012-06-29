@@ -10,8 +10,9 @@ import transaction
 from collections import defaultdict
 from ConfigParser import ConfigParser
 from os import path
-
 from bookie.models import initialize_sql
+
+
 if __name__ == "__main__":
     ini = ConfigParser()
     ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))),

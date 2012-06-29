@@ -20,8 +20,11 @@
     }
 
     a {
-        color: lighten($links, 20%);
+        color: darken($links, 20%);
         text-decoration: none;
     }
-}
 
+    img {
+        max-width: 100%;
+    }
+}

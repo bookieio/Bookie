@@ -45,8 +45,6 @@ YUI.add('bookie-test-model', function (Y) {
             });
         },
 
-
-
         "Bmark model should exist": function () {
             A.isObject(
                 Y.bookie.Bmark,
@@ -86,6 +84,13 @@ YUI.add('bookie-test-model', function (Y) {
 
             A.isInstanceOf(Date, bmark.get('stored'),
                 "Stored should be converted from string to Date object");
+        },
+
+        "model domain should parse out the url properly": function () {
+            var b = new Y.bookie.Bmark({
+                url: 'http://dotfiles.github.com/test#something'
+            });
+            Y.Assert.areEqual('github.com', b.get('domain'));
         },
 
         "calling remove should run destroy": function () {
