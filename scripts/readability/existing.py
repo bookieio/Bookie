@@ -33,25 +33,25 @@ def parse_args():
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument('--ini', dest='ini',
-                            action='store',
-                            default=None,
-                            required=True,
-                            help='What .ini are we pulling the db connection from?')
+        action='store',
+        default=None,
+        required=True,
+        help='What .ini are we pulling the db connection from?')
 
     parser.add_argument('--new', dest="new_only",
-                        action="store_true",
-                        default=False,
-                        help="Only parse new bookmarks that have not been attempted before")
+        action="store_true",
+        default=False,
+        help="Only parse new bookmarks that have not been attempted before")
 
     parser.add_argument('--retry-errors', dest="retry_errors",
-                        action="store_true",
-                        default=False,
-                        help="Try to reload content that had an error last time")
+        action="store_true",
+        default=False,
+        help="Try to reload content that had an error last time")
 
     parser.add_argument('--test-url', dest="test_url",
-                        action="store",
-                        default=False,
-                        help="Run the parser on the url provided and test things out")
+        action="store",
+        default=False,
+        help="Run the parser on the url provided and test things out")
 
     args = parser.parse_args()
     return args
@@ -93,7 +93,9 @@ if __name__ == "__main__":
         # args.ini
 
         ini = ConfigParser()
-        ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))), args.ini)
+        ini_path = path.join(path.dirname(path.dirname(
+                                            path.dirname(__file__))),
+                             args.ini)
         ini.readfp(open(ini_path))
         here = path.abspath(path.join(path.dirname(__file__), '../../'))
         ini.set('app:main', 'here', here)
@@ -107,9 +109,9 @@ if __name__ == "__main__":
             enclosure_queue = Queue()
 
             if args.new_only:
-                # we take off the offset because each time we run, we should have
-                # new ones to process. The query should return the 10 next
-                # non-imported urls
+                # we take off the offset because each time we run, we should
+                # have new ones to process. The query should return the 10
+                # next non-imported urls
                 url_list = Bmark.query.outerjoin(Readable, Bmark.readable).\
                             filter(Readable.imported == None).\
                             limit(PER_TRANS).all()
@@ -130,14 +132,17 @@ if __name__ == "__main__":
             ct = ct + len(url_list)
 
             # build a list of urls to pass to the threads
-            urls = dict([(bmark.hash_id, bmark.hashed.url) for bmark in url_list])
+            urls = dict([
+                       (bmark.hash_id, bmark.hashed.url) for bmark in url_list
+                   ])
             parsed = {}
 
             # Set up some threads to fetch the enclosures
             for i in range(num_fetch_threads):
                 # Download the feed(s) and put the enclosure URLs into
                 # the queue.
-                worker = threading.Thread(target=fetch_content, args=(i, enclosure_queue,))
+                worker = threading.Thread(target=fetch_content,
+                                          args=(i, enclosure_queue,))
                 worker.setDaemon(True)
                 worker.start()
 
