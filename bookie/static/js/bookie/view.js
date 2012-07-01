@@ -182,7 +182,6 @@ YUI.add('bookie-view', function (Y) {
         _update_pagerview: function () {
             var pager = this.get('pager');
 
-
             // if the current data count is < the pager page count, hide next
             if (this.models.length < pager.get('count')) {
                  Y.Array.each(this.pagers, function (p) {

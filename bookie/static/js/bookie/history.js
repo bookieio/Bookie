@@ -8,6 +8,13 @@
 YUI.add('bookie-history-module', function (Y) {
     var ns = Y.namespace('bookie');
 
+    function trim(str, chars) {
+        return ltrim(rtrim(str, chars), chars);
+    }
+    function ltrim(str, chars) {
+        chars = chars || "\s";
+        return str.replace(new RegExp("^[" + chars + "]+", "g"), "");
+    }
     function rtrim(str, chars) {
         chars = chars || "\s";
         return str.replace(new RegExp("[" + chars + "]+$", "g"), "");
@@ -80,7 +87,8 @@ YUI.add('bookie-history-module', function (Y) {
                 page: pager.get('page')
             });
 
-            return '/' + rtrim(this.get('route'), '/') + '/' + terms + '?' + qs;
+            var updated_url = rtrim(this.get('route'), '/') + '/' + terms + '?' + qs;
+            return '/' + ltrim(updated_url, '/')
         },
 
         /**
@@ -101,12 +109,13 @@ YUI.add('bookie-history-module', function (Y) {
             // attempt to only add to the history if this was a valid add
             // event, the new page is > prev page.
             if (ev.newVal > ev.prevVal) {
+                var new_url = this._build_url();
                 this.history.add({
                     pager: this.get('pager').getAttrs(),
                     terms: this.get('terms')
                 }, {
                     title: 'Viewing page: ' + this.get('pager').get('page') + 1,
-                    url  : this._build_url()
+                    url  : new_url
                 });
             }
         },
