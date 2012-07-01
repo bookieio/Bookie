@@ -95,6 +95,7 @@ YUI.add('bookie-history-module', function (Y) {
          *
          */
         _update: function (ev) {
+            console.log(ev);
             // COMPLETE HACK ALERT @todo
             // The issue is that when we catch pop events we often have to
             // catch/update the pager's page manaully. This fires a change

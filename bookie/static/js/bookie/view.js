@@ -413,14 +413,17 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _tags_changed: function (e) {
-            // update the api data with the tags list
-            this.api.set('tags', e.tags);
+            // only update if the tags have changed.
+            if (e.tags !== this.api.get('tags')) {
+                // update the api data with the tags list
+                this.api.set('tags', e.tags);
 
-            // update the pager back to page 1
-            this.get('pager').set('page', 0);
+                // update the pager back to page 1
+                this.get('pager').set('page', 0);
 
-            // and finally fetch the results
-            this._fetch_dataset();
+                // and finally fetch the results
+                this._fetch_dataset();
+            }
         }
     }, {
         ATTRS: {
@@ -826,7 +829,7 @@ YUI.add('bookie-view', function (Y) {
         render: function () {
             // Render this view's HTML into the container element.
             var tpl_data = this.get('model').getAttrs();
-            tpl_data.owner = this.get('current_user') == this.get('model').get('username');
+            tpl_data.owner = this.get('current_user') === this.get('model').get('username');
 
             return this.get('container').set(
                 'innerHTML',
