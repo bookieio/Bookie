@@ -22,7 +22,7 @@ import json
 
             % if username:
                 var resource_username = '${username}';
-                var route = resource_username + '/recent/';
+                var route = resource_username + '/recent';
             % else:
                 var resource_username = undefined;
                 var route = '/recent';

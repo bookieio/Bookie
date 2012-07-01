@@ -8,6 +8,11 @@
 YUI.add('bookie-history-module', function (Y) {
     var ns = Y.namespace('bookie');
 
+    function rtrim(str, chars) {
+        chars = chars || "\s";
+        return str.replace(new RegExp("[" + chars + "]+$", "g"), "");
+    }
+
     /**
      * Manage out interaction with the HTML5 history implementation.
      *
@@ -78,7 +83,7 @@ YUI.add('bookie-history-module', function (Y) {
                 page: pager.get('page')
             });
 
-            return this.get('route') + '/' + terms + '?' + qs;
+            return '/' + rtrim(this.get('route'), '/') + '/' + terms + '?' + qs;
         },
 
         /**
