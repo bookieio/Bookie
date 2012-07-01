@@ -413,8 +413,16 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _tags_changed: function (e) {
-            // only update if the tags have changed.
-            if (e.tags !== this.api.get('tags')) {
+            var api_tags = this.api.get('tags');
+            if (!api_tags) {
+                api_tags = [];
+            }
+            // Only update if the tags have changed. This is hacky as can be
+            // because comparing two JS arrays will fail unless you loop
+            // through them. This is a cheat and might fail if the end of one
+            // tag combines with the start of another tag, but I think this is
+            // a good start.
+            if (e.tags.join('') != api_tags.join('')) {
                 // update the api data with the tags list
                 this.api.set('tags', e.tags);
 

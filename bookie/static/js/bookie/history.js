@@ -58,9 +58,6 @@ YUI.add('bookie-history-module', function (Y) {
                         if (ev.newVal.pager.page !== this.get('pager').get('page')) {
                             this.get('pager').set('page', ev.newVal.pager.page);
                         }
-
-                        // if the terms list is different update that as well
-                        // @todo
                     }
                 }
 
@@ -95,7 +92,6 @@ YUI.add('bookie-history-module', function (Y) {
          *
          */
         _update: function (ev) {
-            console.log(ev);
             // COMPLETE HACK ALERT @todo
             // The issue is that when we catch pop events we often have to
             // catch/update the pager's page manaully. This fires a change
