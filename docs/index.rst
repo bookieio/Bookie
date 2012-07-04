@@ -67,7 +67,8 @@ Upcoming Bookie Events
 Check out the events_ schedule page for some dates of sprints and hacking times
 for Bookie.
 
-Our next sprint is **TBD**
+Our next sprint is at `PyOhio`_ so come see us there. Check out the `events`_
+page for details on what we'll be hacking on!
 
 .. _events: events.html
 .. _features: features.html

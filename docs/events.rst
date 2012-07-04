@@ -2,6 +2,38 @@
 Hacking Events
 =============================
 
+Sprint: July 27th and 28th
+----------------------------
+
+Location: PyOhio see @mitechie for where on Friday and Saturday info is on the
+site: http://pyohio.org/Sprints/
+Time: Refer to the PyOhio site for details.
+
+Tasks
+~~~~~
+We'll be working on any of the Bookie part of apps. This includes
+`breadability`_, `bookie_parser`_, `bookie_firefox`_, `bookie_android`_. So if you want to
+hack on a Pyramid app, celery processing, parsing algorigthms, Tornado apps on
+Heroku, or CoffeeScript we've got something you can work on.
+
+Specific task ideas include:
+
+- Introduction to bookie and working on small bugs from the issue list.
+- Update Bookie's readable parsing to be Celery driven to the bookie_parser
+  service api.
+- Work on Bookie's mobile/responsive UI and a possible two pane reader layout.
+- Update Bookie's celery backend and port more current cron scripts over to Celery
+  tasks.
+- Working on fixing the breadability parser for web sites it's failing to
+  parse
+- Update breadability to provide metadata on processing including potential
+  backup nodes of content, timing information, etc.
+- Update the bookie_parser application to have some better webui.
+- Add full metadata fetching of content from bookie_parser.
+- Work on turning Bookie's Firefox extension into a CoffeeScript application
+  that works against the bookie API.
+
+
 Sprint: PyCon! March 12th-15th
 --------------------------------
 :Location: PyCon Sprints!
@@ -98,3 +130,9 @@ Schedule
 ~~~~~~~~
 The doors open up at 11am and we'll have some lunch delivered around 12:30pm.
 I'll chase everyone away somewhere around 4pm.
+
+
+.. _breadability: https://github.com/mitechie/breadability
+.. _bookie_parser: https://github.com/mitechie/bookie_parser
+.. _bookie_firefox: https://github.com/mitechie/bookie-firefox
+.. _bookie_android: https://github.com/DerekV/Bookie-Android
