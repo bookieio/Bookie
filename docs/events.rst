@@ -5,9 +5,9 @@ Hacking Events
 Sprint: July 27th and 28th
 ----------------------------
 
-Location: PyOhio see @mitechie for where on Friday and Saturday info is on the
-site: http://pyohio.org/Sprints/
-Time: Refer to the PyOhio site for details.
+:Location: PyOhio see @mitechie for where on Friday and Saturday info is on the
+:Site: http://pyohio.org/Sprints/
+:Time: Refer to the PyOhio site for details.
 
 Tasks
 ~~~~~
