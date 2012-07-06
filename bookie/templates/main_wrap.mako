@@ -62,7 +62,7 @@
                     <a href="/recent" class="button nav_button">
                         <span aria-hidden="true" class="icon icon-tags" title="All Bookmarks"></span>
                         <em class="icon">All Bookmarks</em>
-                        All
+                        <span class="text">All</span>
                     </a>
                 </span>
 
@@ -72,7 +72,7 @@
                             <span aria-hidden="true" class="icon icon-tag"
                             title="My Bookmarks"></span>
                             <em class="icon">My Bookmarks</em>
-                            Mine
+                            <span class="text">Mine</span>
                         </a>
                     </span>
                 % endif
@@ -81,7 +81,7 @@
                     <a href="/search" class="button nav_button">
                         <span aria-hidden="true" class="icon icon-search" title="Search"></span>
                         <em class="icon">Search</em>
-                        Search
+                        <span class="text">Search</span>
                     </a>
                 </span>
 
@@ -96,14 +96,14 @@
                                 <em class="icon">Account Details</em>
 
                             % endif
-                            Account
+                            <span class="text">Account</span>
                     </a></span>
                 % else:
                     <span class="item">
                         <a href="/login" class="button nav_button">
                             <span aria-hidden="true" class="icon icon-user" title="Login"></span>
                             <em class="icon">Login</em>
-                            Login
+                            <span class="text">Login</span>
                         </a>
                     </span>
                 % endif

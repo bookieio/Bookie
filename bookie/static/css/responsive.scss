@@ -51,14 +51,29 @@
     }
 
     .navigation {
+        display: block;
         float: none;
+        text-align: center;
         width: 100%;
+
+        span {
+            margin: 0 .1em;
+
+        }
 
         .button {
             &.nav_button {
                 padding: .3em;
                 border-radius: 0;
                 margin-top: 0;
+
+                .icon {
+                    font-size: 1.2em;
+                }
+
+                .text {
+                    display: none;
+                }
             }
         }
     }
