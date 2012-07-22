@@ -75,6 +75,7 @@ YUI().add('bookie-chrome', function (Y) {
             e.preventDefault();
             this.indicator.show();
             var model = this.get('model');
+            debugger;
 
             // we need to make sure the tag control is up to date so that we
             // don't miss any tags. If the user starts typing a tag, and then
@@ -100,7 +101,7 @@ YUI().add('bookie-chrome', function (Y) {
                     return t.get('text');
                 }),
                 extended: Y.one('#extended').get('value'),
-                content: Y.one('#content').get('value')
+                content: Y.one('textarea#content').get('value')
             });
 
             // should just be able to fire the save method on the model and

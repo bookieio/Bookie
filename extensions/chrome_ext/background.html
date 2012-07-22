@@ -3,31 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
-    <script src="lib/combo1.js"></script>
-    <script src="lib/combo2.js"></script>
-    <script type="text/javascript">
-        YUI.GlobalConfig = {
-            combine: true,
-            base: '${combo}/combo?y/',
-            fetchCSS: false,
-            comboBase: '${combo}/combo?',
-            maxURLLength: 1500,
-            root: 'y/',
-            groups: {
-                bookie: {
-                    combine: true,
-                    base: '${combo}/combo?b',
-                    comboBase: '${combo}/combo?',
-                    root: 'b/',
-                    fetchCSS: false,
-                    filter: 'raw',
-                    // comes from including bookie/meta.js
-                    modules: YUI_MODULES,
-                }
-            }
-        };
-    </script>
-
+    <script src="combo.js"></script>
+    <script src="config.js"></script>
     <script src="lib/api.js"></script>
     <script src="lib/hash.js"></script>
     <script src="lib/indicator.js"></script>
@@ -40,17 +17,6 @@
 <body>
     <textarea id="html_content"></textarea>
     <input id="url_hash" />
-
-    <script type="text/javascript">
-        YUI().use('bookie-chrome', function (Y) {
-            var b = new Y.bookie.chrome.BackgroundPage();
-            b.init_background();
-        });
-
-        window.inject_readable = function (callback) {
-            chrome.tabs.executeScript(null, {file:"readable.js"});
-        };
-    </script>
-
+    <script type="text/javascript" src="background.js"></script>
 </body>
 </html>
