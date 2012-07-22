@@ -1,5 +1,4 @@
 @import "fontawesome";
-@import "readable";
 
 // main site colors
 $altcolor: #990000;
@@ -20,6 +19,8 @@ $calendar_grad: #FF4444;
 
 // bmark colors
 $links: #003366;
+
+@import "readable";
 
 .icon {
     color: $altcolor;
@@ -755,3 +756,4 @@ form ul .yui3-bookie-tagcontrol {
 .yui3-bookie-indicator-hidden {
     visibility: hidden;
 }
+
