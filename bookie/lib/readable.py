@@ -39,6 +39,9 @@ STATUS_CODES = DictObj({
 
 IMAGE_TYPES = DictObj({
     'png': 'image/png',
+    'jpeg': 'image/jpeg',
+    'jpg': 'image/jpg',
+    'gif': 'image/gif',
 })
 
 
@@ -165,9 +168,9 @@ class ReadUrl(object):
         if not read.is_error() and not read.is_image():
             try:
                 document = Article(fh.read(), url=clean_url)
-
                 if not document.readable:
-                    read.error(STATUS_CODES['900'], "Could not parse document.")
+                    read.error(STATUS_CODES['900'],
+                        "Could not parse document.")
                 else:
                     read.set_content(document.readable)
 

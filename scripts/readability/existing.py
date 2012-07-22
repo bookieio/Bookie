@@ -167,7 +167,6 @@ if __name__ == "__main__":
                 else:
                     if not bmark.readable:
                         bmark.readable = Readable()
-
                     bmark.readable.content = None
 
                 # set some of the extra metadata
