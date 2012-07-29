@@ -20,7 +20,7 @@
                 <ul>
                     <li>
                         <label>Email Address</label>
-                        <input type="text" id="email" name="email" />
+                        <input type="email" id="email" name="email" />
                         <input type="submit" id="send_signup" name="send_signup" value="Sign Up" />
                     </li>
                 </ul>
