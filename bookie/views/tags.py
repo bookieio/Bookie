@@ -5,6 +5,7 @@ from pyramid.view import view_config
 
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
+from bookie.views import bmarks
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
@@ -26,36 +27,9 @@ def tag_list(request):
     }
 
 
-@view_config(route_name="tag_bmarks", renderer="/tag/bmarks_wrap.mako")
-@view_config(route_name="user_tag_bmarks", renderer="/tag/bmarks_wrap.mako")
+@view_config(route_name="tag_bmarks", renderer="/bmark/recent.mako")
+@view_config(route_name="user_tag_bmarks", renderer="/bmark/recent.mako")
 def bmark_list(request):
     """Display the list of bookmarks for this tag"""
-    rdict = request.matchdict
-    params = request.params
-
-    # check if we have a page count submitted
-    tags = rdict.get('tags')
-    username = rdict.get("username", None)
-
-    page = int(params.get('page', 0))
-
-    # verify the tag exists before we go on
-    # 404 if the tag isn't found
-    exists = TagMgr.find(tags=tags)
-
-    if not exists:
-        raise HTTPNotFound()
-
-    bmarks = BmarkMgr.find(tags=tags,
-                           limit=RESULTS_MAX,
-                           page=page,
-                           username=username)
-
-    return {
-             'tags': tags,
-             'bmark_list': bmarks,
-             'max_count': RESULTS_MAX,
-             'count': len(bmarks),
-             'page': page,
-             'username': username,
-           }
+    # Removed because view was deprecated
+    return bmarks.recent(request)
