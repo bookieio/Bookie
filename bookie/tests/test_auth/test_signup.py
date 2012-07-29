@@ -5,19 +5,18 @@ import logging
 
 from nose.tools import eq_
 from nose.tools import ok_
-from pyramid import testing
-from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models.auth import Activation
 from bookie.models.auth import User
+from bookie.models.auth import UserMgr
 
-from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 from bookie.tests import TestViewBase
 
 LOG = logging.getLogger(__name__)
+
 
 class TestInviteSetup(TestDBBase):
     """Verify we have/can work with the invite numbers"""
@@ -69,6 +68,10 @@ class TestSigningUpUser(TestDBBase):
 class TestOpenSignup(TestViewBase):
     """New users can request a signup for an account."""
 
+    def tearDown(self):
+        super(TestOpenSignup, self).tearDown()
+        User.query.filter(User.email == 'testing@newuser.com').delete()
+
     def testSignupRenders(self):
         """A signup form is kind of required."""
         res = self.app.get('/signup')
@@ -84,8 +87,21 @@ class TestOpenSignup(TestViewBase):
     def testEmailNotAlreadyThere(self):
         """Signup requires an email entry."""
         res = self.app.post('/signup_process',
-            params = {
+            params={
                 'email': 'testing@dummy.com'
             }
         )
         self.assertIn('already signed up', res.body)
+
+    def testSignupWorks(self):
+        """Signing up stores an activation."""
+        email = 'testing@newuser.com'
+        UserMgr.signup_user(email, 'testcase')
+
+        activations = Activation.query.all()
+
+        self.assertTrue(len(activations) == 1)
+        act = activations[0]
+
+        self.assertEqual(email, act.user.email,
+            "The activation email is the correct one.")

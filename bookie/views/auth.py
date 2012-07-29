@@ -157,7 +157,7 @@ def signup_process(request):
     else:
         return {
             'errors': {
-                'email': 'There was an unknown error signing up for your account.'
+                'email': 'There was an unknown error signing up.'
             }
         }
 

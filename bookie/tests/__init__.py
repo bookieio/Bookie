@@ -7,11 +7,13 @@ import unittest
 from pyramid import testing
 
 # tools we use to empty tables
+from bookie.models import bmarks_tags
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
-from bookie.models import Tag, bmarks_tags
+from bookie.models import Tag
+from bookie.models.auth import User
 from bookie.models.queue import ImportQueue
 from bookie.models.fulltext import _reset_index
 
@@ -80,18 +82,7 @@ class TestViewBase(unittest.TestCase):
     def tearDown(self):
         """Tear down each test"""
         testing.tearDown()
-        session = DBSession()
-
-        # clear things out please
-        Bmark.query.delete()
-        Tag.query.delete()
-        Hashed.query.delete()
-        Readable.query.delete()
-        ImportQueue.query.delete()
-
-        session.execute(bmarks_tags.delete())
-        session.flush()
-        transaction.commit()
+        empty_db()
 
     def _login_admin(self):
         """Make the login call to the app"""
@@ -112,12 +103,14 @@ def empty_db():
     Tag.query.delete()
     # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
+    ImportQueue.query.delete()
 
     DBSession.flush()
     transaction.commit()
 
     # Clear the fulltext index as well.
     _reset_index()
+
 
 # unit tests we want to make sure get run
 # from bookie.lib.test_tagcommands import *
