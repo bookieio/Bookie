@@ -193,6 +193,22 @@ class UserMgr(object):
 
         return True
 
+    @staticmethod
+    def signup_user(email, signup_method):
+        # Get this invite party started, create a new user acct.
+        new_user = User()
+        new_user.email = email
+        new_user.username = email
+        new_user.invited_by = signup_method
+        new_user.api_key = User.gen_api_key()
+
+        # they need to be deactivated
+        new_user.reactivate('invite')
+
+        # decrement the invite counter
+        DBSession.add(new_user)
+        return new_user
+
 
 class User(Base):
     """Basic User def"""
@@ -301,14 +317,7 @@ class User(Base):
             raise ValueError('You must supply an email address to invite')
         else:
             # get this invite party started, create a new useracct
-            new_user = User()
-            new_user.email = email
-            new_user.username = email
-            new_user.invited_by = self.username
-            new_user.api_key = User.gen_api_key()
-
-            # they need to be deactivated
-            new_user.reactivate('invite')
+            new_user = UserMgr.signup_user(email, self.username)
 
             # decrement the invite counter
             self.invite_ct = self.invite_ct - 1

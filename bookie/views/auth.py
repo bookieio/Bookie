@@ -10,6 +10,7 @@ from pyramid.url import route_url
 from pyramid.view import view_config
 
 from bookie.lib.applog import AuthLog
+from bookie.lib.message import InvitationMsg
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
 
@@ -93,6 +94,72 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(location=route_url('home', request),
                      headers=headers)
+
+
+@view_config(route_name="signup", renderer="/auth/signup.mako")
+def signup(request):
+    """Signup merely shows the signup for to users.
+
+    We always take their signup even if we don't send out the email/invite at
+    this time so that we can stage invites across a specific number in waves.
+
+    """
+    return {}
+
+
+@view_config(route_name="signup_process", renderer="/auth/signup.mako")
+def signup_process(request):
+    """Process the signup request
+
+    If there are any errors drop to the same template with the error
+    information.
+
+    """
+    params = request.params
+    email = params.get('email', None)
+
+    if not email:
+        # if still no email, I give up!
+        return {
+            'errors': {
+                'email': 'Please supply an email address to sign up.'
+            }
+        }
+
+    # first see if the user is already in the system
+    exists = UserMgr.get(email=email)
+    if exists:
+        return {
+            'errors': {
+                'email': 'The user has already signed up.'
+            }
+        }
+
+    new_user = UserMgr.signup_user(email, 'signup')
+    if new_user:
+        # then this user is able to invite someone
+        # log it
+        AuthLog.reactivate(new_user.username)
+
+        # and then send an email notification
+        # @todo the email side of things
+        settings = request.registry.settings
+        msg = InvitationMsg(new_user.email,
+                            "Enable your Bookie account",
+                            settings)
+
+        msg.send(request.route_url('reset',
+            username=new_user.username,
+            reset_key=new_user.activation.code))
+        return {
+            'message': 'Thank you for signing up from: ' + new_user.email
+        }
+    else:
+        return {
+            'errors': {
+                'email': 'There was an unknown error signing up.'
+            }
+        }
 
 
 @view_config(route_name="reset", renderer="/auth/reset.mako")
