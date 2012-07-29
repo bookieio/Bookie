@@ -124,7 +124,7 @@
                 <ul>
                     <li>
                         <label>Email Address</label>
-                        <input type="text" id="invite_email" name="invite_email" />
+                        <input type="email" id="invite_email" name="invite_email" />
                         <input type="submit" id="send_invite" name="send_invite" value="Send" />
                     </li>
                 </ul>

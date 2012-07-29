@@ -43,7 +43,7 @@ ${account_nav()}
                 </li>
                 <li>
                     <label>Email</label>
-                    <input type="text" id="email" name="email" value="${user.email}" />
+                    <input type="email" id="email" name="email" value="${user.email}" />
                 </li>
                 <li>
                     <label></label>

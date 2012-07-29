@@ -4,7 +4,7 @@
             <ul>
                 <li>
                     <label>Email</label>
-                    <input type="text" id="email" name="email" value="" />
+                    <input type="email" id="email" name="email" value="" />
                 </li>
                 <li>
                     <label></label>
