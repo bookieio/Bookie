@@ -11,6 +11,8 @@ def build_routes(config):
     config.add_route("login", "login")
     config.add_route("logout", "logout")
     config.add_route("reset", "{username}/reset/{reset_key}")
+    config.add_route("signup", "signup")
+    config.add_route("signup_process", "signup_process")
 
     # DELAPI Routes
     config.add_route("del_post_add", "{username}/delapi/posts/add")
