@@ -14,6 +14,9 @@ def build_routes(config):
     config.add_route("signup", "signup")
     config.add_route("signup_process", "signup_process")
 
+    # celery routes
+    config.add_route("celery_hourly_stats", "jobhourly")
+
     # DELAPI Routes
     config.add_route("del_post_add", "{username}/delapi/posts/add")
     config.add_route("del_post_delete", "{username}/delapi/posts/delete")

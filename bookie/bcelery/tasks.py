@@ -1,13 +1,10 @@
-"""Celery Tasks to perform"""
+"""mycelery Tasks to perform"""
+import celery
 import transaction
-from celery.task import task
-from celery.task import subtask
-from ConfigParser import ConfigParser
 from datetime import datetime
-from os import environ
-from os import getcwd
-from os import path
+from datetime import timedelta
 
+import bookie
 from bookie.lib.importer import Importer
 from bookie.lib.rrdstats import SystemCounts
 from bookie.lib.rrdstats import ImportQueueDepth
@@ -19,23 +16,71 @@ from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 
-HERE = path.abspath(path.join(path.dirname(__file__), '../../'))
-ini = ConfigParser()
-selected_ini = environ.get('BOOKIE_INI', None)
-ini_path = path.join(
-    path.dirname(
-        path.dirname(
-            path.dirname(__file__)
-        )
-    ), selected_ini)
-ini.readfp(open(ini_path))
-# Set the here var so we can use it to get the path for things.
-ini.set('app:main', 'here', HERE)
-ini_items = dict(ini.items("app:main"))
+from bookie.bcelery import celery as mycelery
+from bookie.bcelery import ini
+
+if ini is None:
+    from bookie.bcelery.celeryd import load_ini
+    ini = load_ini()
+
+ini_items = ini
+
+
+print 'importing tasks'
+
 importer_processors = 2
 
+print dir(mycelery)
 
-@task(ignore_result=True)
+
+bookie.bcelery.celery.conf.update(
+    # List of modules to import when celery starts.
+    CELERY_IMPORTS=("bookie.bcelery.tasks", ),
+    CELERY_ENABLE_UTC=True,
+
+    ## Result store settings.
+    CELERY_RESULT_BACKEND=ini.get('celery_result_backend'),
+    CELERY_RESULT_DBURI=ini.get('celery_result_dburi'),
+
+    ## Broker settings.
+    BROKER_TRANSPORT=ini.get('celeryd_broker_transport'),
+    BROKER_HOST=ini.get('celery_broker_host'),
+    # BROKER_URL = "amqp://guest:guest@localhost:5672//"
+
+    ## Worker settings
+    ## If you're doing mostly I/O you can have more processes,
+    ## but if mostly spending CPU, try to keep it close to the
+    ## number of CPUs on your machine. If not set, the number of CPUs/cores
+    ## available will be used.
+    CELERYD_CONCURRENCY=ini.get('celery_concurrency'),
+
+    # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
+    CELERYBEAT_SCHEDULE={
+        # "tasks.hourly_stats": {
+        #     "task": "tasks.hourly_stats",
+        #     "schedule": timedelta(seconds=60 * 60),
+        # },
+        # "tasks.stats_rrd": {
+        #     "task": "bookie.bcelery.tasks.generate_count_rrd",
+        #     "schedule": timedelta(seconds=60 * 60 * 12),
+        # },
+        "tasks.importer_depth": {
+            "task": "bookie.bcelery.tasks.importer_depth",
+            "schedule": timedelta(seconds=60 * 5),
+        },
+        # "tasks.importer_depth_rrd": {
+        #     "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
+        #     "schedule": timedelta(seconds=60 * 5),
+        # },
+        "tasks.importer": {
+            "task": "bookie.bcelery.tasks.importer_process",
+            "schedule": timedelta(seconds=60 * 3),
+        },
+    },
+)
+
+
+@mycelery.task(ignore_result=True)
 def hourly_stats():
     """Hourly we want to runa series of numbers to track
 
@@ -45,13 +90,13 @@ def hourly_stats():
     - Total number of tags in the system
 
     """
-    subtask(count_total).delay()
-    subtask(count_unique).delay()
-    subtask(count_tags).delay()
-    subtask(count_rrd).delay()
+    celery.task.subtask(count_total).delay()
+    celery.task.subtask(count_unique).delay()
+    celery.task.subtask(count_tags).delay()
+    # celery.task.subtask(count_rrd).delay()
 
 
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def count_total():
     """Count the total number of bookmarks in the system"""
     trans = transaction.begin()
@@ -60,7 +105,7 @@ def count_total():
     trans.commit()
 
 
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def count_unique():
     """Count the unique number of bookmarks/urls in the system"""
     trans = transaction.begin()
@@ -69,7 +114,7 @@ def count_unique():
     trans.commit()
 
 
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def count_tags():
     """Count the total number of tags in the system"""
     trans = transaction.begin()
@@ -77,63 +122,64 @@ def count_tags():
     StatBookmarkMgr.count_total_tags()
     trans.commit()
 
-@task(ignore_result=True)
-def count_rrd():
-    """Add these counts to the rrd graph"""
-    rrd = SystemCounts(
-        ini.get('app:main', 'rrd_data').format(here=HERE),
-        ini.get('app:main', 'rrd_graphs').format(here=HERE))
-    rrd.mark(
-        datetime.now(),
-        BmarkMgr.count(),
-        BmarkMgr.count(distinct=True),
-        TagMgr.count()
-    )
-    rrd.update()
+
+# @mycelery.task(ignore_result=True)
+# def count_rrd():
+#     """Add these counts to the rrd graph"""
+#     rrd = SystemCounts(
+#         ini_items.get('rrd_data').format(here=HERE),
+#         ini_items.get('rrd_graphs').format(here=HERE))
+#     rrd.mark(
+#         datetime.now(),
+#         BmarkMgr.count(),
+#         BmarkMgr.count(distinct=True),
+#         TagMgr.count()
+#     )
+#     rrd.update()
+# 
+# 
+# @mycelery.task(ignore_result=True)
+# def generate_count_rrd():
+#     """Update the png for the counts."""
+#     rrd = SystemCounts(
+#         ini.get('app:main', 'rrd_data').format(here=HERE),
+#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
+#     rrd.output()
 
 
-@task(ignore_result=True)
-def generate_count_rrd():
-    """Update the png for the counts."""
-    rrd = SystemCounts(
-        ini.get('app:main', 'rrd_data').format(here=HERE),
-        ini.get('app:main', 'rrd_graphs').format(here=HERE))
-    rrd.output()
-
-
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def importer_depth():
     """Update the RRD data for the import queue depth."""
     trans = transaction.begin()
     initialize_sql(ini_items)
     StatBookmarkMgr.count_importer_depth()
     trans.commit()
-    subtask(importer_depth_rrd).delay()
+    mycelery.task.subtask(importer_depth_rrd).delay()
 
 
-@task(ignore_result=True)
-def importer_depth_rrd():
-    """Add these counts to the rrd graph"""
-    rrd = ImportQueueDepth(
-        ini.get('app:main', 'rrd_data').format(here=HERE),
-        ini.get('app:main', 'rrd_graphs').format(here=HERE))
-    rrd.mark(
-        datetime.now(),
-        ImportQueueMgr.size()
-    )
-    rrd.update()
+# @mycelery.task(ignore_result=True)
+# def importer_depth_rrd():
+#     """Add these counts to the rrd graph"""
+#     rrd = ImportQueueDepth(
+#         ini.get('app:main', 'rrd_data').format(here=HERE),
+#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
+#     rrd.mark(
+#         datetime.now(),
+#         ImportQueueMgr.size()
+#     )
+#     rrd.update()
 
 
-@task(ignore_result=True)
-def generate_importer_depth_rrd():
-    """Update the png for the counts."""
-    rrd = ImportQueueDepth(
-        ini.get('app:main', 'rrd_data').format(here=HERE),
-        ini.get('app:main', 'rrd_graphs').format(here=HERE))
-    rrd.output()
+# @mycelery.task(ignore_result=True)
+# def generate_importer_depth_rrd():
+#     """Update the png for the counts."""
+#     rrd = ImportQueueDepth(
+#         ini.get('app:main', 'rrd_data').format(here=HERE),
+#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
+#     rrd.output()
 
 
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def importer_process():
     """Check for new imports that need to be scheduled to run"""
     initialize_sql(ini_items)
@@ -148,10 +194,10 @@ def importer_process():
         trans = transaction.begin()
         i.mark_running()
         trans.commit()
-        subtask(importer_process_worker, args=(i.id,)).delay()
+        mycelery.task.subtask(importer_process_worker, args=(i.id,)).delay()
 
 
-@task(ignore_result=True)
+@mycelery.task(ignore_result=True)
 def importer_process_worker(iid):
     """Do the real import work
 
