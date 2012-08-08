@@ -6,6 +6,9 @@ from os import path
 
 import bookie.bcelery
 
+# We import this to be the target of our command line launch.
+from bookie.bcelery import celery
+
 
 def load_ini():
     selected_ini = environ.get('BOOKIE_INI', None)
@@ -25,13 +28,8 @@ def load_ini():
     cfg.readfp(open(ini_path))
 
     # Hold onto the ini config.
-    return dict(cfg.items('app:main'))
+    return dict(cfg.items('app:main', raw=True))
 
 bookie.bcelery.ini = load_ini()
 
-print bookie.bcelery.ini
-
-print 'celeryd'
-print 'updating celery'
-from bookie.bcelery import celery
 import bookie.bcelery.tasks

@@ -1,8 +1,10 @@
 """mycelery Tasks to perform"""
 import celery
 import transaction
+
 from datetime import datetime
 from datetime import timedelta
+from os.path import dirname
 
 import bookie
 from bookie.lib.importer import Importer
@@ -15,22 +17,16 @@ from bookie.models import TagMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
-
 from bookie.bcelery import celery as mycelery
 from bookie.bcelery import ini
+
+
+HERE = dirname(dirname(dirname(__file__)))
+
 
 if ini is None:
     from bookie.bcelery.celeryd import load_ini
     ini = load_ini()
-
-ini_items = ini
-
-
-print 'importing tasks'
-
-importer_processors = 2
-
-print dir(mycelery)
 
 
 bookie.bcelery.celery.conf.update(
@@ -56,22 +52,22 @@ bookie.bcelery.celery.conf.update(
 
     # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
     CELERYBEAT_SCHEDULE={
-        # "tasks.hourly_stats": {
-        #     "task": "tasks.hourly_stats",
-        #     "schedule": timedelta(seconds=60 * 60),
-        # },
-        # "tasks.stats_rrd": {
-        #     "task": "bookie.bcelery.tasks.generate_count_rrd",
-        #     "schedule": timedelta(seconds=60 * 60 * 12),
-        # },
+        "tasks.hourly_stats": {
+            "task": "tasks.hourly_stats",
+            "schedule": timedelta(seconds=60 * 60),
+        },
+        "tasks.stats_rrd": {
+            "task": "bookie.bcelery.tasks.generate_count_rrd",
+            "schedule": timedelta(seconds=60 * 60 * 12),
+        },
         "tasks.importer_depth": {
             "task": "bookie.bcelery.tasks.importer_depth",
             "schedule": timedelta(seconds=60 * 5),
         },
-        # "tasks.importer_depth_rrd": {
-        #     "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
-        #     "schedule": timedelta(seconds=60 * 5),
-        # },
+        "tasks.generate_importer_depth_rrd": {
+            "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
+            "schedule": timedelta(seconds=60 * 5),
+        },
         "tasks.importer": {
             "task": "bookie.bcelery.tasks.importer_process",
             "schedule": timedelta(seconds=60 * 3),
@@ -100,7 +96,7 @@ def hourly_stats():
 def count_total():
     """Count the total number of bookmarks in the system"""
     trans = transaction.begin()
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     StatBookmarkMgr.count_total_bookmarks()
     trans.commit()
 
@@ -109,7 +105,7 @@ def count_total():
 def count_unique():
     """Count the unique number of bookmarks/urls in the system"""
     trans = transaction.begin()
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     StatBookmarkMgr.count_unique_bookmarks()
     trans.commit()
 
@@ -118,71 +114,71 @@ def count_unique():
 def count_tags():
     """Count the total number of tags in the system"""
     trans = transaction.begin()
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     StatBookmarkMgr.count_total_tags()
     trans.commit()
 
 
-# @mycelery.task(ignore_result=True)
-# def count_rrd():
-#     """Add these counts to the rrd graph"""
-#     rrd = SystemCounts(
-#         ini_items.get('rrd_data').format(here=HERE),
-#         ini_items.get('rrd_graphs').format(here=HERE))
-#     rrd.mark(
-#         datetime.now(),
-#         BmarkMgr.count(),
-#         BmarkMgr.count(distinct=True),
-#         TagMgr.count()
-#     )
-#     rrd.update()
-# 
-# 
-# @mycelery.task(ignore_result=True)
-# def generate_count_rrd():
-#     """Update the png for the counts."""
-#     rrd = SystemCounts(
-#         ini.get('app:main', 'rrd_data').format(here=HERE),
-#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
-#     rrd.output()
+@mycelery.task(ignore_result=True)
+def count_rrd():
+    """Add these counts to the rrd graph"""
+    rrd = SystemCounts(
+        ini.get('rrd_data').format(here=HERE),
+        ini.get('rrd_graphs').format(here=HERE))
+    rrd.mark(
+        datetime.now(),
+        BmarkMgr.count(),
+        BmarkMgr.count(distinct=True),
+        TagMgr.count()
+    )
+    rrd.update()
+
+
+@mycelery.task(ignore_result=True)
+def generate_count_rrd():
+    """Update the png for the counts."""
+    rrd = SystemCounts(
+        ini.get('rrd_data').format(here=HERE),
+        ini.get('rrd_graphs').format(here=HERE))
+    rrd.output()
 
 
 @mycelery.task(ignore_result=True)
 def importer_depth():
     """Update the RRD data for the import queue depth."""
     trans = transaction.begin()
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     StatBookmarkMgr.count_importer_depth()
     trans.commit()
-    mycelery.task.subtask(importer_depth_rrd).delay()
+    celery.task.subtask(importer_depth_rrd).delay()
 
 
-# @mycelery.task(ignore_result=True)
-# def importer_depth_rrd():
-#     """Add these counts to the rrd graph"""
-#     rrd = ImportQueueDepth(
-#         ini.get('app:main', 'rrd_data').format(here=HERE),
-#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
-#     rrd.mark(
-#         datetime.now(),
-#         ImportQueueMgr.size()
-#     )
-#     rrd.update()
+@mycelery.task(ignore_result=True)
+def importer_depth_rrd():
+    """Add these counts to the rrd graph"""
+    rrd = ImportQueueDepth(
+        ini.get('rrd_data').format(here=HERE),
+        ini.get('rrd_graphs').format(here=HERE))
+    rrd.mark(
+        datetime.now(),
+        ImportQueueMgr.size()
+    )
+    rrd.update()
 
 
-# @mycelery.task(ignore_result=True)
-# def generate_importer_depth_rrd():
-#     """Update the png for the counts."""
-#     rrd = ImportQueueDepth(
-#         ini.get('app:main', 'rrd_data').format(here=HERE),
-#         ini.get('app:main', 'rrd_graphs').format(here=HERE))
-#     rrd.output()
+@mycelery.task(ignore_result=True)
+def generate_importer_depth_rrd():
+    """Update the png for the counts."""
+    rrd = ImportQueueDepth(
+        ini.get('rrd_data').format(here=HERE),
+        ini.get('rrd_graphs').format(here=HERE))
+    rrd.output()
 
 
 @mycelery.task(ignore_result=True)
 def importer_process():
     """Check for new imports that need to be scheduled to run"""
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     imports = ImportQueueMgr.get_ready(limit=1)
 
     for i in imports:
@@ -194,7 +190,7 @@ def importer_process():
         trans = transaction.begin()
         i.mark_running()
         trans.commit()
-        mycelery.task.subtask(importer_process_worker, args=(i.id,)).delay()
+        celery.task.subtask(importer_process_worker, args=(i.id,)).delay()
 
 
 @mycelery.task(ignore_result=True)
@@ -207,7 +203,7 @@ def importer_process_worker(iid):
     logger = importer_process_worker.get_logger()
 
     trans = transaction.begin()
-    initialize_sql(ini_items)
+    initialize_sql(ini)
     import_job = ImportQueueMgr.get(iid)
     logger.info("IMPORT: RUNNING for {username}".format(**dict(import_job)))
     try:
