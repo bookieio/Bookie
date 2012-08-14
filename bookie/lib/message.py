@@ -104,7 +104,7 @@ class Message(object):
 
             except smtplib.SMTPException, exc:
                 LOG.error("SMTP Error sending notice for: {0} ".format(
-                            str(self.message_obj)))
+                            str(msg)))
                 return MSG_STATUS['error']
 
 
@@ -128,6 +128,7 @@ The Bookie Team""".format(message_data)
         # # template vars are a combo of the obj dict and the extra dict
         # template_vars = {'data': message_data}
         # return template.render(**template_vars)
+
 
 class InvitationMsg(Message):
     """Send an email that you've been invited to the system"""

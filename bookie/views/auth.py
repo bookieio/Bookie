@@ -9,11 +9,10 @@ from pyramid.security import forget
 from pyramid.url import route_url
 from pyramid.view import view_config
 
+import bookie.bcelery.tasks
 from bookie.lib.applog import AuthLog
-from bookie.lib.message import InvitationMsg
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
-
 
 LOG = logging.getLogger(__name__)
 
@@ -144,13 +143,19 @@ def signup_process(request):
         # and then send an email notification
         # @todo the email side of things
         settings = request.registry.settings
-        msg = InvitationMsg(new_user.email,
-                            "Enable your Bookie account",
-                            settings)
 
-        msg.send(request.route_url('reset',
-            username=new_user.username,
-            reset_key=new_user.activation.code))
+        # Add a queue job to send the user a notification email.
+        bookie.bcelery.tasks.email_signup_user.delay(
+                new_user.email,
+                "Enable your Bookie account",
+                settings,
+                request.route_url('reset',
+                    username=new_user.username,
+                    reset_key=new_user.activation.code
+                )
+        )
+
+        # And let the user know they're signed up.
         return {
             'message': 'Thank you for signing up from: ' + new_user.email
         }

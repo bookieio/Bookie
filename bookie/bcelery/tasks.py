@@ -223,3 +223,22 @@ def importer_process_worker(iid):
         logger.error(str(exc))
         import_job.mark_error()
     trans.commit()
+
+
+@mycelery.task(ignore_result=True)
+def email_signup_user(email, msg, settings, message_data):
+    """Do the real import work
+
+    :param iid: import id we need to pull and work on
+
+    """
+    from bookie.lib.message import InvitationMsg
+    msg = InvitationMsg(email, msg, settings)
+    status = msg.send(message_data)
+    if status == 4:
+        from bookie.lib.applog import SignupLog
+        trans = transaction.begin()
+        initialize_sql(ini)
+        SignupLog(SignupLog.ERROR,
+                  'Could not send smtp email to signup: ' + email)
+        trans.commit()

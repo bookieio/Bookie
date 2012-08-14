@@ -119,6 +119,10 @@ deps: venv
 #
 # Tools for running python and javascript tests
 
+.PHONY: smtp
+smtp:
+	$(PY) scripts/misc/smtpsink.py
+
 .PHONY: test
 test:
 	$(NOSE) --with-id -xv -s bookie/tests

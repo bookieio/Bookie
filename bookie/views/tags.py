@@ -3,7 +3,6 @@ import logging
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
-from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 from bookie.views import bmarks
 
