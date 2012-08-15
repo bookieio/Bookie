@@ -7,7 +7,7 @@ from bookie.models.auth import UserMgr
 
 
 @view_config(route_name="home", renderer="index.mako")
-@view_config(route_name="user_home")
+@view_config(route_name="user_home", renderer="index.mako")
 def home(request):
     """Inital / view for now until we find a better one"""
     rdict = request.matchdict

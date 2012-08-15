@@ -30,7 +30,8 @@
                 <a href="http://docs.bmark.us" title="Bookie docs">Check out the docs</a>
             </li>
             <li>
-                Tip me on Gittip: <br />
+                <a href="https://github.com/mitechie" title="Gittip for
+                mitechie">Tip me on Gittip</a><br />
                 <iframe style="border: 0; margin: 0; padding: 0;"
                     src="https://www.gittip.com/mitechie/widget.html"
                     width="48pt" height="20pt"></iframe>
