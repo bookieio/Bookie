@@ -1,7 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-CELERY := PYTHONPATH="bookie/bcelery/." bin/celeryd -B --loglevel=INFO
+CELERY := PYTHONPATH="bookie/bcelery/." bin/celery worker -B --app=bookie.bcelery.celeryd:celery --loglevel=DEBUG
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
@@ -118,6 +118,10 @@ deps: venv
 # TESTS
 #
 # Tools for running python and javascript tests
+
+.PHONY: smtp
+smtp:
+	$(PY) scripts/misc/smtpsink.py
 
 .PHONY: test
 test:

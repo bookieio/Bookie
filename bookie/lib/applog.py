@@ -125,3 +125,18 @@ class LogRecord(object):
             kwargs['payload'] = json.dumps(dict(kwargs.get('payload')))
 
         AppLogMgr.store(**kwargs)
+
+
+class SignupLog(object):
+    """Signup Log records."""
+
+    def __init__(self, status, message, **kwargs):
+        """A record in the log"""
+        kwargs['status'] = status
+        kwargs['message'] = message
+
+        # we need to hash down the payload if there is one
+        if 'payload' in kwargs and kwargs['payload'] is not None:
+            kwargs['payload'] = json.dumps(dict(kwargs.get('payload')))
+
+        AppLogMgr.store(**kwargs)
