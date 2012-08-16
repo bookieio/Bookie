@@ -5,8 +5,8 @@
     <div class="yui3-u-1-2">
         <p>Bookie is an open source bookmarking application.</p>
         <p>Host it yourself or feel free to signup for the hosted version.</p>
-        <h3>Features</h3>
-        <ul>
+        <div>Features</div>
+        <ul class="features">
             <li>Open source!</li>
             <li>Imports from Delicious.com and Google Bookmarks</li>
             <li><a
@@ -14,12 +14,11 @@
             alt="Bookie Chrome Extension">Google Chrome extension</a></li>
             <li>Bookmarklet for other browsers (mobile devices)</li>
             <li>Parse out page content and fulltext search on it</li>
-            <li>Support for Sqlite, MySQL, and Postgresql</li>
             <li>Mobile friendly responsive layout</li>
         </ul>
 
-        <h3>Participate</h3>
-        <ul>
+        <div>Participate</div>
+        <ul class="features">
             <li>
                 <a href="/signup" alt="signup for Bookie" title="Signup for Bookie">Signup and test</a>
             </li>
@@ -29,17 +28,17 @@
             <li>
                 <a href="http://docs.bmark.us" title="Bookie docs">Check out the docs</a>
             </li>
-            <li>
-                <a href="https://github.com/mitechie" title="Gittip for
-                mitechie">Tip me on Gittip</a><br />
-                <iframe style="border: 0; margin: 0; padding: 0;"
-                    src="https://www.gittip.com/mitechie/widget.html"
-                    width="48pt" height="20pt"></iframe>
-            </li>
         </ul>
 
+        <p>
+            <a href="https://github.com/mitechie" title="Gittip for mitechie">
+            Tip me on Gittip </a>
+        </p>
+        <iframe style="border: 0; margin: 0; padding: 0;"
+            src="https://www.gittip.com/mitechie/widget.html"
+            width="48pt" height="20pt"></iframe>
     </div>
-    <div class="yui3-u-1-2">
+    <div class="yui3-u-1-2" class="signup">
         <div class="form">
             <h2>Enter Email to Signup</h2>
             <form id="#signup_form" action="signup_process" method="POST">
