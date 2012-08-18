@@ -41,6 +41,19 @@ Important Links
 :See it live: https://bmark.us
 :ToDo List: https://trello.com/board/bookie/4f18c1ac96c79ec27105f228
 
+
+Bookie Tools
+------------
+:Bookie App:
+    http://github.com/mitechie/Bookie
+:Readable App:
+    https://github.com/mitechie/bookie_parser
+:Readable Lib:
+    https://github.com/mitechie/breadability
+:Bookie Cli:
+    https://github.com/mitechie/bookie_api
+
+
 Contents:
 ---------
 
