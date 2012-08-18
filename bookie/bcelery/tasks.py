@@ -23,7 +23,6 @@ from bookie.bcelery import ini
 
 HERE = dirname(dirname(dirname(__file__)))
 
-
 if ini is None:
     from bookie.bcelery.celeryd import load_ini
     ini = load_ini()
@@ -183,7 +182,7 @@ def importer_process():
 
     for i in imports:
         # Log that we've scheduled it
-        logger = importer_process.get_logger()
+        logger = celery.utils.log.get_logger('importer_process')
         logger.info("IMPORT: SCHEDULED for {username}.".format(**dict(i)))
         # We need to mark that it's running to prevent it getting picked up
         # again.
@@ -200,7 +199,7 @@ def importer_process_worker(iid):
     :param iid: import id we need to pull and work on
 
     """
-    logger = importer_process_worker.get_logger()
+    logger = celery.utils.log.get_logger('importer_process_worker')
 
     trans = transaction.begin()
     initialize_sql(ini)

@@ -83,6 +83,7 @@ class Message(object):
         msg.attach(plain_text)
 
         is_live = asbool(self.settings.get('email.enable', False))
+        is_live = True
 
         if not is_live:
             print msg.as_string()
