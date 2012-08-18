@@ -14,11 +14,11 @@ Bookie is a young open source project to help replace Delicious.
 
 Latest Release
 ---------------
-:Stable: v0.3_
-:Development: v0.4_ *How about rolling release?*
+:Stable: v0.4_
+:Development: v0.5_
 
-.. _v0.3: https://github.com/mitechie/Bookie/tree/master
-.. _v0.4: https://github.com/mitechie/Bookie/tree/develop
+.. _v0.4: https://github.com/mitechie/Bookie/tree/master
+.. _v0.5: https://github.com/mitechie/Bookie/tree/develop
 
 
 Bookie Features
