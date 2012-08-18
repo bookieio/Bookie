@@ -21,7 +21,7 @@ if sys.version_info[:3] < (2,5,0):
     requires.append('pysqlite')
 
 setup(name='bookie',
-      version='0.3',
+      version='0.4',
       description='Bookie',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
