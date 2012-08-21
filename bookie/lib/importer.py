@@ -120,7 +120,13 @@ class DelImporter(Importer):
                 extended = ""
 
             link = tag.a
-            add_date = datetime.fromtimestamp(float(link['add_date']))
+
+            import_add_date = float(link['add_date'])
+
+            if import_add_date > 9999999999:
+                # Remove microseconds from the timestamp
+                import_add_date = import_add_date / 1000
+            add_date = datetime.fromtimestamp(import_add_date)
 
             self.save_bookmark(link['href'],
                                link.text,
