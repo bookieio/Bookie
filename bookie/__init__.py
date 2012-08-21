@@ -1,3 +1,5 @@
+import os
+
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -23,6 +25,12 @@ class RootFactory(object):
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+
+    # Update the settings with the current app root path
+    settings['app_root'] = os.path.abspath(
+                            os.path.dirname(
+                                os.path.dirname(__file__)))
+
     initialize_sql(settings)
 
     authn_policy = AuthTktAuthenticationPolicy(

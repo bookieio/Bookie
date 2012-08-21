@@ -51,8 +51,10 @@ def import_bmarks(request):
             if files is not None:
                 # save the file off to the temp storage
                 out_dir = "{storage_dir}/{randdir}".format(
-                    storage_dir=request.registry.settings.get('import_files',
-                        '/tmp/bookie'),
+                    storage_dir=request.registry.settings.get(
+                        'import_files',
+                        '/tmp/bookie').format(
+                            here=request.registry.settings.get('app_root')),
                     randdir=random.choice(string.letters),
                 )
 
