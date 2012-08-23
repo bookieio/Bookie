@@ -133,6 +133,7 @@ clean_testdb:
 
 .PHONY: builder_test
 builder_test: clean_testdb test_bookie.db
+	# $(NOSE) -vx --with-id 61 bookie/tests
 	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: mysql_test

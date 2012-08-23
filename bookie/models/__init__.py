@@ -34,6 +34,9 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.sql import func
 from sqlalchemy.sql import and_
 
+from whoosh.store import LockError
+from whoosh.writing import IndexingError
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -292,14 +295,28 @@ def sync_readable_content(mapper, connection, target):
     b = target.bmark
 
     writer = get_writer()
-    writer.update_document(
-        bid=unicode(b.bid),
-        description=b.description if b.description else u"",
-        extended=b.extended if b.extended else u"",
-        tags=b.tag_str if b.tag_str else u"",
-        readable=target.clean_content,
-    )
-    writer.commit()
+    try:
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=target.clean_content,
+        )
+        writer.commit()
+
+    except (IndexingError, LockError), exc:
+        # There was an issue saving into the index.
+        import bookie.bcelery.tasks.fulltext_index_bookmark
+        LOG.warning('Could not fulltext index bid: ' + str(b.bid))
+        LOG.warning(exc)
+        writer.cancel()
+
+        # This should send the work over to a celery task that will try again
+        # in that space.
+        bookie.bcelery.tasks.fulltext_index_bookmark(b.bid,
+                                                     target.clean_content)
+
 
 event.listen(Readable, 'after_insert', sync_readable_content)
 event.listen(Readable, 'after_update', sync_readable_content)
@@ -667,16 +684,28 @@ def bmark_fulltext_insert_update(mapper, connection, target):
     from fulltext import get_writer
 
     b = target
-
     writer = get_writer()
-    writer.update_document(
-        bid=unicode(b.bid),
-        description=b.description if b.description else u"",
-        extended=b.extended if b.extended else u"",
-        tags=b.tag_str if b.tag_str else u"",
-        readable=u"",
-    )
-    writer.commit()
+    try:
+        writer.update_document(
+            bid=unicode(b.bid),
+            description=b.description if b.description else u"",
+            extended=b.extended if b.extended else u"",
+            tags=b.tag_str if b.tag_str else u"",
+            readable=u"",
+        )
+        writer.commit()
+
+    except (IndexingError, LockError), exc:
+        # There was an issue saving into the index.
+        import bookie.bcelery.tasks.fulltext_index_bookmark
+
+        LOG.warning('Could not fulltext index bid: ' + str(b.bid))
+        LOG.warning(exc)
+
+        writer.cancel()
+        # This should send the work over to a celery task that will try again
+        # in that space.
+        bookie.bcelery.tasks.fulltext_index_bookmark(b.bid, "")
 
 event.listen(Bmark, 'after_insert', bmark_fulltext_insert_update)
 event.listen(Bmark, 'after_update', bmark_fulltext_insert_update)

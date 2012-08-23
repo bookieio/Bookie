@@ -12,6 +12,7 @@ from bookie.lib.rrdstats import SystemCounts
 from bookie.lib.rrdstats import ImportQueueDepth
 
 from bookie.models import initialize_sql
+from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 from bookie.models.stats import StatBookmarkMgr
@@ -19,6 +20,9 @@ from bookie.models.queue import ImportQueueMgr
 
 from bookie.bcelery import celery as mycelery
 from bookie.bcelery import ini
+
+from whoosh.store import LockError
+from whoosh.writing import IndexingError
 
 
 HERE = dirname(dirname(dirname(__file__)))
@@ -51,22 +55,22 @@ bookie.bcelery.celery.conf.update(
 
     # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
     CELERYBEAT_SCHEDULE={
-        "tasks.hourly_stats": {
-            "task": "tasks.hourly_stats",
-            "schedule": timedelta(seconds=60 * 60),
-        },
-        "tasks.stats_rrd": {
-            "task": "bookie.bcelery.tasks.generate_count_rrd",
-            "schedule": timedelta(seconds=60 * 60 * 12),
-        },
-        "tasks.importer_depth": {
-            "task": "bookie.bcelery.tasks.importer_depth",
-            "schedule": timedelta(seconds=60 * 5),
-        },
-        "tasks.generate_importer_depth_rrd": {
-            "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
-            "schedule": timedelta(seconds=60 * 5),
-        },
+        # "tasks.hourly_stats": {
+        #     "task": "bookie.bcelery.tasks.hourly_stats",
+        #     "schedule": timedelta(seconds=60 * 60),
+        # },
+        # "tasks.stats_rrd": {
+        #     "task": "bookie.bcelery.tasks.generate_count_rrd",
+        #     "schedule": timedelta(seconds=60 * 60 * 12),
+        # },
+        # "tasks.importer_depth": {
+        #     "task": "bookie.bcelery.tasks.importer_depth",
+        #     "schedule": timedelta(seconds=60 * 5),
+        # },
+        # "tasks.generate_importer_depth_rrd": {
+        #     "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
+        #     "schedule": timedelta(seconds=60 * 5),
+        # },
         "tasks.importer": {
             "task": "bookie.bcelery.tasks.importer_process",
             "schedule": timedelta(seconds=60 * 3),
@@ -241,3 +245,35 @@ def email_signup_user(email, msg, settings, message_data):
         SignupLog(SignupLog.ERROR,
                   'Could not send smtp email to signup: ' + email)
         trans.commit()
+
+
+@mycelery.task(ignore_result=True)
+def fulltext_index_bookmark(bid, content):
+    logger = celery.utils.log.get_logger('fulltext_index_bookmark')
+
+    transaction.begin()
+    initialize_sql(ini)
+    b = Bmark.get(bid)
+
+    if not b:
+        logger.error('Could not load bookmark to fulltext index: ' + str(bid))
+    else:
+        from bookie.models.fulltext import get_writer
+        writer = get_writer()
+        try:
+            writer.update_document(
+                bid=unicode(b.bid),
+                description=b.description if b.description else u"",
+                extended=b.extended if b.extended else u"",
+                tags=b.tag_str if b.tag_str else u"",
+                readable=content,
+            )
+            writer.commit()
+        except (IndexingError, LockError), exc:
+            # There was an issue saving into the index.
+            logger.error(exc)
+            logger.warning('sending back to the queue')
+            # This should send the work over to a celery task that will try
+            # again in that space.
+            writer.cancel()
+            fulltext_index_bookmark.retry(exc=exc, countdown=60)

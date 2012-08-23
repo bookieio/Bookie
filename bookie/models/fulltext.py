@@ -14,11 +14,12 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import joinedload
 
+from whoosh import qparser
 from whoosh.fields import SchemaClass, TEXT, KEYWORD, ID
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.index import create_in
 from whoosh.index import open_dir
-from whoosh import qparser
+from whoosh.writing import AsyncWriter
 
 from bookie.models import Bmark
 
@@ -69,7 +70,7 @@ def get_fulltext_handler(engine):
 
 def get_writer():
     global WIX
-    writer = WIX.writer()
+    writer = AsyncWriter(WIX)
     return writer
 
 

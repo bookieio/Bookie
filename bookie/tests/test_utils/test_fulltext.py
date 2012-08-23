@@ -116,7 +116,6 @@ class TestFulltext(TestCase):
         """Verify that we can get a json MorJSON response when ajax search"""
         # first let's add a bookmark we can search on
         self._get_good_request()
-
         search_res = self.testapp.get(
                         '/admin/results/google',
                         headers={
