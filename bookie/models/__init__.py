@@ -684,6 +684,12 @@ def bmark_fulltext_insert_update(mapper, connection, target):
     from fulltext import get_writer
 
     b = target
+
+    if target.readable and target.readable.clean_content:
+        content = target.readable.clean_content
+    else:
+        content = u""
+
     writer = get_writer()
     try:
         writer.update_document(
@@ -691,7 +697,7 @@ def bmark_fulltext_insert_update(mapper, connection, target):
             description=b.description if b.description else u"",
             extended=b.extended if b.extended else u"",
             tags=b.tag_str if b.tag_str else u"",
-            readable=u"",
+            readable=content,
         )
         writer.commit()
 

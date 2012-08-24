@@ -182,18 +182,23 @@ def generate_importer_depth_rrd():
 def importer_process():
     """Check for new imports that need to be scheduled to run"""
     initialize_sql(ini)
-    imports = ImportQueueMgr.get_ready(limit=1)
+    trans = transaction.begin()
+    imp = ImportQueueMgr.get_ready(limit=1)
 
-    for i in imports:
-        # Log that we've scheduled it
-        logger = celery.utils.log.get_logger('importer_process')
-        logger.info("IMPORT: SCHEDULED for {username}.".format(**dict(i)))
-        # We need to mark that it's running to prevent it getting picked up
-        # again.
-        trans = transaction.begin()
-        i.mark_running()
-        trans.commit()
-        celery.task.subtask(importer_process_worker, args=(i.id,)).delay()
+    if imp:
+        i = imp[0]
+    else:
+        return
+
+    # Log that we've scheduled it
+    logger = celery.utils.log.get_logger('importer_process')
+    logger.info("IMPORT: SCHEDULED for {username}.".format(**dict(i)))
+    # We need to mark that it's running to prevent it getting picked up
+    # again.
+    i.mark_running()
+    id = i.id
+    trans.commit()
+    celery.task.subtask(importer_process_worker, args=(id,)).delay()
 
 
 @mycelery.task(ignore_result=True)
@@ -209,6 +214,8 @@ def importer_process_worker(iid):
     initialize_sql(ini)
     import_job = ImportQueueMgr.get(iid)
     logger.info("IMPORT: RUNNING for {username}".format(**dict(import_job)))
+
+    mission_complete = None
     try:
         # process the file using the import script
         import_file = open(import_job.file_path)
@@ -216,16 +223,22 @@ def importer_process_worker(iid):
             import_file,
             import_job.username)
         importer.process()
+
+        trans = transaction.begin()
+        import_job = ImportQueueMgr.get(iid)
         import_job.mark_done()
         logger.info(
             "IMPORT: COMPLETE for {username}".format(**dict(import_job)))
+        trans.commit()
     except Exception, exc:
         # we need to log this and probably send an error email to the
         # admin
-        logger = importer_process_worker.get_logger()
+        logger = celery.utils.log.get_logger('importer_process_worker')
         logger.error(str(exc))
+        trans = transaction.begin()
+        import_job = ImportQueueMgr.get(iid)
         import_job.mark_error()
-    trans.commit()
+        trans.commit()
 
 
 @mycelery.task(ignore_result=True)
@@ -249,26 +262,36 @@ def email_signup_user(email, msg, settings, message_data):
 
 @mycelery.task(ignore_result=True)
 def fulltext_index_bookmark(bid, content):
+    """Insert bookmark data into the fulltext index."""
     logger = celery.utils.log.get_logger('fulltext_index_bookmark')
 
-    transaction.begin()
     initialize_sql(ini)
-    b = Bmark.get(bid)
+    b = Bmark.query.get(bid)
 
     if not b:
         logger.error('Could not load bookmark to fulltext index: ' + str(bid))
     else:
         from bookie.models.fulltext import get_writer
+        logger.warning('getting writer')
         writer = get_writer()
+
+        if content:
+            found_content = content
+        elif b.readable:
+            found_content = b.readable.clean_content
+        else:
+            found_content = u""
+
         try:
             writer.update_document(
                 bid=unicode(b.bid),
                 description=b.description if b.description else u"",
                 extended=b.extended if b.extended else u"",
                 tags=b.tag_str if b.tag_str else u"",
-                readable=content,
+                readable=found_content,
             )
             writer.commit()
+            logger.warning('writer commit')
         except (IndexingError, LockError), exc:
             # There was an issue saving into the index.
             logger.error(exc)
@@ -277,3 +300,21 @@ def fulltext_index_bookmark(bid, content):
             # again in that space.
             writer.cancel()
             fulltext_index_bookmark.retry(exc=exc, countdown=60)
+
+
+@mycelery.task(ignore_result=True)
+def reindex_fulltext_allbookmarks():
+    """Rebuild the fulltext index with all bookmarks."""
+    logger = celery.utils.log.get_logger('fulltext_index_bookmark')
+    logger.warning("Starting freshen of fulltext index.")
+
+    transaction.begin()
+    initialize_sql(ini)
+
+    bookmarks = Bmark.query.all()
+
+    for b in bookmarks:
+        celery.task.subtask(fulltext_index_bookmark).delay(
+            b.bid,
+            None
+        )

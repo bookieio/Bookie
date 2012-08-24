@@ -1,12 +1,15 @@
 """Importers for bookmarks"""
 import time
+import transaction
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
+
 from bookie.lib.urlhash import generate_hash
 from bookie.models import BmarkMgr
 
 
 IMPORTED = "importer"
+COMMIT_SIZE = 25
 
 
 class Importer(object):
@@ -111,6 +114,7 @@ class DelImporter(Importer):
     def process(self):
         """Given a file, process it"""
         soup = BeautifulSoup(self.file_handle)
+        count = 0
 
         for tag in soup.findAll('dt'):
             # if we have a dd as next sibling, get it's content
@@ -133,6 +137,15 @@ class DelImporter(Importer):
                                extended,
                                " ".join(link['tags'].split(',')),
                                dt=add_date)
+            count = count + 1
+
+            if count % COMMIT_SIZE == 0:
+                transaction.commit()
+                transaction.begin()
+
+        # Commit any that are left since the last commit performed.
+        transaction.commit()
+
 
 
 class GBookmarkImporter(Importer):
@@ -182,6 +195,7 @@ class GBookmarkImporter(Importer):
         under that heading. If a url has N tags, it will appear N times, once
         under each heading.
         """
+        count = 0
         soup = BeautifulSoup(self.file_handle)
         if not soup.contents[0] == "DOCTYPE NETSCAPE-Bookmark-file-1":
             raise Exception("File is not a google bookmarks file")
@@ -233,3 +247,9 @@ class GBookmarkImporter(Importer):
                                metadata['extended'],
                                " ".join(metadata['tags']),
                                dt=metadata['date_added'])
+            if count % COMMIT_SIZE == 0:
+                transaction.commit()
+                transaction.begin()
+
+        # Commit any that are left since the last commit performed.
+        transaction.commit()
