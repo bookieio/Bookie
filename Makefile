@@ -298,7 +298,7 @@ clean_chrome:
 	fi
 
 
-run: run_combo run_app
+run: run_celery run_combo run_app 
 run_celery:
 	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
 run_dev: run run_css autojsbuild
@@ -313,7 +313,7 @@ run_livereload:
 autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
-stop: stop_combo stop_app
+stop: stop_combo stop_app stop_celery
 stop_dev: stop stop_css
 stop_celery:
 	kill -9 `cat celeryd.pid` || true

@@ -61,6 +61,7 @@ Contents:
    :maxdepth: 1
 
    install
+   manage_command
    user
    extensions
    hosting
