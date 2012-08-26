@@ -27,6 +27,7 @@ STATUS_CODES = DictObj({
     '200': 200,
     '404': 404,
     '403': 403,
+    '429': 429,   # wtf, 429 doesn't exist...
 
     # errors like 9's
     '900': 900,   # used for unparseable
@@ -149,7 +150,10 @@ class ReadUrl(object):
             read.content_type = read.headers.gettype()
 
         except urllib2.HTTPError, exc:
-            read.error(exc.code, HTTPH.responses[exc.code])
+            if exc.code == 429:
+                read.error(STATUS_CODES['429'], str(exc))
+            else:
+                read.error(exc.code, HTTPH.responses[exc.code])
 
         except urllib2.URLError, exc:
             read.error(STATUS_CODES['901'], str(exc))
