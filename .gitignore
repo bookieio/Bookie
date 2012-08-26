@@ -35,13 +35,12 @@ parts
 /man
 /lib
 /local
+/share
 ropevim.vim
 *.pid
 /download-cache
 /extensions/chrome_ext/lib
 bookie.ini
-bookie/static/
 bookie_index/
 celerybeat-schedule
 docs/_build/
-share/
