@@ -298,10 +298,12 @@ clean_chrome:
 	fi
 
 
-run: run_celery run_combo run_app 
+run: run_celery run_combo run_app
+run_dev: run run_css autojsbuild
+run_webapp: run_combo run_app
+
 run_celery:
 	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
-run_dev: run run_css autojsbuild
 run_combo:
 	$(GUNICORN) -p combo.pid combo:application &
 run_css:
