@@ -124,7 +124,7 @@ class TagMgr(object):
         Currently it only supports space delimited
 
         """
-        if tag_str == '':
+        if not tag_str or tag_str == '':
             return {}
 
         tag_list = set([tag.lower().strip() for tag in tag_str.split(" ")])
