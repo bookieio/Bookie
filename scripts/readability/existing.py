@@ -8,6 +8,7 @@ import threading
 import transaction
 
 from ConfigParser import ConfigParser
+from logging.handlers import TimedRotatingFileHandler
 from os import path
 from Queue import Queue
 
@@ -17,11 +18,13 @@ from bookie.models import initialize_sql
 from bookie.models import Bmark
 from bookie.models import Readable
 
-PER_TRANS = 24
+PER_TRANS = 9
 LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.DEBUG)
+LOG.addHandler(TimedRotatingFileHandler('existing.log', when='midnight'))
 
 # Set up some global variables
-num_fetch_threads = 8
+num_fetch_threads = 3
 
 
 def parse_args():
@@ -61,8 +64,9 @@ def fetch_content(i, q):
     """Our threaded worker to fetch the url contents"""
     while True:
         hash_id, url = q.get()
-        print 'Q' + str(i) + ' getting content for ' + hash_id + ' ' + url
+        LOG.debug("Q%d getting content for %s %s" % (i, hash_id, url))
         read = ReadUrl.parse(url)
+        LOG.debug("Q%d completed parsing for %s %s" % (i, hash_id, url))
         parsed[hash_id] = read
         q.task_done()
 
@@ -159,6 +163,13 @@ if __name__ == "__main__":
 
                 read = parsed[bmark.hash_id]
 
+                LOG.debug("%s: %s %d %s %s" % (
+                    hashed.hash_id,
+                    read.url,
+                    len(read.content) if read.content else -1,
+                    read.is_error(),
+                    read.status_message))
+
                 if not read.is_image():
                     if not bmark.readable:
                         bmark.readable = Readable()
@@ -175,5 +186,6 @@ if __name__ == "__main__":
                 bmark.readable.status_message = read.status_message
 
             # let's do some count/transaction maint
+            LOG.debug('COMMIT')
             transaction.commit()
             transaction.begin()
