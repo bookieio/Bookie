@@ -150,10 +150,11 @@ class ReadUrl(object):
             read.content_type = read.headers.gettype()
 
         except urllib2.HTTPError, exc:
-            if exc.code == 429:
-                read.error(STATUS_CODES['429'], str(exc))
-            else:
+            # for some reason getting a code 429 from a server
+            if exc.code not in [429]:
                 read.error(exc.code, HTTPH.responses[exc.code])
+            else:
+                read.error(exc.code, unicode(exc.code) + ': ' + clean_url)
 
         except urllib2.URLError, exc:
             read.error(STATUS_CODES['901'], str(exc))
