@@ -161,6 +161,11 @@ def build_routes(config):
         "api_admin_accounts_invites",
         "/api/v1/a/accounts/invites",
         request_method="GET")
+    config.add_route(
+        "api_admin_imports_list",
+        "/api/v1/a/imports/list",
+        request_method="GET")
+
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

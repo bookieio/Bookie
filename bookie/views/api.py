@@ -23,6 +23,7 @@ from bookie.models import Readable
 from bookie.models import TagMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr
+from bookie.models.queue import ImportQueueMgr
 
 from bookie.models.fulltext import get_fulltext_handler
 
@@ -927,3 +928,15 @@ def accounts_invites_add(request):
         request.response.status_int = 400
         ret = {'error': "Bad request, missing parameters"}
         return ret
+
+
+@view_config(route_name="api_admin_imports_list", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def import_list(request):
+    """Provide some import related data."""
+    import_list = ImportQueueMgr.get_list()
+    ret = {
+        'count': len(import_list),
+        'imports': [dict(h) for h in import_list],
+    }
+    return ret

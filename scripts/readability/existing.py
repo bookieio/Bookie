@@ -108,10 +108,10 @@ if __name__ == "__main__":
         ct = 0
 
         all = False
-        while(not all):
-            # start the queue up we'll use to thread the url fetching
-            enclosure_queue = Queue()
+        # start the queue up we'll use to thread the url fetching
+        enclosure_queue = Queue()
 
+        while(not all):
             if args.new_only:
                 # we take off the offset because each time we run, we should
                 # have new ones to process. The query should return the 10
@@ -147,7 +147,6 @@ if __name__ == "__main__":
                 # the queue.
                 worker = threading.Thread(target=fetch_content,
                                           args=(i, enclosure_queue,))
-                worker.setDaemon(True)
                 worker.start()
 
             for hash_id, url in urls.iteritems():

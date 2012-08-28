@@ -8,6 +8,8 @@ from nose.tools import ok_, eq_
 from pyramid import testing
 
 from bookie.models import DBSession
+from bookie.models.queue import ImportQueue
+from bookie.models.queue import ImportQueueMgr
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
@@ -38,6 +40,17 @@ class AdminApiTest(unittest.TestCase):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
         empty_db()
+
+    def _add_demo_import(self):
+        """DB Needs some imports to be able to query."""
+        # add out completed one
+        q = ImportQueue(
+            username='admin',
+            file_path='testing.txt'
+        )
+        DBSession.add(q)
+        transaction.commit()
+        return
 
     def test_list_inactive_users(self):
         """Test that we can fetch the inactive users."""
@@ -94,3 +107,23 @@ class AdminApiTest(unittest.TestCase):
         res = self.testapp.post('/api/v1/a/accounts/invites/admin/0',
                                 params=params,
                                 status=200)
+
+    def test_import_info(self):
+        """Test that we can get a count of the imports in the system."""
+        self._add_demo_import()
+        params = {
+            'api_key': self.api_key
+        }
+        res = self.testapp.get('/api/v1/a/imports/list',
+                                params=params,
+                                status=200)
+
+        # we should get back tuples of username/count
+        data = json.loads(res.body)
+
+        eq_(1, data.get('count'), "There are none by default. " + res.body)
+
+        eq_('admin', data.get('imports')[0]['username'],
+            "The first import is from rharding " + res.body)
+        eq_(0, data.get('imports')[0]['status'],
+            "And it has a status of 0 " + res.body)

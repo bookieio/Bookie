@@ -12,7 +12,6 @@ from nose.tools import raises
 
 from bookie.models import DBSession
 from bookie.models import Bmark
-from bookie.models import Tag, bmarks_tags
 from bookie.models.queue import ImportQueue
 from bookie.models.queue import ImportQueueMgr
 from bookie.lib.urlhash import generate_hash
@@ -267,7 +266,7 @@ class ImportViews(TestViewBase):
         # now verify that we've got our record
         imp = ImportQueueMgr.get_ready()
         imp = imp[0]
-        imp.status=2
+        imp.status = 2
         DBSession.flush()
 
         imp = ImportQueueMgr.get_ready()
@@ -280,8 +279,10 @@ class ImportViews(TestViewBase):
         # Prep the db with 2 other imports ahead of this user's.
         # We have to commit these since the request takes place in a new
         # session/transaction.
-        DBSession.add(ImportQueue(username='testing', file_path='testing.txt'))
-        DBSession.add(ImportQueue(username='testing2', file_path='testing2.txt'))
+        DBSession.add(ImportQueue(username='testing',
+                                  file_path='testing.txt'))
+        DBSession.add(ImportQueue(username='testing2',
+                                  file_path='testing2.txt'))
         DBSession.flush()
         transaction.commit()
 
@@ -293,8 +294,10 @@ class ImportViews(TestViewBase):
         res = self.app.get('/admin/import')
 
         ok_('<form' not in res.body, "We shouldn't have a form")
-        ok_('waiting in the queue' in res.body, "We want to display a waiting message.")
-        ok_('2 other imports' in res.body, "We want to display a count message." + res.body)
+        ok_('waiting in the queue' in res.body,
+            "We want to display a waiting message.")
+        ok_('2 other imports' in res.body,
+            "We want to display a count message." + res.body)
 
     def test_completed_dont_count(self):
         """Once completed, we should get the form again"""
@@ -315,4 +318,3 @@ class ImportViews(TestViewBase):
         res = self.app.get('/admin/import')
 
         ok_('<form' in res.body, "We should have a form")
-

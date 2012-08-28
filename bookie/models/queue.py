@@ -64,6 +64,16 @@ class ImportQueueMgr(object):
             ImportQueue.status != ERROR))
         return qry.count()
 
+    @staticmethod
+    def get_list():
+        """Searching for records and all that.
+
+        """
+        qry = ImportQueue.query
+        qry = qry.order_by(ImportQueue.id)
+        return qry.all()
+
+
 class ImportQueue(Base):
     """Track imports we need to do"""
     __tablename__ = 'import_queue'
