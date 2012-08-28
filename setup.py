@@ -17,13 +17,13 @@ requires = [
     'BeautifulSoup==3.2.0',
     ]
 
-if sys.version_info[:3] < (2,5,0):
+if sys.version_info[:3] < (2, 5, 0):
     requires.append('pysqlite')
 
 setup(name='bookie',
-      version='0.4',
+      version='0.4.1',
       description='Bookie',
-      long_description=README + '\n\n' +  CHANGES,
+      long_description=README + '\n\n' + CHANGES,
       classifiers=[
         "Programming Language :: Python",
         "Framework :: Pylons",
@@ -38,11 +38,10 @@ setup(name='bookie',
       include_package_data=True,
       zip_safe=False,
       test_suite='bookie',
-      install_requires = requires,
-      entry_points = """\
+      install_requires=requires,
+      entry_points="""\
       [paste.app_factory]
       main = bookie:main
       """,
       paster_plugins=['pyramid'],
       )
-
