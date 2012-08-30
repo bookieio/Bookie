@@ -3,7 +3,6 @@ import logging
 import json
 import transaction
 import unittest
-import urllib
 from nose.tools import ok_, eq_
 from pyramid import testing
 
@@ -124,6 +123,25 @@ class AdminApiTest(unittest.TestCase):
         eq_(1, data.get('count'), "There are none by default. " + res.body)
 
         eq_('admin', data.get('imports')[0]['username'],
-            "The first import is from rharding " + res.body)
+            "The first import is from admin " + res.body)
         eq_(0, data.get('imports')[0]['status'],
             "And it has a status of 0 " + res.body)
+
+    def test_user_list(self):
+        """Test that we can hit the api and get the list of users."""
+        self._add_demo_import()
+        params = {
+            'api_key': self.api_key
+        }
+        res = self.testapp.get('/api/v1/a/users/list',
+                                params=params,
+                                status=200)
+
+        # we should get back dict of count, users.
+        data = json.loads(res.body)
+
+        eq_(1, data.get('count'), "There are none by default. " + res.body)
+        eq_('admin', data.get('users')[0]['username'],
+            "The first user is from admin " + res.body)
+        eq_('testing@dummy.com', data.get('users')[0]['email'],
+            "The first user is from testing@dummy.com " + res.body)

@@ -129,6 +129,7 @@ class UserMgr(object):
         if active is not None:
             user_query = user_query.filter(User.activated == active)
 
+        user_query = user_query.order_by(User.signup.asc())
         return user_query.all()
 
     @staticmethod
