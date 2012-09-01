@@ -22,6 +22,8 @@ from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
 from bookie.models.auth import ActivationMgr
+from bookie.models.auth import get_random_word
+from bookie.models.auth import User
 from bookie.models.auth import UserMgr
 from bookie.models.queue import ImportQueueMgr
 
@@ -952,3 +954,38 @@ def user_list(request):
         'users': [dict(h) for h in user_list],
     }
     return ret
+
+
+@view_config(route_name="api_admin_new_user", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def new_user(request):
+    """Add a new user to the system manually."""
+    rdict = request.params
+
+    u = User()
+
+    u.username = unicode(rdict.get('username'))
+    u.email = unicode(rdict.get('email'))
+    passwd = get_random_word(8)
+    u.password = passwd
+    u.activated = True
+    u.is_admin = False
+    u.api_key = User.gen_api_key()
+
+    try:
+        DBSession.add(u)
+        DBSession.flush()
+        # We need to return the password since the admin added the user
+        # manually.  This is only time we should have/give the original
+        # password.
+        ret = dict(u)
+        ret['random_pass'] = passwd
+        return ret
+
+    except IntegrityError, exc:
+        # We might try to add a user that already exists.
+        LOG.error(exc)
+        request.response.status_int = 400
+        return {
+            'error': 'Bad Request: User exists.',
+         }

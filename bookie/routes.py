@@ -169,6 +169,10 @@ def build_routes(config):
         "api_admin_users_list",
         "/api/v1/a/users/list",
         request_method="GET")
+    config.add_route(
+        "api_admin_new_user",
+        "/api/v1/a/users/add",
+        request_method="POST")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

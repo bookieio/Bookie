@@ -130,6 +130,12 @@ if __name__ == "__main__":
             else:
                 url_list = Bmark.query.limit(PER_TRANS).offset(ct).all()
 
+            # If there are no results, then we need to kill this loop
+            # iteration and bail out.
+            if not url_list:
+                all = True
+                break
+
             if len(url_list) < PER_TRANS:
                 all = True
 
