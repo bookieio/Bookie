@@ -1226,6 +1226,72 @@ Mark a user as disabled. Will not allow them to login, save bookmarks, use the
 api
 
 
+/a/users/list
+~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+*GET* `/api/v1/a/users/list`
+
+Return a list of the users in the system.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/users/list?api_key=12345...')
+    >>>{
+            "count": 10,
+            "users": [
+                [
+                    "admin",
+                    ...
+                ],
+                [
+                    "user2",
+                    ...
+                ]
+            ]
+        }
+
+/a/users/add
+~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+*POST* `/api/v1/a/users/add`
+
+Admin override and add a new user to the system.
+
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: username *required* - the email address of the new user
+:query param: email *required* - the email address of the new user
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/a/users/list?api_key=12345...', {
+        'email': 'test@dummy.com',
+        'username': 'test',
+    })
+    >>>{
+            "username": "admin",
+            "email": "test@dummy.com",
+            "id": 11,
+            "random_pass": "blah123",
+            ...
+        }
+
+
 /admin/log
 ~~~~~~~~~~
 GET `/api/v1/admin/log`
