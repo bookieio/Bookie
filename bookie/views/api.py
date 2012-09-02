@@ -5,6 +5,7 @@ from datetime import datetime
 from pyramid.settings import asbool
 from pyramid.view import view_config
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
 from bookie.lib.access import api_auth
@@ -18,6 +19,7 @@ from bookie.lib.tagcommands import Commander
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
+from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
@@ -874,11 +876,21 @@ def invite_user(request):
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
     url_list = Bmark.query.outerjoin(Readable, Readable.bid == Bmark.bid).\
-                filter(Readable.imported == None).all()
-    ret = {
-        'urls': [dict(h) for h in url_list]
+                           join(Bmark.hashed).\
+                           options(contains_eager(Bmark.hashed)).\
+                           filter(Readable.imported == None).all()
+
+    def data(urls):
+        """Yield out the results with the url in the data streamed."""
+        for url in urls:
+            d = dict(url)
+            d['url'] = url.hashed.url
+            yield d
+
+    return {
+        'urls': [u for u in data(url_list)]
+
     }
-    return ret
 
 
 @view_config(route_name="api_admin_accounts_inactive", renderer="json")
