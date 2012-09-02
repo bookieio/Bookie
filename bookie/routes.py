@@ -173,6 +173,10 @@ def build_routes(config):
         "api_admin_new_user",
         "/api/v1/a/users/add",
         request_method="POST")
+    config.add_route(
+        "api_admin_del_user",
+        "/api/v1/a/users/delete/{username}",
+        request_method="DELETE")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

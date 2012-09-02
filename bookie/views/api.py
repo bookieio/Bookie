@@ -989,3 +989,48 @@ def new_user(request):
         return {
             'error': 'Bad Request: User exists.',
          }
+
+@view_config(route_name="api_admin_del_user", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def del_user(request):
+    """Remove a bad user from the system via the api.
+
+    For admin use only.
+
+    """
+    mdict = request.matchdict
+
+    # Submit a username.
+    del_username = mdict.get('username', None)
+
+    if del_username is None:
+        LOG.error('No username to remove.')
+        request.response.status_int = 400
+        return {
+            'error': 'Bad Request: No username to remove.',
+         }
+
+    u = UserMgr.get(username=del_username)
+
+    if not u:
+        LOG.error('Username not found.')
+        request.response.status_int = 404
+        return {
+            'error': 'User not found.',
+         }
+
+    try:
+        DBSession.delete(u.activation)
+        DBSession.delete(u)
+        return {
+            'success': True,
+            'message': 'Removed user: ' + del_username
+        }
+    except Exception, exc:
+        # There might be cascade issues or something that causes us to fail in
+        # removing.
+        LOG.error(exc)
+        request.response.status_int = 500
+        return {
+            'error': 'Bad Request: ' + str(exc)
+         }

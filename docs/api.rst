@@ -1284,12 +1284,41 @@ Example
         'username': 'test',
     })
     >>>{
-            "username": "admin",
-            "email": "test@dummy.com",
-            "id": 11,
-            "random_pass": "blah123",
-            ...
-        }
+           "username": "admin",
+           "email": "test@dummy.com",
+           "id": 11,
+           "random_pass": "blah123",
+           ...
+       }
+
+/a/users/delete/:username
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+*DELETE* `/api/v1/a/users/delete/:username`
+
+Admin endpoint to remove a user from the system.
+
+Currently meant for bad new user accounts that removes activation and user
+account. Does not reach into bmarks/tags.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''''
+:success 200: If successful a "200 OK" will be returned
+
+Example
+'''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/a/users/delete/admin?api_key=12345...')
+    >>>{
+           "success": true,
+           "message": "Removed user: admin"
+       }
+
+
 
 
 /admin/log
