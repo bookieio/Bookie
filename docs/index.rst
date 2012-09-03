@@ -61,6 +61,7 @@ Contents:
    :maxdepth: 1
 
    install
+   single_user_mode
    user
    extensions
    hosting

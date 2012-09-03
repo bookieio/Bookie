@@ -62,7 +62,7 @@
                     <a href="/recent" class="button nav_button">
                         <span aria-hidden="true" class="icon icon-tags" title="All Bookmarks"></span>
                         <em class="icon">All Bookmarks</em>
-                        <span class="text">All</span>
+                        <span class="text">${ all_bookmark_title }</span>
                     </a>
                 </span>
 

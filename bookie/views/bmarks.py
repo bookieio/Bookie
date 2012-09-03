@@ -7,6 +7,7 @@ from pyramid.view import view_config
 
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
+from bookie.lib.utils import parse_bool
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
@@ -43,14 +44,19 @@ def recent(request):
         tags = [tags]
 
     ret = {
-         'username': username,
-         'tags': tags,
+        'username': username,
+        'tags': tags,
     }
 
     # if we've got url parameters for the page/count then use those to help
     # feed the init of the ajax script
     ret['count'] = params.get('count') if 'count' in params else RESULTS_MAX
     ret['page'] = params.get('page') if 'page' in params else 0
+
+    if parse_bool(request.registry.settings.get('single_user_mode', False)):
+        ret['all_bookmark_title'] = 'Bookmark'
+    else:
+        ret['all_bookmark_title'] = 'All'
 
     return ret
 
@@ -99,9 +105,11 @@ def edit(request):
                                                    request.user.username)
 
                 if test_exists:
-                    location = request.route_url('user_bmark_edit',
-                                               hash_id=new_url_hash,
-                                               username=request.user.username)
+                    location = request.route_url(
+                        'user_bmark_edit',
+                        hash_id=new_url_hash,
+                        username=request.user.username
+                    )
                     return HTTPFound(location)
 
             new = True
@@ -114,10 +122,10 @@ def edit(request):
         )
 
         return {
-                'new': new,
-                'bmark': bmark,
-                'user': request.user,
-                'tag_suggest': tag_suggest,
+            'new': new,
+            'bmark': bmark,
+            'user': request.user,
+            'tag_suggest': tag_suggest,
         }
 
 
@@ -172,8 +180,8 @@ def readable(request):
         found = BmarkMgr.get_by_hash(bid, username=username)
         if found:
             return {
-                    'bmark': found,
-                    'username': username,
-                    }
+                'bmark': found,
+                'username': username,
+            }
         else:
             return HTTPNotFound()

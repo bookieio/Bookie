@@ -11,6 +11,7 @@ from pyramid.view import view_config
 
 import bookie.bcelery.tasks
 from bookie.lib.applog import AuthLog
+from bookie.lib.utils import parse_bool
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
 
@@ -61,10 +62,13 @@ def login(request):
 
             # we're always going to return a user to their own /recent after a
             # login
-            return HTTPFound(location=request.route_url(
-                                            'user_bmark_recent',
-                                            username=auth.username),
-                             headers=headers)
+            return HTTPFound(
+                location=request.route_url(
+                    'user_bmark_recent',
+                    username=auth.username
+                ),
+                headers=headers
+            )
 
         # log the right level of problem
         if auth and not auth.validate_password(password):
@@ -103,6 +107,9 @@ def signup(request):
     this time so that we can stage invites across a specific number in waves.
 
     """
+    if parse_bool(request.registry.settings.get('single_user_mode', False)):
+        return HTTPFound(location=request.route_url("bmark_recent"))
+
     return {}
 
 
@@ -114,6 +121,9 @@ def signup_process(request):
     information.
 
     """
+    if parse_bool(request.registry.settings.get('single_user_mode', False)):
+        return HTTPFound(location=request.route_url("bmark_recent"))
+
     params = request.params
     email = params.get('email', None)
 
@@ -146,13 +156,14 @@ def signup_process(request):
 
         # Add a queue job to send the user a notification email.
         bookie.bcelery.tasks.email_signup_user.delay(
-                new_user.email,
-                "Enable your Bookie account",
-                settings,
-                request.route_url('reset',
-                    username=new_user.username,
-                    reset_key=new_user.activation.code
-                )
+            new_user.email,
+            "Enable your Bookie account",
+            settings,
+            request.route_url(
+                'reset',
+                username=new_user.username,
+                reset_key=new_user.activation.code
+            )
         )
 
         # And let the user know they're signed up.
@@ -199,10 +210,14 @@ def forbidden_view(request):
     if referrer == login_url:
         referrer = '/'  # never use the login form itself as came_from
     came_from = request.params.get('came_from', referrer)
-    return render_to_response('/auth/login.mako', dict(
-               message='',
-               url=request.application_url + '/login',
-               came_from=came_from,
-               login='',
-               password='',
-           ), request=request)
+    return render_to_response(
+        '/auth/login.mako',
+        dict(
+            message='',
+            url=request.application_url + '/login',
+            came_from=came_from,
+            login='',
+            password='',
+        ),
+        request=request
+    )
