@@ -24,12 +24,12 @@ class ImportQueueMgr(object):
     def get(id=None, username=None, status=None):
         """Get the import item"""
         if (id):
-            qry = ImportQueue.query.filter(ImportQueue.id==id)
+            qry = ImportQueue.query.filter(ImportQueue.id == id)
         elif (username):
-            qry = ImportQueue.query.filter(ImportQueue.username==username)
+            qry = ImportQueue.query.filter(ImportQueue.username == username)
 
         if status is not None:
-            qry = qry.filter(ImportQueue.status==status)
+            qry = qry.filter(ImportQueue.status == status)
 
         return qry.first()
 
@@ -42,7 +42,7 @@ class ImportQueueMgr(object):
 
         """
         your_import = ImportQueueMgr.get(id=id, username=username)
-        place_qry = ImportQueue.query.filter(ImportQueue.status==NEW)
+        place_qry = ImportQueue.query.filter(ImportQueue.status == NEW)
         place_qry = place_qry.filter(ImportQueue.id < your_import.id)
 
         return {

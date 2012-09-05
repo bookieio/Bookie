@@ -19,7 +19,6 @@ from bookie.lib.tagcommands import Commander
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
-from bookie.models import Hashed
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
@@ -1001,6 +1000,7 @@ def new_user(request):
         return {
             'error': 'Bad Request: User exists.',
          }
+
 
 @view_config(route_name="api_admin_del_user", renderer="json")
 @api_auth('api_key', UserMgr.get, admin_only=True)

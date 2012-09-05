@@ -21,7 +21,8 @@ class Importer(object):
         self.username = username
 
         # we need to get our list of hashes to make sure we check for dupes
-        self.hash_list = set([b[0] for b in BmarkMgr.hash_list(username=username)])
+        self.hash_list = set([b[0] for b in
+                             BmarkMgr.hash_list(username=username)])
 
     def __new__(cls, *args, **kwargs):
         """Overriding new we return a subclass based on the file content"""
@@ -145,7 +146,6 @@ class DelImporter(Importer):
 
         # Commit any that are left since the last commit performed.
         transaction.commit()
-
 
 
 class GBookmarkImporter(Importer):
