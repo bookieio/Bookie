@@ -208,7 +208,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 // keep this up
                 var unique = true;
                 Y.Array.each(this.get('tags'), function (t) {
-                    if (t.get('text') == current_text) {
+                    if (t.get('text') === current_text) {
                         unique = false;
                     }
                 });
@@ -275,6 +275,14 @@ YUI.add('bookie-tagcontrol', function (Y) {
             this.ui.delegate(
                 'keyup',
                 this._parse_input,
+                'input',
+                this
+            );
+
+            // Special keydown event catch for deleting whole tags.
+            this.ui.delegate(
+                'keydown',
+                this._check_delete,
                 'input',
                 this
             );
@@ -372,6 +380,26 @@ YUI.add('bookie-tagcontrol', function (Y) {
         },
 
         /**
+         * Check if the keydown is a delete and we have no current input.
+         *
+         * If so, then we need to see if we need to remove the previous tag.
+         *
+         * @method _check_delete
+         * @private
+         * @param {Event} e
+         *
+         */
+        _check_delete: function (e) {
+            if (e.keyCode === keymap.backspace) {
+                if (this.ui.one('input').get('value') === '') {
+                    // remove the last tag we put on the stack
+                    var last_tag = this.get('tags').pop();
+                    last_tag.destroy();
+                }
+            }
+        },
+
+        /**
          * Fetch any autocomplete suggestions from the API.
          *
          * @method _fetch_suggestions
@@ -447,15 +475,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                     that.set('events_waiting', undefined);
                 }
             }, AJAX_WAITTIME);
-
-            if (e.keyCode == keymap.backspace) {
-                if (this.ui.one('input').get('value') === '') {
-                    // remove the last tag we put on the stack
-                    var last_tag = this.get('tags').pop();
-                    last_tag.destroy();
-                }
-                return;
-            }
 
             // continue on with what you were doing
             // these are events and keystrokes we want to throttle

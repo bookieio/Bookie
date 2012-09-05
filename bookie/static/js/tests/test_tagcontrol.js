@@ -128,7 +128,7 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
             var tags = Y.all('.yui3-bookie-tagcontrol-item'),
                 fired = false;
             tags.each(function (t) {
-                if (t.getContent() == 'test') {
+                if (t.getContent() === 'test') {
                     t.simulate('click');
                     fired = true;
                 }
@@ -139,6 +139,33 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
             Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol-item').size());
             Y.Assert.areEqual(0, this.tc.get('tags').length);
         },
+
+        test_double_backspace: function () {
+            // Hitting delete on the last character removes the previous tag
+            this.t = Y.one('input');
+            this.tc = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc.render();
+
+            // setup a new tag
+            var input = Y.one('.yui3-bookie-tagcontrol-input');
+            input.set('value', 'test');
+
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+
+            // Now let's hit the backspace key and we should lose our new tag.
+            input.simulate('keydown', {
+                keyCode: 8
+            });
+
+            // our node should be gone
+            Y.Assert.areEqual(1, Y.all('.yui3-bookie-tagcontrol-item').size());
+            Y.Assert.areEqual(0, this.tc.get('tags').length);
+        },
+
 
         test_initial_tags: function () {
             this.t = Y.one('input');
