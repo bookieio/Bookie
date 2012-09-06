@@ -115,7 +115,4 @@ YUI.add('bookie-readable', function (Y) {
     });
 }, '0.1.0', {
     requires: ['base', 'io-xdr', 'json', 'substitute', 'bookie-api']
-
 });
-
-
