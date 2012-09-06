@@ -252,9 +252,9 @@ YUI.add('bookie-model', function (Y) {
                 'domain': {
                     getter: function () {
                         var url = this.get('url');
-                        var domain = url.replace('http://','').replace('https://','').split(/[/?#]/)[0]
-                        var spl = domain.split('.')
-                        return [spl[spl.length-2], spl[spl.length-1]].join('.')
+                        var domain = url.replace('http://','').replace('https://','').split(/[/?#]/)[0];
+                        var spl = domain.split('.');
+                        return [spl[spl.length-2], spl[spl.length-1]].join('.');
                     }
                 },
 
@@ -404,12 +404,14 @@ YUI.add('bookie-model', function (Y) {
                 'dateinfo': {
                     // we want to return a formatted version of stored
                     getter: function (val) {
-                        var stored = this.get('stored');
+                        var ret,
+                            stored = this.get('stored');
                         if (stored) {
-                            return (stored.getMonth() + 1) + "/" + stored.getDate();
+                            ret = (stored.getMonth() + 1) + "/" + stored.getDate();
                         } else {
-                            return stored;
+                            ret = stored;
                         }
+                        return ret;
                     }
                 },
 
@@ -424,9 +426,10 @@ YUI.add('bookie-model', function (Y) {
                 'prettystored': {
                     // we want to return a formatted version of stored
                     getter: function (val) {
-                        var stored = this.get('stored');
+                        var ret,
+                            stored = this.get('stored');
                         if (stored) {
-                            return _("{month}/{date}/{year} {hours}:{minutes}", {
+                            ret = _("{month}/{date}/{year} {hours}:{minutes}", {
                                      'month': stored.getMonth() + 1,
                                      'date': stored.getDate(),
                                      'year': stored.getFullYear(),
@@ -434,8 +437,9 @@ YUI.add('bookie-model', function (Y) {
                                      'minutes': stored.getMinutes()
                             });
                         } else {
-                            return stored;
+                            ret = stored;
                         }
+                        return ret;
                     }
                 }
            }
@@ -610,12 +614,14 @@ YUI.add('bookie-model', function (Y) {
          *
          */
         _get_data: function (key, def) {
-            var found = localStorage.getItem(key);
+            var ret,
+                found = localStorage.getItem(key);
             if (found === null) {
-                return def;
+                ret = def;
             } else {
-                return found;
+                ret = found;
             }
+            return ret;
         },
 
         get_apicfg: function () {

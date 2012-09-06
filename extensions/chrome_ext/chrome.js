@@ -26,7 +26,7 @@ YUI().add('bookie-chrome', function (Y) {
          *
          */
         _bind_site_link: function () {
-            var url = this.api_cfg.url
+            var url = this.api_cfg.url;
             url = url.replace(/api\/v1\/?/, '');
             url = url + this.api_cfg.username;
             Y.one('#bookie_site').set('href', url);
@@ -75,7 +75,6 @@ YUI().add('bookie-chrome', function (Y) {
             e.preventDefault();
             this.indicator.show();
             var model = this.get('model');
-            debugger;
 
             // we need to make sure the tag control is up to date so that we
             // don't miss any tags. If the user starts typing a tag, and then
@@ -195,6 +194,7 @@ YUI().add('bookie-chrome', function (Y) {
 
         _validate_settings: function () {
             var errors = [],
+                ret,
                 settings = this.get('settings'),
                 required = [
                     'api_url',
@@ -210,11 +210,12 @@ YUI().add('bookie-chrome', function (Y) {
 
             // display errors if we have them
             if (errors.length) {
-                return false;
+                ret = false;
             } else {
-                return true;
+                ret = true;
             }
 
+            return ret;
         },
 
         events: {
@@ -539,7 +540,7 @@ YUI().add('bookie-chrome', function (Y) {
                     if (request.url) {
                         chrome.tabs.getSelected(null, function(tab_obj) {
                             var encoded_url = window.btoa(tab_obj.url),
-                                encoded_title = window.btoa(tab_obj.title)
+                                encoded_title = window.btoa(tab_obj.title),
                                 hash = [encoded_url, encoded_title].join('|');
 
                             chrome.tabs.create({url: "popup.html#" + hash});

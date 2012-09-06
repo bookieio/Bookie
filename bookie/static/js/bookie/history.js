@@ -88,7 +88,7 @@ YUI.add('bookie-history-module', function (Y) {
             });
 
             var updated_url = rtrim(this.get('route'), '/') + '/' + terms + '?' + qs;
-            return '/' + ltrim(updated_url, '/')
+            return '/' + ltrim(updated_url, '/');
         },
 
         /**

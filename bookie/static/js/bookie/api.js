@@ -6,7 +6,6 @@
  * @module api
  *
  */
-
 YUI.add('bookie-api', function (Y) {
 
     ns = Y.namespace('bookie');
@@ -48,8 +47,6 @@ YUI.add('bookie-api', function (Y) {
 
                 if (args.callbacks.complete !== undefined) {
                     args.callbacks.complete(data, response, args);
-                } else {
-
                 }
             },
             default_success = function (id, response, args) {
@@ -59,8 +56,6 @@ YUI.add('bookie-api', function (Y) {
                 // data we need to decode and pass to the callback
                 if (args.callbacks.success !== undefined) {
                     args.callbacks.success(data, response, args);
-                } else {
-
                 }
             },
             default_failure = function (id, response, args) {
@@ -75,8 +70,6 @@ YUI.add('bookie-api', function (Y) {
                         response,
                         args
                     );
-                } else {
-
                 }
             };
 
@@ -459,6 +452,7 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/{resource}/bmarks',
                     getter: function () {
+                        var ret;
                         // if there is no resource, use the username as the
                         // resource
                         if (!this.get('resource')) {
@@ -466,13 +460,14 @@ YUI.add('bookie-api', function (Y) {
                         }
 
                         if (this.get('tags')) {
-                            return [
+                            ret = [
                                 '/{resource}/bmarks',
                                 this.get('tags').join('/')
                             ].join('/');
                         } else {
-                            return '/{resource}/bmarks';
+                            ret = '/{resource}/bmarks';
                         }
+                        return ret;
                     }
                 },
 
@@ -966,14 +961,16 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/bmarks/search',
                     getter: function () {
+                        var ret;
                         if (this.get('phrase').length) {
-                            return [
+                            ret = [
                                 '/bmarks/search',
                                 this.get('phrase').join('/')
                             ].join('/');
                         } else {
-                            return '/bmarks/search';
+                            ret = '/bmarks/search';
                         }
+                        return ret;
                     }
                 }
             }
@@ -1032,14 +1029,16 @@ YUI.add('bookie-api', function (Y) {
                 url_element: {
                     value: '/{username}/bmarks/search',
                     getter: function () {
+                        var ret;
                         if (this.get('phrase').length) {
-                            return [
+                            ret = [
                                 '/{username}/bmarks/search',
                                 this.get('phrase').join('/')
                             ].join('/');
                         } else {
-                            return '/{username}/bmarks/search';
+                            ret = '/{username}/bmarks/search';
                         }
+                        return ret;
                     }
                 }
             }
