@@ -24,7 +24,7 @@ class AdminApiTest(unittest.TestCase):
         """Cache the api key for all calls."""
         if not self._api_key:
             res = DBSession.execute(
-                "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+                "SELECT api_key FROM users WHERE username='admin'").fetchone()
             self._api_key = res['api_key']
         return self._api_key
 
