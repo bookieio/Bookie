@@ -8,7 +8,6 @@ from pyramid import testing
 
 from bookie.models import DBSession
 from bookie.models.queue import ImportQueue
-from bookie.models.queue import ImportQueueMgr
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 
@@ -85,7 +84,8 @@ class AdminApiTest(unittest.TestCase):
                 invite_count = count
 
         ok_(found, "There should be the admin user." + res.body)
-        eq_(0, invite_count, "The admin user shouldn't have any invites." + res.body)
+        eq_(0, invite_count,
+            "The admin user shouldn't have any invites." + res.body)
 
     def test_set_invite_ct(self):
         """Test we can set the invite count for the user"""
@@ -98,8 +98,10 @@ class AdminApiTest(unittest.TestCase):
                                 status=200)
         # we should get back tuples of username/count
         data = json.loads(res.body)
-        eq_('admin', data.get('username'), "The admin user data is returned to us." + res.body)
-        eq_(10, int(data.get('invite_ct')), "The admin user now has 10 invites." + res.body)
+        eq_('admin', data.get('username'),
+            "The admin user data is returned to us." + res.body)
+        eq_(10, int(data.get('invite_ct')),
+            "The admin user now has 10 invites." + res.body)
 
         # and of course when we're done we need to unset it back to 0 or else
         # the test above blows up...sigh.
