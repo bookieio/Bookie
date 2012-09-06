@@ -87,7 +87,7 @@ YUI.add('bookie-readable', function (Y) {
              *
              */
             api_host: {
-                value: "http://readable.bmark.us/readable/"
+                value: "http://r.bmark.us/readable/"
             },
 
             /**

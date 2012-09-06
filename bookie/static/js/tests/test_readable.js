@@ -31,7 +31,7 @@ YUI.add('bookie-test-readable', function (Y) {
 
             Y.Assert.areEqual(test_url, api.get('url'));
             Y.Assert.areEqual(
-                'http://readable.bmark.us/readable/http%3A//www.google.com',
+                'http://r.bmark.us/readable/http%3A//www.google.com',
                 api.build_url());
         },
 
