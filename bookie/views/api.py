@@ -270,6 +270,8 @@ def bmark_remove(request):
         }
 
 
+
+
 @view_config(route_name="api_bmarks", renderer="json")
 @view_config(route_name="api_bmarks_user", renderer="json")
 @view_config(route_name="api_bmarks_tags", renderer="json")
@@ -1046,3 +1048,33 @@ def del_user(request):
         return {
             'error': 'Bad Request: ' + str(exc)
          }
+
+
+@view_config(route_name="api_admin_bmark_remove", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def admin_bmark_remove(request):
+    """Remove this bookmark from the system"""
+    rdict = request.matchdict
+    username = rdict.get('username')
+    hash_id = rdict.get('hash_id')
+
+    try:
+        bmark = BmarkMgr.get_by_hash(hash_id,
+                                    username=username)
+        print bmark
+        if bmark:
+            DBSession.delete(bmark)
+            return {
+                'message': "done",
+            }
+        else:
+            return {
+                'error': 'Bookmark not found.',
+             }
+
+    except NoResultFound:
+        request.response.status_code = 404
+        return {
+            'error': 'Bookmark with hash id {0} not found.'.format(
+                        rdict['hash_id'])
+        }
