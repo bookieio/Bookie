@@ -270,8 +270,6 @@ def bmark_remove(request):
         }
 
 
-
-
 @view_config(route_name="api_bmarks", renderer="json")
 @view_config(route_name="api_bmarks_user", renderer="json")
 @view_config(route_name="api_bmarks_tags", renderer="json")
