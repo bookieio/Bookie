@@ -1,6 +1,14 @@
 <%inherit file="/main_wrap.mako" />
 <%namespace file="func.mako" import="api_setup, pager_setup"/>
+<%namespace file="rss.mako" import="rss_title"/>
 <%def name="title()">Recent Bookmarks</%def>
+
+<%def name="rss_link()">
+    % if request.current_route_url() != request.route_url('bmark_recent'):
+        <link href="${request.route_url('bmark_recent_rss')}" rel="alternate" title="Latest bookmarks" type="application/rss+xml" />
+    % endif
+        <link href="${request.current_route_url().replace('recent', 'rss')}" rel="alternate" title="${rss_title()}" type="application/rss+xml" />
+</%def>
 
 <div class="bmarks"></div>
 <%include file="../jstpl.mako"/>
