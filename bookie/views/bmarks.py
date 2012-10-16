@@ -56,6 +56,32 @@ def recent(request):
 
 
 @view_config(
+    route_name="bmark_recent_rss",
+    renderer="/bmark/rss.mako")
+@view_config(
+    route_name="bmark_recent_rss_tags",
+    renderer="/bmark/rss.mako")
+@view_config(
+    route_name="user_bmark_rss",
+    renderer="/bmark/rss.mako")
+@view_config(
+    route_name="user_bmark_rss_tags",
+    renderer="/bmark/rss.mako")
+def recent_rss(request):
+    rdict = request.matchdict
+    request.response.headerlist.extend([('Content-Type', 'application/rss+xml; charset=UTF-8')])
+    
+    tags = rdict.get('tags', None)
+    username = rdict.get('username', None)
+    
+    from views.api import bmark_recent
+    ret = bmark_recent(request)
+    ret['username'] = username
+    ret['tags'] = tags
+    return ret
+
+
+@view_config(
     route_name="user_bmark_edit",
     renderer="/bmark/edit.mako")
 @view_config(
