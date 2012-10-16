@@ -1,20 +1,18 @@
 """Test that we're meeting delicious API specifications"""
-from datetime import datetime, timedelta
+import feedparser
 import logging
+import time
 import transaction
 import unittest
-from mock import Mock, patch
+from datetime import datetime
 from nose.tools import ok_, eq_
 from pyramid import testing
 
-from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
-from bookie.models import Hashed
-from bookie.models import Tag
-from bookie.models import bmarks_tags
 from bookie.tests import TestViewBase
 from bookie.tests import empty_db
+from bookie.tests.factory import make_bookmark
 
 LOG = logging.getLogger(__name__)
 
@@ -35,7 +33,6 @@ class BookieViewsTest(unittest.TestCase):
 
         bmark_us.stored = datetime.now()
         bmark_us.updated = datetime.now()
-        DBSession.add(bmark_us)
         transaction.commit()
 
     def setUp(self):
@@ -94,3 +91,57 @@ class TestNewBookmark(TestViewBase):
         res = self.app.get('/admin/new')
         ok_('Add Bookmark' in res.body,
             "Should see the add bookmark title")
+
+
+class TestRSSFeeds(TestViewBase):
+    """Verify the RSS feeds function correctly."""
+
+    def test_rss_added(self):
+        """Viewing /recent should have a rss url in the content."""
+        body_str = "application/rss+xml"
+        res = self.app.get('/recent')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(body_str in res.body,
+            msg="Request should contain rss str: " + res.body)
+
+    def test_rss_matches_request(self):
+        """The url should match the /recent request with tags."""
+        body_str = "rss/ubuntu"
+        res = self.app.get('/recent/ubuntu')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(body_str in res.body,
+            msg="Request should contain rss url: " + res.body)
+
+    def test_rss_is_parseable(self):
+        """The rss feed should be a parseable feed."""
+        bmarks = [make_bookmark() for i in range(10)]
+        transaction.commit()
+
+        res = self.app.get('/rss')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+
+        # http://packages.python.org/feedparser/introduction.html#parsing-a-feed-from-a-string
+        parsed = feedparser.parse(res.body)
+        links = []
+        for entry in parsed.entries:
+            links.append({
+                'title': entry.title,
+                'category': entry.category,
+                'date': time.strftime('%d %b %Y', entry.updated_parsed),
+                'description': entry.description,
+                'link': entry.link,
+                })
+
+        ok_(links, 'The feed should have a list of links.')
+        eq_(10, len(links), 'There are 10 links in the feed.')
+
+        sample_item = links[0]
+        ok_(sample_item['title'], 'Items have a title.')
+        ok_(sample_item['link'], 'Items have a link to reach things.')
+        ok_(sample_item['description'], 'Items have a description string.')

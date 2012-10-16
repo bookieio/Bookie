@@ -3,6 +3,8 @@ from random import randint
 import random
 import string
 
+from bookie.models import DBSession
+from bookie.models import Bmark
 from bookie.models import Tag
 
 
@@ -21,7 +23,13 @@ def random_string(length=None):
     """
     chars = string.ascii_uppercase + string.digits
     str_length = length if length is not None else random_int()
-    return ''.join(random.choice(chars) for x in range(str_length))
+    return u''.join(random.choice(chars) for x in range(str_length))
+
+
+def random_url():
+    """Generate a random url that is totally bogus."""
+    url = "http://{0}.com".format(random_string())
+    return url
 
 
 def make_tag(name=None):
@@ -29,3 +37,15 @@ def make_tag(name=None):
         name = random_string(255)
 
     return Tag(name)
+
+
+def make_bookmark():
+    """Generate a fake bookmark for testing use."""
+    bmark = Bmark(random_url(),
+                  username="admin",
+                  desc=random_string(),
+                  ext=random_string(),
+                  tags=u"bookmarks")
+    DBSession.add(bmark)
+    DBSession.flush()
+    return bmark

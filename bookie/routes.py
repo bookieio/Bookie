@@ -27,11 +27,17 @@ def build_routes(config):
     config.add_route("bmark_recent", "recent")
     config.add_route("bmark_recent_tags", "recent/*tags")
 
+    config.add_route("bmark_recent_rss", "rss")
+    config.add_route("bmark_recent_rss_tags", "rss/*tags")
+
     config.add_route("bmark_readable", "bmark/readable/{hash_id}")
 
     # user based bmark routes
     config.add_route("user_bmark_recent", "{username}/recent")
     config.add_route("user_bmark_recent_tags", "{username}/recent/*tags")
+
+    config.add_route("user_bmark_rss", "{username}/rss")
+    config.add_route("user_bmark_rss_tags", "{username}/rss/*tags")
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
     config.add_route("user_bmark_edit_error",
