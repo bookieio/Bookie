@@ -10,6 +10,7 @@ from bookie.lib.urlhash import generate_hash
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import TagMgr
+from bookie.views import api
 
 LOG = logging.getLogger(__name__)
 RESULTS_MAX = 50
@@ -32,6 +33,9 @@ def recent(request):
     rdict = request.matchdict
     params = request.params
 
+    # Make sure we generate a url to feed our rss link.
+    current_route = request.current_route_url()
+
     # check for auth related stuff
     # are we looking for a specific user
     username = rdict.get('username', None)
@@ -45,6 +49,7 @@ def recent(request):
     ret = {
          'username': username,
          'tags': tags,
+         'rss_url': current_route.replace('recent', 'rss')
     }
 
     # if we've got url parameters for the page/count then use those to help
@@ -69,13 +74,14 @@ def recent(request):
     renderer="/bmark/rss.mako")
 def recent_rss(request):
     rdict = request.matchdict
-    request.response.headerlist.extend([('Content-Type', 'application/rss+xml; charset=UTF-8')])
-    
+    request.response.headerlist.extend([(
+        'Content-Type',
+        'application/rss+xml; charset=UTF-8')])
+
     tags = rdict.get('tags', None)
     username = rdict.get('username', None)
-    
-    from views.api import bmark_recent
-    ret = bmark_recent(request)
+
+    ret = api.bmark_recent(request)
     ret['username'] = username
     ret['tags'] = tags
     return ret

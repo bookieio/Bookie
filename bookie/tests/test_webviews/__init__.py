@@ -1,20 +1,16 @@
 """Test that we're meeting delicious API specifications"""
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 import transaction
 import unittest
-from mock import Mock, patch
 from nose.tools import ok_, eq_
 from pyramid import testing
 
-from bookie.lib import access
 from bookie.models import DBSession
 from bookie.models import Bmark
-from bookie.models import Hashed
-from bookie.models import Tag
-from bookie.models import bmarks_tags
 from bookie.tests import TestViewBase
 from bookie.tests import empty_db
+from bookie.tests.factory import make_bookmark
 
 LOG = logging.getLogger(__name__)
 
@@ -94,3 +90,40 @@ class TestNewBookmark(TestViewBase):
         res = self.app.get('/admin/new')
         ok_('Add Bookmark' in res.body,
             "Should see the add bookmark title")
+
+
+class TestRSSFeeds(TestViewBase):
+    """Verify the RSS feeds function correctly."""
+
+    def test_rss_added(self):
+        """Viewing /recent should have a rss url in the content."""
+        body_str = "application/rss+xml"
+        res = self.app.get('/recent')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(body_str in res.body,
+            msg="Request should contain rss str: " + res.body)
+
+    def test_rss_matches_request(self):
+        """The url should match the /recent request with tags."""
+        body_str = "rss/ubuntu"
+        res = self.app.get('/recent/ubuntu')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(body_str in res.body,
+            msg="Request should contain rss url: " + res.body)
+
+    def test_rss_is_parseable(self):
+        """The rss feed should be a parseable feed."""
+        bmarks = [make_bookmark() for i in range(10)]
+        [DBSession.add(b) for b in bmarks]
+
+        res = self.app.get('/rss')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+
+        # http://packages.python.org/feedparser/introduction.html#parsing-a-feed-from-a-string
+        ok_(False)

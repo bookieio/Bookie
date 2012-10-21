@@ -9,9 +9,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <meta name="viewport" content="width=device-width" initial-scale="1.0">
         <title>Bookie: ${self.title()}</title>
-        % if hasattr(self, 'rss_link'):
-        ${self.rss_link()}
-        % endif
         <script type="text/javascript"
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
 
@@ -45,6 +42,7 @@
         % if hasattr(self, 'header'):
             ${self.header()}
         % endif
+
         <script type="text/javascript" charset="utf-8">
             <%
                 app_url = request.route_url('home').rstrip('/')

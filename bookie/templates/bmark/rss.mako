@@ -1,15 +1,19 @@
+<?xml version="1.0"?>
 <%
 
 	import time
 	time_format = '%Y-%m-%d %H:%M:%S'
 
-%><%def name="rss_title()"><%
-	rss_title = 'Latest bookmarks'
-	if username:
-		rss_title += ' from ' + username
-	if tags:
-		rss_title += ' tagged with ' + ", ".join(tags)
-%>${rss_title}</%def><?xml version="1.0"?>
+%>
+<%def name="rss_title()">
+    <%
+        rss_title = 'Latest bookmarks'
+        if username:
+            rss_title += ' from ' + username
+        if tags:
+            rss_title += ' tagged with ' + ", ".join(tags)
+    %>${rss_title}
+</%def>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Bookie: ${rss_title()}</title>
