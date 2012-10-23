@@ -1,0 +1,31 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script src="../build/y/yui/yui.js"></script>
+    <script src="../bookie/rsswatch.js"></script>
+    <title>RSS Watch Tests</title>
+</head>
+<body class="yui3-skin-sam">
+    <div id="container"></div>
+    <div id="log"></div>
+    <script src="test_rsswatch.js"></script>
+
+    <script type="text/javascript">
+        YUI().use('test-console', 'test', 'bookie-test-rsswatch', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.rsswatch.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+
+</html>

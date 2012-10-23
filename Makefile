@@ -158,7 +158,7 @@ pgsql_test:
 jstestserver:
 	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer 9000
 .PHONY: jstest
-jstest: test_api test_history test_model test_view test_indicator test_tagcontrol
+jstest: test_api test_history test_model test_rsswatch test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
 jstest_index:
 	xdg-open http://127.0.0.1:6543/tests/index
@@ -177,6 +177,9 @@ test_model:
 .PHONY: test_readable
 test_readable:
 	xdg-open $(JSTESTURL)/test_readable.html
+.PHONY: test_rsswatch
+test_rsswatch:
+	xdg-open $(JSTESTURL)/test_rsswatch.html
 .PHONY: test_tagcontrol
 test_tagcontrol:
 	xdg-open $(JSTESTURL)/test_tagcontrol.html
