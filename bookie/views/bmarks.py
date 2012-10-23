@@ -74,9 +74,7 @@ def recent(request):
     renderer="/bmark/rss.mako")
 def recent_rss(request):
     rdict = request.matchdict
-    request.response.headerlist.extend([(
-        'Content-Type',
-        'application/rss+xml; charset=UTF-8')])
+    request.response.content_type = 'application/atom+xml; charset=UTF-8'
 
     tags = rdict.get('tags', None)
     username = rdict.get('username', None)

@@ -1,8 +1,10 @@
 """Test that we're meeting delicious API specifications"""
-from datetime import datetime
+import feedparser
 import logging
+import time
 import transaction
 import unittest
+from datetime import datetime
 from nose.tools import ok_, eq_
 from pyramid import testing
 
@@ -31,7 +33,6 @@ class BookieViewsTest(unittest.TestCase):
 
         bmark_us.stored = datetime.now()
         bmark_us.updated = datetime.now()
-        DBSession.add(bmark_us)
         transaction.commit()
 
     def setUp(self):
@@ -118,7 +119,7 @@ class TestRSSFeeds(TestViewBase):
     def test_rss_is_parseable(self):
         """The rss feed should be a parseable feed."""
         bmarks = [make_bookmark() for i in range(10)]
-        [DBSession.add(b) for b in bmarks]
+        transaction.commit()
 
         res = self.app.get('/rss')
 
@@ -126,4 +127,21 @@ class TestRSSFeeds(TestViewBase):
             msg='recent status is 200, ' + res.status)
 
         # http://packages.python.org/feedparser/introduction.html#parsing-a-feed-from-a-string
-        ok_(False)
+        parsed = feedparser.parse(res.body)
+        links = []
+        for entry in parsed.entries:
+            links.append({
+                'title': entry.title,
+                'category': entry.category,
+                'date': time.strftime('%d %b %Y', entry.updated_parsed),
+                'description': entry.description,
+                'link': entry.link,
+                })
+
+        ok_(links, 'The feed should have a list of links.')
+        eq_(10, len(links), 'There are 10 links in the feed.')
+
+        sample_item = links[0]
+        ok_(sample_item['title'], 'Items have a title.')
+        ok_(sample_item['link'], 'Items have a link to reach things.')
+        ok_(sample_item['description'], 'Items have a description string.')

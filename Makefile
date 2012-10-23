@@ -125,7 +125,7 @@ smtp:
 
 .PHONY: test
 test:
-	$(NOSE) --with-id -xv -s bookie/tests
+	$(NOSE) --with-id -vx -s bookie/tests
 
 .PHONY: clean_testdb
 clean_testdb:
@@ -134,7 +134,7 @@ clean_testdb:
 .PHONY: builder_test
 builder_test: clean_testdb test_bookie.db
 	# $(NOSE) -vx --with-id 61 bookie/tests
-	$(NOSE) --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
+	$(NOSE) -v --with-coverage --with-id --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: mysql_test
 mysql_test:
