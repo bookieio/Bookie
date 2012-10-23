@@ -10,3 +10,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Jay Wren
 - mikelietz
 - Stéphane Klein
+- Alexandre Gravel-Raymond
