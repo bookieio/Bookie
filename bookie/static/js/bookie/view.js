@@ -264,6 +264,17 @@ YUI.add('bookie-view', function (Y) {
                 n.appendChild(p.render());
                 idx = idx + 1;
             });
+
+            // Watch the API event to make sure we update the rss link.
+            that.rss = new Y.bookie.rsswatch.Updater();
+            Y.on('api:loaded', function (ev) {
+                if (ev.url.indexOf('api/v1/bmarks') !== -1) {
+                    that.rss.fire('update', {
+                        data_url: ev.url
+                    });
+                }
+            });
+
             return html;
         }
     }, {
@@ -1945,7 +1956,8 @@ YUI.add('bookie-view', function (Y) {
         }
     });
 
-}, '0.1.0', { requires: ['base',
-    'view', 'bookie-model', 'bookie-api', 'bookie-indicator', 'handlebars', 'transition',
-    'bookie-tagcontrol', 'substitute']
+}, '0.1.0', {
+    requires: ['base', 'view', 'bookie-model', 'bookie-api',
+        'bookie-indicator', 'handlebars', 'transition', 'bookie-tagcontrol',
+        'bookie-rsswatch', 'substitute']
 });

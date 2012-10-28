@@ -12,6 +12,17 @@ YUI.add('bookie-api', function (Y) {
 
     var _ = Y.substitute;
 
+    /**
+     * Event to watch for that the API has successfully loaded some data.
+     *
+     * @method
+     * @param {}
+     *
+     */
+    Y.publish('api:loaded', {
+        emitFacade: true
+    });
+
     ns.decode_response = function (resp_text) {
         var data;
         try  {
@@ -51,6 +62,10 @@ YUI.add('bookie-api', function (Y) {
             },
             default_success = function (id, response, args) {
                 var data = ns.decode_response(response.responseText);
+                Y.fire('api:loaded', {
+                    url: url,
+                    response: response
+                });
 
                 // this is a 200 code and the response text should be json
                 // data we need to decode and pass to the callback

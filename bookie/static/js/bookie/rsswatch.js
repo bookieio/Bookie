@@ -20,7 +20,6 @@ YUI.add('bookie-rsswatch', function (Y) {
      */
     ns.watch = function () {
         var watcher = ns.Updater();
-        watcher.bind();
     };
 
     /**
@@ -36,22 +35,29 @@ YUI.add('bookie-rsswatch', function (Y) {
          *
          * @method _bind_events
          * @private
+         * @event update Required data_url
          *
          */
         _bind_events: function () {
-            // Potential changes are tags and pagination
-
-            // We need to watch for a new event that the api should shout
-            // about what url was just loaded so that we can s/recent/rss it
-            // and update the rss feed.
-
-
-            // We need this for both the BmarksAll and UserBmarksAll
-
+            var that = this;
+            // We just need an event that says update the url given a set of
+            // data, the last called api url.
+            this.publish('update', {
+                defaultFn: function (ev) {
+                    that._update_url(ev.data_url);
+                }
+            });
         },
 
         /**
          * Given the data url generated, update it to the valid rss url.
+         *
+         * We're building this off of the api of the last loaded set of
+         * content. For example:
+         *
+         * /api/v1/admin/bmarks
+         *
+         * By basically replacing api/v1/bmarks with rss.
          *
          * @method _generate_updated_url
          * @param {String} data_url
@@ -59,7 +65,9 @@ YUI.add('bookie-rsswatch', function (Y) {
          *
          */
         _generate_updated_url: function (data_url) {
-            var updated_url = data_url.replace('recent', 'rss'),
+            var updated_url = data_url.replace('api/v1', '');
+            updated_url = updated_url.replace('/bmarks', 'rss');
+            return updated_url;
         },
 
         /**
@@ -73,7 +81,7 @@ YUI.add('bookie-rsswatch', function (Y) {
          *
          */
         _update_url: function (api_url) {
-            var link = this.get('rss_link');
+            var link = this.get('rss_node');
 
             if (!link) {
                 console.error('missing rss link');
@@ -88,7 +96,7 @@ YUI.add('bookie-rsswatch', function (Y) {
 
     }, {
         ATTRS: {
-            rss_link: {
+            rss_node: {
                 valueFn: function (val) {
                     return Y.one('#rss_url');
                 }
@@ -97,5 +105,6 @@ YUI.add('bookie-rsswatch', function (Y) {
     });
 
 
-
+}, '0.1', {
+    requires: ['base']
 });
