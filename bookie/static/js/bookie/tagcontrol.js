@@ -606,6 +606,23 @@ YUI.add('bookie-tagcontrol', function (Y) {
          *
          */
         _update_input_width: function (new_value) {
+            // If there's a space in the new value (say from a paste) make
+            // sure we're updating our list of tags before we adjust the
+            // input.
+            if (new_value.indexOf(' ') !== -1) {
+                var tags = new_value.split(' ');
+
+                // only the last one gets treated as input.
+                var last = tags.pop();
+
+                for (var i=0;i<tags.length;i++) {
+                    // Add silently.
+                    this.add(tags[i], true);
+                }
+
+                this.ui.one('input').set('value', last);
+            }
+
             // we need to update the clone with the content so it resizes
             this.clone.setContent(new_value);
 
@@ -614,6 +631,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 'width',
                 this.clone.get('offsetWidth') + 20
             );
+
+            
         },
 
         /**

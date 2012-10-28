@@ -166,7 +166,6 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
             Y.Assert.areEqual(0, this.tc.get('tags').length);
         },
 
-
         test_initial_tags: function () {
             this.t = Y.one('input');
             this.t.set('value', 'test test2');
@@ -183,6 +182,6 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
 
 }, '0.4', {
     requires: [
-        'test', 'node-event-simulate', 'bookie-tagcontrol'
+        'test', 'node-event-simulate', 'bookie-tagcontrol', 'event-valuechange'
     ]
 });
