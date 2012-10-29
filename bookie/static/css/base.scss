@@ -123,6 +123,11 @@ body {
 
     .signup {
         font-weight: .8em;
+        float: right;
+        width: 45%;
+        input[type="email"]#email {
+            width: 20em;
+        }
     }
 }
 

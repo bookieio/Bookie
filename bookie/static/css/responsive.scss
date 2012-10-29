@@ -11,6 +11,18 @@
         margin: 0;
     }
 
+    #welcome {
+        .signup {
+            float: none;
+            clear: both;
+            width: 100%;
+
+            input[type="email"]#email {
+                width: 95%;
+            }
+        }
+    }
+
     .readable {
         font-size: 16px;
 

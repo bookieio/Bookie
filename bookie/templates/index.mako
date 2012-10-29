@@ -1,8 +1,23 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Welcome to Bookie</%def>
 
-<div id="welcome" class="yui3-g" style="max-width: 1000px; margin: 1em 4em;">
-    <div class="yui3-u-1-2">
+<div id="welcome" class="" style="max-width: 1000px; margin: 1em 4em;">
+    <div class="signup">
+        <div class="form">
+            <h2>Enter Email to Signup</h2>
+            <form id="#signup_form" action="signup_process" method="POST">
+                <ul>
+                    <li>
+                        <input type="email" id="email" name="email"
+                        placeholder="email address" />
+                        <input type="submit" id="send_signup" name="send_signup" value="Sign Up" />
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+
+    <div class="">
         <p>Bookie is an open source bookmarking application.</p>
         <p>Host it yourself or feel free to signup for the hosted version.</p>
         <div>Features</div>
@@ -37,19 +52,5 @@
         <iframe style="border: 0; margin: 0; padding: 0;"
             src="https://www.gittip.com/mitechie/widget.html"
             width="48pt" height="20pt"></iframe>
-    </div>
-    <div class="yui3-u-1-2" class="signup">
-        <div class="form">
-            <h2>Enter Email to Signup</h2>
-            <form id="#signup_form" action="signup_process" method="POST">
-                <ul>
-                    <li>
-                        <input type="email" id="email" name="email"
-                        style="width: 20em;" placeholder="email address" />
-                        <input type="submit" id="send_signup" name="send_signup" value="Sign Up" />
-                    </li>
-                </ul>
-            </form>
-        </div>
     </div>
 </div>
