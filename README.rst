@@ -3,7 +3,7 @@ Bookie
 :Main Site: https://bmark.us
 :Docs: http://docs.bmark.us
 :Mailing List: https://groups.google.com/forum/?hl=en#!forum/bookie_bookmarks
-:Twitter: http://twitter.com/BoookieBmarks
+:Twitter: http://twitter.com/BookieBmarks
 :Build Server: http://build.bmark.us
 
 Bookie will one day be a self-hosted bookmark web-service similar to
