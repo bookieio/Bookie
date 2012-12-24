@@ -23,7 +23,7 @@
                 combine: true,
                 base: '${combo}${cache_buster}/combo?y/',
                 comboBase: '${combo}${cache_buster}/combo?',
-                maxURLLength: 1500,
+                maxURLLength: 1300,
                 root: 'y/',
                 groups: {
                     bookie: {
