@@ -31,21 +31,6 @@ YUI.add('bookie-readable', function (Y) {
         },
 
         /**
-         * Generate a full api url to call
-         *
-         * If user_username is true then perform a replace on the given url
-         * with the api instance's username parameter
-         *
-         * @method build_url
-         *
-         */
-        build_url: function () {
-            // make sure the username is in the config as well
-            var url = this.get('url');
-            return this.get('api_host') + escape(url);
-        },
-
-        /**
          * Actually make the ajax call with the given cfg we've setup for use.
          *
          * The callbacks passed are then sent through to be called upon the
@@ -59,7 +44,10 @@ YUI.add('bookie-readable', function (Y) {
         call: function (callbacks) {
             var that = this,
                 cfg = {
-                    method: 'GET',
+                    data: {
+                        url: this.get('url')
+                    },
+                    method: 'POST',
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json"
@@ -73,7 +61,7 @@ YUI.add('bookie-readable', function (Y) {
                 };
 
             Y.bookie.request_handler(
-                this.build_url(),
+                this.get('api_host'),
                 cfg,
                 args
             );
@@ -87,7 +75,7 @@ YUI.add('bookie-readable', function (Y) {
              *
              */
             api_host: {
-                value: "http://r.bmark.us/readable/"
+                value: "http://r.bmark.us/api/v1/parse"
             },
 
             /**

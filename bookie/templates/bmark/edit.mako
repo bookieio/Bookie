@@ -124,7 +124,7 @@
 
             readable.call({
                 success: function (data, response, args) {
-                    readable_target.setContent(data.content)
+                    readable_target.setContent(data.readable)
                     indicator.hide();
                 },
 
