@@ -6,10 +6,12 @@ import unittest
 from nose.tools import ok_, eq_
 from pyramid import testing
 
+from bookie.models import Bmark
 from bookie.models import DBSession
 from bookie.models.queue import ImportQueue
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
+from bookie.tests import factory
 
 LOG = logging.getLogger(__name__)
 
@@ -137,6 +139,7 @@ class AdminApiTest(unittest.TestCase):
         }
         res = self.testapp.get('/api/v1/a/users/list',
                                 params=params,
+
                                 status=200)
 
         # we should get back dict of count, users.
@@ -147,3 +150,24 @@ class AdminApiTest(unittest.TestCase):
             "The first user is from admin " + res.body)
         eq_('testing@dummy.com', data.get('users')[0]['email'],
             "The first user is from testing@dummy.com " + res.body)
+
+    def test_user_delete(self):
+        """Verify we can remove a user and their bookmarks via api."""
+        bob = factory.make_user(username='bob')
+        factory.make_bookmark(user=bob)
+        transaction.commit()
+
+        res = self.testapp.delete(
+            '/api/v1/a/users/delete/{0}?api_key={1}'.format(
+                'bob',
+                self.api_key),
+            status=200)
+
+        # we should get back dict of count, users.
+        data = json.loads(res.body)
+
+        ok_(data.get('success'))
+
+        # Verify that we have no bookmark for the user any longer.
+        bmarks = Bmark.query.filter(Bmark.username == 'bob').all()
+        eq_(0, len(bmarks))

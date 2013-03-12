@@ -125,7 +125,7 @@ smtp:
 
 .PHONY: test
 test:
-	$(NOSE) --with-id -vx -s bookie/tests
+	$(NOSE) --with-id $(ID) -vx -s bookie/tests
 
 .PHONY: clean_testdb
 clean_testdb:

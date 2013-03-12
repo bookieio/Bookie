@@ -6,6 +6,7 @@ import string
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag
+from bookie.models.auth import User
 
 
 def random_int(max=1000):
@@ -39,13 +40,32 @@ def make_tag(name=None):
     return Tag(name)
 
 
-def make_bookmark():
+def make_bookmark(user=None):
     """Generate a fake bookmark for testing use."""
     bmark = Bmark(random_url(),
                   username="admin",
                   desc=random_string(),
                   ext=random_string(),
                   tags=u"bookmarks")
+
+    if user:
+        bmark.username = user.username
+        bmark.user = user
+
     DBSession.add(bmark)
     DBSession.flush()
     return bmark
+
+
+def make_user(username=None):
+    """Generate a fake user to test against."""
+    user = User()
+
+    if not username:
+        username = random_string(10)
+
+    user.username = username
+
+    DBSession.add(user)
+    DBSession.flush()
+    return user

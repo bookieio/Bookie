@@ -100,7 +100,7 @@ def bmark_get(request):
     if 'last_bmark' in params and params['last_bmark'] != "false":
         last = BmarkMgr.get_recent_bmark(username=username)
         if last is not None:
-            last_bmark = {'last':  dict(last)}
+            last_bmark = {'last': dict(last)}
 
     if bookmark is None:
         request.response.status_int = 404
@@ -161,7 +161,7 @@ def bmark_add(request):
         request.response.status_int = 400
         return {
             'error': 'Bad Request: missing url',
-         }
+        }
 
     user = request.user
 
@@ -169,19 +169,19 @@ def bmark_add(request):
         request.response.status_int = 400
         return {
             'error': 'Bad Request: missing url',
-         }
+        }
 
     elif 'hash_id' in rdict:
         try:
             mark = BmarkMgr.get_by_hash(rdict['hash_id'],
-                                       username=user.username)
+                                        username=user.username)
             mark = _update_mark(mark, params)
 
         except NoResultFound:
             request.response.status_code = 404
             return {
                 'error': 'Bookmark with hash id {0} not found.'.format(
-                            rdict['hash_id'])
+                         rdict['hash_id'])
             }
 
     else:
@@ -206,14 +206,15 @@ def bmark_add(request):
             # check to see if we know where this is coming from
             inserted_by = params.get('inserted_by', 'unknown_api')
 
-            mark = BmarkMgr.store(params['url'],
-                         user.username,
-                         params.get('description', ''),
-                         params.get('extended', ''),
-                         params.get('tags', ''),
-                         dt=stored_time,
-                         inserted_by=inserted_by,
-                   )
+            mark = BmarkMgr.store(
+                params['url'],
+                user.username,
+                params.get('description', ''),
+                params.get('extended', ''),
+                params.get('tags', ''),
+                dt=stored_time,
+                inserted_by=inserted_by,
+            )
 
         # we need to process any commands associated as well
         commander = Commander(mark)
@@ -256,7 +257,7 @@ def bmark_remove(request):
 
     try:
         bmark = BmarkMgr.get_by_hash(rdict['hash_id'],
-                                    username=user.username)
+                                     username=user.username)
         DBSession.delete(bmark)
         return {
             'message': "done",
@@ -266,7 +267,7 @@ def bmark_remove(request):
         request.response.status_code = 404
         return {
             'error': 'Bookmark with hash id {0} not found.'.format(
-                        rdict['hash_id'])
+                     rdict['hash_id'])
         }
 
 
@@ -310,14 +311,15 @@ def bmark_recent(request):
     # see bug #142
     with_content = False
 
-    recent_list = BmarkMgr.find(limit=count,
-                           order_by=Bmark.stored.desc(),
-                           page=page,
-                           tags=tags,
-                           username=username,
-                           with_content=with_content,
-                           with_tags=True,
-                           )
+    recent_list = BmarkMgr.find(
+        limit=count,
+        order_by=Bmark.stored.desc(),
+        page=page,
+        tags=tags,
+        username=username,
+        with_content=with_content,
+        with_tags=True,
+    )
 
     result_set = []
 
@@ -336,11 +338,11 @@ def bmark_recent(request):
         result_set.append(return_obj)
 
     return {
-         'bmarks': result_set,
-         'max_count': RESULTS_MAX,
-         'count': len(recent_list),
-         'page': page,
-         'tag_filter': tags,
+        'bmarks': result_set,
+        'max_count': RESULTS_MAX,
+        'count': len(recent_list),
+        'page': page,
+        'tag_filter': tags,
     }
 
 
@@ -378,14 +380,15 @@ def bmark_popular(request):
     if not tags and 'tag_filter' in params:
         tags = params.get('tag_filter').split()
 
-    popular_list = BmarkMgr.find(limit=count,
-                           order_by=Bmark.clicks.desc(),
-                           page=page,
-                           tags=tags,
-                           username=username,
-                           with_content=with_content,
-                           with_tags=True,
-                           )
+    popular_list = BmarkMgr.find(
+        limit=count,
+        order_by=Bmark.clicks.desc(),
+        page=page,
+        tags=tags,
+        username=username,
+        with_content=with_content,
+        with_tags=True,
+    )
 
     result_set = []
 
@@ -404,11 +407,11 @@ def bmark_popular(request):
         result_set.append(return_obj)
 
     return {
-         'bmarks': result_set,
-         'max_count': RESULTS_MAX,
-         'count': len(popular_list),
-         'page': page,
-         'tag_filter': tags,
+        'bmarks': result_set,
+        'max_count': RESULTS_MAX,
+        'count': len(popular_list),
+        'page': page,
+        'tag_filter': tags,
     }
 
 
@@ -448,7 +451,7 @@ def extension_sync(request):
 
     hash_list = BmarkMgr.hash_list(username=username)
     return {
-            'hash_list': [hash[0] for hash in hash_list]
+        'hash_list': [hash[0] for hash in hash_list]
     }
 
 
@@ -662,18 +665,18 @@ def reset_password(request):
     if not UserMgr.acceptable_password(new):
         request.response.status_int = 406
         return {
-                'username': user_acct.username,
-                'error': "Come on, let's try a real password this time"
-               }
+            'username': user_acct.username,
+            'error': "Come on, let's try a real password this time"
+        }
 
     # before we change the password, let's verify it
     if user_acct.validate_password(current):
         # we're good to change it
         user_acct.password = new
         return {
-                'username': user_acct.username,
-                'message': "Password changed",
-               }
+            'username': user_acct.username,
+            'message': "Password changed",
+        }
     else:
         request.response.status_int = 403
         return {
@@ -698,7 +701,7 @@ def suspend_acct(request):
     if user is None and email is None:
         request.response.status_int = 406
         return {
-            'error':  "Please submit an email address",
+            'error': "Please submit an email address",
         }
 
     if user is None and email is not None:
@@ -707,7 +710,7 @@ def suspend_acct(request):
     if user is None:
         request.response.status_int = 404
         return {
-            'error':  "Please submit a valid address",
+            'error': "Please submit a valid address",
             'email': email
         }
 
@@ -715,7 +718,7 @@ def suspend_acct(request):
     if user.activation is not None:
         request.response.status_int = 406
         return {
-            'error':  """You've already marked your account for reactivation.
+            'error': """You've already marked your account for reactivation.
 Please check your email for the reactivation link. Make sure to
 check your spam folder.""",
             'username': user.username,
@@ -734,12 +737,14 @@ check your spam folder.""",
                         "Activate your Bookie account",
                         settings)
 
-    msg.send(request.route_url('reset',
-                         username=user.username,
-                         reset_key=user.activation.code))
+    msg.send(
+        request.route_url(
+            'reset',
+            username=user.username,
+            reset_key=user.activation.code))
 
     return {
-        'message':  """Your account has been marked for reactivation. Please
+        'message': """Your account has been marked for reactivation. Please
                     check your email for instructions to reset your
                     password""",
     }
@@ -855,9 +860,11 @@ def invite_user(request):
                             "Enable your Bookie account",
                             settings)
 
-        msg.send(request.route_url('reset',
-            username=new_user.username,
-            reset_key=new_user.activation.code))
+        msg.send(
+            request.route_url(
+                'reset',
+                username=new_user.username,
+                reset_key=new_user.activation.code))
         return {
             'message': 'You have invited: ' + new_user.email
         }
@@ -999,7 +1006,7 @@ def new_user(request):
         request.response.status_int = 400
         return {
             'error': 'Bad Request: User exists.',
-         }
+        }
 
 
 @view_config(route_name="api_admin_del_user", renderer="json")
@@ -1008,6 +1015,8 @@ def del_user(request):
     """Remove a bad user from the system via the api.
 
     For admin use only.
+
+    Removes all of a user's bookmarks before removing the user.
 
     """
     mdict = request.matchdict
@@ -1020,7 +1029,7 @@ def del_user(request):
         request.response.status_int = 400
         return {
             'error': 'Bad Request: No username to remove.',
-         }
+        }
 
     u = UserMgr.get(username=del_username)
 
@@ -1029,10 +1038,12 @@ def del_user(request):
         request.response.status_int = 404
         return {
             'error': 'User not found.',
-         }
+        }
 
     try:
+        Bmark.query.filter(Bmark.username == u.username).delete()
         DBSession.delete(u.activation)
+        # Delete all of the bmarks for this year.
         DBSession.delete(u)
         return {
             'success': True,
@@ -1045,7 +1056,7 @@ def del_user(request):
         request.response.status_int = 500
         return {
             'error': 'Bad Request: ' + str(exc)
-         }
+        }
 
 
 @view_config(route_name="api_admin_bmark_remove", renderer="json")
@@ -1058,7 +1069,7 @@ def admin_bmark_remove(request):
 
     try:
         bmark = BmarkMgr.get_by_hash(hash_id,
-                                    username=username)
+                                     username=username)
         print bmark
         if bmark:
             DBSession.delete(bmark)
@@ -1068,11 +1079,11 @@ def admin_bmark_remove(request):
         else:
             return {
                 'error': 'Bookmark not found.',
-             }
+            }
 
     except NoResultFound:
         request.response.status_code = 404
         return {
             'error': 'Bookmark with hash id {0} not found.'.format(
-                        rdict['hash_id'])
+                rdict['hash_id'])
         }
