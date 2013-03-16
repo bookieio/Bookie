@@ -13,6 +13,7 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
 from bookie.models import Tag
+from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.queue import ImportQueue
 from bookie.models.fulltext import _reset_index
@@ -86,7 +87,8 @@ class TestViewBase(unittest.TestCase):
 
     def _login_admin(self):
         """Make the login call to the app"""
-        self.app.post('/login',
+        self.app.post(
+            '/login',
             params={
                 "login": "admin",
                 "password": "admin",
@@ -104,6 +106,9 @@ def empty_db():
     # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
     ImportQueue.query.delete()
+    # Delete the users not admin in the system.
+    Activation.query.delete()
+    User.query.filter(User.username != 'admin').delete()
 
     DBSession.flush()
     transaction.commit()

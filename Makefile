@@ -106,6 +106,9 @@ tags:
 	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
 
 
+lint:
+	flake8 bookie/
+
 # DEPS
 #
 # Install the packages we need.

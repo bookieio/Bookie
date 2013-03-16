@@ -51,7 +51,7 @@ class TestTagCommander(TestCase):
         commander.build_commands()
 
         ok_('!toread' in commander.commands,
-                "Our commander should find !toread command to run")
+            "Our commander should find !toread command to run")
 
     def test_command_tags_removed(self):
         """Test that the command tags are not left over in bmark object"""
@@ -64,7 +64,7 @@ class TestTagCommander(TestCase):
         updated = commander.process()
 
         ok_('!toread' not in updated.tags,
-                "Our commander should find !toread command to run")
+            "Our commander should find !toread command to run")
 
 
 class TestToRead(TestCase):
@@ -88,7 +88,7 @@ class TestToRead(TestCase):
         bm = BmarkMock()
         updated = ToRead.run(bm)
         ok_('toread' in updated.tags,
-                "Updated bmark should have 'toread' tag set")
+            "Updated bmark should have 'toread' tag set")
 
     def test_toread_in_commandset(self):
         """Make sure we can process this command through the commander"""
@@ -100,9 +100,9 @@ class TestToRead(TestCase):
         updated = commander.process()
 
         ok_('toread' in updated.tags,
-                "Should have the toread tag in the updated bookmark")
+            "Should have the toread tag in the updated bookmark")
         ok_('!toread' not in updated.tags,
-                "Should not have the !toread tag in the updated bookmark")
+            "Should not have the !toread tag in the updated bookmark")
 
 
 class TestIsRead(TestCase):
@@ -125,4 +125,4 @@ class TestIsRead(TestCase):
         bm.tags['toread'] = True
         updated = IsRead.run(bm)
         ok_('toread' not in updated.tags,
-                "Updated bmark should not have 'toread' tag set")
+            "Updated bmark should not have 'toread' tag set")

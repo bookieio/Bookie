@@ -81,9 +81,9 @@ class DelImporter(Importer):
         Any blank lines before it will cause it to fail
 
         """
-        if soup.contents \
-           and soup.contents[0] == delicious_doctype \
-           and not soup.find('h3'):
+        if (soup.contents and
+                soup.contents[0] == delicious_doctype and
+                not soup.find('h3')):
             can_handle = True
 
         return can_handle
@@ -105,8 +105,8 @@ class DelImporter(Importer):
         soup = BeautifulSoup(file_io)
         can_handle = False
         can_handle = DelImporter._is_delicious_format(soup,
-                                                   can_handle,
-                                                   delicious_doctype)
+                                                      can_handle,
+                                                      delicious_doctype)
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
@@ -159,9 +159,9 @@ class GBookmarkImporter(Importer):
         get them all. See the sample files in the test_importer directory
 
         """
-        if soup.contents \
-           and soup.contents[0] == gbookmark_doctype \
-           and soup.find('h3'):
+        if (soup.contents and
+                soup.contents[0] == gbookmark_doctype and
+                soup.find('h3')):
             can_handle = True
 
         return can_handle
@@ -219,8 +219,9 @@ class GBookmarkImporter(Importer):
                         tags = [tag_text] if tag_text != 'Unlabeled' else []
 
                         # get extended description
-                        has_extended = (link.parent.nextSibling and
-                                link.parent.nextSibling.name == 'dd')
+                        has_extended = (
+                            link.parent.nextSibling and
+                            link.parent.nextSibling.name == 'dd')
                         if has_extended:
                             extended = link.parent.nextSibling.text
                         else:
@@ -237,7 +238,7 @@ class GBookmarkImporter(Importer):
                             'tags': tags,
                             'extended': extended,
                             'date_added': datetime.fromtimestamp(
-                                            timestamp_added),
+                                timestamp_added),
                         }
 
         # save the bookmark

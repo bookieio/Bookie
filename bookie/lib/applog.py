@@ -40,12 +40,12 @@ class AuthLog(Log):
 
         status = get_status(success)
         message = "User {0} attempted to login {1}".format(username,
-                                                          success)
+                                                           success)
 
         data = {
-                'user': username,
-                'component': AuthLog.component,
-                'payload': passwd(password)
+            'user': username,
+            'component': AuthLog.component,
+            'payload': passwd(password)
         }
 
         AuthLog.store(status, message, **data)
@@ -56,8 +56,8 @@ class AuthLog(Log):
         msg = "{0} is a disabled user account".format(username)
 
         data = {
-                'user': username,
-                'component': AuthLog.component
+            'user': username,
+            'component': AuthLog.component
         }
 
         AuthLog.store(Log.INFO, msg, **data)
@@ -73,12 +73,12 @@ class AuthLog(Log):
 
         LOG.debug(msg)
         data = {
-                'user': username,
-                'component': AuthLog.component,
-                'payload': {
-                    'success': success,
-                    'code': code,
-                }
+            'user': username,
+            'component': AuthLog.component,
+            'payload': {
+                'success': success,
+                'code': code,
+            }
         }
 
         AuthLog.store(Log.INFO, msg, **data)
@@ -102,11 +102,11 @@ class BmarkLog(Log):
 
         status = get_status(your_export)
         message = "User {0} exported the bookmarks for {1}".format(
-                current_user, for_user)
+            current_user, for_user)
 
         data = {
-                'user': current_user,
-                'component': BmarkLog.component,
+            'user': current_user,
+            'component': BmarkLog.component,
         }
 
         BmarkLog.store(status, message, **data)

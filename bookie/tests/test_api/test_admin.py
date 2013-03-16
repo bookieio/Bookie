@@ -59,8 +59,8 @@ class AdminApiTest(unittest.TestCase):
             'api_key': self.api_key
         }
         res = self.testapp.get('/api/v1/a/accounts/inactive',
-                                params=params,
-                                status=200)
+                               params=params,
+                               status=200)
         # by default we shouldn't have any inactive users
         data = json.loads(res.body)
         users = [u for u in data['users']]
@@ -74,8 +74,8 @@ class AdminApiTest(unittest.TestCase):
             'api_key': self.api_key
         }
         res = self.testapp.get('/api/v1/a/accounts/invites',
-                                params=params,
-                                status=200)
+                               params=params,
+                               status=200)
         # we should get back tuples of username/count
         data = json.loads(res.body)['users']
         found = False
@@ -118,8 +118,8 @@ class AdminApiTest(unittest.TestCase):
             'api_key': self.api_key
         }
         res = self.testapp.get('/api/v1/a/imports/list',
-                                params=params,
-                                status=200)
+                               params=params,
+                               status=200)
 
         # we should get back tuples of username/count
         data = json.loads(res.body)
@@ -138,9 +138,8 @@ class AdminApiTest(unittest.TestCase):
             'api_key': self.api_key
         }
         res = self.testapp.get('/api/v1/a/users/list',
-                                params=params,
-
-                                status=200)
+                               params=params,
+                               status=200)
 
         # we should get back dict of count, users.
         data = json.loads(res.body)

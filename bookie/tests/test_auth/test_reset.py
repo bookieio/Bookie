@@ -52,7 +52,8 @@ class TestReactivateFunctional(TestCase):
 
     def test_activate_form_bad(self):
         """Test bad call to reset"""
-        res = self.testapp.post('/api/v1/suspend',
+        res = self.testapp.post(
+            '/api/v1/suspend',
             content_type='application/json',
             status=406)
         success = json.loads(res.body)['error']
@@ -75,8 +76,8 @@ class TestReactivateFunctional(TestCase):
 
         """
         res = self.testapp.post('/api/v1/suspend',
-                               params={'email': u'testing@dummy.com'},
-                               status=200)
+                                params={'email': u'testing@dummy.com'},
+                                status=200)
 
         success = json.loads(res.body)
         ok_('message' in success,
@@ -91,23 +92,23 @@ class TestReactivateFunctional(TestCase):
 
         """
         res = self.testapp.post('/api/v1/suspend',
-                               params={'email': u'testing@dummy.com'},
-                               status=200)
+                                params={'email': u'testing@dummy.com'},
+                                status=200)
 
         success = json.loads(res.body)
         ok_('message' in success,
             "Should be successful with admin email address")
 
         res = self.testapp.post('/api/v1/suspend',
-                               params={'email': u'testing@dummy.com'},
-                               status=406)
+                                params={'email': u'testing@dummy.com'},
+                                status=406)
 
         success = json.loads(res.body)
         ok_('error' in success,
             "Should not be successful on second try: " + str(res))
 
         ok_('already' in str(res),
-                "Should find 'already' in the response: " + str(res))
+            "Should find 'already' in the response: " + str(res))
 
     def test_reactivate_process(self):
         """Walk through all of the steps at a time
@@ -119,8 +120,8 @@ class TestReactivateFunctional(TestCase):
 
         """
         res = self.testapp.post('/api/v1/suspend',
-                               params={'email': u'testing@dummy.com'},
-                               status=200)
+                                params={'email': u'testing@dummy.com'},
+                                status=200)
 
         success = json.loads(res.body)
         ok_('message' in success,
@@ -133,11 +134,11 @@ class TestReactivateFunctional(TestCase):
                      'form.submitted': 'true'}
 
         res = self.testapp.post('/login',
-                               params=user_data,
-                               status=200)
+                                params=user_data,
+                                status=200)
 
         ok_('account deactivated' in str(res),
-                "Login should have failed since we're not active: " + str(res))
+            "Login should have failed since we're not active: " + str(res))
 
         act = Activation.query.first()
         self.testapp.delete(
@@ -148,12 +149,12 @@ class TestReactivateFunctional(TestCase):
             status=200)
 
         ok_('activated' in str(res),
-                "Should be prompted to login now: " + str(res))
+            "Should be prompted to login now: " + str(res))
 
         user_data = {'login': 'admin',
                      'password': 'admin',
                      'form.submitted': 'true'}
 
         res = self.testapp.post('/login',
-                               params=user_data,
-                               status=302)
+                                params=user_data,
+                                status=302)

@@ -47,8 +47,8 @@ class ActivationMgr(object):
     def get_user(username, code):
         """Get the user for this code"""
         qry = Activation.query.\
-                filter(Activation.code == code).\
-                filter(User.username == username)
+            filter(Activation.code == code).\
+            filter(User.username == username)
 
         res = qry.first()
 
@@ -62,8 +62,8 @@ class ActivationMgr(object):
         """Given this code get the user with this code make sure they exist"""
 
         qry = Activation.query.\
-                filter(Activation.code == code).\
-                filter(User.username == username)
+            filter(Activation.code == code).\
+            filter(User.username == username)
 
         res = qry.first()
 
@@ -97,8 +97,9 @@ class Activation(Base):
 
     id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     code = Column(Unicode(60))
-    valid_until = Column(DateTime,
-                    default=lambda: datetime.now + ACTIVATION_AGE)
+    valid_until = Column(
+        DateTime,
+        default=lambda: datetime.now + ACTIVATION_AGE)
     created_by = Column('created_by', Unicode(255))
 
     def __init__(self, created_system):
@@ -228,9 +229,10 @@ class User(Base):
     invite_ct = Column(Integer, default=0)
     invited_by = Column('invited_by', Unicode(255))
 
-    activation = relation(Activation,
-                    uselist=False,
-                    backref='user')
+    activation = relation(
+        Activation,
+        uselist=False,
+        backref='user')
 
     def __init__(self):
         """By default a user starts out deactivated"""

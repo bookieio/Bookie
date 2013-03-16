@@ -41,11 +41,11 @@ class TestFulltext(TestCase):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
-                'description': u'This is my google desc SEE',
-                'extended': u'And some extended notes about it in full form',
-                'tags': u'python search',
-                'api_key': API_KEY,
+            'url': u'http://google.com',
+            'description': u'This is my google desc SEE',
+            'extended': u'And some extended notes about it in full form',
+            'tags': u'python search',
+            'api_key': API_KEY,
         }
 
         if new_tags:
@@ -64,7 +64,7 @@ class TestFulltext(TestCase):
         handler = get_fulltext_handler("")
 
         ok_(isinstance(handler, WhooshFulltext),
-                "Should get a whoosh fulltext by default")
+            "Should get a whoosh fulltext by default")
 
     def test_sqlite_save(self):
         """Verify that if we store a bookmark we get the fulltext storage"""
@@ -73,25 +73,25 @@ class TestFulltext(TestCase):
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/google')
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/python')
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
 
         ok_('my google desc' in search_res.body,
-            "Tag search should find our description on the page: " + \
-                search_res.body)
+            "Tag search should find our description on the page: " +
+            search_res.body)
 
         search_res = self.testapp.get(
             '/api/v1/admin/bmarks/search/extended%20notes')
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
         ok_('extended notes' in search_res.body,
-            "Extended search should find our description on the page: " + \
-                search_res.body)
+            "Extended search should find our description on the page: " +
+            search_res.body)
 
     def test_sqlite_update(self):
         """Verify that if we update a bookmark, fulltext is updated
@@ -107,7 +107,7 @@ class TestFulltext(TestCase):
 
         search_res = self.testapp.get('/admin/results?search=icon')
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
 
         ok_('icon' in search_res.body,
             "We should find the new tag icon on the page: " + search_res.body)
@@ -117,25 +117,25 @@ class TestFulltext(TestCase):
         # first let's add a bookmark we can search on
         self._get_good_request()
         search_res = self.testapp.get(
-                        '/admin/results/google',
-                        headers={
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
+            '/admin/results/google',
+            headers={
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
         )
 
         ok_(search_res.status == '200 OK',
-                "Status is 200: " + search_res.status)
+            "Status is 200: " + search_res.status)
 
         ok_('my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
         # also check for our specific json bits
         ok_('success' in search_res.body,
-                "We should see a success bit in the json: " + search_res.body)
+            "We should see a success bit in the json: " + search_res.body)
 
         ok_('payload' in search_res.body,
-                "We should see a payload bit in the json: " + search_res.body)
+            "We should see a payload bit in the json: " + search_res.body)
 
         ok_('message' in search_res.body,
-                "We should see a message bit in the json: " + search_res.body)
+            "We should see a message bit in the json: " + search_res.body)

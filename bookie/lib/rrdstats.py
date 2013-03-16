@@ -51,7 +51,8 @@ class SystemCounts(object):
         rra1 = RRA(cf='AVERAGE', xff=0.5, steps=24, rows=8760)
         self.rras.append(rra1)
 
-        self.myRRD = RRD(self.datafile,
+        self.myRRD = RRD(
+            self.datafile,
             ds=self.dss,
             rra=self.rras,
             start=int(time.mktime(start_date.timetuple())))
@@ -69,20 +70,25 @@ class SystemCounts(object):
 
     def output(self, months=3):
         """Render out the image of the rrd"""
-        def1 = DEF(rrdfile=self.datafile,
+        def1 = DEF(
+            rrdfile=self.datafile,
             vname='bookmark_count',
             dsName=self.ds1.name)
-        def2 = DEF(rrdfile=self.datafile,
+        def2 = DEF(
+            rrdfile=self.datafile,
             vname='unique_count',
             dsName=self.ds2.name)
-        def3 = DEF(rrdfile=self.datafile,
+        def3 = DEF(
+            rrdfile=self.datafile,
             vname='tag_count',
             dsName=self.ds3.name)
-        line1 = LINE(defObj=def1,
+        line1 = LINE(
+            defObj=def1,
             color='#01FF13',
             legend='Bookmarks',
             stack=True)
-        line2 = LINE(defObj=def2,
+        line2 = LINE(
+            defObj=def2,
             color='#DA7202',
             legend='Unique',
             stack=True)
@@ -108,10 +114,10 @@ class SystemCounts(object):
         start_date = time.mktime((today - timedelta(weeks=28)).timetuple())
         end_date = time.mktime(today.timetuple())
         g = Graph(self.outputfile,
-            start=int(start_date),
-            end=int(end_date),
-            vertical_label='count',
-            color=ca)
+                  start=int(start_date),
+                  end=int(end_date),
+                  vertical_label='count',
+                  color=ca)
         g.data.extend([def1, def2, def3, line3, line2, line1])
 
         if not os.path.exists(os.path.dirname(self.outputfile)):
@@ -155,7 +161,8 @@ class ImportQueueDepth(object):
         rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=2016)
         self.rras.append(rra1)
 
-        self.myRRD = RRD(self.datafile,
+        self.myRRD = RRD(
+            self.datafile,
             ds=self.dss,
             rra=self.rras,
             start=int(time.mktime(start_date.timetuple())))
@@ -173,10 +180,12 @@ class ImportQueueDepth(object):
 
     def output(self, months=3):
         """Render out the image of the rrd"""
-        def1 = DEF(rrdfile=self.datafile,
+        def1 = DEF(
+            rrdfile=self.datafile,
             vname='queue',
             dsName=self.ds1.name)
-        line1 = LINE(defObj=def1,
+        line1 = LINE(
+            defObj=def1,
             color='#01FF13',
             legend='Queue Depth',
             stack=True)
@@ -198,10 +207,10 @@ class ImportQueueDepth(object):
         start_date = time.mktime((today - timedelta(days=7)).timetuple())
         end_date = time.mktime(today.timetuple())
         g = Graph(self.outputfile,
-            start=int(start_date),
-            end=int(end_date),
-            vertical_label='count',
-            color=ca)
+                  start=int(start_date),
+                  end=int(end_date),
+                  vertical_label='count',
+                  color=ca)
         g.data.extend([def1, line1])
 
         if not os.path.exists(os.path.dirname(self.outputfile)):

@@ -47,9 +47,9 @@ def recent(request):
         tags = [tags]
 
     ret = {
-         'username': username,
-         'tags': tags,
-         'rss_url': current_route.replace('recent', 'rss')
+        'username': username,
+        'tags': tags,
+        'rss_url': current_route.replace('recent', 'rss')
     }
 
     # if we've got url parameters for the page/count then use those to help
@@ -129,9 +129,10 @@ def edit(request):
                                                    request.user.username)
 
                 if test_exists:
-                    location = request.route_url('user_bmark_edit',
-                                               hash_id=new_url_hash,
-                                               username=request.user.username)
+                    location = request.route_url(
+                        'user_bmark_edit',
+                        hash_id=new_url_hash,
+                        username=request.user.username)
                     return HTTPFound(location)
 
             new = True
@@ -144,10 +145,10 @@ def edit(request):
         )
 
         return {
-                'new': new,
-                'bmark': bmark,
-                'user': request.user,
-                'tag_suggest': tag_suggest,
+            'new': new,
+            'bmark': bmark,
+            'user': request.user,
+            'tag_suggest': tag_suggest,
         }
 
 
@@ -202,8 +203,8 @@ def readable(request):
         found = BmarkMgr.get_by_hash(bid, username=username)
         if found:
             return {
-                    'bmark': found,
-                    'username': username,
-                    }
+                'bmark': found,
+                'username': username,
+            }
         else:
             return HTTPNotFound()

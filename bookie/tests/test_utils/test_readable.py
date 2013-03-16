@@ -12,11 +12,6 @@ from bookie.lib.readable import ReadContent
 from bookie.lib.readable import ReadUrl
 
 from bookie.models import DBSession
-from bookie.models import Bmark
-from bookie.models import Hashed
-from bookie.models import Tag
-from bookie.models import Readable
-from bookie.models import bmarks_tags
 from bookie.tests import empty_db
 
 
@@ -37,7 +32,7 @@ class TestReadable(TestCase):
         ok_(not read.is_image(), "The content is not an image")
         ok_(read.content is not None, "Content should not be none")
         ok_('Lococast' in read.content,
-                "The word Lococast is in the content: " + str(read.content))
+            "The word Lococast is in the content: " + str(read.content))
 
     def test_404_url(self):
         """Test that we get the proper errors in a missing url"""
@@ -60,7 +55,7 @@ class TestReadable(TestCase):
         ok_(not read.is_image(), "The content is not an image")
         ok_(read.content is not None, "Content should not be none")
         ok_('Bookie' in read.content,
-                u"The word Bookie is in the content: " + unicode(read.content))
+            u"The word Bookie is in the content: " + unicode(read.content))
 
     def test_non_net_url(self):
         """I might be bookmarking something internal bookie can't access"""
@@ -82,13 +77,14 @@ class TestReadable(TestCase):
 
     def test_nonworking_url(self):
         """Testing some urls we know we had issues with initially"""
-        urls = {'CouchSurfing': ('http://allthatiswrong.wordpress.com/2010/01'
-                                 '/24/a-criticism-of-couchsurfing-and-review-o'
-                                 'f-alternatives/#problems'),
-                 'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
-                                'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
-                                '8407'),
-                 'Will Fuqua': 'http://twitter.com/#!/wafuqua',
+        urls = {
+            'CouchSurfing': ('http://allthatiswrong.wordpress.com/2010/01'
+                             '/24/a-criticism-of-couchsurfing-and-review-o'
+                             'f-alternatives/#problems'),
+            'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
+                           'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
+                           '8407'),
+            'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
 
         for key, url in urls.iteritems():
@@ -127,17 +123,17 @@ class TestReadableFulltext(TestCase):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
-                'description': u'This is my google desc',
-                'extended': u'And some extended notes about it in full form',
-                'tags': u'python search',
-                'api_key': API_KEY,
-                'content': 'bmark content is the best kind of content man',
+            'url': u'http://google.com',
+            'description': u'This is my google desc',
+            'extended': u'And some extended notes about it in full form',
+            'tags': u'python search',
+            'api_key': API_KEY,
+            'content': 'bmark content is the best kind of content man',
         }
 
         req_params = urllib.urlencode(prms)
         res = self.testapp.post('/api/v1/admin/bmark',
-                               params=req_params)
+                                params=req_params)
         session.flush()
         transaction.commit()
         return res

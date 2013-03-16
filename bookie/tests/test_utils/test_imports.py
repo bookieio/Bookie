@@ -50,7 +50,7 @@ def _delicious_data_test():
 
     # and check we have a right tag or two
     ok_('canonical' in found.tag_string(),
-            'Canonical should be a valid tag in the bookmark')
+        'Canonical should be a valid tag in the bookmark')
 
     # and check the long description field
     ok_("description" in found.extended,
@@ -74,7 +74,7 @@ def _google_data_test():
 
     # and check we have a right tag or two
     ok_('html' in found.tag_string(),
-            'html should be a valid tag in the bookmark')
+        'html should be a valid tag in the bookmark')
 
     # and check the long description field
     ok_("make websites" in found.extended,
@@ -105,7 +105,7 @@ class ImporterBaseTest(unittest.TestCase):
             imp = Importer(del_io, username="admin")
 
             ok_(isinstance(imp, DelImporter),
-                    "Instance should be a delimporter instance")
+                "Instance should be a delimporter instance")
 
     def test_factory_gives_google(self):
         """"Verify that the base importer will give GBookmarkImporter"""
@@ -116,7 +116,7 @@ class ImporterBaseTest(unittest.TestCase):
             imp = Importer(google_io, username="admin")
 
             ok_(isinstance(imp, GBookmarkImporter),
-                    "Instance should be a GBookmarkImporter instance")
+                "Instance should be a GBookmarkImporter instance")
 
 
 class ImportDeliciousTest(unittest.TestCase):

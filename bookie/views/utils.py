@@ -63,7 +63,8 @@ def import_bmarks(request):
                 if not os.path.isdir(out_dir):
                     os.makedirs(out_dir)
 
-                out_fname = "{0}/{1}.{2}".format(out_dir, username, files.filename)
+                out_fname = "{0}/{1}.{2}".format(
+                    out_dir, username, files.filename)
                 out = open(out_fname, 'w')
                 out.write(files.file.read())
                 out.close()
@@ -185,14 +186,14 @@ def export(request):
         current_user = None
 
     bmark_list = Bmark.query.join(Bmark.tags).\
-                             options(
-                                contains_eager(Bmark.tags)
-                             ).\
-                             join(Bmark.hashed).\
-                             options(
-                                 contains_eager(Bmark.hashed)
-                             ).\
-                             filter(Bmark.username == username).all()
+        options(
+            contains_eager(Bmark.tags)
+        ).\
+        join(Bmark.hashed).\
+        options(
+            contains_eager(Bmark.hashed)
+        ).\
+        filter(Bmark.username == username).all()
 
     BmarkLog.export(username, current_user)
 
@@ -229,8 +230,8 @@ def redirect(request):
 
     if username is not None:
         bookmark = Bmark.query.\
-                         filter(Bmark.hash_id == hash_id).\
-                         filter(Bmark.username == username).one()
+            filter(Bmark.hash_id == hash_id).\
+            filter(Bmark.username == username).one()
         bookmark.clicks = bookmark.clicks + 1
 
     return HTTPFound(location=hashed.url)

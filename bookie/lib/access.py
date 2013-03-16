@@ -59,7 +59,7 @@ class ReqOrApiAuthorize(object):
     """A context manager that works with either Api key or logged in user"""
 
     def __init__(self, request, api_key, user_acct, username=None,
-        redirect=None):
+                 redirect=None):
         self.request = request
         self.api_key = api_key
         self.user_acct = user_acct
@@ -106,6 +106,8 @@ class ApiAuthorize(object):
     def __init__(self, user, submitted_key, redirect=None):
         """Create the context manager"""
         self.user = user
+
+
 class RequestWithUserAttribute(Request):
     @reify
     def user(self):
@@ -118,11 +120,6 @@ class RequestWithUserAttribute(Request):
             # in the database
             user = UserMgr.get(user_id=user_id)
             return user
-        self.api_key = user.api_key
-        self.check_key = submitted_key
-
-        if redirect:
-            self.redirect = redirect
 
     def __enter__(self):
         """Verify api key set in constructor"""

@@ -86,7 +86,8 @@ class TestOpenSignup(TestViewBase):
 
     def testEmailNotAlreadyThere(self):
         """Signup requires an email entry."""
-        res = self.app.post('/signup_process',
+        res = self.app.post(
+            '/signup_process',
             params={
                 'email': 'testing@dummy.com'
             }
@@ -103,5 +104,7 @@ class TestOpenSignup(TestViewBase):
         self.assertTrue(len(activations) == 1)
         act = activations[0]
 
-        self.assertEqual(email, act.user.email,
+        self.assertEqual(
+            email,
+            act.user.email,
             "The activation email is the correct one.")

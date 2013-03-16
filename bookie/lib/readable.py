@@ -73,8 +73,8 @@ class Readable(object):
         # we can only get this if we have headers
         LOG.debug('content type')
         LOG.debug(self.content_type)
-        if self.content_type is not None and \
-           self.content_type.lower() in IMAGE_TYPES.values():
+        if (self.content_type is not None and
+                self.content_type.lower() in IMAGE_TYPES.values()):
             return True
         else:
             return False
@@ -99,7 +99,7 @@ class ReadContent(object):
             read.error(STATUS_CODES['900'], "Could not parse content.")
         else:
             read.set_content(document.readable,
-                         content_type=content_type,)
+                             content_type=content_type)
             read.status = STATUS_CODES['1']
         return read
 
@@ -122,7 +122,7 @@ class ReadUrl(object):
             idx = url.index(u'#')
             fragment = url[idx:]
             clean_url = u"{0}?_escaped_fragment_={1}".format(url[0:idx],
-                                                            fragment)
+                                                             fragment)
         else:
             # we need to clean up the url first, we can't have any anchor tag
             # on the url or urllib2 gets cranky
@@ -133,11 +133,12 @@ class ReadUrl(object):
             else:
                 query = u''
 
-            clean_url = u"{0}://{1}{2}{query}{3}".format(parsed[0],
-                                              parsed[1],
-                                              parsed[2],
-                                              parsed[4],
-                                              query=query)
+            clean_url = u"{0}://{1}{2}{query}{3}".format(
+                parsed[0],
+                parsed[1],
+                parsed[2],
+                parsed[4],
+                query=query)
 
         try:
             LOG.debug('Readable Parsed: ' + clean_url)
@@ -175,7 +176,7 @@ class ReadUrl(object):
                 document = Article(fh.read(), url=clean_url)
                 if not document.readable:
                     read.error(STATUS_CODES['900'],
-                        "Could not parse document.")
+                               "Could not parse document.")
                 else:
                     read.set_content(document.readable)
 

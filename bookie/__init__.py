@@ -1,4 +1,5 @@
-import os
+from os.path import abspath
+from os.path import dirname
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -27,15 +28,13 @@ def main(global_config, **settings):
     """
 
     # Update the settings with the current app root path
-    settings['app_root'] = os.path.abspath(
-                            os.path.dirname(
-                                os.path.dirname(__file__)))
+    settings['app_root'] = abspath(dirname(dirname(__file__)))
 
     initialize_sql(settings)
 
     authn_policy = AuthTktAuthenticationPolicy(
-                       settings.get('auth.secret'),
-                       callback=UserMgr.auth_groupfinder)
+        settings.get('auth.secret'),
+        callback=UserMgr.auth_groupfinder)
     authz_policy = ACLAuthorizationPolicy()
 
     config = Configurator(settings=settings,

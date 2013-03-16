@@ -8,7 +8,6 @@ from datetime import datetime
 from nose.tools import ok_, eq_
 from pyramid import testing
 
-from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.tests import TestViewBase
 from bookie.tests import empty_db
@@ -118,7 +117,7 @@ class TestRSSFeeds(TestViewBase):
 
     def test_rss_is_parseable(self):
         """The rss feed should be a parseable feed."""
-        bmarks = [make_bookmark() for i in range(10)]
+        [make_bookmark() for i in range(10)]
         transaction.commit()
 
         res = self.app.get('/rss')
@@ -126,7 +125,8 @@ class TestRSSFeeds(TestViewBase):
         eq_(res.status, "200 OK",
             msg='recent status is 200, ' + res.status)
 
-        # http://packages.python.org/feedparser/introduction.html#parsing-a-feed-from-a-string
+        # http://packages.python.org/feedparser/
+        # introduction.html#parsing-a-feed-from-a-string
         parsed = feedparser.parse(res.body)
         links = []
         for entry in parsed.entries:
@@ -136,7 +136,7 @@ class TestRSSFeeds(TestViewBase):
                 'date': time.strftime('%d %b %Y', entry.updated_parsed),
                 'description': entry.description,
                 'link': entry.link,
-                })
+            })
 
         ok_(links, 'The feed should have a list of links.')
         eq_(10, len(links), 'There are 10 links in the feed.')

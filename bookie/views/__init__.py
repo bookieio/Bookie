@@ -25,5 +25,6 @@ def home(request):
             if not user:
                 return HTTPNotFound()
             else:
-                return HTTPFound(location=request.route_url("user_bmark_recent",
-                                                            username=username))
+                return HTTPFound(
+                    location=request.route_url("user_bmark_recent",
+                                               username=username))

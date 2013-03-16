@@ -17,12 +17,6 @@ def build_routes(config):
     # celery routes
     config.add_route("celery_hourly_stats", "jobhourly")
 
-    # DELAPI Routes
-    config.add_route("del_post_add", "{username}/delapi/posts/add")
-    config.add_route("del_post_delete", "{username}/delapi/posts/delete")
-    config.add_route("del_post_get", "{username}/delapi/posts/get")
-    config.add_route("del_tag_complete", "{username}/delapi/tags/complete")
-
     # bmark routes
     config.add_route("bmark_recent", "recent")
     config.add_route("bmark_recent_tags", "recent/*tags")
@@ -41,7 +35,7 @@ def build_routes(config):
 
     config.add_route("user_bmark_edit", "{username}/edit/{hash_id}")
     config.add_route("user_bmark_edit_error",
-        "{username}/edit_error/{hash_id}")
+                     "{username}/edit_error/{hash_id}")
     config.add_route("user_bmark_new", "{username}/new")
     config.add_route("user_bmark_new_error", "{username}/new_error")
 
@@ -85,14 +79,14 @@ def build_routes(config):
 
     # ping checks
     config.add_route('api_ping',
-        '/api/v1/{username}/ping',
-        request_method='GET')
+                     '/api/v1/{username}/ping',
+                     request_method='GET')
     config.add_route('api_ping_missing_user',
-        '/api/v1/ping',
-        request_method='GET')
+                     '/api/v1/ping',
+                     request_method='GET')
     config.add_route('api_ping_missing_api',
-        '/ping',
-        request_method='GET')
+                     '/ping',
+                     request_method='GET')
 
     # auth related
     config.add_route("api_user_account",
@@ -133,13 +127,15 @@ def build_routes(config):
 
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
     config.add_route('api_bmarks_popular_user',
-        'api/v1/{username}/bmarks/popular')
+                     'api/v1/{username}/bmarks/popular')
 
     # user bookmark api calls
-    config.add_route("api_bmark_add", "/api/v1/{username}/bmark",
-        request_method="POST")
-    config.add_route("api_bmark_update", "/api/v1/{username}/bmark/{hash_id}",
-        request_method="POST")
+    config.add_route("api_bmark_add",
+                     "/api/v1/{username}/bmark",
+                     request_method="POST")
+    config.add_route("api_bmark_update",
+                     "/api/v1/{username}/bmark/{hash_id}",
+                     request_method="POST")
     config.add_route("api_extension_sync", "/api/v1/{username}/extension/sync")
 
     config.add_route("api_bmark_hash",
@@ -185,9 +181,8 @@ def build_routes(config):
         request_method="DELETE")
     config.add_route(
         "api_admin_bmark_remove",
-         "/api/v1/a/bmark/{username}/{hash_id}",
-         request_method="DELETE")
-
+        "/api/v1/a/bmark/{username}/{hash_id}",
+        request_method="DELETE")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

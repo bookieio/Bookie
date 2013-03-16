@@ -25,13 +25,6 @@ class TestAuthWeb(TestCase):
     def tearDown(self):
         """We need to empty the bmarks table on each run"""
         testing.tearDown()
-        # session = DBSession()
-        # Bmark.query.delete()
-        # Tag.query.delete()
-        # Hashed.query.delete()
-        # session.execute(bmarks_tags.delete())
-        # session.flush()
-        # transaction.commit()
 
     def test_login_url(self):
         """Verify we get the login form"""
@@ -56,14 +49,14 @@ class TestAuthWeb(TestCase):
                      'form.submitted': 'true'}
 
         res = self.testapp.post('/login',
-                               params=user_data)
+                                params=user_data)
         eq_(res.status, "302 Found",
             msg='status is 302 Found, ' + res.status)
 
         # should end up back at the recent page
         res = res.follow()
         ok_('recent' in str(res),
-                "Should have 'recent' in the resp: " + str(res))
+            "Should have 'recent' in the resp: " + str(res))
 
     def test_login_failure(self):
         """Verify a bad login"""
@@ -74,11 +67,11 @@ class TestAuthWeb(TestCase):
                      'form.submitted': 'true'}
 
         res = self.testapp.post('/login',
-                               params=user_data)
+                                params=user_data)
 
         eq_(res.status, "200 OK",
             msg='status is 200 OK, ' + res.status)
 
         # should end up back at login with an error message
         ok_('has failed' in str(res),
-                "Should have 'Failed login' in the resp: " + str(res))
+            "Should have 'Failed login' in the resp: " + str(res))

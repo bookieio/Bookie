@@ -6,12 +6,7 @@ and API as we did in the importer
 """
 import logging
 import os
-import pyramid
 
-from sqlalchemy import or_
-from sqlalchemy import text
-from sqlalchemy.orm import aliased
-from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import joinedload
 
 from whoosh import qparser
@@ -91,8 +86,8 @@ class WhooshFulltext(object):
                 fields.append('readable')
 
             parser = qparser.MultifieldParser(fields,
-                                               schema=WIX.schema,
-                                               group=qparser.OrGroup)
+                                              schema=WIX.schema,
+                                              group=qparser.OrGroup)
             qry = parser.parse(phrase)
 
             try:
@@ -101,8 +96,8 @@ class WhooshFulltext(object):
                 raise(exc)
 
             qry = Bmark.query.filter(
-                        Bmark.bid.in_([r['bid'] for r in res])
-                  )
+                Bmark.bid.in_([r['bid'] for r in res])
+            )
             qry = qry.options(joinedload('hashed'))
 
             return qry.all()

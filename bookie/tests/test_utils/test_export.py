@@ -11,9 +11,6 @@ from nose.tools import eq_
 from pyramid import testing
 
 from bookie.models import DBSession
-from bookie.models import Bmark
-from bookie.models import Tag, bmarks_tags
-
 from bookie.tests import empty_db
 
 
@@ -28,11 +25,11 @@ class TestExport(unittest.TestCase):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
-                'url': u'http://google.com',
-                'description': u'This is my google desc',
-                'extended': u'And some extended notes about it in full form',
-                'tags': u'python search',
-                'api_key': API_KEY
+            'url': u'http://google.com',
+            'description': u'This is my google desc',
+            'extended': u'And some extended notes about it in full form',
+            'tags': u'python search',
+            'api_key': API_KEY
         }
 
         req_params = urllib.urlencode(prms)
@@ -68,8 +65,8 @@ class TestExport(unittest.TestCase):
             status=200)
 
         ok_("google.com" in res.body,
-                msg='Google is in the exported body: ' + res.body)
+            msg='Google is in the exported body: ' + res.body)
         data = json.loads(res.body)
 
         eq_(1, data['count'],
-                "Should be one result: " + str(data['count']))
+            "Should be one result: " + str(data['count']))

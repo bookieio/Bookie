@@ -61,10 +61,11 @@ def login(request):
 
             # we're always going to return a user to their own /recent after a
             # login
-            return HTTPFound(location=request.route_url(
-                                            'user_bmark_recent',
-                                            username=auth.username),
-                             headers=headers)
+            return HTTPFound(
+                location=request.route_url(
+                    'user_bmark_recent',
+                    username=auth.username),
+                headers=headers)
 
         # log the right level of problem
         if auth and not auth.validate_password(password):
@@ -82,9 +83,9 @@ def login(request):
 
     return {
         'message': message,
-        'came_from':  came_from,
-        'login':  login,
-        'password':  password,
+        'came_from': came_from,
+        'login': login,
+        'password': password,
     }
 
 
@@ -146,13 +147,14 @@ def signup_process(request):
 
         # Add a queue job to send the user a notification email.
         bookie.bcelery.tasks.email_signup_user.delay(
-                new_user.email,
-                "Enable your Bookie account",
-                settings,
-                request.route_url('reset',
-                    username=new_user.username,
-                    reset_key=new_user.activation.code
-                )
+            new_user.email,
+            "Enable your Bookie account",
+            settings,
+            request.route_url(
+                'reset',
+                username=new_user.username,
+                reset_key=new_user.activation.code
+            )
         )
 
         # And let the user know they're signed up.
@@ -199,10 +201,13 @@ def forbidden_view(request):
     if referrer == login_url:
         referrer = '/'  # never use the login form itself as came_from
     came_from = request.params.get('came_from', referrer)
-    return render_to_response('/auth/login.mako', dict(
-               message='',
-               url=request.application_url + '/login',
-               came_from=came_from,
-               login='',
-               password='',
-           ), request=request)
+    return render_to_response(
+        '/auth/login.mako',
+        dict(
+            message='',
+            url=request.application_url + '/login',
+            came_from=came_from,
+            login='',
+            password='',
+        ),
+        request=request)

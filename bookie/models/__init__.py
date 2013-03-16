@@ -108,7 +108,8 @@ Base.__todict__ = todict
 Base.__iter__ = iterfunc
 Base.fromdict = fromdict
 
-bmarks_tags = Table('bmark_tags', Base.metadata,
+bmarks_tags = Table(
+    'bmark_tags', Base.metadata,
     Column('bmark_id', Integer, ForeignKey('bmarks.bid'), primary_key=True),
     Column('tag_id', Integer, ForeignKey('tags.tid'), primary_key=True)
 )
@@ -154,7 +155,7 @@ class TagMgr(object):
             # username field
             bmark = aliased(Bmark)
             qry = qry.join((bmark, Tag.bmark)).\
-                    filter(bmark.username == username)
+                filter(bmark.username == username)
 
         if order_by is not None:
             qry = qry.order_by(order_by)
@@ -176,7 +177,7 @@ class TagMgr(object):
 
         """
         prefix = prefix.lower()
-        if current == None:
+        if current is None:
             qry = Tag.query.filter(Tag.name.startswith(prefix))
 
             # if we have a username limit to only bookmarks of that user
@@ -213,8 +214,8 @@ class TagMgr(object):
                 group_by(Bmark.bid)
 
             query = DBSession.query(Tag.name.distinct().label('name')).\
-                              filter(Tag.name.startswith(prefix)).\
-                              filter(Tag.bmark.any(Bmark.bid.in_(good_bmarks)))
+                filter(Tag.name.startswith(prefix)).\
+                filter(Tag.bmark.any(Bmark.bid.in_(good_bmarks)))
 
             return DBSession.execute(query)
 
@@ -359,8 +360,8 @@ class BmarkMgr(object):
         clean_url = BmarkTools.normalize_url(url)
 
         qry = Bmark.query.join(Bmark.hashed).\
-                           options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.url == clean_url)
+            options(contains_eager(Bmark.hashed)).\
+            filter(Hashed.url == clean_url)
 
         if username:
             qry = qry.filter(Bmark.username == username)
@@ -372,8 +373,8 @@ class BmarkMgr(object):
         """Get a bmark from the system via the hash_id"""
         # normalize the url
         qry = Bmark.query.join(Bmark.hashed).\
-                           options(contains_eager(Bmark.hashed)).\
-                           filter(Hashed.hash_id == hash_id)
+            options(contains_eager(Bmark.hashed)).\
+            filter(Hashed.hash_id == hash_id)
 
         if username:
             qry = qry.filter(Bmark.username == username)
@@ -414,29 +415,29 @@ class BmarkMgr(object):
 
         if not tags:
             qry = qry.order_by(order_by).\
-                      limit(limit).\
-                      offset(offset).\
-                      from_self()
+                limit(limit).\
+                offset(offset).\
+                from_self()
 
         if tags:
             qry = qry.join(Bmark.tags).\
-                  options(contains_eager(Bmark.tags))
+                options(contains_eager(Bmark.tags))
 
             if isinstance(tags, str):
                 qry = qry.filter(Tag.name == tags)
                 qry = qry.order_by(order_by).\
-                          limit(limit).\
-                          offset(offset).\
-                          from_self()
+                    limit(limit).\
+                    offset(offset).\
+                    from_self()
             else:
-                bids_we_want = select([
-                        bmarks_tags.c.bmark_id.label('good_bmark_id')
-                    ],
+                bids_we_want = select(
+                    [bmarks_tags.c.bmark_id.label('good_bmark_id')],
                     from_obj=[
-                        bmarks_tags.join('tags',
+                        bmarks_tags.join(
+                            'tags',
                             and_(Tag.name.in_(tags),
                             bmarks_tags.c.tag_id == Tag.tid)
-                        ).\
+                        ).
                         join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
                     ]).\
                     group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
@@ -455,7 +456,7 @@ class BmarkMgr(object):
         # full list of tags for each bmark we filterd down to
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
-                  options(contains_eager(Bmark.tags))
+                options(contains_eager(Bmark.tags))
 
         # join to hashed so we always have the url
         # if we have with_content, this is already done
@@ -469,14 +470,14 @@ class BmarkMgr(object):
 
         """
         return Bmark.query.join(Bmark.tags).\
-                             options(
-                                contains_eager(Bmark.tags)
-                             ).\
-                             join(Bmark.hashed).\
-                             options(
-                                 contains_eager(Bmark.hashed)
-                             ).\
-                             filter(Bmark.username == username).all()
+            options(
+                contains_eager(Bmark.tags)
+            ).\
+            join(Bmark.hashed).\
+            options(
+                contains_eager(Bmark.hashed)
+            ).\
+            filter(Bmark.username == username).all()
 
     @staticmethod
     def recent(limit=50, page=0, with_tags=False):
@@ -485,13 +486,13 @@ class BmarkMgr(object):
 
         offset = limit * page
         qry = qry.order_by(Bmark.stored.desc()).\
-                  limit(limit).\
-                  offset(offset).\
-                  from_self()
+            limit(limit).\
+            offset(offset).\
+            from_self()
 
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
-                      options(contains_eager(Bmark.tags))
+                options(contains_eager(Bmark.tags))
 
         return qry.all()
 
@@ -502,20 +503,20 @@ class BmarkMgr(object):
 
         offset = limit * page
         qry = qry.order_by(Hashed.clicks.desc()).\
-                  limit(limit).\
-                  offset(offset).\
-                  from_self()
+            limit(limit).\
+            offset(offset).\
+            from_self()
 
         bmark = aliased(Bmark)
         qry = qry.join((bmark, Hashed.bmark)).\
-                  options(contains_eager(Hashed.bmark, alias=bmark))
+            options(contains_eager(Hashed.bmark, alias=bmark))
 
         tags = aliased(Tag)
         if with_tags:
             qry = qry.outerjoin((tags, bmark.tags)).\
-                      options(contains_eager(Hashed.bmark,
-                                             bmark.tags,
-                                             alias=tags))
+                options(contains_eager(Hashed.bmark,
+                                       bmark.tags,
+                                       alias=tags))
         res = qry.all()
         return res
 
@@ -530,12 +531,13 @@ class BmarkMgr(object):
         :param fulltext: an instance of a fulltext handler
 
         """
-        mark = Bmark(url,
-                     username,
-                     desc=desc,
-                     ext=ext,
-                     tags=tags,
-               )
+        mark = Bmark(
+            url,
+            username,
+            desc=desc,
+            ext=ext,
+            tags=tags,
+        )
 
         mark.inserted_by = inserted_by
 
@@ -610,12 +612,13 @@ class Bmark(Base):
     # DON"T USE
     tag_str = Column(UnicodeText())
 
-    tags = relation(Tag,
-            backref="bmark",
-            collection_class=attribute_mapped_collection('name'),
-            secondary=bmarks_tags,
-            lazy='joined',
-            innerjoin=False,
+    tags = relation(
+        Tag,
+        backref="bmark",
+        collection_class=attribute_mapped_collection('name'),
+        secondary=bmarks_tags,
+        lazy='joined',
+        innerjoin=False,
     )
 
     hashed = relation(Hashed,
