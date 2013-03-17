@@ -117,7 +117,7 @@ lint:
 deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
 	if test -d download-cache; \
-		then git pull download-cache; \
+		then cd download-cache && git pull; \
 		else git clone "git://github.com/mitechie/bookie-download-cache.git" download-cache; \
 	fi
 	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt

@@ -9,7 +9,7 @@ and your distro for the following:
 
 ::
 
-    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git python-virtualenv rrdtool unzip
+    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git python-virtualenv rrdtool unzip
     $ git clone git://github.com/mitechie/Bookie.git && cd Bookie && make install
     # THIS WILL TAKE A WHILE, GET A COFFEE
     $ make run
