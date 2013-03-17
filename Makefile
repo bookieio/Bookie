@@ -14,6 +14,7 @@ S3 := s3cp.py --bucket files.bmark.us --public
 BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 
+CACHE := download-cache
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
@@ -116,7 +117,11 @@ lint:
 .PHONY: deps
 deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
-	$(PIP_MIR) $(PIP) install -q -r requirements.txt
+	if test -d download-cache; \
+		then git pull download-cache; \
+		else git clone "git://github.com/mitechie/bookie-download-cache.git" download-cache; \
+	fi
+	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
 
 # TESTS
 #
@@ -220,8 +225,7 @@ bookie/static/js/tests/jstpl.html: bookie/templates/jstpl.mako
 
 download-cache/yui:
 	mkdir -p download-cache/yui
-	wget $(YUIRELEASES)$(YUI) -O /tmp/$(YUI)
-	unzip /tmp/$(YUI) -d download-cache
+	unzip download-cache/js/$(YUI) -d download-cache
 
 .PHONY: jsmin
 jsmin: $(BUILD_JS_FILES)
