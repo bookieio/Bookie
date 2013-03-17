@@ -37,6 +37,9 @@ BOOKIE_CSS = bookie/static/css
 RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
+SYSDEPS := build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
+	       python-virtualenv rrdtool unzip
+
 .PHONY: all
 all: deps develop bookie.db db_up $(CHROME_BUILD) chrome_css js
 
@@ -46,8 +49,14 @@ clean: clean_js clean_css
 .PHONY: clean_all
 clean_all: clean_venv clean_js clean_css clean_chrome clean_downloadcache
 
+.PHONY: sysdeps
+sysdeps:
+	sudo apt-get install $(SYSDEPS)
+
+.PHONY: install
 install: $(BOOKIE_INI) all first_bookmark
 
+.PHONY: develop
 develop: lib/python*/site-packages/bookie.egg-link
 lib/python*/site-packages/bookie.egg-link:
 	$(PY) setup.py develop

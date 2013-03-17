@@ -9,8 +9,8 @@ and your distro for the following:
 
 ::
 
-    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git python-virtualenv rrdtool unzip
-    $ git clone git://github.com/mitechie/Bookie.git && cd Bookie && make install
+    $ git clone git://github.com/mitechie/Bookie.git
+    $ cd Bookie && make sysdeps && make install
     # THIS WILL TAKE A WHILE, GET A COFFEE
     $ make run
     $ (YOUR BROWSER) http://127.0.0.1:6543/
@@ -47,15 +47,14 @@ OS Packages
 There are some required packages that need to be installed so you can build bookie. These are:
 
 - build-essential
-- python-dev
 - libxslt1-dev
 - libxml2-dev
+- python-dev
+- libpq-dev
 - git
-
-::
-
-    # install the required packages to build bookie
-    $ sudo apt-get install build-essential libxslt1-dev libxml2-dev python-dev git
+- python-virtualenv
+- rrdtool
+- unzip
 
 
 Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. Out of the box, Bookie will setup a Sqlite version for you to get started with.
