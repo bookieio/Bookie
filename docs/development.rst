@@ -16,6 +16,7 @@ when you check out Bookie, make sure to start out using the `develop` branch.
 If you want to help out with the hacking of Bookie, here's some info you might
 want to check out:
 
+
 Contents:
 ---------
 
