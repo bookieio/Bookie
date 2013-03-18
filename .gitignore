@@ -45,3 +45,6 @@ ropevim.vim
 bookie.ini
 celerybeat-schedule
 bookie/static/js/tests/jstpl.html
+bookie/static/css/base.css
+bookie/static/css/responsive.css
+bookie/static/rrd/
