@@ -118,6 +118,8 @@ class DelImporter(Importer):
         count = 0
 
         for tag in soup.findAll('dt'):
+            if 'javascript' in str(tag):
+                continue
             # if we have a dd as next sibling, get it's content
             if tag.nextSibling and tag.nextSibling.name == 'dd':
                 extended = tag.nextSibling.text

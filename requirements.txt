@@ -9,6 +9,7 @@ Chameleon==1.3.0-rc1
 chardet==2.1.1
 colorama
 convoy==0.2.2
+feedparser==5.1.3
 Jinja2==2.5.5
 kombu==2.5.7
 Mako==0.4.1
