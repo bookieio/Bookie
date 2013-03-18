@@ -965,8 +965,14 @@ def import_list(request):
 @view_config(route_name="api_admin_users_list", renderer="json")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def user_list(request):
-    """Provide list of users in the system."""
-    user_list = UserMgr.get_list()
+    """Provide list of users in the system.
+
+    Supported Query params: order, limit
+    """
+    params = request.params
+    order = params.get('order', None)
+    limit = params.get('limit', None)
+    user_list = UserMgr.get_list(order=order, limit=limit)
     ret = {
         'count': len(user_list),
         'users': [dict(h) for h in user_list],

@@ -123,14 +123,21 @@ class UserMgr(object):
     """ Wrapper for static/combined operations of User object"""
 
     @staticmethod
-    def get_list(active=None):
+    def get_list(active=None, order=None, limit=None):
         """Get a list of all of the user accounts"""
         user_query = User.query.order_by(User.username)
 
         if active is not None:
             user_query = user_query.filter(User.activated == active)
 
-        user_query = user_query.order_by(User.signup.asc())
+        if order:
+            user_query = user_query.order_by(getattr(User, order))
+        else:
+            user_query = user_query.order_by(User.signup)
+
+        if limit:
+            user_query = user_query.limit(limit)
+
         return user_query.all()
 
     @staticmethod
