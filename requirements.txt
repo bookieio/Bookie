@@ -35,7 +35,7 @@ lxml==2.3
 mock==0.7.0
 nose==1.1.2
 pep8==0.6.1
-py-bcrypt==0.2.0
+py-bcrypt==0.3.0
 pyinotify
 pylint==0.23.0
 pyramid<1.3

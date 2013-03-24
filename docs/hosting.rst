@@ -242,7 +242,7 @@ Then you need to create a pyramid.wsgi file in the root of your Bookie virtualen
 ::
 
     from pyramid.paster import get_app
-    application = get_app('/home/user/bookie/bookie/mybookie.ini', 'main')
+    application = get_app('/home/user/bookie/bookie/mybookie.ini', 'bookie')
 
 A couple of things to check:
 

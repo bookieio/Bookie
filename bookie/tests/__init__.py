@@ -29,7 +29,7 @@ if not test_ini:
     test_ini = 'test.ini'
 
 ini.read(test_ini)
-settings = dict(ini.items('app:main'))
+settings = dict(ini.items('app:bookie'))
 
 BOOKIE_TEST_INI = test_ini
 print "USING TEST INI: ", BOOKIE_TEST_INI
@@ -71,7 +71,7 @@ class TestViewBase(unittest.TestCase):
         """Setup Tests"""
         from pyramid.paster import get_app
         from bookie.tests import BOOKIE_TEST_INI
-        app = get_app(BOOKIE_TEST_INI, 'main')
+        app = get_app(BOOKIE_TEST_INI, 'bookie')
         from webtest import TestApp
         self.app = TestApp(app)
         testing.setUp()

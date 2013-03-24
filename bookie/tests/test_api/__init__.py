@@ -22,7 +22,7 @@ class BookieAPITest(unittest.TestCase):
 
     def setUp(self):
         from pyramid.paster import get_app
-        app = get_app(BOOKIE_TEST_INI, 'main')
+        app = get_app(BOOKIE_TEST_INI, 'bookie')
         from webtest import TestApp
         self.testapp = TestApp(app)
         testing.setUp()
