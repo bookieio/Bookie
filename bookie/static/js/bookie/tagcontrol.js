@@ -223,7 +223,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                         this.set('events_waiting', true);
                     }
                 }
-
             }
         },
 
@@ -243,6 +242,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 current_text = input.get('value');
 
             this.add(current_text);
+            this._fire_changed();
 
             // clear the input
             input.set('value', '');
@@ -631,8 +631,6 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 'width',
                 this.clone.get('offsetWidth') + 20
             );
-
-            
         },
 
         /**
