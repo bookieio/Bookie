@@ -15,8 +15,8 @@ def load_bookie_ini(ini_file):
     ini_path = path.join(path.dirname(path.dirname(__file__)), ini_file)
     ini.readfp(open(ini_path))
     here = path.abspath(path.join(path.dirname(__file__), '../'))
-    ini.set('app:main', 'here', here)
-    initialize_sql(dict(ini.items("app:main")))
+    ini.set('app:bookie', 'here', here)
+    initialize_sql(dict(ini.items("app:bookie")))
     return ini
 
 # this is the Alembic Config object, which provides
@@ -25,7 +25,7 @@ config = context.config
 
 bookie_ini = config.get_main_option('app.ini', 'bookie.ini')
 bookie_config = load_bookie_ini(bookie_ini)
-sa_url = bookie_config.get('app:main', 'sqlalchemy.url')
+sa_url = bookie_config.get('app:bookie', 'sqlalchemy.url')
 config.set_main_option('sqlalchemy.url', sa_url)
 
 # Interpret the config file for Python logging.

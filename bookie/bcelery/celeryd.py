@@ -28,7 +28,7 @@ def load_ini():
     cfg.readfp(open(ini_path))
 
     # Hold onto the ini config.
-    return dict(cfg.items('app:main', raw=True))
+    return dict(cfg.items('app:bookie', raw=True))
 
 bookie.bcelery.ini = load_ini()
 
