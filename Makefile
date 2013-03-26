@@ -14,7 +14,7 @@ S3 := s3cp.py --bucket files.bmark.us --public
 BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 
-CACHE := download-cache
+CACHE := $(WD)/download-cache
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
