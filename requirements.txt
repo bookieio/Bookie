@@ -58,7 +58,7 @@ unittest2==0.5.1
 virtualenv==1.5.2
 wsgiref==0.1.2
 zope.component==3.10.0
-zope.configuration==3.7.3
+zope.configuration==3.7.4
 zope.deprecation==3.5.0
 zope.event==3.5.0-1
 zope.i18nmessageid==3.5.3

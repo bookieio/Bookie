@@ -129,6 +129,8 @@ deps: venv
 		then cd download-cache && git pull; \
 		else git clone "http://github.com/mitechie/bookie-download-cache.git" download-cache; \
 	fi
+	@echo "Making sure the latest version of pip is available"
+	$(PIP) install -U pip
 	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
 
 # TESTS
