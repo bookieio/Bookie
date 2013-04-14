@@ -11,4 +11,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - mikelietz
 - Stéphane Klein
 - Alexandre Gravel-Raymond
-- John Schewe
+- Jon Schewe
