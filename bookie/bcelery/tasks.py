@@ -215,7 +215,6 @@ def importer_process_worker(iid):
     import_job = ImportQueueMgr.get(iid)
     logger.info("IMPORT: RUNNING for {username}".format(**dict(import_job)))
 
-    mission_complete = None
     try:
         # process the file using the import script
         import_file = open(import_job.file_path)

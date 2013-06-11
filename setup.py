@@ -15,21 +15,30 @@ requires = [
     'WebError',
     'WebTest',
     'BeautifulSoup==3.2.0',
-    ]
+]
 
+
+# Add sqlite for python pre 2.5
 if sys.version_info[:3] < (2, 5, 0):
     requires.append('pysqlite')
+
+
+# Add sqlite for python pre 2.7
+if sys.version_info[:3] < (2, 7, 0):
+    requires.append('ordereddict')
+
 
 setup(name='bookie',
       version='0.4.1',
       description='Bookie',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
-        "Programming Language :: Python",
-        "Framework :: Pylons",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-        ],
+          "Programming Language :: Python",
+          "Framework :: Pylons",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+      ],
+
       author='',
       author_email='',
       url='',
