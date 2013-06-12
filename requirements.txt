@@ -66,5 +66,6 @@ zope.interface==3.8.0
 zope.schema==3.7.1
 zope.sqlalchemy==0.6.1
 shortuuid
+waitress==0.8.5
 Whoosh
 PyRRD

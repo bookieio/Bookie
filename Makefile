@@ -6,7 +6,7 @@ PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 NOSE := bin/nosetests
-PASTER := bin/paster
+PASTER := bin/pserve
 PYSCSS := bin/pyscss
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
@@ -114,7 +114,7 @@ docs_open: docs
 tags:
 	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
 
-
+.PHONY: lint
 lint:
 	flake8 bookie/
 
@@ -318,36 +318,45 @@ clean_chrome:
 	fi
 
 
-run: run_celery run_combo run_app
+.PHONY: run
+run: run_celery run_app
+.PHONY: run_dev
 run_dev: run run_css autojsbuild
-run_webapp: run_combo run_app
-
+.PHONY: run_celery
 run_celery:
 	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
-run_combo:
-	$(GUNICORN) -p combo.pid combo:application &
+.PHONY: run_css
 run_css:
 	$(PYSCSS) --watch bookie/static/css &
+.PHONY: run_prod
+run_prod:
+	$(PASTER) --pid-file=app.pid $(BOOKIE_INI) &
+.PHONY: run_app
 run_app:
-	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
+	$(PASTER) --reload $(BOOKIE_INI)
+.PHONY: run_livereload
 run_livereload:
 	livereload
+.PHONY: autojsbuild
 autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
-stop: stop_combo stop_app stop_celery
+.PHONY: stop
+stop: stop_app stop_celery
+.PHONY: stop_dev
 stop_dev: stop stop_css
+.PHONY: stop_celery
 stop_celery:
 	kill -9 `cat celeryd.pid` || true
 	rm celeryd.pid || true
-stop_combo:
-	kill -9 `cat combo.pid` || true
-	rm combo.pid || true
+.PHONY: stop_css
 stop_css:
 	killall -9 scss
+.PHONY: stop_app
 stop_app:
-	kill -9 `cat paster.pid` || true
-	rm paster.pid || true
+	kill -9 `cat app.pid` || true
+	rm app.pid || true
+.PHONY: stop_livereload
 stop_livereload:
 	killall livereload || true
 
@@ -356,6 +365,7 @@ stop_livereload:
 #
 # Crap to help us install and setup Bookie
 # We need a virtualenv
+.PHONY: venv
 venv: bin/python
 bin/python:
 	virtualenv .
@@ -363,8 +373,3 @@ bin/python:
 .PHONY: clean_venv
 clean_venv:
 	rm -rf lib include local bin
-
-.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
-	run run_dev run_combo run_css run_app run_livereload \
-	stop stop_dev stop_app stop_css stop_combo stop_livereload \
-	css chrome_css clean_css

@@ -1,6 +1,6 @@
 <%inherit file="/main_wrap.mako" />
 <%namespace file="func.mako" import="api_setup"/>
-<%def name="title()">${"Add" if bmark.hashed.url == "" else "Edit"} bookmark</%def>
+<%def name="title()">${"Add" if bmark and bmark.hashed.url == "" else "Edit"} bookmark</%def>
 <%
     # we might have a user from the resource path that we want to keep tabs on
     resource_username = username if username else False
@@ -21,7 +21,7 @@
             action="${request.route_url('user_bmark_edit_error', username=request.user.username, hash_id=bmark.hash_id)}"
         % endif
         method="post" class="login form">
-        <div class="heading">${"Add" if bmark.hashed.url == "" else "Edit"} bookmark</div>
+        <div class="heading">${"Add" if bmark and bmark.hashed.url == "" else "Edit"} bookmark</div>
         % if message:
             <p class="error">${message}</p>
         % endif
