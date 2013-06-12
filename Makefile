@@ -6,7 +6,7 @@ PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 NOSE := bin/nosetests
-PASTER := bin/paster
+PASTER := bin/pserve
 PYSCSS := bin/pyscss
 GUNICORN := bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
@@ -329,7 +329,7 @@ run_combo:
 run_css:
 	$(PYSCSS) --watch bookie/static/css &
 run_app:
-	$(PASTER) serve --reload --pid-file=paster.pid $(BOOKIE_INI) &
+	$(PASTER) --reload --pid-file=app.pid $(BOOKIE_INI) &
 run_livereload:
 	livereload
 autojsbuild:
@@ -346,8 +346,8 @@ stop_combo:
 stop_css:
 	killall -9 scss
 stop_app:
-	kill -9 `cat paster.pid` || true
-	rm paster.pid || true
+	kill -9 `cat app.pid` || true
+	rm app.pid || true
 stop_livereload:
 	killall livereload || true
 
