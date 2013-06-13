@@ -51,3 +51,12 @@ def main(global_config, **settings):
     config.scan('bookie.views')
 
     return config.make_wsgi_app()
+
+    # # Add the combo loader wsgi application into the stack.
+    # import os
+    # from convoy.combo import combo_app
+
+    # JS_FILES = settings['app_root'] + '/bookie/static/js/build'
+    # application = combo_app(JS_FILES)
+    # return application
+

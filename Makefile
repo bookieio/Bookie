@@ -318,31 +318,27 @@ clean_chrome:
 	fi
 
 
-run: run_celery run_combo run_app
+run: run_celery run_app
 run_dev: run run_css autojsbuild
-run_webapp: run_combo run_app
-
+run_webapp: run_app
 run_celery:
 	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
-run_combo:
-	$(GUNICORN) -p combo.pid combo:application &
 run_css:
 	$(PYSCSS) --watch bookie/static/css &
+run_prod:
+	$(PASTER) --pid-file=app.pid $(BOOKIE_INI) &
 run_app:
-	$(PASTER) --reload --pid-file=app.pid $(BOOKIE_INI) &
+	$(PASTER) --reload $(BOOKIE_INI)
 run_livereload:
 	livereload
 autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
-stop: stop_combo stop_app stop_celery
+stop: stop_app stop_celery
 stop_dev: stop stop_css
 stop_celery:
 	kill -9 `cat celeryd.pid` || true
 	rm celeryd.pid || true
-stop_combo:
-	kill -9 `cat combo.pid` || true
-	rm combo.pid || true
 stop_css:
 	killall -9 scss
 stop_app:
@@ -365,6 +361,6 @@ clean_venv:
 	rm -rf lib include local bin
 
 .PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
-	run run_dev run_combo run_css run_app run_livereload \
-	stop stop_dev stop_app stop_css stop_combo stop_livereload \
+	run run_dev run_css run_app run_livereload \
+	stop stop_dev stop_app stop_css stop_livereload \
 	css chrome_css clean_css

@@ -1,4 +1,6 @@
 """Create routes here and gets returned into __init__ main()"""
+from convoy.combo import combo_app
+from pyramid.wsgi import wsgiapp2
 
 
 def build_routes(config):
@@ -6,6 +8,15 @@ def build_routes(config):
 
     config.add_route("home", "/")
     config.add_route("dashboard", "/dashboard")
+
+    # Add routes for the combo loader to match up to static file requests.
+    config.add_route('convoy', '/combo')
+
+    JS_FILES = config.get_settings()['app_root'] + '/bookie/static/js/build'
+    application = combo_app(JS_FILES)
+    config.add_view(
+        wsgiapp2(application),
+        route_name='convoy')
 
     # auth routes
     config.add_route("login", "login")
