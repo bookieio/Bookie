@@ -318,32 +318,45 @@ clean_chrome:
 	fi
 
 
+.PHONY: run
 run: run_celery run_app
+.PHONY: run_dev
 run_dev: run run_css autojsbuild
-run_webapp: run_app
+.PHONY: run_celery
 run_celery:
 	BOOKIE_INI=$(BOOKIE_INI) $(CELERY) --pidfile celeryd.pid &
+.PHONY: run_css
 run_css:
 	$(PYSCSS) --watch bookie/static/css &
+.PHONY: run_prod
 run_prod:
 	$(PASTER) --pid-file=app.pid $(BOOKIE_INI) &
+.PHONY: run_app
 run_app:
 	$(PASTER) --reload $(BOOKIE_INI)
+.PHONY: run_livereload
 run_livereload:
 	livereload
+.PHONY: autojsbuild
 autojsbuild:
 	$(PY) scripts/js/autojsbuild.py -w $(BOOKIE_JS) -b $(JS_BUILD_PATH)/b
 
+.PHONY: stop
 stop: stop_app stop_celery
+.PHONY: stop_dev
 stop_dev: stop stop_css
+.PHONY: stop_celery
 stop_celery:
 	kill -9 `cat celeryd.pid` || true
 	rm celeryd.pid || true
+.PHONY: stop_css
 stop_css:
 	killall -9 scss
+.PHONY: stop_app
 stop_app:
 	kill -9 `cat app.pid` || true
 	rm app.pid || true
+.PHONY: stop_livereload
 stop_livereload:
 	killall livereload || true
 
@@ -352,6 +365,7 @@ stop_livereload:
 #
 # Crap to help us install and setup Bookie
 # We need a virtualenv
+.PHONY: venv
 venv: bin/python
 bin/python:
 	virtualenv .
@@ -359,8 +373,3 @@ bin/python:
 .PHONY: clean_venv
 clean_venv:
 	rm -rf lib include local bin
-
-.PHONY: clean clean_js $(JS_BUILD_PATH)/b/meta.js autojsbuild js_doc js_doc_upload\
-	run run_dev run_css run_app run_livereload \
-	stop stop_dev stop_app stop_css stop_livereload \
-	css chrome_css clean_css
