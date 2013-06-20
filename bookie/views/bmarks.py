@@ -115,17 +115,14 @@ def edit(request):
             hash_id = None
 
         if hash_id:
-            # hash_id is provided, make sure we can find it for this user.
             bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
 
-            # if we can't then this is a 404.
             if bmark is None:
                 return HTTPNotFound()
         else:
-            # there's no hash_id provided, let's make sure that we hash the
-            # url and make sure that it doesn't exist
-            url = params.get('url', None)
-            if url:
+            # hash the url and make sure that it doesn't exist
+            url = params.get('url', "")
+            if url != "":
                 new_url_hash = generate_hash(url)
 
                 test_exists = BmarkMgr.get_by_hash(new_url_hash,
@@ -138,22 +135,14 @@ def edit(request):
                         username=request.user.username)
                     return HTTPFound(location)
 
-                # the url must be provided right?
-                new = True
-                desc = params.get('description', None)
-                bmark = Bmark(url, request.user.username, desc=desc)
-            else:
-                # We cannot save a bmark without a url.
-                request.response.status_int = 400
-                return {
-                    'message': 'The url must be supplised.'
-                }
+            new = True
+            desc = params.get('description', None)
+            bmark = Bmark(url, request.user.username, desc=desc)
 
-        if bmark:
-            tag_suggest = TagMgr.suggestions(
-                url=bmark.hashed.url,
-                username=request.user.username
-            )
+        tag_suggest = TagMgr.suggestions(
+            url=bmark.hashed.url,
+            username=request.user.username
+        )
 
         return {
             'new': new,
