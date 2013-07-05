@@ -138,7 +138,7 @@ class DelImporter(Importer):
             self.save_bookmark(link['href'],
                                link.text,
                                extended,
-                               " ".join(link['tags'].split(',')),
+                               " ".join(link.get('tags', '').split(',')),
                                dt=add_date)
             count = count + 1
 

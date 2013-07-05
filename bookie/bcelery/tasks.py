@@ -233,6 +233,7 @@ def importer_process_worker(iid):
         # we need to log this and probably send an error email to the
         # admin
         logger = celery.utils.log.get_logger('importer_process_worker')
+        logger.error(exc)
         logger.error(str(exc))
         trans = transaction.begin()
         import_job = ImportQueueMgr.get(iid)
