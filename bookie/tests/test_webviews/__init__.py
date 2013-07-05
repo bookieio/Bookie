@@ -91,6 +91,20 @@ class TestNewBookmark(TestViewBase):
         ok_('Add Bookmark' in res.body,
             "Should see the add bookmark title")
 
+    def test_manual_entry_error(self):
+        """Use can manually submit a bookmark."""
+        self._login_admin()
+        # no url entered
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': '',
+                'description': '',
+                'extended': '',
+                'tags': ''
+            })
+        self.assertIn('not valid', res.body)
+
 
 class TestRSSFeeds(TestViewBase):
     """Verify the RSS feeds function correctly."""

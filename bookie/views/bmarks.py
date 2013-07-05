@@ -9,6 +9,7 @@ from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
+from bookie.models import InvalidBookmark
 from bookie.models import TagMgr
 from bookie.views import api
 
@@ -161,11 +162,30 @@ def edit_error(request):
 
     with ReqAuthorize(request, username=rdict['username']):
         if 'new' in request.url:
-            BmarkMgr.store(post['url'],
-                           request.user.username,
-                           post['description'],
-                           post['extended'],
-                           post['tags'])
+            try:
+                bmark = BmarkMgr.store(
+                    post['url'],
+                    request.user.username,
+                    post['description'],
+                    post['extended'],
+                    post['tags'])
+            except InvalidBookmark, exc:
+                # There was an issue using the supplied data to create a new
+                # bookmark. Send the data back to the user with the error
+                # message.
+                bmark = Bmark(
+                    post['url'],
+                    request.user.username,
+                    desc=post['description'],
+                    ext=post['extended'],
+                    tags=post['tags'])
+
+                return {
+                    'new': True,
+                    'bmark': bmark,
+                    'message': exc.message,
+                    'user': request.user,
+                }
 
         else:
             if 'hash_id' in rdict:

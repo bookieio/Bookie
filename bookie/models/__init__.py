@@ -18,6 +18,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Table
 from sqlalchemy import select
 from unidecode import unidecode
+from urlparse import urlparse
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
@@ -113,6 +114,10 @@ bmarks_tags = Table(
     Column('bmark_id', Integer, ForeignKey('bmarks.bid'), primary_key=True),
     Column('tag_id', Integer, ForeignKey('tags.tid'), primary_key=True)
 )
+
+
+class InvalidBookmark(Exception):
+    """Exception class for erroring when a bookmark is not a valid one."""
 
 
 class TagMgr(object):
@@ -531,6 +536,10 @@ class BmarkMgr(object):
         :param fulltext: an instance of a fulltext handler
 
         """
+        parsed_url = urlparse(url)
+        if not parsed_url.netloc:
+            raise InvalidBookmark('The url provided is not valid: ' + url)
+
         mark = Bmark(
             url,
             username,
@@ -540,7 +549,6 @@ class BmarkMgr(object):
         )
 
         mark.inserted_by = inserted_by
-
         DBSession.add(mark)
 
         # if we have a dt then manually set the stored value

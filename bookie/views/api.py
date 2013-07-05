@@ -561,7 +561,7 @@ def tag_complete(request):
 
     return {
         'current': ",".join(current_tags),
-        'tags': [tag.name for tag in tags]
+        'tags': [t.name for t in tags]
     }
 
 
