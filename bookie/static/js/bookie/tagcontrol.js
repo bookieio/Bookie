@@ -480,10 +480,10 @@ YUI.add('bookie-tagcontrol', function (Y) {
             // these are events and keystrokes we want to throttle
             // external activity for
             if (e.keyCode === keymap.space ||
-                    e.keyCode === keymap.enter ||
-                    e.keyCode === keymap.tab ||
-                    e.type === 'autocompleteList:select' ||
-                    e.type === 'blur') {
+                e.keyCode === keymap.enter ||
+                e.keyCode === keymap.tab ||
+                e.type === 'autocompleteList:select' ||
+                e.type === 'blur') {
                 // then handle the current input as a tag and clear for a
                 // new one
                 that._added_tag();

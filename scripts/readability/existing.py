@@ -35,23 +35,31 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('--ini', dest='ini',
+    parser.add_argument(
+        '--ini',
+        dest='ini',
         action='store',
         default=None,
         required=True,
         help='What .ini are we pulling the db connection from?')
 
-    parser.add_argument('--new', dest="new_only",
+    parser.add_argument(
+        '--new',
+        dest="new_only",
         action="store_true",
         default=False,
         help="Only parse new bookmarks that have not been attempted before")
 
-    parser.add_argument('--retry-errors', dest="retry_errors",
+    parser.add_argument(
+        '--retry-errors',
+        dest="retry_errors",
         action="store_true",
         default=False,
         help="Try to reload content that had an error last time")
 
-    parser.add_argument('--test-url', dest="test_url",
+    parser.add_argument(
+        '--test-url',
+        dest="test_url",
         action="store",
         default=False,
         help="Run the parser on the url provided and test things out")
@@ -76,30 +84,35 @@ if __name__ == "__main__":
 
     if args.test_url:
         # then we only want to test this one url and not process full lists
-            read = ReadUrl.parse(args.test_url)
+        read = ReadUrl.parse(args.test_url)
 
-            print "META"
-            print "*" * 30
+        print "META"
+        print "*" * 30
 
-            print read.content_type
-            print read.status
-            print read.status_message
+        print read.content_type
+        print read.status
+        print read.status_message
 
-            print "\n\n"
+        print "\n\n"
 
-            if not read.is_image():
-                print read.content
-            else:
-                print "Url is an image"
+        if not read.is_image():
+            print read.content
+        else:
+            print "Url is an image"
 
     else:
         # we need to make sure you submitted an ini file to use:
         # args.ini
 
         ini = ConfigParser()
-        ini_path = path.join(path.dirname(path.dirname(
-                                            path.dirname(__file__))),
-                             args.ini)
+        ini_path = path.join(
+            path.dirname(
+                path.dirname(
+                    path.dirname(__file__)
+                )
+            ),
+            args.ini
+        )
         ini.readfp(open(ini_path))
         here = path.abspath(path.join(path.dirname(__file__), '../../'))
         ini.set('app:bookie', 'here', here)
@@ -116,16 +129,17 @@ if __name__ == "__main__":
                 # we take off the offset because each time we run, we should
                 # have new ones to process. The query should return the 10
                 # next non-imported urls
-                url_list = Bmark.query.outerjoin(Readable, Bmark.readable).\
-                            filter(Readable.imported == None).\
-                            limit(PER_TRANS).all()
+                url_list = Bmark.query.outerjoin(
+                    Readable, Bmark.readable).\
+                    filter(Readable.imported is None).\
+                    limit(PER_TRANS).all()
 
             elif args.retry_errors:
                 # we need a way to handle this query. If we offset and we clear
                 # errors along the way, we'll skip potential retries
                 # but if we don't we'll just keep getting errors and never end
                 url_list = Bmark.query.outerjoin(Readable).\
-                            filter(Readable.status_code != 200).all()
+                    filter(Readable.status_code != 200).all()
 
             else:
                 url_list = Bmark.query.limit(PER_TRANS).offset(ct).all()
@@ -143,8 +157,8 @@ if __name__ == "__main__":
 
             # build a list of urls to pass to the threads
             urls = dict([
-                       (bmark.hash_id, bmark.hashed.url) for bmark in url_list
-                   ])
+                (bmark.hash_id, bmark.hashed.url) for bmark in url_list
+            ])
             parsed = {}
 
             # Set up some threads to fetch the enclosures
