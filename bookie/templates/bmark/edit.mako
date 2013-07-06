@@ -28,8 +28,15 @@
         <ul>
             <li>
                 <label>Url</label>
-                <input type="url" name="url" value="${bmark.hashed.url}"
-                       placeholder="url of website..."/>
+                % if new:
+                    <input type="url" name="url" value="${bmark.hashed.url}"
+                        hidden="hidden"
+                        placeholder="url of website..."/>
+                % else:
+                    <div class="url">
+                        ${bmark.hashed.url}
+                    </div>
+                % endif
             </li>
             <li>
                 <label>Description</label>

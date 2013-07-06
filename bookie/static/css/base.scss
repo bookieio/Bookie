@@ -298,6 +298,12 @@ form {
             padding: 5px;
         }
     }
+
+    .url {
+        display: inline-block;
+        overflow: hidden;
+        width: 35em;
+    }
 }
 
 .form {
