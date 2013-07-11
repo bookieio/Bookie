@@ -30,9 +30,10 @@
                 <label>Url</label>
                 % if new:
                     <input type="url" name="url" value="${bmark.hashed.url}"
-                        hidden="hidden"
                         placeholder="url of website..."/>
                 % else:
+                    <input type="hidden" name="url" value="${bmark.hashed.url}"
+                        placeholder="url of website..."/>
                     <div class="url">
                         ${bmark.hashed.url}
                     </div>
@@ -102,6 +103,17 @@
                'with_submit': false
             });
             tagcontrol.render();
+
+            // Watch the form for the submit event and make sure that the tag
+            // control is up to date before we submit the form.
+            Y.one('form').on('submit', function(ev) {
+                // Fire the tag update event for the tag control to update
+                // anything that's currently entered.
+                Y.fire('tag:update', {
+                    type: 'blur',
+                    target: ''
+                });
+            });
 
             // so now we need to bind up the prev tags to add to our tag
             // control as well
