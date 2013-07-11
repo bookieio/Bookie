@@ -157,6 +157,9 @@ class ReadUrl(object):
             else:
                 read.error(exc.code, unicode(exc.code) + ': ' + clean_url)
 
+        except httplib.InvalidURL, exc:
+            read.error(STATUS_CODES['901'], str(exc))
+
         except urllib2.URLError, exc:
             read.error(STATUS_CODES['901'], str(exc))
 
