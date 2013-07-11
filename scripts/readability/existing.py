@@ -73,9 +73,13 @@ def fetch_content(i, q):
     while True:
         hash_id, url = q.get()
         LOG.debug("Q%d getting content for %s %s" % (i, hash_id, url))
-        read = ReadUrl.parse(url)
-        LOG.debug("Q%d completed parsing for %s %s" % (i, hash_id, url))
-        parsed[hash_id] = read
+        try:
+            read = ReadUrl.parse(url)
+            LOG.debug("Q%d completed parsing for %s %s" % (i, hash_id, url))
+            parsed[hash_id] = read
+        except ValueError, exc:
+            LOG.error('ValueError: ' + str(exc))
+            parsed[hash_id] = None
         q.task_done()
 
 
@@ -125,6 +129,8 @@ if __name__ == "__main__":
         enclosure_queue = Queue()
 
         while(not all):
+            transaction.begin()
+
             if args.new_only:
                 # we take off the offset because each time we run, we should
                 # have new ones to process. The query should return the 10
@@ -181,30 +187,36 @@ if __name__ == "__main__":
                 hashed = bmark.hashed
 
                 read = parsed[bmark.hash_id]
+                if read:
+                    LOG.debug("%s: %s %d %s %s" % (
+                        hashed.hash_id,
+                        read.url,
+                        len(read.content) if read.content else -1,
+                        read.is_error(),
+                        read.status_message))
 
-                LOG.debug("%s: %s %d %s %s" % (
-                    hashed.hash_id,
-                    read.url,
-                    len(read.content) if read.content else -1,
-                    read.is_error(),
-                    read.status_message))
+                    if not read.is_image():
+                        if not bmark.readable:
+                            bmark.readable = Readable()
 
-                if not read.is_image():
-                    if not bmark.readable:
-                        bmark.readable = Readable()
+                        bmark.readable.content = read.content
+                    else:
+                        if not bmark.readable:
+                            bmark.readable = Readable()
+                        bmark.readable.content = None
 
-                    bmark.readable.content = read.content
+                    # set some of the extra metadata
+                    bmark.readable.content_type = read.content_type
+                    bmark.readable.status_code = read.status
+                    bmark.readable.status_message = read.status_message
                 else:
-                    if not bmark.readable:
-                        bmark.readable = Readable()
-                    bmark.readable.content = None
-
-                # set some of the extra metadata
-                bmark.readable.content_type = read.content_type
-                bmark.readable.status_code = read.status
-                bmark.readable.status_message = read.status_message
+                    # There was a failure reading the thing.
+                    bmark.readable = Readable()
+                    bmark.readable.status = '900'
+                    bmark.readable.status_message = ('No readable record '
+                        'during existing processing')
 
             # let's do some count/transaction maint
             LOG.debug('COMMIT')
             transaction.commit()
-            transaction.begin()
+            LOG.debug('COMMIT DONE')
