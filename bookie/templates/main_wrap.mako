@@ -31,7 +31,7 @@
                         base: '${combo}${cache_buster}/combo?b',
                         comboBase: '${combo}${cache_buster}/combo?',
                         root: 'b/',
-                        // filter: 'raw',
+                        filter: 'raw',
                         // comes from including bookie/meta.js
                         modules: YUI_MODULES,
                     }

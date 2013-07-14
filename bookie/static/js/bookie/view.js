@@ -116,13 +116,26 @@ YUI.add('bookie-view', function (Y) {
                         new_nodes = new Y.NodeList();
 
                     if (data.count === 0) {
-                        // if there are no results, show the default new user view
-                        that.models = [];
-                        var tpl = Y.one('#new_user').get('text'),
-                            welcome = Y.Handlebars.compile(tpl);
-                        data_node.setContent(welcome({
-                            username: that.get('resource_user')
-                        }));
+                        // If there is not filter in place then this is a new
+                        if(data.tag_filter.length === 0) {
+                            // user showing their 'recent' bookmarks.
+                            that.models = [];
+                            var tpl = Y.one('#new_user').get('text'),
+                                welcome = Y.Handlebars.compile(tpl);
+                            data_node.setContent(welcome({
+                                username: that.get('resource_user')
+                            }));
+                        } else {
+                            // If there is a filter in place, then there's
+                            // just no results for this call. Let the user
+                            // know there's nadda here.
+                            var no_results = Y.Node.create(
+                                '<h3 class="heading"></h3>');
+                            data_node.setContent(
+                                no_results.setContent(
+                                    'No results found for specified search.')
+                            );
+                        }
                     } else {
                         // build models out of our data
                         that.models = Y.Array.map(data[that.get('results_key')],
@@ -183,7 +196,7 @@ YUI.add('bookie-view', function (Y) {
             var pager = this.get('pager');
 
             // if the current data count is < the pager page count, hide next
-            if (this.models.length < pager.get('count')) {
+            if (this.models && (this.models.length < pager.get('count'))) {
                  Y.Array.each(this.pagers, function (p) {
                     p.set('show_next', false);
                 });
