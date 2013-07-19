@@ -1047,9 +1047,8 @@ def del_user(request):
         }
 
     try:
-        Bmark.query.filter(Bmark.username == u.username).delete()
-        DBSession.delete(u.activation)
         # Delete all of the bmarks for this year.
+        Bmark.query.filter(Bmark.username == u.username).delete()
         DBSession.delete(u)
         return {
             'success': True,

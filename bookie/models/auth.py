@@ -238,6 +238,7 @@ class User(Base):
 
     activation = relation(
         Activation,
+        cascade="all, delete, delete-orphan",
         uselist=False,
         backref='user')
 

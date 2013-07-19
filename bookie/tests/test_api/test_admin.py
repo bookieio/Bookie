@@ -8,6 +8,7 @@ from pyramid import testing
 
 from bookie.models import Bmark
 from bookie.models import DBSession
+from bookie.models.auth import Activation
 from bookie.models.queue import ImportQueue
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
@@ -153,6 +154,8 @@ class AdminApiTest(unittest.TestCase):
     def test_user_delete(self):
         """Verify we can remove a user and their bookmarks via api."""
         bob = factory.make_user(username='bob')
+        bob.activation = Activation('signup')
+
         factory.make_bookmark(user=bob)
         transaction.commit()
 

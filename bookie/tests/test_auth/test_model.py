@@ -1,9 +1,18 @@
 """Test the Auth model setup"""
 from unittest import TestCase
-from nose.tools import ok_, eq_
+from nose.tools import eq_
+from nose.tools import ok_
+from pyramid import testing
 
+
+from bookie.models import DBSession
+from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
+
+from bookie.tests import empty_db
+from bookie.tests import gen_random_word
+from bookie.tests import TestDBBase
 
 
 class TestPassword(TestCase):
@@ -36,6 +45,62 @@ class TestAuthUser(TestCase):
         ok_(tst.password == self.test_hash, "Getting should have hash")
         ok_(tst.validate_password(self.test_password),
             "The password should pass against the given hash: " + tst.password)
+
+
+class TestAuthUserDB(TestDBBase):
+    def setUp(self):
+        """Setup Tests"""
+        from pyramid.paster import get_app
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'bookie')
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+        testing.setUp()
+
+    def tearDown(self):
+        """Tear down each test"""
+        testing.tearDown()
+        empty_db()
+
+    def test_activation_delete(self):
+        """Make sure removing an activation does not remove a user."""
+        tst = User()
+        tst.username = gen_random_word(10)
+        tst.activation = Activation('signup')
+        DBSession.add(tst)
+        DBSession.flush()
+
+        DBSession.delete(tst.activation)
+
+        users = UserMgr.get_list()
+
+        # We still have the admin user as well so the count is two.
+        eq_(
+            2,
+            len(users),
+            'We should have a total of 2 users still: ' + str(len(users)))
+
+    def test_activation_cascade(self):
+        """Removing a user cascades the activations as well."""
+        tst = User()
+        tst.username = gen_random_word(10)
+        tst.activation = Activation('signup')
+        DBSession.add(tst)
+        DBSession.flush()
+
+        DBSession.delete(tst)
+
+        users = UserMgr.get_list()
+
+        # We still have the admin user as well so the count is one.
+        eq_(
+            1,
+            len(users),
+            'We should have a total of 1 user still: ' + str(len(users)))
+
+        activations = DBSession.query(Activation).all()
+        eq_(0, len(activations), 'There should be no activations left')
+
 
 
 class TestAuthMgr(TestCase):
