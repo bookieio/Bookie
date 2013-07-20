@@ -117,7 +117,7 @@ YUI.add('bookie-view', function (Y) {
 
                     if (data.count === 0) {
                         // If there is not filter in place then this is a new
-                        if(data.tag_filter.length === 0) {
+                        if(!data.tag_filter || data.tag_filter.length === 0) {
                             // user showing their 'recent' bookmarks.
                             that.models = [];
                             var tpl = Y.one('#new_user').get('text'),
