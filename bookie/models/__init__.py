@@ -357,6 +357,10 @@ class Hashed(Base):
 
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
+    @staticmethod
+    def count():
+        """Number of bookmarks in the system."""
+        return Bmark.query.count()
 
     @staticmethod
     def get_by_url(url, username=None):

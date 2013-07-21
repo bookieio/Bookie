@@ -751,6 +751,12 @@ YUI.add('bookie-model', function (Y) {
         }
     });
 
-}, '0.1.0' /* module version */, {
-    requires: ['base', 'model', 'model-list', 'substitute', 'bookie-hash']
+}, '0.1.0', {
+    requires: [
+        'base',
+        'bookie-hash',
+        'model',
+        'model-list',
+        'substitute'
+    ]
 });

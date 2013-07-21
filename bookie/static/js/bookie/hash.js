@@ -73,7 +73,7 @@
         // add length (in bits) into final pair of 32-bit integers (big-endian) [§5.1.1]
         // note: most significant word would be (len-1)*8 >>> 32, but since JS converts
         // bitwise-op args to 32 bits, we need to simulate this by arithmetic operators
-        M[N-1][14] = ((msg.length-1)*8) / Math.pow(2, 32); M[N-1][14] = Math.floor(M[N-1][14])
+        M[N-1][14] = ((msg.length-1)*8) / Math.pow(2, 32); M[N-1][14] = Math.floor(M[N-1][14]);
         M[N-1][15] = ((msg.length-1)*8) & 0xffffffff;
 
 
@@ -115,7 +115,7 @@
 
         return Sha256.toHexStr(H[0]) + Sha256.toHexStr(H[1]) + Sha256.toHexStr(H[2]) + Sha256.toHexStr(H[3]) +
                Sha256.toHexStr(H[4]) + Sha256.toHexStr(H[5]) + Sha256.toHexStr(H[6]) + Sha256.toHexStr(H[7]);
-    }
+    };
 
     Sha256.ROTR = function(n, x) { return (x >>> n) | (x << (32-n)); }
     Sha256.Sigma0 = function(x) { return Sha256.ROTR(2,  x) ^ Sha256.ROTR(13, x) ^ Sha256.ROTR(22, x); }
@@ -200,4 +200,3 @@
  }, '0.1.0', {
      requires: []
  });
-

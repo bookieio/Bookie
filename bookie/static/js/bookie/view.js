@@ -1970,7 +1970,16 @@ YUI.add('bookie-view', function (Y) {
     });
 
 }, '0.1.0', {
-    requires: ['base', 'view', 'bookie-model', 'bookie-api',
-        'bookie-indicator', 'handlebars', 'transition', 'bookie-tagcontrol',
-        'bookie-rsswatch', 'substitute']
+    requires: [
+        'base',
+        'bookie-api',
+        'bookie-indicator',
+        'bookie-model',
+        'bookie-rsswatch',
+        'bookie-tagcontrol',
+        'handlebars',
+        'substitute',
+        'transition',
+        'view'
+    ]
 });

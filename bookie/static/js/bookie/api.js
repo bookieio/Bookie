@@ -7,10 +7,8 @@
  *
  */
 YUI.add('bookie-api', function (Y) {
-
-    ns = Y.namespace('bookie');
-
-    var _ = Y.substitute;
+    var ns = Y.namespace('bookie'),
+        _ = Y.substitute;
 
     /**
      * Event to watch for that the API has successfully loaded some data.
@@ -1127,5 +1125,12 @@ YUI.add('bookie-api', function (Y) {
 
 
 }, '0.1.0', {
-    requires: ['base', 'io', 'io-xdr', 'querystring-stringify-simple', 'json', 'substitute']
+    requires: [
+        'base',
+        'io',
+        'io-xdr',
+        'json',
+        'querystring-stringify-simple',
+        'substitute'
+    ]
 });

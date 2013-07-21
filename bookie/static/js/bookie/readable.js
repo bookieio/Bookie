@@ -7,9 +7,8 @@
  */
 YUI.add('bookie-readable', function (Y) {
 
-    var ns = Y.namespace('bookie.readable');
-
-    var _ = Y.substitute;
+    var ns = Y.namespace('bookie.readable'),
+        _ = Y.substitute;
 
     /**
      * Api helper for making calls out to the readable webservice.
@@ -102,5 +101,11 @@ YUI.add('bookie-readable', function (Y) {
         }
     });
 }, '0.1.0', {
-    requires: ['base', 'io-xdr', 'json', 'substitute', 'bookie-api']
+    requires: [
+        'base',
+        'bookie-api',
+        'io-xdr',
+        'json',
+        'substitute'
+    ]
 });

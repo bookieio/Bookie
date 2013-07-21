@@ -106,5 +106,7 @@ YUI.add('bookie-rsswatch', function (Y) {
 
 
 }, '0.1', {
-    requires: ['base']
+    requires: [
+        'base'
+    ]
 });

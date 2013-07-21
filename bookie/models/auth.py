@@ -44,6 +44,11 @@ def get_random_word(wordLen):
 class ActivationMgr(object):
 
     @staticmethod
+    def count():
+        """Count how many activations are in the system."""
+        return Activation.query.count()
+
+    @staticmethod
     def get_user(username, code):
         """Get the user for this code"""
         qry = Activation.query.\
@@ -121,6 +126,11 @@ class Activation(Base):
 
 class UserMgr(object):
     """ Wrapper for static/combined operations of User object"""
+
+    @staticmethod
+    def count():
+        """Number of users in the system."""
+        return User.query.count()
 
     @staticmethod
     def get_list(active=None, order=None, limit=None):

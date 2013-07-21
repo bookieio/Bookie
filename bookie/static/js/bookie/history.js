@@ -161,7 +161,7 @@ YUI.add('bookie-history-module', function (Y) {
              *
              */
             terms: {
-                value: [],
+                value: []
             },
 
             /**
@@ -184,5 +184,9 @@ YUI.add('bookie-history-module', function (Y) {
     });
 
 }, '0.1', {
-    requires: ['history', 'querystring', 'base']
+    requires: [
+        'base',
+        'history',
+        'querystring'
+    ]
 });

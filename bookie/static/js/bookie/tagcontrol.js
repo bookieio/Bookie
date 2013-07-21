@@ -761,7 +761,12 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
 }, '0.1.0', {
     requires: [
-        'autocomplete', 'autocomplete-highlighters', 'base', 'widget',
-        'handlebars', 'array-extras', 'event-valuechange'
+        'array-extras',
+        'autocomplete',
+        'autocomplete-highlighters',
+        'base',
+        'event-valuechange',
+        'handlebars',
+        'widget'
     ]
 });

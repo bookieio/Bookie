@@ -115,4 +115,10 @@ YUI.add('bookie-indicator', function (Y) {
         }
     });
 
-}, '0.1', {requires: ['base', 'widget', 'node-screen']});
+}, '0.1', {
+    requires: [
+        'base',
+        'node-screen',
+        'widget'
+    ]
+});
