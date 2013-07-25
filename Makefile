@@ -54,7 +54,7 @@ sysdeps:
 	sudo apt-get install $(SYSDEPS)
 
 .PHONY: install
-install: $(BOOKIE_INI) all first_bookmark
+install: $(BOOKIE_INI) all first_bookmark css
 
 .PHONY: develop
 develop: lib/python*/site-packages/bookie.egg-link
