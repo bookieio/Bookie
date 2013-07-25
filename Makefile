@@ -240,6 +240,7 @@ download-cache/yui:
 .PHONY: jsmin
 jsmin: $(BUILD_JS_FILES)
 	rm $(JS_BUILD_PATH)/b/meta.js || true
+	chmod +x scripts/js/jsmin_all.py
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
 
 $(JS_BUILD_PATH)/b/meta.js: $(BUILD_JS_FILES)
