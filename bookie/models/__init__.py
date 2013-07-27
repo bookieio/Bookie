@@ -330,6 +330,11 @@ event.listen(Readable, 'after_update', sync_readable_content)
 
 class HashedMgr(object):
     """Manage non-instance methods of Hashed objects"""
+
+    def count():
+        """Count how many unique hashed urls we've got."""
+        return Hashed.query.count()
+
     @staticmethod
     def get_by_url(url):
         """Return a hashed object for the url specified"""
@@ -357,11 +362,6 @@ class Hashed(Base):
 
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
-    @staticmethod
-    def count():
-        """Number of bookmarks in the system."""
-        return Bmark.query.count()
-
     @staticmethod
     def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""

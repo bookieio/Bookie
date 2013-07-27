@@ -6,15 +6,20 @@
 <ul>
     <li><span class="label">Users:</span> ${user_data['count']}</li>
     <li><span class="label">Pending Activations:</span> ${user_data['activations']}</li>
-
 </ul>
 
 
 <h2>Bookmark Data</h2>
 
 <ul>
-    <li><span class="label">Bookmarks:</span> ${bookmark_data['count']}</li>
-
+    <li>
+        <span class="label">Bookmarks:</span>
+        ${"{:,}".format(bookmark_data['count'])}
+    </li>
+    <li>
+        <span class="label">Unique Urls:</span>
+        ${"{:,}".format(bookmark_data['unique_count'])}
+    </li>
 </ul>
 
 <h2>Number of items in the system</h2>

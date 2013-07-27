@@ -22,12 +22,13 @@ def dashboard(request):
     pending_activations = ActivationMgr.count()
 
     # Generate some bookmark data.
-
+    bookmark_count = BmarkMgr.count()
+    unique_url_count = BmarkMgr.count(distinct=True)
 
     return {
         'bookmark_data': {
-            'count': BmarkMgr.count()
-
+            'count': bookmark_count,
+            'unique_count': unique_url_count
         },
         'user_data': {
             'count': user_count,
