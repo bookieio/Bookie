@@ -14,11 +14,11 @@
 <ul>
     <li>
         <span class="label">Bookmarks:</span>
-        ${"{:,}".format(bookmark_data['count'])}
+        ${bookmark_data['count']}
     </li>
     <li>
         <span class="label">Unique Urls:</span>
-        ${"{:,}".format(bookmark_data['unique_count'])}
+        ${bookmark_data['unique_count']}
     </li>
 </ul>
 
