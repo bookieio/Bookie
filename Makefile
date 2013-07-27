@@ -41,7 +41,7 @@ SYSDEPS := build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
 	       python-virtualenv rrdtool unzip
 
 .PHONY: all
-all: deps develop bookie.db db_up $(CHROME_BUILD) chrome_css js
+all: deps develop bookie.db db_up js
 
 .PHONY: clean
 clean: clean_js clean_css
@@ -54,7 +54,7 @@ sysdeps:
 	sudo apt-get install $(SYSDEPS)
 
 .PHONY: install
-install: $(BOOKIE_INI) all first_bookmark
+install: $(BOOKIE_INI) all first_bookmark css
 
 .PHONY: develop
 develop: lib/python*/site-packages/bookie.egg-link
@@ -126,7 +126,7 @@ lint:
 deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
 	if test -d download-cache; \
-		then cd download-cache && git pull; \
+		then cd download-cache && git pull || true; \
 		else git clone "http://github.com/mitechie/bookie-download-cache.git" download-cache; \
 	fi
 	@echo "Making sure the latest version of pip is available"
@@ -240,6 +240,7 @@ download-cache/yui:
 .PHONY: jsmin
 jsmin: $(BUILD_JS_FILES)
 	rm $(JS_BUILD_PATH)/b/meta.js || true
+	chmod +x scripts/js/jsmin_all.py
 	scripts/js/jsmin_all.py $(JS_BUILD_PATH)/b
 
 $(JS_BUILD_PATH)/b/meta.js: $(BUILD_JS_FILES)
@@ -297,7 +298,7 @@ clean_css:
 # extension, copying it up to files.bmark.us, and such.
 
 .PHONY: chrome_ext
-chrome: clean_chrome chrome_combo
+chrome: clean_chrome chrome_css chrome_combo
 	$(CHROME) --pack-extension=$(CHROME_EXT_PATH) --pack-extension-key=$(CHROME_KEY)
 	cd $(CHROME_EXT_PATH) && zip -r $(CHROME_DEV_FILE) .
 
