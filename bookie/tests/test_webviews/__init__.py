@@ -3,20 +3,17 @@ import feedparser
 import logging
 import time
 import transaction
-import unittest
 from datetime import datetime
 from nose.tools import ok_, eq_
-from pyramid import testing
 
 from bookie.models import Bmark
 from bookie.tests import TestViewBase
-from bookie.tests import empty_db
 from bookie.tests.factory import make_bookmark
 
 LOG = logging.getLogger(__name__)
 
 
-class BookieViewsTest(unittest.TestCase):
+class BookieViewsTest(TestViewBase):
     """Test the normal web views user's user"""
 
     def _add_bmark(self):
@@ -34,25 +31,12 @@ class BookieViewsTest(unittest.TestCase):
         bmark_us.updated = datetime.now()
         transaction.commit()
 
-    def setUp(self):
-        from pyramid.paster import get_app
-        from bookie.tests import BOOKIE_TEST_INI
-        app = get_app(BOOKIE_TEST_INI, 'bookie')
-        from webtest import TestApp
-        self.testapp = TestApp(app)
-        testing.setUp()
-
-    def tearDown(self):
-        """We need to empty the bmarks table on each run"""
-        testing.tearDown()
-        empty_db()
-
     def test_bookmark_recent(self):
         """Verify we can call the /recent url """
         self._add_bmark()
         body_str = "Recent Bookmarks"
 
-        res = self.testapp.get('/recent')
+        res = self.app.get('/recent')
 
         eq_(res.status, "200 OK",
             msg='recent status is 200, ' + res.status)
@@ -63,7 +47,7 @@ class BookieViewsTest(unittest.TestCase):
         """We should be able to page through the list"""
         body_str = "Prev"
 
-        res = self.testapp.get('/recent?page=1')
+        res = self.app.get('/recent?page=1')
         eq_(res.status, "200 OK",
             msg='recent page 1 status is 200, ' + res.status)
         ok_(body_str in res.body,
@@ -75,10 +59,20 @@ class BookieViewsTest(unittest.TestCase):
             'api_key': 'wrong_key'
         }
 
-        res = self.testapp.post('/admin/import', params=post, status=403)
+        res = self.app.post('/admin/import', params=post, status=403)
 
         eq_(res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
+
+    def test_changes_link_in_footer(self):
+        """Changes link should go to the bookie commits github page."""
+        changes_link = "https://github.com/mitechie/Bookie/commits/develop"
+        res = self.app.get('/')
+
+        eq_(res.status, "200 OK",
+            msg='recent status is 200, ' + res.status)
+        ok_(changes_link in res.body,
+            msg="Changes link should appear: " + res.body)
 
 
 class TestNewBookmark(TestViewBase):

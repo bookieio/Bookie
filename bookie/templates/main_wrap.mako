@@ -130,7 +130,7 @@
                     <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="${request.route_url('dashboard')}">Dashboard</a> |
-                    <a href="http://docs.bmark.us/changes.html">Changes</a> |
+                    <a href="https://github.com/mitechie/Bookie/commits/develop">Changes</a> |
                 </div>
             </div>
         </div>

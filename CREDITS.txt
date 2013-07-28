@@ -12,3 +12,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Stéphane Klein
 - Alexandre Gravel-Raymond
 - Jon Schewe
+- Cameron Macintosh
