@@ -4,9 +4,9 @@
 """
 import argparse
 import logging
+import signal
 import threading
 import transaction
-import signal
 
 from ConfigParser import ConfigParser
 from logging.handlers import TimedRotatingFileHandler
@@ -18,8 +18,8 @@ from bookie.lib.readable import ReadUrl
 from bookie.models import initialize_sql
 from bookie.models import Bmark
 from bookie.models import Readable
-TIMEOUT_SECS = 10 * 60
 
+TIMEOUT_SECS = 10 * 60
 PER_TRANS = 9
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.DEBUG)
@@ -86,6 +86,7 @@ def fetch_content(i, q):
 
 
 def alarm_handler(signum, frame):
+    """Alarm handler. Log error, and raise exception"""
     LOG.error("Timeout exceeded")
     raise Exception("Timeout exceeded")
 
