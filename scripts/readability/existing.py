@@ -6,6 +6,7 @@ import argparse
 import logging
 import threading
 import transaction
+import signal
 
 from ConfigParser import ConfigParser
 from logging.handlers import TimedRotatingFileHandler
@@ -17,6 +18,7 @@ from bookie.lib.readable import ReadUrl
 from bookie.models import initialize_sql
 from bookie.models import Bmark
 from bookie.models import Readable
+TIMEOUT_SECS = 10 * 60
 
 PER_TRANS = 9
 LOG = logging.getLogger(__name__)
@@ -83,7 +85,16 @@ def fetch_content(i, q):
         q.task_done()
 
 
+def alarm_handler(signum, frame):
+    LOG.error("Timeout exceeded")
+    raise Exception("Timeout exceeded")
+
+
 if __name__ == "__main__":
+    # Set timeout to exit the application when timeout is exceeded
+    signal.signal(signal.SIGALRM, alarm_handler)
+    signal.alarm(TIMEOUT_SECS)
+
     args = parse_args()
 
     if args.test_url:
@@ -220,3 +231,6 @@ if __name__ == "__main__":
             LOG.debug('COMMIT')
             transaction.commit()
             LOG.debug('COMMIT DONE')
+
+    # Turn the alarm off
+    signal.alarm(0)
