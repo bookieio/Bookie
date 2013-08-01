@@ -71,10 +71,10 @@ bookie.bcelery.celery.conf.update(
         #     "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
         #     "schedule": timedelta(seconds=60 * 5),
         # },
-        "tasks.importer": {
-            "task": "bookie.bcelery.tasks.importer_process",
-            "schedule": timedelta(seconds=60 * 3),
-        },
+        # "tasks.importer": {
+        #     "task": "bookie.bcelery.tasks.importer_process",
+        #     "schedule": timedelta(seconds=60 * 3),
+        # },
     },
 )
 
@@ -176,6 +176,16 @@ def generate_importer_depth_rrd():
         ini.get('rrd_data').format(here=HERE),
         ini.get('rrd_graphs').format(here=HERE))
     rrd.output()
+
+
+@mycelery.task(ignore_result=True)
+def import_bookmarks(importdata):
+    """Import a user's bookmarks from the application side."""
+    logger = celery.utils.log.get_logger('import_bookmarks')
+    logger.info("IMPORT Process: {0}.".format(username))
+    celery.task.subtask(
+        importer_process_worker,
+        args=(importdata.id,)).delay()
 
 
 @mycelery.task(ignore_result=True)

@@ -179,6 +179,11 @@ def build_routes(config):
         "/api/v1/a/imports/list",
         request_method="GET")
     config.add_route(
+        "api_admin_imports_reset",
+        "/api/v1/a/imports/reset/{id}",
+        request_method="POST")
+
+    config.add_route(
         "api_admin_users_list",
         "/api/v1/a/users/list",
         request_method="GET")

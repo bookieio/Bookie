@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
+from bookie.celery import tasks
 from bookie.lib.access import api_auth
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog
@@ -958,6 +959,28 @@ def import_list(request):
     ret = {
         'count': len(import_list),
         'imports': [dict(h) for h in import_list],
+    }
+    return ret
+
+
+@view_config(route_name="api_admin_imports_reset", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def import_reset(request):
+    """Reset an import to try again"""
+    rdict = request.matchdict
+    import_id = rdict.get('id', None)
+
+    if not id:
+        request.response.status_int = 400
+        ret = {'error': "Bad request, missing parameters"}
+        return ret
+
+    imp = ImportQueueMgr.get(int(import_id))
+    imp.status = 0
+    tasks.importer_process.delay(imp.id)
+
+    ret = {
+        'import': dict(imp)
     }
     return ret
 

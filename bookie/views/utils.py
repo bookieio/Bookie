@@ -12,6 +12,7 @@ from sqlalchemy.orm import contains_eager
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.applog import BmarkLog
 
+from bookie.celery import tasks
 from bookie.models import Bmark
 from bookie.models import DBSession
 from bookie.models import Hashed
@@ -19,6 +20,7 @@ from bookie.models.fulltext import get_fulltext_handler
 from bookie.models.queue import NEW
 from bookie.models.queue import ImportQueue
 from bookie.models.queue import ImportQueueMgr
+
 
 LOG = logging.getLogger(__name__)
 
@@ -73,6 +75,9 @@ def import_bmarks(request):
                 # be completed
                 q = ImportQueue(username, out_fname)
                 DBSession.add(q)
+                DBSession.flush()
+                # Schedule a task to start this import job.
+                tasks.importer_process.delay(q.id)
 
                 return HTTPFound(location=request.route_url('user_import',
                                                             username=username))

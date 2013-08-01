@@ -1,2 +1,2 @@
-#!/usr/bin/env python
+bookieusr/bin/env python
 """Celery config for Bookie Instance"""

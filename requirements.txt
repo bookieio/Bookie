@@ -1,5 +1,5 @@
 alembic == 0.3.4
-amqp==1.0.9
+amqp==1.0.12
 anyjson==0.3.3
 argparse
 BeautifulSoup==3.2.0
