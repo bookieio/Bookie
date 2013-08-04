@@ -53,11 +53,22 @@ There are some required packages that need to be installed so you can build book
 - libpq-dev
 - git
 - python-virtualenv
+- redis-server
 - rrdtool
 - unzip
 
 
 Note: right we we support three databases - mysql, postgres, and sqlite - and the database bindings need to be built into the virtualenv. Out of the box, Bookie will setup a Sqlite version for you to get started with.
+
+Celery backend task processiing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Bookie uses the `Celery`_ library to handle backgroud processing tasks that
+might be expensive. Currently, it's setup to use redis as the backend for
+this. Please check the `bookie.ini` for the connection string to the redis
+database. Any time a bookmark is saved it will background fulltext indexing for
+the bookmark. During import, it will attempt to fetch content for the imported
+urls as well. Emails and stats generation also go through this system. By
+default, `make run` will start up celery in the background.
 
 
 MySQL & Postgresql Users
@@ -85,3 +96,4 @@ the database for you. Once you're ready run:
 
 .. _`browser extension`: extensions.html
 .. _`hosting docs`: hosting.html
+.. _`Celery`: http://www.celeryproject.org/

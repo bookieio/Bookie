@@ -885,7 +885,7 @@ def to_readable(request):
     url_list = Bmark.query.outerjoin(Readable, Readable.bid == Bmark.bid).\
         join(Bmark.hashed).\
         options(contains_eager(Bmark.hashed)).\
-        filter(Readable.imported is None).all()
+        filter(Readable.imported == None).all()
 
     def data(urls):
         """Yield out the results with the url in the data streamed."""
