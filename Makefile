@@ -1,7 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-CELERY := PYTHONPATH="bookie/bcelery/." bin/celery worker -B --app=bookie.bcelery.celeryd:celery --loglevel=DEBUG
+CELERY := bin/celery worker --app=bookie -B -l debug
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
@@ -38,7 +38,7 @@ RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
 SYSDEPS := build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
-	       python-virtualenv rrdtool unzip
+	       python-virtualenv redis-server rrdtool unzip
 
 .PHONY: all
 all: deps develop bookie.db db_up js
