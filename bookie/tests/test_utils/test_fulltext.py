@@ -6,6 +6,7 @@ from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
+from bookie.celery import tasks
 from bookie.models import DBSession
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
@@ -57,6 +58,7 @@ class TestFulltext(TestCase):
 
         session.flush()
         transaction.commit()
+        tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
 
     def test_get_handler(self):

@@ -6,6 +6,7 @@ import unittest
 from nose.tools import ok_, eq_
 from pyramid import testing
 
+from bookie.celery import tasks
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
@@ -88,6 +89,8 @@ class BookieAPITest(unittest.TestCase):
 
         session.flush()
         transaction.commit()
+        # Run the celery task for indexing this bookmark.
+        tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
 
     def test_add_bookmark(self):

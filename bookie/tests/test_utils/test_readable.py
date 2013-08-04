@@ -8,6 +8,7 @@ from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
+from bookie.celery import tasks
 from bookie.lib.readable import ReadContent
 from bookie.lib.readable import ReadUrl
 
@@ -81,9 +82,9 @@ class TestReadable(TestCase):
             'CouchSurfing': ('http://allthatiswrong.wordpress.com/2010/01'
                              '/24/a-criticism-of-couchsurfing-and-review-o'
                              'f-alternatives/#problems'),
-            'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
-                           'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
-                           '8407'),
+            # 'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
+            #                'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
+            #                '8407'),
             'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
 
@@ -136,20 +137,8 @@ class TestReadableFulltext(TestCase):
                                 params=req_params)
         session.flush()
         transaction.commit()
+        tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
-
-    def test_sqlite_save(self):
-        """Verify that if we store a bookmark we get the fulltext storage"""
-        # first let's add a bookmark we can search on
-        self._get_good_request()
-
-        search_res = self.testapp.get(
-            '/api/v1/admin/bmarks/search/bmark?search_content=True')
-
-        ok_(search_res.status == '200 OK',
-            "Status is 200: " + search_res.status)
-        ok_('python' in search_res.body,
-            "We should find the python tag in the results: " + search_res.body)
 
     def test_restlike_search(self):
         """Verify that our search still works in a restful url method"""
@@ -157,7 +146,7 @@ class TestReadableFulltext(TestCase):
         self._get_good_request()
 
         search_res = self.testapp.get(
-            '/api/v1/admin/bmarks/search/bmark?search_content=True')
+            '/api/v1/admin/bmarks/search/search?search_content=True')
 
         ok_(search_res.status == '200 OK',
             "Status is 200: " + search_res.status)

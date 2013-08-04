@@ -908,7 +908,7 @@ def readable_reindex(request):
     This loops through ALL bookmarks and might take a while to complete.
 
     """
-    tasks.reindex_fulltext_allbookmarks.delay();
+    tasks.reindex_fulltext_allbookmarks.delay()
     return {
         'success': True
     }
