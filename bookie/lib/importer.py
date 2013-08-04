@@ -122,8 +122,8 @@ class DelImporter(Importer):
         soup = BeautifulSoup(self.file_handle)
         count = 0
 
+        ids = []
         for tag in soup.findAll('dt'):
-            ids = []
             if 'javascript' in str(tag):
                 continue
             # if we have a dd as next sibling, get it's content
@@ -155,18 +155,17 @@ class DelImporter(Importer):
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
 
-                from bookie.celery import tasks
-                # For each bookmark in this set that we saved, sign up to
-                # fetch its content.
-                print ids
-                for bid in ids:
-                    tasks.fetch_bmark_content.delay(bid)
-
-                # Start a new transaction for the next grouping.
-                transaction.begin()
-
         # Commit any that are left since the last commit performed.
         transaction.commit()
+
+        from bookie.celery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)
+
+        # Start a new transaction for the next grouping.
+        transaction.begin()
 
 
 class GBookmarkImporter(Importer):
@@ -262,9 +261,9 @@ class GBookmarkImporter(Importer):
                                 timestamp_added),
                         }
 
-        # save the bookmark
+        # save the bookmarks
+        ids = []
         for url, metadata in urls.items():
-            ids = []
             bmark = self.save_bookmark(
                 url,
                 metadata['description'],
@@ -272,17 +271,18 @@ class GBookmarkImporter(Importer):
                 " ".join(metadata['tags']),
                 dt=metadata['date_added'])
             DBSession.flush()
-            ids.append(bmark.bid)
+            if bmark:
+                ids.append(bmark.bid)
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
-                from bookie.celery import tasks
-                # For each bookmark in this set that we saved, sign up to
-                # fetch its content.
-                for bid in ids:
-                    tasks.fetch_bmark_content.delay(bid)
-
                 # Start a new transaction for the next grouping.
                 transaction.begin()
 
         # Commit any that are left since the last commit performed.
         transaction.commit()
+
+        from bookie.celery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)
