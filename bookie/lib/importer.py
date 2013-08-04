@@ -6,6 +6,7 @@ from BeautifulSoup import BeautifulSoup
 
 from bookie.lib.urlhash import generate_hash
 from bookie.models import BmarkMgr
+from bookie.models import DBSession
 
 
 IMPORTED = "importer"
@@ -57,17 +58,21 @@ class Importer(object):
         # adding it...if the hash matches, you must skip!
         check_hash = generate_hash(url)
         if check_hash not in self.hash_list:
-            BmarkMgr.store(url,
-                           self.username,
-                           desc,
-                           ext,
-                           tags,
-                           dt=dt,
-                           inserted_by=IMPORTED)
+            bmark = BmarkMgr.store(
+                url,
+                self.username,
+                desc,
+                ext,
+                tags,
+                dt=dt,
+                inserted_by=IMPORTED)
 
             # add this hash to the list so that we can skip dupes in the same
             # import set
             self.hash_list.add(check_hash)
+            return bmark
+        else:
+            return None
 
 
 class DelImporter(Importer):
@@ -118,6 +123,7 @@ class DelImporter(Importer):
         count = 0
 
         for tag in soup.findAll('dt'):
+            ids = []
             if 'javascript' in str(tag):
                 continue
             # if we have a dd as next sibling, get it's content
@@ -135,15 +141,28 @@ class DelImporter(Importer):
                 import_add_date = import_add_date / 1000
             add_date = datetime.fromtimestamp(import_add_date)
 
-            self.save_bookmark(link['href'],
-                               link.text,
-                               extended,
-                               " ".join(link.get('tags', '').split(',')),
-                               dt=add_date)
+            bmark = self.save_bookmark(
+                link['href'],
+                link.text,
+                extended,
+                " ".join(link.get('tags', '').split(',')),
+                dt=add_date)
             count = count + 1
+            DBSession.flush()
+            if bmark:
+                ids.append(bmark.bid)
 
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
+
+                from bookie.celery import tasks
+                # For each bookmark in this set that we saved, sign up to
+                # fetch its content.
+                print ids
+                for bid in ids:
+                    tasks.fetch_bmark_content.delay(bid)
+
+                # Start a new transaction for the next grouping.
                 transaction.begin()
 
         # Commit any that are left since the last commit performed.
@@ -245,13 +264,24 @@ class GBookmarkImporter(Importer):
 
         # save the bookmark
         for url, metadata in urls.items():
-            self.save_bookmark(url,
-                               metadata['description'],
-                               metadata['extended'],
-                               " ".join(metadata['tags']),
-                               dt=metadata['date_added'])
+            ids = []
+            bmark = self.save_bookmark(
+                url,
+                metadata['description'],
+                metadata['extended'],
+                " ".join(metadata['tags']),
+                dt=metadata['date_added'])
+            DBSession.flush()
+            ids.append(bmark.bid)
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
+                from bookie.celery import tasks
+                # For each bookmark in this set that we saved, sign up to
+                # fetch its content.
+                for bid in ids:
+                    tasks.fetch_bmark_content.delay(bid)
+
+                # Start a new transaction for the next grouping.
                 transaction.begin()
 
         # Commit any that are left since the last commit performed.

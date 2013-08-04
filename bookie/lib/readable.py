@@ -22,6 +22,11 @@ class DictObj(dict):
             return super(DictObj, self).__getattr__(name)
 
 
+USER_AGENT = 'bookie / ({url})'.format(
+    url="https://github.com/mitechie/bookie",
+)
+
+
 STATUS_CODES = DictObj({
     '1': 1,    # used for manual parsed
     '200': 200,
@@ -142,7 +147,10 @@ class ReadUrl(object):
 
         try:
             LOG.debug('Readable Parsed: ' + clean_url)
-            fh = urllib2.urlopen(clean_url.encode('utf-8'))
+            request = urllib2.Request(clean_url.encode('utf-8'))
+            request.add_header('User-Agent', USER_AGENT)
+            opener = urllib2.build_opener()
+            fh = opener.open(request)
 
             # if it works, then we default to a 200 request
             # it's ok, promise :)

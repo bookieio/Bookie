@@ -900,6 +900,20 @@ def to_readable(request):
     }
 
 
+@view_config(route_name="api_admin_readable_reindex", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def readable_reindex(request):
+    """Force the fulltext index to rebuild
+
+    This loops through ALL bookmarks and might take a while to complete.
+
+    """
+    tasks.reindex_fulltext_allbookmarks.delay();
+    return {
+        'success': True
+    }
+
+
 @view_config(route_name="api_admin_accounts_inactive", renderer="json")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def accounts_inactive(request):

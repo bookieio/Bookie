@@ -5,10 +5,12 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
+from bookie.celery import tasks
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
+from bookie.models import DBSession
 from bookie.models import InvalidBookmark
 from bookie.models import TagMgr
 from bookie.views import api
@@ -169,6 +171,12 @@ def edit_error(request):
                     post['description'],
                     post['extended'],
                     post['tags'])
+
+                # Assign a task to fetch this pages content and parse it out
+                # for storage and indexing.
+                DBSession.flush()
+                tasks.fetch_bmark_content.delay(bmark.bid)
+
             except InvalidBookmark, exc:
                 # There was an issue using the supplied data to create a new
                 # bookmark. Send the data back to the user with the error

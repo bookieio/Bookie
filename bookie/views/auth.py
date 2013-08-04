@@ -9,7 +9,7 @@ from pyramid.security import forget
 from pyramid.url import route_url
 from pyramid.view import view_config
 
-import bookie.bcelery.tasks
+from bookie.celery import tasks
 from bookie.lib.applog import AuthLog
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
@@ -146,7 +146,7 @@ def signup_process(request):
         settings = request.registry.settings
 
         # Add a queue job to send the user a notification email.
-        bookie.bcelery.tasks.email_signup_user.delay(
+        tasks.email_signup_user.delay(
             new_user.email,
             "Enable your Bookie account",
             settings,
