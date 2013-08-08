@@ -158,7 +158,7 @@ class DelImporter(Importer):
         # Commit any that are left since the last commit performed.
         transaction.commit()
 
-        from bookie.celery import tasks
+        from bookie.bcelery import tasks
         # For each bookmark in this set that we saved, sign up to
         # fetch its content.
         for bid in ids:
@@ -283,7 +283,7 @@ class GBookmarkImporter(Importer):
         # Commit any that are left since the last commit performed.
         transaction.commit()
 
-        from bookie.celery import tasks
+        from bookie.bcelery import tasks
         # For each bookmark in this set that we saved, sign up to
         # fetch its content.
         for bid in ids:

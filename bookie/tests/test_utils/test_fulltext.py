@@ -6,7 +6,7 @@ from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler

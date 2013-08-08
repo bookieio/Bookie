@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
 from bookie.models import Bmark

@@ -2,7 +2,7 @@
 import logging
 from pyramid.view import view_config
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.models import BmarkMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr

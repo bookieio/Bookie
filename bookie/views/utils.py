@@ -12,7 +12,7 @@ from sqlalchemy.orm import contains_eager
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.applog import BmarkLog
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.models import Bmark
 from bookie.models import DBSession
 from bookie.models import Hashed

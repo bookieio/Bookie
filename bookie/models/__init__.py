@@ -294,7 +294,7 @@ def sync_readable_content(mapper, connection, target):
     target.clean_content = _clean_content(target.content)
 
     # Background the process of fulltext indexing this bookmark's content.
-    from bookie.celery import tasks
+    from bookie.bcelery import tasks
     tasks.fulltext_index_bookmark.delay(
         target.bmark.bid,
         target.clean_content)
@@ -677,7 +677,7 @@ def bmark_fulltext_insert_update(mapper, connection, target):
         content = target.readable.clean_content
 
     # Background the process of fulltext indexing this bookmark's content.
-    from bookie.celery import tasks
+    from bookie.bcelery import tasks
     tasks.fulltext_index_bookmark.delay(target.bid, content)
 
 event.listen(Bmark, 'after_insert', bmark_fulltext_insert_update)

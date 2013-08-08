@@ -6,7 +6,7 @@ import unittest
 from nose.tools import ok_, eq_
 from pyramid import testing
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db

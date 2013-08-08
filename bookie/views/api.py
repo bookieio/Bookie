@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.lib.access import api_auth
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog

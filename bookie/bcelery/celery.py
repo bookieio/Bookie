@@ -32,9 +32,9 @@ INI = load_ini()
 
 
 celery = Celery(
-    'bookie.celery',
+    'bookie.bcelery',
     broker=INI.get('celery_broker'),
-    include=['bookie.celery.tasks'])
+    include=['bookie.bcelery.tasks'])
 
 # Optional configuration, see the application user guide.
 celery.conf.update(
@@ -42,11 +42,11 @@ celery.conf.update(
     CELERY_RESULT_BACKEND=INI.get('celery_broker'),
     CELERYBEAT_SCHEDULE={
         'hourly_stats': {
-            'task': 'bookie.celery.tasks.hourly_stats',
+            'task': 'bookie.bcelery.tasks.hourly_stats',
             'schedule': timedelta(seconds=60*60),
         },
         'fetch_unfetched': {
-            'task': 'bookie.celery.tasks.fetch_unfetched_bmark_content',
+            'task': 'bookie.bcelery.tasks.fetch_unfetched_bmark_content',
             'schedule': timedelta(seconds=60),
         },
     }

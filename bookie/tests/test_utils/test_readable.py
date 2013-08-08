@@ -8,7 +8,7 @@ from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
-from bookie.celery import tasks
+from bookie.bcelery import tasks
 from bookie.lib.readable import ReadContent
 from bookie.lib.readable import ReadUrl
 
