@@ -217,6 +217,18 @@ class ImportGoogleTest(unittest.TestCase):
         # now let's do some db sanity checks
         _google_data_test()
 
+    def test_bookmarklet_file(self):
+        """Verify we can import a file with a bookmarklet in it."""
+        loc = os.path.dirname(__file__)
+        bmarklet_file = os.path.join(loc, 'bookmarklet_error.htm')
+        fh = open(bmarklet_file)
+
+        imp = Importer(fh, username="admin")
+        imp.process()
+
+        res = Bmark.query.all()
+        eq_(len(res), 3)
+
 
 class ImportViews(TestViewBase):
     """Test the web import"""
