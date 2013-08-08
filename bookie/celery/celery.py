@@ -39,7 +39,6 @@ celery = Celery(
 # Optional configuration, see the application user guide.
 celery.conf.update(
     CELERY_TASK_RESULT_EXPIRES=3600,
-    CELERY_CONCURRENCY=1,
     CELERY_RESULT_BACKEND=INI.get('celery_broker'),
     CELERYBEAT_SCHEDULE={
         'hourly_stats': {
