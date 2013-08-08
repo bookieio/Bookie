@@ -116,10 +116,23 @@ def importer_process_worker(import_id):
     except Exception, exc:
         # We need to log this and probably send an error email to the
         # admin
-        logger.error(exc)
-        logger.error(str(exc))
+        from bookie.lib.message import ImportFailureMessage
+
         trans = transaction.begin()
         import_job = ImportQueueMgr.get(import_id)
+
+        msg = ImportFailureMessage(
+            INI.get('email.from'),
+            'Import failure!',
+            INI)
+        msg.send({
+            'username': import_job.username,
+            'file_path': import_job.file_path,
+            'exc': str(exc)
+        })
+
+        logger.error(exc)
+        logger.error(str(exc))
         import_job.mark_error()
         logger.info(
             "IMPORT: ERROR for {username}".format(**dict(import_job)))

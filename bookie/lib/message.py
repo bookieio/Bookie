@@ -166,3 +166,23 @@ https://github.com/mitechie/Bookie
 
 ---
 The Bookie Team""".format(message_data)
+
+
+class ImportFailureMessage(Message):
+    """Send an email that the import has failed."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg =  """
+The import for user {username} has failed to import. The path to the import
+is:
+
+{file_path}
+
+Error:
+
+{exc}
+
+""".format(**message_data)
+        return msg

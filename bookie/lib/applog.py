@@ -111,6 +111,18 @@ class BmarkLog(Log):
 
         BmarkLog.store(status, message, **data)
 
+    @staticmethod
+    def import_file(for_user, file_path, error=None):
+        """Note that an import has been processed for a user."""
+        data = {
+            'username': for_user,
+            'file_path': file_path,
+            'error': error
+        }
+
+        message = "Import added" if error is None else "Import ERROR"
+        BmarkLog.store(Log.INFO, message, **data)
+
 
 class LogRecord(object):
     """A record in the log"""

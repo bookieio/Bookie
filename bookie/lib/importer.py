@@ -124,7 +124,7 @@ class DelImporter(Importer):
 
         ids = []
         for tag in soup.findAll('dt'):
-            if 'javascript' in str(tag):
+            if 'javascript:' in str(tag):
                 continue
             # if we have a dd as next sibling, get it's content
             if tag.nextSibling and tag.nextSibling.name == 'dd':
@@ -232,6 +232,8 @@ class GBookmarkImporter(Importer):
 
                 for link in links:
                     url = link["href"]
+                    if url.startswith('javascript:'):
+                        continue
                     tag_text = tag.text.replace(" ", "-")
                     if url in urls:
                         urls[url]['tags'].append(tag_text)
