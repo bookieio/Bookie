@@ -7,6 +7,7 @@ from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
+from bookie.models import InvalidBookmark
 
 
 IMPORTED = "importer"
@@ -141,14 +142,18 @@ class DelImporter(Importer):
                 import_add_date = import_add_date / 1000
             add_date = datetime.fromtimestamp(import_add_date)
 
-            bmark = self.save_bookmark(
-                link['href'],
-                link.text,
-                extended,
-                " ".join(link.get('tags', '').split(',')),
-                dt=add_date)
-            count = count + 1
-            DBSession.flush()
+            try:
+                bmark = self.save_bookmark(
+                    link['href'],
+                    link.text,
+                    extended,
+                    " ".join(link.get('tags', '').split(',')),
+                    dt=add_date)
+                count = count + 1
+                DBSession.flush()
+            except InvalidBookmark, exc:
+                bmark = None
+
             if bmark:
                 ids.append(bmark.bid)
 
@@ -266,13 +271,16 @@ class GBookmarkImporter(Importer):
         # save the bookmarks
         ids = []
         for url, metadata in urls.items():
-            bmark = self.save_bookmark(
-                url,
-                metadata['description'],
-                metadata['extended'],
-                " ".join(metadata['tags']),
-                dt=metadata['date_added'])
-            DBSession.flush()
+            try:
+                bmark = self.save_bookmark(
+                    url,
+                    metadata['description'],
+                    metadata['extended'],
+                    " ".join(metadata['tags']),
+                    dt=metadata['date_added'])
+                DBSession.flush()
+            except InvalidBookmark, exc:
+                bmark = None
             if bmark:
                 ids.append(bmark.bid)
             if count % COMMIT_SIZE == 0:
