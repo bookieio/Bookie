@@ -13,6 +13,7 @@ from bookie.lib.readable import ReadUrl
 from bookie.models import initialize_sql
 from bookie.models import Bmark
 from bookie.models import Readable
+from bookie.models.auth import UserMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
@@ -117,6 +118,7 @@ def importer_process_worker(import_id):
         # We need to log this and probably send an error email to the
         # admin
         from bookie.lib.message import ImportFailureMessage
+        from bookie.lib.message import UserImportFailureMessage
 
         trans = transaction.begin()
         import_job = ImportQueueMgr.get(import_id)
@@ -128,6 +130,17 @@ def importer_process_worker(import_id):
         msg.send({
             'username': import_job.username,
             'file_path': import_job.file_path,
+            'exc': str(exc)
+        })
+
+        # Also send an email to the user that their import failed.
+        user = UserMgr.get(username=import_job.username)
+        msg = UserImportFailureMessage(
+            user.email,
+            'Bookie: We are sorry, your import failed.',
+            INI)
+        msg.send({
+            'username': import_job.username,
             'exc': str(exc)
         })
 

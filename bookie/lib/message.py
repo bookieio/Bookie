@@ -174,7 +174,7 @@ class ImportFailureMessage(Message):
     def _get_message_body(self, template_file, message_data):
         """Build the email message body."""
 
-        msg =  """
+        msg = """
 The import for user {username} has failed to import. The path to the import
 is:
 
@@ -185,4 +185,29 @@ Error:
 {exc}
 
 """.format(**message_data)
+        return msg
+
+
+class UserImportFailureMessage(Message):
+    """Send an email to the user their import has failed."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg = """
+Your import has failed. The error is listed below. Please file a bug at
+https://github.com/mitechie/bookie/issues if this error continues. You may
+also join #bookie on freenode irc if you wish to aid in debugging the issue.
+If the error pertains to a specific bookmark in your import file you might try
+removing it and importing the file again.
+
+Error
+----------
+
+{exc}
+
+A copy of this error has been logged and will be looked at.
+
+---
+The Bookie Team""".format(**message_data)
         return msg
