@@ -1,7 +1,7 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-CELERY := bin/celery worker --app=bookie:bcelery -B -l debug
+CELERY := bin/celery worker --app=bookie.bcelery -B -l debug
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
