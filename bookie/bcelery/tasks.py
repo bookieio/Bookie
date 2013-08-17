@@ -124,7 +124,6 @@ def importer_process_worker(import_id):
             "IMPORT: COMPLETE for {username}".format(**dict(import_job)))
         trans.commit()
 
-
     except Exception, exc:
         # We need to log this and probably send an error email to the
         # admin
@@ -270,7 +269,14 @@ def fetch_bmark_content(bid):
         raise Exception('Bookmark not found: ' + str(bid))
     hashed = bmark.hashed
 
-    read = ReadUrl.parse(hashed.url)
+    try:
+        read = ReadUrl.parse(hashed.url)
+    except ValueError, exc:
+        # We hit this where urllib2 choked trying to get the protocol type of
+        # this url to fetch it.
+        logger.error('Could not parse url: ' + hashed.url)
+        logger.error('exc')
+        read = None
 
     if read:
         logger.debug(read)
