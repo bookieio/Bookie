@@ -211,3 +211,20 @@ A copy of this error has been logged and will be looked at.
 ---
 The Bookie Team""".format(**message_data)
         return msg
+
+
+class UserImportSuccessMessage(Message):
+    """Send an email to the user after a successful import."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg = """
+Your bookmark import is complete! We've begun processing your bookmarks to
+load their page contents and fulltext index them. This process might take a
+while if you have a large number of bookmarks. Check out your imported
+bookmarks at https://bmark.us/{username}/recent.
+
+---
+The Bookie Team""".format(**message_data)
+        return msg

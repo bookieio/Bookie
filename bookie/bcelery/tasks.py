@@ -110,9 +110,20 @@ def importer_process_worker(import_id):
         trans = transaction.begin()
         import_job = ImportQueueMgr.get(import_id)
         import_job.mark_done()
+        user = UserMgr.get(username=import_job.username)
+        from bookie.lib.message import UserImportSuccessMessage
+        msg = UserImportSuccessMessage(
+            user.email,
+            'Bookie: Your requested import has completed.',
+            INI)
+        msg.send({
+            'username': import_job.username,
+        })
+
         logger.info(
             "IMPORT: COMPLETE for {username}".format(**dict(import_job)))
         trans.commit()
+
 
     except Exception, exc:
         # We need to log this and probably send an error email to the
@@ -122,6 +133,7 @@ def importer_process_worker(import_id):
 
         trans = transaction.begin()
         import_job = ImportQueueMgr.get(import_id)
+        user = UserMgr.get(username=import_job.username)
 
         msg = ImportFailureMessage(
             INI.get('email.from'),
@@ -134,7 +146,6 @@ def importer_process_worker(import_id):
         })
 
         # Also send an email to the user that their import failed.
-        user = UserMgr.get(username=import_job.username)
         msg = UserImportFailureMessage(
             user.email,
             'Bookie: We are sorry, your import failed.',
