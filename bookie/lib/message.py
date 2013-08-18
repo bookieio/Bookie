@@ -118,12 +118,14 @@ class ReactivateMsg(Message):
 
         """
         return """
-Reactivate your Bookie account with the following url:
+Hello {username}:
 
-{0}
+Please activate your Bookie account by clicking on the following url:
+
+{url}
 
 ---
-The Bookie Team""".format(message_data)
+The Bookie Team""".format(**message_data)
         # lookup = config['pylons.app_globals'].mako_lookup
         # template = lookup.get_template(template_file)
 

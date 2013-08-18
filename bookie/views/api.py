@@ -738,11 +738,13 @@ check your spam folder.""",
                         "Activate your Bookie account",
                         settings)
 
-    msg.send(
-        request.route_url(
+    msg.send({
+        'url': request.route_url(
             'reset',
             username=user.username,
-            reset_key=user.activation.code))
+            reset_key=user.activation.code),
+        'username': user.username
+    })
 
     return {
         'message': """Your account has been marked for reactivation. Please
