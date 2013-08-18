@@ -426,13 +426,6 @@ fieldset {
         .tags {
             float: right;
         }
-
-        .dateinfo {
-            padding-left: 2em;
-            clear: right;
-            float: right;
-
-        }
     }
 }
 
@@ -504,6 +497,11 @@ fieldset {
         opacity: .7;
     }
 
+    .days-ago {
+        color: $altcolor;
+        font-size: .8em;
+    }
+
     .url {
         padding: .3em 0 0 .3em;
     }
@@ -537,11 +535,6 @@ fieldset {
             }
         }
     }
-}
-
-.dateinfo {
-    color: lighten($darkgrey, 25%);
-    font-size: .8em;
 }
 
 .note {
