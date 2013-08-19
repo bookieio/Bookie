@@ -7,9 +7,11 @@ side
 
 """
 from datetime import datetime
+from datetime import timedelta
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import func
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import UnicodeText
@@ -26,6 +28,23 @@ class AppLogMgr(object):
         stored = AppLog(**kwargs)
         DBSession.add(stored)
 
+    @staticmethod
+    def find(days=1, message_filter=None, status=None):
+        """Find a set of app log records based on predefined filters."""
+        qry = AppLog.query
+        if status is not None:
+            qry = qry.filter(AppLog.status == status)
+
+        if message_filter:
+            mfilter = '%{0}%'.format(message_filter)
+            qry = qry.filter(func.lower(AppLog.message).like(mfilter))
+
+        now = datetime.now()
+        limit = now - timedelta(days=days)
+        qry = qry.filter(AppLog.tstamp > limit)
+
+        return qry.order_by(AppLog.tstamp.desc()).all()
+
 
 class AppLog(Base):
     __tablename__ = 'logging'
@@ -37,10 +56,3 @@ class AppLog(Base):
     message = Column(Unicode(255), nullable=False)
     payload = Column(UnicodeText)
     tstamp = Column(DateTime, default=datetime.now)
-
-    def __init__(self, **kwargs):
-        self.user = kwargs.get('user', None)
-        self.component = kwargs.get('component', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.payload = kwargs.get('payload', None)

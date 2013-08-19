@@ -23,6 +23,7 @@ from bookie.models import DBSession
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
+from bookie.models.applog import AppLogMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
 from bookie.models.auth import User
@@ -1131,3 +1132,27 @@ def admin_bmark_remove(request):
             'error': 'Bookmark with hash id {0} not found.'.format(
                 rdict['hash_id'])
         }
+
+
+@view_config(route_name="api_admin_applog", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def admin_applog(request):
+    """Return applog data for admin use."""
+    rdict = request.GET
+
+    # Support optional filter parameters
+    days = int(rdict.get('days', 1))
+    status=rdict.get('status', None)
+    message = rdict.get('message', None)
+
+    log_list = AppLogMgr.find(
+        days=days,
+        message_filter=message,
+        status=status,
+    )
+
+    ret = {
+        'count': len(log_list),
+        'logs': [dict(l) for l in log_list],
+    }
+    return ret

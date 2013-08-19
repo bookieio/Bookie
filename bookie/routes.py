@@ -203,6 +203,11 @@ def build_routes(config):
         "/api/v1/a/bmark/{username}/{hash_id}",
         request_method="DELETE")
 
+    config.add_route(
+        "api_admin_applog",
+        "/api/v1/a/applog/list",
+        request_method="GET")
+
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")
 
