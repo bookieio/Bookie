@@ -104,14 +104,14 @@ class Activation(Base):
     code = Column(Unicode(60))
     valid_until = Column(
         DateTime,
-        default=lambda: datetime.now + ACTIVATION_AGE)
+        default=lambda: datetime.utcnow + ACTIVATION_AGE)
     created_by = Column('created_by', Unicode(255))
 
     def __init__(self, created_system):
         """Create a new activation"""
         self.code = Activation._gen_activation_hash()
         self.created_by = created_system
-        self.valid_until = datetime.now() + ACTIVATION_AGE
+        self.valid_until = datetime.utcnow() + ACTIVATION_AGE
 
     @staticmethod
     def _gen_activation_hash():
@@ -241,7 +241,7 @@ class User(Base):
     activated = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     last_login = Column(DateTime)
-    signup = Column(DateTime, default=datetime.now)
+    signup = Column(DateTime, default=datetime.utcnow)
     api_key = Column(Unicode(12))
     invite_ct = Column(Integer, default=0)
     invited_by = Column('invited_by', Unicode(255))

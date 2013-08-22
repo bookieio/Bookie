@@ -81,7 +81,7 @@ class ImportQueue(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     username = Column(Unicode(255))
     file_path = Column(Unicode(100), nullable=False)
-    tstamp = Column(DateTime, default=datetime.now)
+    tstamp = Column(DateTime, default=datetime.utcnow)
     status = Column(Integer, default=NEW)
     completed = Column(DateTime)
 
@@ -100,5 +100,5 @@ class ImportQueue(Base):
 
     def mark_done(self):
         """Mark it complete"""
-        self.completed = datetime.now()
+        self.completed = datetime.utcnow()
         self.status = COMPLETE

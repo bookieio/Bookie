@@ -39,7 +39,7 @@ class AppLogMgr(object):
             mfilter = '%{0}%'.format(message_filter)
             qry = qry.filter(func.lower(AppLog.message).like(mfilter))
 
-        now = datetime.now()
+        now = datetime.utcnow()
         limit = now - timedelta(days=days)
         qry = qry.filter(AppLog.tstamp > limit)
 
@@ -55,4 +55,4 @@ class AppLog(Base):
     status = Column(Unicode(10), nullable=False)
     message = Column(Unicode(255), nullable=False)
     payload = Column(UnicodeText)
-    tstamp = Column(DateTime, default=datetime.now)
+    tstamp = Column(DateTime, default=datetime.utcnow)

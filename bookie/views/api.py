@@ -437,7 +437,7 @@ def bmark_export(request):
     return {
         'bmarks': [build_bmark(bmark) for bmark in bmark_list],
         'count': len(bmark_list),
-        'date': str(datetime.now())
+        'date': str(datetime.utcnow())
     }
 
 

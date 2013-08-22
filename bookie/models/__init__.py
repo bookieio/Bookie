@@ -278,7 +278,7 @@ class Readable(Base):
                      index=True)
     content = Column(UnicodeText)
     clean_content = Column(UnicodeText)
-    imported = Column(DateTime, default=datetime.now)
+    imported = Column(DateTime, default=datetime.utcnow)
     content_type = Column(Unicode(255))
     status_code = Column(Integer)
     status_message = Column(Unicode(255))
@@ -373,7 +373,7 @@ class BmarkMgr(object):
         Only check for a recent one, last 3 hours
 
         """
-        last_hours = datetime.now() - timedelta(hours=RECENT)
+        last_hours = datetime.utcnow() - timedelta(hours=RECENT)
         qry = Bmark.query.filter(Bmark.stored > last_hours)
 
         if username:
@@ -587,8 +587,8 @@ class Bmark(Base):
     hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'))
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
-    stored = Column(DateTime, default=datetime.now)
-    updated = Column(DateTime, onupdate=datetime.now)
+    stored = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, onupdate=datetime.utcnow)
     clicks = Column(Integer, default=0)
 
     # this could be chrome_extension, firefox_extension, website, browser XX,

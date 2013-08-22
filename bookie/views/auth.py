@@ -54,7 +54,7 @@ def login(request):
             # authenticated rather than the username.  You can change what is
             # returned as the userid by altering what is passed to remember.
             headers = remember(request, auth.id, max_age=60 * 60 * 24 * 30)
-            auth.last_login = datetime.now()
+            auth.last_login = datetime.utcnow()
 
             # log the successful login
             AuthLog.login(login, True)
