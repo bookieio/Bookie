@@ -7,8 +7,7 @@
  */
 YUI.add('bookie-model', function (Y) {
     var _ = Y.substitute,
-        ns = Y.namespace('bookie'),
-        TZ = '-05:00';
+        ns = Y.namespace('bookie');
 
     // Copyright (C) 2011 by Will Tomlins
     //
@@ -482,14 +481,18 @@ YUI.add('bookie-model', function (Y) {
                  * @type Date
                  *
                  */
-                'stored': {},
+                'stored': {
+                    getter: function(val) {
+                      return val + " UTC";
+                    }
+
+                },
 
                 'stored_date': {
                     getter: function() {
                         var stored = this.get('stored');
                         if (stored) {
-                            return new Date(stored.replace(' ', 'T') + TZ);
-
+                            return new Date(stored);
                         }
 
                     }
@@ -504,7 +507,7 @@ YUI.add('bookie-model', function (Y) {
                 'updated': {
                     // we need to turn a string from json into a Date object
                     setter: function (val, name) {
-                        return new Date(val.replace(' ', 'T') + TZ);
+                        return new Date(val + " UTC");
                     }
                 },
 
