@@ -82,7 +82,7 @@ def recent_rss(request):
     tags = rdict.get('tags', None)
     username = rdict.get('username', None)
 
-    ret = api.bmark_recent(request)
+    ret = api.bmark_recent(request, with_content=True)
     ret['username'] = username
     ret['tags'] = tags
     return ret

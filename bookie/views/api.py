@@ -278,7 +278,7 @@ def bmark_remove(request):
 @view_config(route_name="api_bmarks_tags", renderer="json")
 @view_config(route_name="api_bmarks_user_tags", renderer="json")
 @api_auth('api_key', UserMgr.get, anon=True)
-def bmark_recent(request):
+def bmark_recent(request, with_content=False):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
     params = request.params
@@ -286,7 +286,6 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = _check_with_content(params)
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
@@ -311,15 +310,13 @@ def bmark_recent(request):
     # if we allow showing of content the query hangs and fails on the
     # postgres side. Need to check the query and figure out what's up.
     # see bug #142
-    with_content = False
-
+    # We don't allow with_content by default because of this bug.
     recent_list = BmarkMgr.find(
         limit=count,
         order_by=Bmark.stored.desc(),
         page=page,
         tags=tags,
         username=username,
-        with_content=with_content,
         with_tags=True,
     )
 
@@ -1142,7 +1139,7 @@ def admin_applog(request):
 
     # Support optional filter parameters
     days = int(rdict.get('days', 1))
-    status=rdict.get('status', None)
+    status = rdict.get('status', None)
     message = rdict.get('message', None)
 
     log_list = AppLogMgr.find(

@@ -33,6 +33,11 @@
 			% for tag in bmark['tags']:
 			<category>${tag['name']}</category>
 			% endfor
+            <summary>
+                % if 'readable' in bmark and 'content' in bmark['readable']:
+                    ${bmark['readable']['content']}
+                % endif
+            </summary>
 		</item>
 		% endfor
 	</channel>
