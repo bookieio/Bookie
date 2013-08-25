@@ -23,7 +23,6 @@
 		% for bmark in bmarks:
 		<item>
 			<title><![CDATA[${bmark['description']}]]></title>
-			<description><![CDATA[${bmark['extended']}]]></description>
 			<%
 				local_timestamp = time.mktime(time.strptime(bmark['stored'], time_format))
 				gmt_date_string = time.strftime('%a, %d %b %Y %H:%M:%S', time.gmtime(local_timestamp))
@@ -33,11 +32,11 @@
 			% for tag in bmark['tags']:
 			<category>${tag['name']}</category>
 			% endfor
-            <summary>
+            <description>
                 % if 'readable' in bmark and 'content' in bmark['readable']:
                     ${bmark['readable']['content']}
                 % endif
-            </summary>
+            </description>
 		</item>
 		% endfor
 	</channel>
