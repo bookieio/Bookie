@@ -39,17 +39,21 @@
             ${title}
         </a>
 
-        % if reset:
-            <input type="hidden" id="username" value="${user.username}" />
-            <input type="hidden" id="code" value="${user.activation.code}" />
-        % endif
-
         <div id="password_change"
             % if not reset:
                 style="display: none; opacity: 0;"
             % endif
         >
-            <form id="password_reset">
+            <form id="password_reset" method="POST">
+                % if message:
+                    <div class="error">${message}</div>
+                % endif
+                 % if reset:
+                     <input type="hidden" name="username" id="username" value="${user.username}" />
+                     <input type="hidden" name="code" id="code" value="${user.activation.code}" />
+                 % endif
+
+                <div></div
                 <ul>
                     % if not reset:
                         <li>
@@ -72,7 +76,7 @@
 
                     <li>
                         <label></label>
-                        <input type="button" id="submit_password_change" value="${submit}" class="button" />
+                        <input type="submit" id="submit_password_change" value="${submit}" class="button" />
                     </li>
                 </ul>
             </form>

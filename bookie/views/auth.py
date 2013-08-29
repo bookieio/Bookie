@@ -173,26 +173,81 @@ def signup_process(request):
 def reset(request):
     """Once deactivated, allow for changing the password via activation key"""
     rdict = request.matchdict
+    params = request.params
 
+    # This is an initial request to show the activation form.
     username = rdict.get('username', None)
     activation_key = rdict.get('reset_key', None)
-
-    LOG.error("CHECKING")
-    LOG.error(username)
-
-    # this can only be visited if user is visiting the reset with the right key
-    # for the username in the url
     user = ActivationMgr.get_user(username, activation_key)
 
     if user is None:
         # just 404 if we don't have an activation code for this user
         raise HTTPNotFound()
 
-    LOG.error(user.username)
-    LOG.error(user.email)
-    return {
-        'user': user,
-    }
+    if 'code' in params:
+        # This is a posted form with the activation, attempt to unlock the
+        # user's account.
+        username = params.get('username', None)
+        activation = params.get('code', None)
+        password = params.get('new_password', None)
+        new_username = params.get('new_username', None)
+        error = None
+
+        if not UserMgr.acceptable_password(password):
+            # Set an error message to the template.
+            error = "Come on, pick a real password please."
+        else:
+            res = ActivationMgr.activate_user(username, activation, password)
+            if res:
+                # success so respond nicely
+                AuthLog.reactivate(username, success=True, code=activation)
+
+                # if there's a new username and it's not the same as our current
+                # username, update it
+                if new_username and new_username != username:
+                    try:
+                        user = UserMgr.get(username=username)
+                        user.username = new_username
+                    except IntegrityError, exc:
+                        error = 'There was an issue setting your new username'
+            else:
+                AuthLog.reactivate(username, success=False, code=activation)
+                error = 'There was an issue attempting to activate this account.'
+
+        if error:
+            return {
+                'message': error,
+                'user': user
+            }
+        else:
+            # Log the user in and move along.
+            headers = remember(request, user.id, max_age=60 * 60 * 24 * 30)
+            user.last_login = datetime.utcnow()
+
+            # log the successful login
+            AuthLog.login(user.username, True)
+
+            # we're always going to return a user to their own /recent after a
+            # login
+            return HTTPFound(
+                location=request.route_url(
+                    'user_bmark_recent',
+                    username=user.username),
+                headers=headers)
+
+    else:
+        LOG.error("CHECKING")
+        LOG.error(username)
+
+        if user is None:
+            # just 404 if we don't have an activation code for this user
+            raise HTTPNotFound()
+
+        LOG.error(user.username)
+        LOG.error(user.email)
+        return {
+            'user': user,
+        }
 
 
 def forbidden_view(request):

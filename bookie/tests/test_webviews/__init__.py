@@ -152,4 +152,5 @@ class TestRSSFeeds(TestViewBase):
         sample_item = links[0]
         ok_(sample_item['title'], 'Items have a title.')
         ok_(sample_item['link'], 'Items have a link to reach things.')
-        ok_(sample_item['description'], 'Items have a description string.')
+        ok_('description' in sample_item, 'Items have a description string.')
+

@@ -85,7 +85,6 @@ class TestReadable(TestCase):
             # 'Electronic': ('https://www.fbo.gov/index?s=opportunity&mode='
             #                'form&tab=core&id=dd11f27254c796f80f2aadcbe415'
             #                '8407'),
-            'Will Fuqua': 'http://twitter.com/#!/wafuqua',
         }
 
         for key, url in urls.iteritems():
