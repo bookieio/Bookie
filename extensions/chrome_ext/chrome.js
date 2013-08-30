@@ -208,6 +208,16 @@ YUI().add('bookie-chrome', function (Y) {
                 }
             });
 
+            // Verify the auth credentials are not the default values.
+            var defaults = new Y.bookie.OptionsModel();
+            if (settings.get('api_username') === defaults.get('api_username')) {
+                errors.push("The api username must be set.");
+            }
+
+            if (settings.get('api_key') === defaults.get('api_key')) {
+                errors.push("The api key must be set.");
+            }
+
             // display errors if we have them
             if (errors.length) {
                 ret = false;

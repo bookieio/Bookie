@@ -48,7 +48,7 @@ YUI().use('bookie-chrome', function (Y) {
                 message: 'Could not find a url to bookmark.'
             });
         }
-    }
+    };
 
     // this could be fed tab info via the url
     // usually in the case of a keyboard shortcut loading this in a
@@ -56,10 +56,10 @@ YUI().use('bookie-chrome', function (Y) {
     var parts = window.location.hash.substring(1).split('|');
     var tab_data;
     if (parts.length === 2) {
-        var tab_data = {
+        tab_data = {
             'url': window.atob(parts[0]),
             'description': window.atob(parts[1])
-        }
+        };
         run(tab_data);
     } else {
         // first get the windowid
