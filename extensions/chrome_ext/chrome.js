@@ -208,6 +208,11 @@ YUI().add('bookie-chrome', function (Y) {
                 }
             });
 
+            // check to make sure credentials have been changed from the defaults
+            if (settings.get('api_url') === "username" || settings.get('api_key') === "XXXXXX") {
+                errors.push("The API credentials have not been set.");
+            }
+
             // display errors if we have them
             if (errors.length) {
                 ret = false;
