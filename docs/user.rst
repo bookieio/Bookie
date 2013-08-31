@@ -15,25 +15,11 @@ run into any issues so we can improve our import process.
 
 Readable Parsing of your Bookmarks
 -----------------------------------
-In order to get the parsed readable version of your bookmark content you can
-use the script *scripts/readability/existing.py*
-
-Parameters
-~~~~~~~~~~
-
---ini
-    (Required) what is the *.ini* file we're using to do things like figure out
-    the db connection string? By default this should be `bookie.ini`.
-
---new
-    Only go through and fetch/parse html content for bookmarks that have not
-    been processed before. You might use this in a daily cron script to update
-    readable content for new bookmarks.
-
---retry-errors
-    Go through and retry any bookmarks that were not a successful status code
-    of 200 during a previous run. You might want to run this once a month to
-    see if any previous 404'd bookmarks are available now, etc.
+One of Bookie's best features is that it will fetch the content of your
+bookmarks and attempt to parse/fulltext index it. A bookmark import will cause
+the system to go in and start fetching content for the new bookmarks. There's
+also a background task that will (by default) attempt to find any bookmarks
+missing content and fetch it on an hourly basis.
 
 Example cron jobs
 ~~~~~~~~~~~~~~~~~

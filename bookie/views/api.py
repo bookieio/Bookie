@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
 
+from bookie.bcelery import tasks
 from bookie.lib.access import api_auth
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog
@@ -22,6 +23,7 @@ from bookie.models import DBSession
 from bookie.models import NoResultFound
 from bookie.models import Readable
 from bookie.models import TagMgr
+from bookie.models.applog import AppLogMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
 from bookie.models.auth import User
@@ -276,7 +278,7 @@ def bmark_remove(request):
 @view_config(route_name="api_bmarks_tags", renderer="json")
 @view_config(route_name="api_bmarks_user_tags", renderer="json")
 @api_auth('api_key', UserMgr.get, anon=True)
-def bmark_recent(request):
+def bmark_recent(request, with_content=False):
     """Get a list of the bmarks for the api call"""
     rdict = request.matchdict
     params = request.params
@@ -284,7 +286,6 @@ def bmark_recent(request):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
-    with_content = _check_with_content(params)
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
@@ -309,15 +310,13 @@ def bmark_recent(request):
     # if we allow showing of content the query hangs and fails on the
     # postgres side. Need to check the query and figure out what's up.
     # see bug #142
-    with_content = False
-
+    # We don't allow with_content by default because of this bug.
     recent_list = BmarkMgr.find(
         limit=count,
         order_by=Bmark.stored.desc(),
         page=page,
         tags=tags,
         username=username,
-        with_content=with_content,
         with_tags=True,
     )
 
@@ -435,7 +434,7 @@ def bmark_export(request):
     return {
         'bmarks': [build_bmark(bmark) for bmark in bmark_list],
         'count': len(bmark_list),
-        'date': str(datetime.now())
+        'date': str(datetime.utcnow())
     }
 
 
@@ -737,11 +736,13 @@ check your spam folder.""",
                         "Activate your Bookie account",
                         settings)
 
-    msg.send(
-        request.route_url(
+    msg.send({
+        'url': request.route_url(
             'reset',
             username=user.username,
-            reset_key=user.activation.code))
+            reset_key=user.activation.code),
+        'username': user.username
+    })
 
     return {
         'message': """Your account has been marked for reactivation. Please
@@ -884,7 +885,7 @@ def to_readable(request):
     url_list = Bmark.query.outerjoin(Readable, Readable.bid == Bmark.bid).\
         join(Bmark.hashed).\
         options(contains_eager(Bmark.hashed)).\
-        filter(Readable.imported is None).all()
+        filter(Readable.imported == None).all()
 
     def data(urls):
         """Yield out the results with the url in the data streamed."""
@@ -896,6 +897,20 @@ def to_readable(request):
     return {
         'urls': [u for u in data(url_list)]
 
+    }
+
+
+@view_config(route_name="api_admin_readable_reindex", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def readable_reindex(request):
+    """Force the fulltext index to rebuild
+
+    This loops through ALL bookmarks and might take a while to complete.
+
+    """
+    tasks.reindex_fulltext_allbookmarks.delay()
+    return {
+        'success': True
     }
 
 
@@ -958,6 +973,28 @@ def import_list(request):
     ret = {
         'count': len(import_list),
         'imports': [dict(h) for h in import_list],
+    }
+    return ret
+
+
+@view_config(route_name="api_admin_imports_reset", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def import_reset(request):
+    """Reset an import to try again"""
+    rdict = request.matchdict
+    import_id = rdict.get('id', None)
+
+    if not id:
+        request.response.status_int = 400
+        ret = {'error': "Bad request, missing parameters"}
+        return ret
+
+    imp = ImportQueueMgr.get(int(import_id))
+    imp.status = 0
+    tasks.importer_process.delay(imp.id)
+
+    ret = {
+        'import': dict(imp)
     }
     return ret
 
@@ -1092,3 +1129,27 @@ def admin_bmark_remove(request):
             'error': 'Bookmark with hash id {0} not found.'.format(
                 rdict['hash_id'])
         }
+
+
+@view_config(route_name="api_admin_applog", renderer="json")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def admin_applog(request):
+    """Return applog data for admin use."""
+    rdict = request.GET
+
+    # Support optional filter parameters
+    days = int(rdict.get('days', 1))
+    status = rdict.get('status', None)
+    message = rdict.get('message', None)
+
+    log_list = AppLogMgr.find(
+        days=days,
+        message_filter=message,
+        status=status,
+    )
+
+    ret = {
+        'count': len(log_list),
+        'logs': [dict(l) for l in log_list],
+    }
+    return ret

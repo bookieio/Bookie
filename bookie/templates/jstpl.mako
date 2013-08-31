@@ -18,8 +18,7 @@
     </div>
 
     <div class="actions">
-        <span aria-hidden="true" class="icon icon-calendar" title="{{prettystored}}"></span>
-        <em class="icon">Date Stored</em>
+        <span class="days-ago">{{prettystored}}</span>
 
         <a href="/bmark/readable/{{hash_id}}"
            title="View readable content"

@@ -12,7 +12,6 @@ YUI.add('bookie-test-model', function (Y) {
             'extended': "longer description",
             'stored': "2011-11-10 20:57:40.273044",
             'updated': "2011-11-11 20:57:40.273044",
-            'dateinfo': "",
             'prettystored': ""
         });
     }
@@ -39,7 +38,6 @@ YUI.add('bookie-test-model', function (Y) {
                 'extended': "",
                 'stored': "2011-11-10 20:57:40.273044",
                 'updated': "2011-11-11 20:57:40.273044",
-                'dateinfo': "",
                 'prettystored': "",
                 'uesrname': ""
             });
@@ -52,37 +50,9 @@ YUI.add('bookie-test-model', function (Y) {
             );
         },
 
-        "Bmark model should take a bunch of properties": function () {
-            var prop_list = ['bid', 'hash_id', 'description', 'extended'],
-                prop_dates = {
-                    stored: String(
-                        new Date("2011-11-10 20:57:40.273044-05:00".replace(' ', 'T'))
-                    ),
-                    updated: String(
-                        new Date("2011-11-11 20:57:40.273044-05:00".replace(' ', 'T'))
-                    ),
-                    dateinfo: "11/10",
-                    prettystored: "11/10/2011 20:57"
-                },
-                bmark = this.empty_model();
-
-            Y.each(prop_list, function (prop) {
-                // check that this property exists
-                A.areEqual("", bmark.get(prop));
-            });
-
-            Y.Object.each(prop_dates, function (value, prop) {
-                // check that this property exists
-                A.areEqual(value, String(bmark.get(prop)));
-            });
-
-            A.areEqual(undefined, bmark.get('not_exist'));
-        },
-
         "model date getters should format correctly": function () {
             var bmark = test_model();
-
-            A.isInstanceOf(Date, bmark.get('stored'),
+            A.isInstanceOf(Date, bmark.get('stored_date'),
                 "Stored should be converted from string to Date object");
         },
 

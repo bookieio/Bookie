@@ -43,20 +43,8 @@ def main(global_config, **settings):
                           authorization_policy=authz_policy)
     config.set_request_factory(RequestWithUserAttribute)
 
-    import bookie.bcelery.celeryapp
-    bookie.bcelery.celeryapp.load_config(settings)
-
     config = build_routes(config)
     config.add_static_view('static', 'bookie:static')
     config.scan('bookie.views')
 
     return config.make_wsgi_app()
-
-    # # Add the combo loader wsgi application into the stack.
-    # import os
-    # from convoy.combo import combo_app
-
-    # JS_FILES = settings['app_root'] + '/bookie/static/js/build'
-    # application = combo_app(JS_FILES)
-    # return application
-

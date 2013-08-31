@@ -2,10 +2,15 @@
 import time
 import transaction
 from datetime import datetime
+from dateutil import parser as dateparser
 from BeautifulSoup import BeautifulSoup
+from lxml import etree
+from lxml.etree import XMLSyntaxError
 
 from bookie.lib.urlhash import generate_hash
 from bookie.models import BmarkMgr
+from bookie.models import DBSession
+from bookie.models import InvalidBookmark
 
 
 IMPORTED = "importer"
@@ -28,6 +33,9 @@ class Importer(object):
         """Overriding new we return a subclass based on the file content"""
         if DelImporter.can_handle(args[0]):
             return super(Importer, cls).__new__(DelImporter)
+
+        if DelXMLImporter.can_handle(args[0]):
+            return super(Importer, cls).__new__(DelXMLImporter)
 
         if GBookmarkImporter.can_handle(args[0]):
             return super(Importer, cls).__new__(GBookmarkImporter)
@@ -57,17 +65,21 @@ class Importer(object):
         # adding it...if the hash matches, you must skip!
         check_hash = generate_hash(url)
         if check_hash not in self.hash_list:
-            BmarkMgr.store(url,
-                           self.username,
-                           desc,
-                           ext,
-                           tags,
-                           dt=dt,
-                           inserted_by=IMPORTED)
+            bmark = BmarkMgr.store(
+                url,
+                self.username,
+                desc,
+                ext,
+                tags,
+                dt=dt,
+                inserted_by=IMPORTED)
 
             # add this hash to the list so that we can skip dupes in the same
             # import set
             self.hash_list.add(check_hash)
+            return bmark
+        else:
+            return None
 
 
 class DelImporter(Importer):
@@ -117,8 +129,9 @@ class DelImporter(Importer):
         soup = BeautifulSoup(self.file_handle)
         count = 0
 
+        ids = []
         for tag in soup.findAll('dt'):
-            if 'javascript' in str(tag):
+            if 'javascript:' in str(tag):
                 continue
             # if we have a dd as next sibling, get it's content
             if tag.nextSibling and tag.nextSibling.name == 'dd':
@@ -135,19 +148,122 @@ class DelImporter(Importer):
                 import_add_date = import_add_date / 1000
             add_date = datetime.fromtimestamp(import_add_date)
 
-            self.save_bookmark(link['href'],
-                               link.text,
-                               extended,
-                               " ".join(link.get('tags', '').split(',')),
-                               dt=add_date)
-            count = count + 1
+            try:
+                bmark = self.save_bookmark(
+                    link['href'],
+                    link.text,
+                    extended,
+                    " ".join(link.get('tags', '').split(',')),
+                    dt=add_date)
+                count = count + 1
+                DBSession.flush()
+            except InvalidBookmark, exc:
+                bmark = None
+
+            if bmark:
+                ids.append(bmark.bid)
 
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
-                transaction.begin()
 
         # Commit any that are left since the last commit performed.
         transaction.commit()
+
+        from bookie.bcelery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)
+
+        # Start a new transaction for the next grouping.
+        transaction.begin()
+
+
+class DelXMLImporter(Importer):
+    """Process a delicious xml export file"""
+
+    @staticmethod
+    def _is_delicious_format(parsed, can_handle):
+        """A check for if this import files is a delicious xml format compat
+
+        The root xml element will be 'posts' if this is the case.
+
+        """
+        if parsed.docinfo and parsed.docinfo.root_name == 'posts':
+            can_handle = True
+        return can_handle
+
+    @staticmethod
+    def can_handle(file_io):
+        """Check if this file is a google bookmarks format file
+
+        In order to check the file we have to read it and check it's content
+        type.
+
+        Google Bookmarks and Delicious both have the same content type, but
+        they use different formats. We use the fact that Google Bookmarks
+        uses <h3> tags and Delicious does not in order to differentiate these
+        two formats.
+        """
+
+        try:
+            parsed = etree.parse(file_io)
+        except XMLSyntaxError:
+            # IF etree can't parse it, it's not our file.
+            return False
+        can_handle = False
+        can_handle = DelXMLImporter._is_delicious_format(parsed,
+                                                         can_handle)
+
+        # make sure we reset the file_io object so that we can use it again
+        return can_handle
+
+    def process(self):
+        """Given a file, process it"""
+        if self.file_handle.closed:
+            self.file_handle = open(self.file_handle.name)
+
+        parsed = etree.parse(self.file_handle)
+        count = 0
+
+        ids = []
+        for post in parsed.findall('post'):
+            if 'javascript:' in post.get('href'):
+                continue
+
+            add_date = dateparser.parse(post.get('time'))
+
+            try:
+                bmark = self.save_bookmark(
+                    post.get('href'),
+                    post.get('description'),
+                    post.get('extended'),
+                    post.get('tag'),
+                    dt=add_date)
+                count = count + 1
+                if bmark:
+                    bmark.stored = bmark.stored.replace(tzinfo=None)
+                    DBSession.flush()
+            except InvalidBookmark, exc:
+                bmark = None
+
+            if bmark:
+                ids.append(bmark.bid)
+
+            if count % COMMIT_SIZE == 0:
+                transaction.commit()
+
+        # Commit any that are left since the last commit performed.
+        transaction.commit()
+
+        from bookie.bcelery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)
+
+        # Start a new transaction for the next grouping.
+        transaction.begin()
 
 
 class GBookmarkImporter(Importer):
@@ -180,6 +296,8 @@ class GBookmarkImporter(Importer):
         uses <h3> tags and Delicious does not in order to differentiate these
         two formats.
         """
+        if (file_io.closed):
+            file_io = open(file_io.name)
         soup = BeautifulSoup(file_io)
         can_handle = False
         gbookmark_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
@@ -198,6 +316,8 @@ class GBookmarkImporter(Importer):
         under each heading.
         """
         count = 0
+        if (self.file_handle.closed):
+            self.file_handle = open(self.file_handle.name)
         soup = BeautifulSoup(self.file_handle)
         if not soup.contents[0] == "DOCTYPE NETSCAPE-Bookmark-file-1":
             raise Exception("File is not a google bookmarks file")
@@ -214,6 +334,8 @@ class GBookmarkImporter(Importer):
 
                 for link in links:
                     url = link["href"]
+                    if url.startswith('javascript:'):
+                        continue
                     tag_text = tag.text.replace(" ", "-")
                     if url in urls:
                         urls[url]['tags'].append(tag_text)
@@ -243,16 +365,31 @@ class GBookmarkImporter(Importer):
                                 timestamp_added),
                         }
 
-        # save the bookmark
+        # save the bookmarks
+        ids = []
         for url, metadata in urls.items():
-            self.save_bookmark(url,
-                               metadata['description'],
-                               metadata['extended'],
-                               " ".join(metadata['tags']),
-                               dt=metadata['date_added'])
+            try:
+                bmark = self.save_bookmark(
+                    url,
+                    metadata['description'],
+                    metadata['extended'],
+                    " ".join(metadata['tags']),
+                    dt=metadata['date_added'])
+                DBSession.flush()
+            except InvalidBookmark, exc:
+                bmark = None
+            if bmark:
+                ids.append(bmark.bid)
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
+                # Start a new transaction for the next grouping.
                 transaction.begin()
 
         # Commit any that are left since the last commit performed.
         transaction.commit()
+
+        from bookie.bcelery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)

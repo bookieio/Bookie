@@ -2,6 +2,25 @@
 Hacking Events
 =============================
 
+Sprint: Saturday Aug 31st
+----------------------------
+
+:Location: `@mitechie`_'s house. Ping him for details.
+:Time: 11am
+
+Tasks
+~~~~~
+The main task is to work on test coverage of Bookie. We'll be using
+`coverage.py`_ to find areas missing tests and work on getting better coverage
+for them.
+
+A couple of people have expressed interest in working on `breadability`_ and
+some sites it's not processing that well.
+
+Lunch will be provided and if you're interesting in working on something else
+please let me know. The day will end when people get tired of sprinting.
+
+
 Sprint: July 27th and 28th
 ----------------------------
 
@@ -136,3 +155,5 @@ I'll chase everyone away somewhere around 4pm.
 .. _bookie_parser: https://github.com/mitechie/bookie_parser
 .. _bookie_firefox: https://github.com/mitechie/bookie-firefox
 .. _bookie_android: https://github.com/DerekV/Bookie-Android
+.. _coverage.py: http://nedbatchelder.com/code/coverage/
+.. _@mitechie: https://twitter.com/mitechie

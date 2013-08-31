@@ -1,85 +1,28 @@
-"""mycelery Tasks to perform"""
-import celery
+from __future__ import absolute_import
+from celery.utils.log import get_task_logger
+
+from bookie.bcelery.celery import celery
+
+
 import transaction
-
-from datetime import datetime
-from datetime import timedelta
-from os.path import dirname
-
-import bookie
-from bookie.lib.importer import Importer
-from bookie.lib.rrdstats import SystemCounts
-from bookie.lib.rrdstats import ImportQueueDepth
-
-from bookie.models import initialize_sql
-from bookie.models import Bmark
-from bookie.models import BmarkMgr
-from bookie.models import TagMgr
-from bookie.models.stats import StatBookmarkMgr
-from bookie.models.queue import ImportQueueMgr
-
-from bookie.bcelery import celery as mycelery
-from bookie.bcelery import ini
-
 from whoosh.store import LockError
 from whoosh.writing import IndexingError
 
+from bookie.lib.importer import Importer
+from bookie.lib.readable import ReadUrl
+from bookie.models import initialize_sql
+from bookie.models import Bmark
+from bookie.models import Readable
+from bookie.models.auth import UserMgr
+from bookie.models.stats import StatBookmarkMgr
+from bookie.models.queue import ImportQueueMgr
 
-HERE = dirname(dirname(dirname(__file__)))
-
-if ini is None:
-    from bookie.bcelery.celeryd import load_ini
-    ini = load_ini()
-
-
-bookie.bcelery.celery.conf.update(
-    # List of modules to import when celery starts.
-    CELERY_IMPORTS=("bookie.bcelery.tasks", ),
-    CELERY_ENABLE_UTC=True,
-
-    ## Result store settings.
-    CELERY_RESULT_BACKEND=ini.get('celery_result_backend'),
-    CELERY_RESULT_DBURI=ini.get('celery_result_dburi'),
-
-    ## Broker settings.
-    BROKER_TRANSPORT=ini.get('celeryd_broker_transport'),
-    BROKER_HOST=ini.get('celery_broker_host'),
-    # BROKER_URL = "amqp://guest:guest@localhost:5672//"
-
-    ## Worker settings
-    ## If you're doing mostly I/O you can have more processes,
-    ## but if mostly spending CPU, try to keep it close to the
-    ## number of CPUs on your machine. If not set, the number of CPUs/cores
-    ## available will be used.
-    CELERYD_CONCURRENCY=ini.get('celery_concurrency'),
-
-    # CELERY_ANNOTATIONS = {"tasks.add": {"rate_limit": "10/s"}}
-    CELERYBEAT_SCHEDULE={
-        # "tasks.hourly_stats": {
-        #     "task": "bookie.bcelery.tasks.hourly_stats",
-        #     "schedule": timedelta(seconds=60 * 60),
-        # },
-        # "tasks.stats_rrd": {
-        #     "task": "bookie.bcelery.tasks.generate_count_rrd",
-        #     "schedule": timedelta(seconds=60 * 60 * 12),
-        # },
-        # "tasks.importer_depth": {
-        #     "task": "bookie.bcelery.tasks.importer_depth",
-        #     "schedule": timedelta(seconds=60 * 5),
-        # },
-        # "tasks.generate_importer_depth_rrd": {
-        #     "task": "bookie.bcelery.tasks.generate_importer_depth_rrd",
-        #     "schedule": timedelta(seconds=60 * 5),
-        # },
-        "tasks.importer": {
-            "task": "bookie.bcelery.tasks.importer_process",
-            "schedule": timedelta(seconds=60 * 3),
-        },
-    },
-)
+from .celery import load_ini
+INI = load_ini()
+initialize_sql(INI)
 
 
-@mycelery.task(ignore_result=True)
+@celery.task(ignore_result=True)
 def hourly_stats():
     """Hourly we want to runa series of numbers to track
 
@@ -89,130 +32,69 @@ def hourly_stats():
     - Total number of tags in the system
 
     """
-    celery.task.subtask(count_total).delay()
-    celery.task.subtask(count_unique).delay()
-    celery.task.subtask(count_tags).delay()
-    # celery.task.subtask(count_rrd).delay()
+    count_total.delay()
+    count_unique.delay()
+    count_tags.delay()
 
 
-@mycelery.task(ignore_result=True)
+@celery.task(ignore_result=True)
 def count_total():
     """Count the total number of bookmarks in the system"""
     trans = transaction.begin()
-    initialize_sql(ini)
     StatBookmarkMgr.count_total_bookmarks()
     trans.commit()
 
 
-@mycelery.task(ignore_result=True)
+@celery.task(ignore_result=True)
 def count_unique():
     """Count the unique number of bookmarks/urls in the system"""
     trans = transaction.begin()
-    initialize_sql(ini)
     StatBookmarkMgr.count_unique_bookmarks()
     trans.commit()
 
 
-@mycelery.task(ignore_result=True)
+@celery.task(ignore_result=True)
 def count_tags():
     """Count the total number of tags in the system"""
     trans = transaction.begin()
-    initialize_sql(ini)
     StatBookmarkMgr.count_total_tags()
     trans.commit()
 
 
-@mycelery.task(ignore_result=True)
-def count_rrd():
-    """Add these counts to the rrd graph"""
-    rrd = SystemCounts(
-        ini.get('rrd_data').format(here=HERE),
-        ini.get('rrd_graphs').format(here=HERE))
-    rrd.mark(
-        datetime.now(),
-        BmarkMgr.count(),
-        BmarkMgr.count(distinct=True),
-        TagMgr.count()
-    )
-    rrd.update()
+@celery.task()
+def importer_process(import_id):
+    """Start the process of running the import.
 
+    We load it, mark it as running, and begin begin a task to process.
 
-@mycelery.task(ignore_result=True)
-def generate_count_rrd():
-    """Update the png for the counts."""
-    rrd = SystemCounts(
-        ini.get('rrd_data').format(here=HERE),
-        ini.get('rrd_graphs').format(here=HERE))
-    rrd.output()
-
-
-@mycelery.task(ignore_result=True)
-def importer_depth():
-    """Update the RRD data for the import queue depth."""
-    trans = transaction.begin()
-    initialize_sql(ini)
-    StatBookmarkMgr.count_importer_depth()
-    trans.commit()
-    celery.task.subtask(importer_depth_rrd).delay()
-
-
-@mycelery.task(ignore_result=True)
-def importer_depth_rrd():
-    """Add these counts to the rrd graph"""
-    rrd = ImportQueueDepth(
-        ini.get('rrd_data').format(here=HERE),
-        ini.get('rrd_graphs').format(here=HERE))
-    rrd.mark(
-        datetime.now(),
-        ImportQueueMgr.size()
-    )
-    rrd.update()
-
-
-@mycelery.task(ignore_result=True)
-def generate_importer_depth_rrd():
-    """Update the png for the counts."""
-    rrd = ImportQueueDepth(
-        ini.get('rrd_data').format(here=HERE),
-        ini.get('rrd_graphs').format(here=HERE))
-    rrd.output()
-
-
-@mycelery.task(ignore_result=True)
-def importer_process():
-    """Check for new imports that need to be scheduled to run"""
-    initialize_sql(ini)
-    trans = transaction.begin()
-    imp = ImportQueueMgr.get_ready(limit=1)
-
-    if imp:
-        i = imp[0]
-    else:
-        return
-
-    # Log that we've scheduled it
-    logger = celery.utils.log.get_logger('importer_process')
-    logger.info("IMPORT: SCHEDULED for {username}.".format(**dict(i)))
-    # We need to mark that it's running to prevent it getting picked up
-    # again.
-    i.mark_running()
-    id = i.id
-    trans.commit()
-    celery.task.subtask(importer_process_worker, args=(id,)).delay()
-
-
-@mycelery.task(ignore_result=True)
-def importer_process_worker(iid):
-    """Do the real import work
-
-    :param iid: import id we need to pull and work on
+    :param import_id: import id we need to pull and work on
 
     """
-    logger = celery.utils.log.get_logger('importer_process_worker')
+    trans = transaction.begin()
+    imp = ImportQueueMgr.get(import_id)
+    import_id = imp.id
+
+    # Log that we've scheduled it
+    logger = get_task_logger('importer_process')
+    logger.info("IMPORT: SCHEDULED for {0}.".format(imp.username))
+    # We need to mark that it's running to prevent it getting picked up
+    # again.
+    imp.mark_running()
+    trans.commit()
+    importer_process_worker.delay(import_id)
+
+
+@celery.task()
+def importer_process_worker(import_id):
+    """Do the real import work
+
+    :param import_id: import id we need to pull and work on
+
+    """
+    logger = get_task_logger('importer_process_worker')
 
     trans = transaction.begin()
-    initialize_sql(ini)
-    import_job = ImportQueueMgr.get(iid)
+    import_job = ImportQueueMgr.get(import_id)
     logger.info("IMPORT: RUNNING for {username}".format(**dict(import_job)))
 
     try:
@@ -223,25 +105,65 @@ def importer_process_worker(iid):
             import_job.username)
         importer.process()
 
+        # Processing kills off our transaction so we need to start a new one
+        # to update that our import is complete.
         trans = transaction.begin()
-        import_job = ImportQueueMgr.get(iid)
+        import_job = ImportQueueMgr.get(import_id)
         import_job.mark_done()
+        user = UserMgr.get(username=import_job.username)
+        from bookie.lib.message import UserImportSuccessMessage
+        msg = UserImportSuccessMessage(
+            user.email,
+            'Bookie: Your requested import has completed.',
+            INI)
+        msg.send({
+            'username': import_job.username,
+        })
+
         logger.info(
             "IMPORT: COMPLETE for {username}".format(**dict(import_job)))
         trans.commit()
+
     except Exception, exc:
-        # we need to log this and probably send an error email to the
+        # We need to log this and probably send an error email to the
         # admin
-        logger = celery.utils.log.get_logger('importer_process_worker')
+        from bookie.lib.message import ImportFailureMessage
+        from bookie.lib.message import UserImportFailureMessage
+
+        trans = transaction.begin()
+        import_job = ImportQueueMgr.get(import_id)
+        user = UserMgr.get(username=import_job.username)
+
+        msg = ImportFailureMessage(
+            INI.get('email.from'),
+            'Import failure!',
+            INI)
+        msg.send({
+            'username': import_job.username,
+            'file_path': import_job.file_path,
+            'exc': str(exc)
+        })
+
+        # Also send an email to the user that their import failed.
+        msg = UserImportFailureMessage(
+            user.email,
+            'Bookie: We are sorry, your import failed.',
+            INI)
+        msg.send({
+            'username': import_job.username,
+            'exc': str(exc)
+        })
+
         logger.error(exc)
         logger.error(str(exc))
-        trans = transaction.begin()
-        import_job = ImportQueueMgr.get(iid)
         import_job.mark_error()
+        logger.info(
+            "IMPORT: ERROR for {username}".format(**dict(import_job)))
+        logger.info(exc)
         trans.commit()
 
 
-@mycelery.task(ignore_result=True)
+@celery.task(ignore_result=True)
 def email_signup_user(email, msg, settings, message_data):
     """Do the real import work
 
@@ -254,22 +176,25 @@ def email_signup_user(email, msg, settings, message_data):
     if status == 4:
         from bookie.lib.applog import SignupLog
         trans = transaction.begin()
-        initialize_sql(ini)
         SignupLog(SignupLog.ERROR,
                   'Could not send smtp email to signup: ' + email)
         trans.commit()
 
 
-@mycelery.task(ignore_result=True)
+class BookmarkNotFoundException(Exception):
+    pass
+
+
+@celery.task(ignore_result=True, default_retry_delay=30)
 def fulltext_index_bookmark(bid, content):
     """Insert bookmark data into the fulltext index."""
-    logger = celery.utils.log.get_logger('fulltext_index_bookmark')
+    logger = get_task_logger('fulltext_index_bookmark')
 
-    initialize_sql(ini)
     b = Bmark.query.get(bid)
 
     if not b:
         logger.error('Could not load bookmark to fulltext index: ' + str(bid))
+        fulltext_index_bookmark.retry(exc=BookmarkNotFoundException())
     else:
         from bookie.models.fulltext import get_writer
         logger.warning('getting writer')
@@ -302,19 +227,95 @@ def fulltext_index_bookmark(bid, content):
             fulltext_index_bookmark.retry(exc=exc, countdown=60)
 
 
-@mycelery.task(ignore_result=True)
-def reindex_fulltext_allbookmarks():
+@celery.task(ignore_result=True)
+def reindex_fulltext_allbookmarks(sync=False):
     """Rebuild the fulltext index with all bookmarks."""
-    logger = celery.utils.log.get_logger('fulltext_index_bookmark')
+    logger = get_task_logger('fulltext_index_bookmark')
     logger.warning("Starting freshen of fulltext index.")
-
-    transaction.begin()
-    initialize_sql(ini)
 
     bookmarks = Bmark.query.all()
 
     for b in bookmarks:
-        celery.task.subtask(fulltext_index_bookmark).delay(
-            b.bid,
-            None
-        )
+        if sync:
+            fulltext_index_bookmark(b.bid, None)
+        else:
+            fulltext_index_bookmark.delay(b.bid, None)
+
+
+@celery.task(ignore_result=True)
+def fetch_unfetched_bmark_content(ignore_result=True):
+    """Check the db for any unfetched content. Fetch and index."""
+    logger = get_task_logger('fetch_unfetched_bmark_content')
+    logger.info("Checking for unfetched bookmarks")
+
+    url_list = Bmark.query.outerjoin(
+        Readable, Bmark.readable).\
+        filter(Readable.imported == None).all()
+
+    for bmark in url_list:
+        fetch_bmark_content.delay(bmark.bid)
+
+
+@celery.task(ignore_result=True)
+def fetch_bmark_content(bid):
+    """Given a bookmark, fetch its content and index it."""
+    trans = transaction.begin()
+    logger = get_task_logger('fetch_bmark_content')
+
+    if not bid:
+        raise Exception('missing bookmark id')
+    bmark = Bmark.query.get(bid)
+    if not bmark:
+        raise Exception('Bookmark not found: ' + str(bid))
+    hashed = bmark.hashed
+
+    try:
+        read = ReadUrl.parse(hashed.url)
+    except ValueError, exc:
+        # We hit this where urllib2 choked trying to get the protocol type of
+        # this url to fetch it.
+        logger.error('Could not parse url: ' + hashed.url)
+        logger.error('exc')
+        read = None
+
+    if read:
+        logger.debug(read)
+        logger.debug(read.content)
+
+        logger.debug("%s: %s %d %s %s" % (
+            hashed.hash_id,
+            read.url,
+            len(read.content) if read.content else -1,
+            read.is_error(),
+            read.status_message))
+
+        if not read.is_image():
+            if not bmark.readable:
+                bmark.readable = Readable()
+
+            bmark.readable.content = read.content
+        else:
+            if not bmark.readable:
+                bmark.readable = Readable()
+            bmark.readable.content = None
+
+        # set some of the extra metadata
+        bmark.readable.content_type = read.content_type
+        bmark.readable.status_code = read.status
+        bmark.readable.status_message = read.status_message
+        trans.commit()
+        fulltext_index_bookmark.delay(
+            bid,
+            read.content if read else None)
+    else:
+        logger.error(
+            'No readable record for bookmark: ',
+            str(bid, bmark.hashed.url))
+
+        # There was a failure reading the thing.
+        bmark.readable = Readable()
+        bmark.readable.status = '900'
+        bmark.readable.status_message = (
+            'No readable record '
+            'during existing processing')
+        trans.commit()

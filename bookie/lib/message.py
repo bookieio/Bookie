@@ -118,12 +118,14 @@ class ReactivateMsg(Message):
 
         """
         return """
-Reactivate your Bookie account with the following url:
+Hello {username}:
 
-{0}
+Please activate your Bookie account by clicking on the following url:
+
+{url}
 
 ---
-The Bookie Team""".format(message_data)
+The Bookie Team""".format(**message_data)
         # lookup = config['pylons.app_globals'].mako_lookup
         # template = lookup.get_template(template_file)
 
@@ -166,3 +168,65 @@ https://github.com/mitechie/Bookie
 
 ---
 The Bookie Team""".format(message_data)
+
+
+class ImportFailureMessage(Message):
+    """Send an email that the import has failed."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg = """
+The import for user {username} has failed to import. The path to the import
+is:
+
+{file_path}
+
+Error:
+
+{exc}
+
+""".format(**message_data)
+        return msg
+
+
+class UserImportFailureMessage(Message):
+    """Send an email to the user their import has failed."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg = """
+Your import has failed. The error is listed below. Please file a bug at
+https://github.com/mitechie/bookie/issues if this error continues. You may
+also join #bookie on freenode irc if you wish to aid in debugging the issue.
+If the error pertains to a specific bookmark in your import file you might try
+removing it and importing the file again.
+
+Error
+----------
+
+{exc}
+
+A copy of this error has been logged and will be looked at.
+
+---
+The Bookie Team""".format(**message_data)
+        return msg
+
+
+class UserImportSuccessMessage(Message):
+    """Send an email to the user after a successful import."""
+
+    def _get_message_body(self, template_file, message_data):
+        """Build the email message body."""
+
+        msg = """
+Your bookmark import is complete! We've begun processing your bookmarks to
+load their page contents and fulltext index them. This process might take a
+while if you have a large number of bookmarks. Check out your imported
+bookmarks at https://bmark.us/{username}/recent.
+
+---
+The Bookie Team""".format(**message_data)
+        return msg

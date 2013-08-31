@@ -13,6 +13,7 @@ from bookie.models import Bmark
 from bookie.models import Hashed
 from bookie.models import Readable
 from bookie.models import Tag
+from bookie.models.applog import AppLog
 from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.queue import ImportQueue
@@ -110,6 +111,7 @@ def empty_db():
     Activation.query.delete()
     User.query.filter(User.username != 'admin').delete()
 
+    AppLog.query.delete()
     DBSession.flush()
     transaction.commit()
 

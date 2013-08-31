@@ -6,6 +6,7 @@ import string
 from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.models import Tag
+from bookie.models.applog import AppLog
 from bookie.models.auth import User
 
 
@@ -31,6 +32,24 @@ def random_url():
     """Generate a random url that is totally bogus."""
     url = "http://{0}.com".format(random_string())
     return url
+
+
+def make_applog(message=None, status=None):
+    """Generate applog instances."""
+    if status is None:
+        status = random_int(max=3)
+
+    if message is None:
+        message = random_string(100)
+
+    alog = AppLog(**{
+      'user': random_string(10),
+      'component': random_string(10),
+      'status': status,
+      'message': message,
+      'payload': '',
+    })
+    return alog
 
 
 def make_tag(name=None):

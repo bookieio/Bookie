@@ -117,6 +117,7 @@ YUI.add('bookie-test-view', function (Y) {
                 }),
                 hit = false,
                 test = this;
+            debugger;
 
             model.remove = function () {
                 hit = true;
@@ -131,7 +132,8 @@ YUI.add('bookie-test-view', function (Y) {
                 resource_user: 'admin'
             });
 
-            Y.one('.view').appendChild(testview.render());
+            var html = testview.render();
+            Y.one('.view').appendChild(html);
             var click_points = Y.all('.delete');
             Y.Assert.areEqual(1, click_points.size(),
                 "We should have one rendered remove button");
@@ -144,9 +146,10 @@ YUI.add('bookie-test-view', function (Y) {
             this.wait(function () {
                 // and verify that our node is now gone
                 var click_points = Y.all('.bmark');
+                debugger;
                 Y.Assert.areEqual(0, click_points.size(),
                     "We shouldn't have any html elements left after deleting");
-            }, 500);
+            }, 700);
         },
 
         test_missing_edit_when_not_logged_in: function () {

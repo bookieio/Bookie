@@ -19,7 +19,7 @@ quarter = month * 3
 half = 365 * day / 2
 year = 365 * day
 
-today = datetime.now()
+today = datetime.utcnow()
 delta = timedelta(weeks=28)
 start_date = today - delta
 step = 3600

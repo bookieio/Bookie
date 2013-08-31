@@ -164,6 +164,9 @@ def build_routes(config):
     # admin api calls
     config.add_route("api_admin_readable_todo", "/api/v1/a/readable/todo")
     config.add_route(
+        "api_admin_readable_reindex",
+        "/api/v1/a/readable/reindex")
+    config.add_route(
         "api_admin_accounts_inactive",
         "/api/v1/a/accounts/inactive")
     config.add_route(
@@ -178,6 +181,11 @@ def build_routes(config):
         "api_admin_imports_list",
         "/api/v1/a/imports/list",
         request_method="GET")
+    config.add_route(
+        "api_admin_imports_reset",
+        "/api/v1/a/imports/reset/{id}",
+        request_method="POST")
+
     config.add_route(
         "api_admin_users_list",
         "/api/v1/a/users/list",
@@ -194,6 +202,11 @@ def build_routes(config):
         "api_admin_bmark_remove",
         "/api/v1/a/bmark/{username}/{hash_id}",
         request_method="DELETE")
+
+    config.add_route(
+        "api_admin_applog",
+        "/api/v1/a/applog/list",
+        request_method="GET")
 
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")

@@ -92,7 +92,7 @@ class StatBookmark(Base):
     __tablename__ = 'stats_bookmarks'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    tstamp = Column(DateTime, default=datetime.now)
+    tstamp = Column(DateTime, default=datetime.utcnow)
     attrib = Column(Unicode(100), nullable=False)
     data = Column(Integer, nullable=False, default=0)
 
