@@ -241,7 +241,9 @@ class DelXMLImporter(Importer):
                     post.get('tag'),
                     dt=add_date)
                 count = count + 1
-                DBSession.flush()
+                if bmark:
+                    bmark.stored = bmark.stored.replace(tzinfo=None)
+                    DBSession.flush()
             except InvalidBookmark, exc:
                 bmark = None
 
