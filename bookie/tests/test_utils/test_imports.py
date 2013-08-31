@@ -18,6 +18,7 @@ from bookie.lib.urlhash import generate_hash
 
 from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
+from bookie.lib.importer import DelXMLImporter
 from bookie.lib.importer import GBookmarkImporter
 
 from bookie.tests import TestViewBase
@@ -55,6 +56,30 @@ def _delicious_data_test():
     # and check the long description field
     ok_("description" in found.extended,
         "The extended attrib should have a nice long string in it")
+
+
+def _delicious_xml_data_test():
+    """Test that we find the correct google bmark data after import"""
+    res = Bmark.query.all()
+    eq_(len(res), 25,
+        "We should have 25 results, we got: " + str(len(res)))
+
+    # verify we can find a bookmark by url and check tags, etc
+    check_url = 'http://jekyllrb.com/'
+    check_url_hashed = generate_hash(check_url)
+    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+    ok_(found.hashed.url == check_url, "The url should match our search")
+    eq_(len(found.tags), 6,
+        "We should have gotten 6 tags, got: " + str(len(found.tags)))
+
+    # and check we have a right tag or two
+    ok_('ruby' in found.tag_string(),
+        'ruby should be a valid tag in the bookmark')
+
+    # and check the long description field
+    ok_('added for test' in found.extended,
+        "'added for test' should be in the extended description")
 
 
 def _google_data_test():
@@ -178,6 +203,60 @@ class ImportDeliciousTest(unittest.TestCase):
 
         # now let's do some db sanity checks
         _delicious_data_test()
+
+
+class ImportDeliciousXMLTest(unittest.TestCase):
+    """Test the Bookie XML version importer for delicious"""
+
+    def _get_del_file(self):
+        """We need to get the locally found delicious.html file for tests"""
+        loc = os.path.dirname(__file__)
+        del_file = os.path.join(loc, 'newdelicious.xml')
+        return open(del_file)
+
+    def tearDown(self):
+        """Regular tear down method"""
+        empty_db()
+
+    def test_is_delicious_file(self):
+        """Verify that this is a delicious file"""
+        good_file = self._get_del_file()
+        ok_(DelXMLImporter.can_handle(good_file),
+            "DelXMLImporter should handle this file")
+        good_file.close()
+
+    def test_is_not_delicious_file(self):
+        """And that it returns false when it should"""
+        bad_file = StringIO.StringIO()
+        bad_file.write('failing tests please')
+        bad_file.seek(0)
+
+        ok_(not DelXMLImporter.can_handle(bad_file),
+            "DelXMLImporter cannot handle this file")
+
+        bad_file.close()
+
+    def test_import_process(self):
+        """Verify importer inserts the correct records"""
+        good_file = self._get_del_file()
+        imp = Importer(good_file, username="admin")
+        imp.process()
+
+        # now let's do some db sanity checks
+        _delicious_xml_data_test()
+
+    def test_dupe_imports(self):
+        """If we import twice, we shouldn't end up with duplicate bmarks"""
+        good_file = self._get_del_file()
+        imp = Importer(good_file, username="admin")
+        imp.process()
+
+        good_file = self._get_del_file()
+        imp = Importer(good_file, username="admin")
+        imp.process()
+
+        # Now let's do some db sanity checks.
+        _delicious_xml_data_test()
 
 
 class ImportGoogleTest(unittest.TestCase):
