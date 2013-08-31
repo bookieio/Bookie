@@ -145,6 +145,10 @@ smtp:
 test:
 	$(NOSE) --with-id $(ID) -vx -s bookie/tests
 
+.PHONY: testcoverage
+testcoverage:
+	$(NOSE) --with-coverage --cover-html --cover-package=bookie bookie/tests
+
 .PHONY: clean_testdb
 clean_testdb:
 	- rm test_bookie.db
