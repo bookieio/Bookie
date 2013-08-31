@@ -162,20 +162,6 @@ class ReqAuthorize(object):
         pass
 
 
-class RequestWithUserAttribute(Request):
-    @reify
-    def user(self):
-        # <your database connection, however you get it, the below line
-        # is just an example>
-        # dbconn = self.registry.settings['dbconn']
-        user_id = unauthenticated_userid(self)
-        if user_id is not None:
-            # this should return None if the user doesn't exist
-            # in the database
-            user = UserMgr.get(user_id=user_id)
-            return user
-
-
 class api_auth():
     """View decorator to set check the client is permitted
 
