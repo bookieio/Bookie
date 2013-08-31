@@ -5,8 +5,6 @@ from nose.tools import ok_, eq_
 from pyramid import testing
 from unittest import TestCase
 
-# from bookie.lib import access
-# from bookie.models import DBSession
 
 LOG = logging.getLogger(__name__)
 
@@ -74,4 +72,23 @@ class TestAuthWeb(TestCase):
 
         # should end up back at login with an error message
         ok_('has failed' in str(res),
+            "Should have 'Failed login' in the resp: " + str(res))
+
+    def test_login_null(self):
+        """Verify null login form submission fails"""
+
+        user_data = {
+            'login': '',
+            'password': '',
+            'form.submitted': 'true'
+        }
+
+        res = self.testapp.post('/login',
+                                params=user_data)
+
+        eq_(res.status, "200 OK",
+            msg='status is 200 OK, ' + res.status)
+
+        # should end up back at login with an error message
+        ok_('Failed login' in str(res),
             "Should have 'Failed login' in the resp: " + str(res))
