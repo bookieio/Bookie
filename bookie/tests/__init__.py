@@ -17,6 +17,7 @@ from bookie.models.applog import AppLog
 from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.queue import ImportQueue
+from bookie.models.stats import StatBookmark
 from bookie.models.fulltext import _reset_index
 
 global_config = {}
@@ -103,6 +104,7 @@ def empty_db():
     DBSession.execute(bmarks_tags.delete())
     Readable.query.delete()
     Bmark.query.delete()
+    StatBookmark.query.delete()
     Tag.query.delete()
     # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
