@@ -76,18 +76,15 @@ def make_bookmark(user=None):
     return bmark
 
 
-def make_user(username=None, activation=None):
+def make_user(username=None):
     """Generate a fake user to test against."""
     user = User()
 
     if not username:
         username = random_string(10)
 
-    if not activation:
-        activation = random_string(10)
 
     user.username = username
-    user.activation = activation
 
     DBSession.add(user)
     DBSession.flush()
