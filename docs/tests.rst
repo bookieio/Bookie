@@ -5,10 +5,35 @@ Running Tests
 --------------
 Running the test suite for Bookie is very simple:
 
+Basic app tests
+~~~~~~~~~~~~~~~~
+
 ::
 
+  # Init the db first to prepare for running tests
+  $ INI=test.ini make test_bookie.db
   $ make test
+
+Javascript tests
+~~~~~~~~~~~~~~~~~
+
+::
+
+  $ make jstestserver
+
+  # open a new tab
   $ make jstest
+
+Other ways to run tests
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- `make testcoverage`: will run the tests and generate the html coverage data
+  in the cover directory for viewing.
+- `make mysql_test`: Runs the tests against mysql using the test_mysql.ini file
+  for processing.
+- `make pgsql_test`: Runs the tests against postgres using the test_pgsql.ini file
+  for processing.
+
 
 Test Types
 -----------

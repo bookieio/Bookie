@@ -1,4 +1,4 @@
-"""Test that we're meeting delicious API specifications"""
+""Test that we're meeting delicious API specifications"""
 import logging
 import json
 import transaction
