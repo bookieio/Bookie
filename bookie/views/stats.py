@@ -2,7 +2,6 @@
 import logging
 from pyramid.view import view_config
 
-from bookie.bcelery import tasks
 from bookie.models import BmarkMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr
@@ -17,8 +16,6 @@ LOG = logging.getLogger(__name__)
 def dashboard(request):
     """A public dashboard of the system
     """
-    res = tasks.count_total.delay()
-
     # Generate some user data and stats
     user_count = UserMgr.count()
     pending_activations = ActivationMgr.count()
