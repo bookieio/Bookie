@@ -24,6 +24,7 @@ Mako==0.4.1
 MarkupSafe==0.12
 mock==0.7.0
 nose==1.1.2
+nose-selecttests
 Paste==1.7.5.1
 PasteDeploy==1.5.0
 PasteScript==1.7.5
