@@ -33,6 +33,7 @@ YUI.add('bookie-model', function (Y) {
 
 
     function humanized_time_span(date, ref_date, date_formats, time_units) {
+
       //Date Formats must be be ordered
       // smallest -> largest and must end in a format with ceiling of null
       date_formats = date_formats || {
@@ -75,7 +76,7 @@ YUI.add('bookie-model', function (Y) {
 
       function get_format() {
         for (var i=0; i<date_formats[tense].length; i++) {
-          if (date_formats[tense][i].ceiling == null ||
+          if (date_formats[tense][i].ceiling === null ||
               seconds_difference <= date_formats[tense][i].ceiling) {
             return date_formats[tense][i];
           }
@@ -483,7 +484,7 @@ YUI.add('bookie-model', function (Y) {
                  */
                 'stored': {
                     getter: function(val) {
-                      return val + " UTC";
+                      return val.replace(/-/g, '/') + " UTC";
                     }
 
                 },
@@ -524,6 +525,7 @@ YUI.add('bookie-model', function (Y) {
                     getter: function (val) {
                         var ret,
                             stored = this.get('stored');
+                        debugger;
                         if (stored) {
                             ret = humanized_time_span(stored);
                         } else {
