@@ -38,7 +38,7 @@ RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
 SYSDEPS := build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
-	       python-virtualenv redis-server rrdtool unzip
+	       python-virtualenv redis-server unzip
 
 .PHONY: all
 all: deps develop bookie.db db_up js

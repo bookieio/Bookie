@@ -6,6 +6,7 @@
 <ul>
     <li><span class="label">Users:</span> ${user_data['count']}</li>
     <li><span class="label">Pending Activations:</span> ${user_data['activations']}</li>
+    <li><span class="label">Users with Bookmarks:</span> ${user_data['with_bookmarks']}</li>
 </ul>
 
 
@@ -21,9 +22,3 @@
         ${bookmark_data['unique_count']}
     </li>
 </ul>
-
-<h2>Number of items in the system</h2>
-<img src="/static/rrd/systemcount.png" alt="Import queue depth"></img>
-
-<h2>Average import queue depth</h2>
-<img src="/static/rrd/import_queue_depth.png" alt="Import queue depth"></img>

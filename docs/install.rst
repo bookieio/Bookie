@@ -54,7 +54,6 @@ There are some required packages that need to be installed so you can build book
 - git
 - python-virtualenv
 - redis-server
-- rrdtool
 - unzip
 
 

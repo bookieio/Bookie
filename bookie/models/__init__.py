@@ -548,7 +548,7 @@ class BmarkMgr(object):
         return qry.all()
 
     @staticmethod
-    def count(username=None, distinct=False):
+    def count(username=None, distinct=False, distinct_users=False):
         """How many bookmarks are there
 
         :param username: should we limit to a username?
@@ -559,6 +559,8 @@ class BmarkMgr(object):
             qry = qry.filter(Bmark.username == username)
         if distinct:
             qry = qry.distinct()
+        if distinct_users:
+            qry = DBSession.query(Bmark.username).distinct()
         return qry.count()
 
 
