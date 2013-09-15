@@ -20,3 +20,18 @@ class TestReadUrl(TestCase):
         url = u'http://whttp://lucumr.pocoo.org/2012/8/5/stateless-and-proud/'
         read = readable.ReadUrl.parse(url)
         self.assertEqual(read.status, 901)
+
+    def test_unfetchable_url(self):
+        """Cannot fetch content for unreadable urls.
+
+        Urls that are with:
+
+            chrome://
+            file://
+
+        cannot have their content fetched so don't bother.
+
+        """
+        url = u'file://test.html'
+        read = readable.ReadUrl.parse(url)
+        self.assertEqual(read.status, 901)

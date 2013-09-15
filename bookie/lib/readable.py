@@ -133,6 +133,13 @@ class ReadUrl(object):
             # on the url or urllib2 gets cranky
             parsed = urlparse(url)
 
+            # We cannot parse urls that aren't http, https, or ftp://
+            if (parsed.scheme not in (u'http', u'https', u'ftp')):
+                read.error(
+                    STATUS_CODES['901'],
+                    'Invalid url scheme for readable content')
+                return read
+
             if parsed.query is not None and parsed.query != '':
                 query = u'?'
             else:
