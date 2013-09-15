@@ -525,7 +525,6 @@ YUI.add('bookie-model', function (Y) {
                     getter: function (val) {
                         var ret,
                             stored = this.get('stored');
-                        debugger;
                         if (stored) {
                             ret = humanized_time_span(stored);
                         } else {

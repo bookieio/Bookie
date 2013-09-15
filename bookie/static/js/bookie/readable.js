@@ -52,7 +52,7 @@ YUI.add('bookie-readable', function (Y) {
                         "Accept": "application/json"
                     },
                     sync: that.get('sync'),
-                    timeout: 3000,
+                    timeout: 10000,
                     xdr: {use: 'native' }
                 },
                 args = {
