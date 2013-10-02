@@ -29,7 +29,7 @@ class TestReadUrl(TestCase):
             chrome://
             file://
 
-        cannot have their content fetched so don't bother.
+        etc, cannot have their content fetched so don't bother.
 
         """
         url = u'file://test.html'
