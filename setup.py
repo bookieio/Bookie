@@ -29,7 +29,7 @@ if sys.version_info[:3] < (2, 7, 0):
 
 
 setup(name='bookie',
-      version='0.4.1',
+      version='0.5.0',
       description='Bookie',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
