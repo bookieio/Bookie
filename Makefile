@@ -51,7 +51,11 @@ clean_all: clean_venv clean_js clean_css clean_chrome clean_downloadcache
 
 .PHONY: sysdeps
 sysdeps:
-	sudo apt-get install $(SYSDEPS)
+	if [ $(NONINTERACTIVE) ]; then \
+		sudo apt-get install -y $(SYSDEPS); \
+	else \
+		sudo apt-get install $(SYSDEPS); \
+	fi
 
 .PHONY: install
 install: $(BOOKIE_INI) all first_bookmark css
