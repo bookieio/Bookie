@@ -9,7 +9,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8" />
         <meta name="viewport" content="width=device-width" initial-scale="1.0">
         <meta name="mobile-web-app-capable" content="yes">
-        <link rel="shortcut icon" sizes="512x512" href="/static/images/logo.196.png">
+        <link rel="shortcut icon" sizes="196x196" href="/static/images/logo.196.png">
         <title>Bookie: ${self.title()}</title>
         <script type="text/javascript"
         src="${combo}/combo?y/yui/yui-min.js&b/meta.js&y/loader/loader-min.js&y/substitute/substitute-min.js"></script>
