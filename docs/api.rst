@@ -203,7 +203,7 @@ Usage
 
 Return a list of the most recent bookmarks
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
@@ -348,7 +348,7 @@ Usage
 
 Return a list of the most clicked on bookmarks for the user.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
@@ -468,7 +468,7 @@ given terms.  There can be one or more search terms. All search terms are
 fulltext search against the readable content of pages with the correct
 query parameter from below.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
@@ -552,7 +552,7 @@ Usage
 
 Return a list of potential tags to use for the given *tag*.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: tag *required* - the part of the word we want completions for
 :query param: current - a space separated list of the current tags selected that we should take into account when selecting a potential completion option.
 
@@ -717,7 +717,7 @@ Usage
 
 Return a list of the most recent bookmarks
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
@@ -788,11 +788,11 @@ Example
 
 Usage
 ''''''
-*GET* `/api/v1/admin/bmarks/popular`
+*GET* `/api/v1/bmarks/popular`
 
-Return a list of the most clicked on bookmarks for the user.
+Return a list of the most clicked on bookmarks.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
@@ -807,7 +807,7 @@ Example
 
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/admin/bmarks/popular?count=2&api_key=12345...')
+    requests.get('http://127.0.0.1:6543/api/v1/bmarks/popular?count=2&api_key=12345...')
     >>>{
         "count": 2,
         "bmarks": [
@@ -876,7 +876,7 @@ given terms.  There can be one or more search terms. All search terms are
 fulltext search against the readable content of pages with the correct
 query parameter from below.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
