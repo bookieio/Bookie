@@ -1,7 +1,7 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Welcome to Bookie</%def>
 
-<div id="welcome" class="" style="max-width: 1000px; margin: 1em 4em;">
+<div id="welcome" class="" style="max-width: 1000px;">
     <div class="signup">
         <div class="form">
             <h2>Enter Email to Signup</h2>
