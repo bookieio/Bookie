@@ -12,14 +12,26 @@
     }
 
     #welcome {
+        margin: 0;
+
         .signup {
             float: none;
             clear: both;
             width: 100%;
 
             input[type="email"]#email {
-                width: 95%;
+                width: 90%;
             }
+
+            ul {
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        ul.features {
+          padding: 0;
+          margin: 1em 0;
         }
     }
 
@@ -182,11 +194,14 @@
     }
 
     .form {
+        display: inline-block;
+        width: 100%;
         margin: 1em 0;
-        padding: .2em;
+        padding: 0;
 
         ul {
             margin: 0;
+            padding: 0;
         }
         li {
             padding: .5em 0;
@@ -203,10 +218,10 @@
         }
 
         input[type=text], input[type="email"], input[type="url"], input[type="password"], textarea {
-            display: block;
-            width: 100%;
-            padding: 5px;
             border: 1px solid $darkgrey;
+            display: block;
+            padding: 5px;
+            width: 95%;
         }
 
         input[type=submit] {
