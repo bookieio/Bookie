@@ -109,6 +109,7 @@ body {
 
 #welcome {
     font-size: 1em;
+    margin: 1em 4em;
 
     ul.features {
         list-style: none;
@@ -312,6 +313,7 @@ form {
     border-radius: 5px;
     margin: 1em;
     padding: .5em;
+    display: block;
 
     input[type=text], input[type="url"],input[type="email"], input[type="password"], textarea {
         width: 35em;
