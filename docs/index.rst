@@ -14,29 +14,32 @@ Bookie is a young open source project to help replace Delicious.
 
 Latest Release
 ---------------
-:Stable: v0.4_
-:Development: v0.5_
+:Stable: v0.5_
+:Development: v0.6_
 
-.. _v0.4: https://github.com/mitechie/Bookie/tree/master
-.. _v0.5: https://github.com/mitechie/Bookie/tree/develop
+.. _v0.5: https://github.com/bookieio/Bookie/tree/master
+.. _v0.6: https://github.com/bookieio/Bookie/tree/develop
 
 
 Bookie Features
 ----------------
 - Open source!
 - Imports from Delicious.com and Google Bookmarks
-- Google Chrome extension (Firefox in development)
+- `Google Chrome extension`_
+- `Firefox extension`_
 - Bookmarklet for other browsers (mobile devices)
 - Store page content and fulltext searches it
 - Support for Sqlite, MySQL, and Postgresql
 - Mobile friendly responsive layout
+- `Android app`_
+
 
 See the features_ page for full length details.
 
 
 Important Links
 ----------------
-:Github: http://github.com/mitechie/Bookie
+:Github: http://github.com/bookieio/Bookie
 :Mailing List: https://groups.google.com/forum/?hl=en#!forum/bookie_bookmarks
 :See it live: https://bmark.us
 :ToDo List: https://trello.com/board/bookie/4f18c1ac96c79ec27105f228
@@ -45,13 +48,15 @@ Important Links
 Bookie Tools
 ------------
 :Bookie App:
-    http://github.com/mitechie/Bookie
+    http://github.com/bookieio/Bookie
 :Readable App:
-    https://github.com/mitechie/bookie_parser
+    https://github.com/bookieio/bookie_parser
 :Readable Lib:
-    https://github.com/mitechie/breadability
+    https://github.com/bookieio/breadability
 :Bookie Cli:
-    https://github.com/mitechie/bookie_api
+    https://github.com/bookieio/bookie_api
+:Bookie Android:
+    https://github.com/bookieio/Bookie-Android
 
 
 Contents:
@@ -86,3 +91,7 @@ page for details on what we'll be hacking on!
 .. _events: events.html
 .. _features: features.html
 .. _PyOhio: http://pyohio.org
+
+.. _Google Chrome extension: https://chrome.google.com/webstore/detail/bookie/knnbmilfpmbmlglpeemajjkelcbaaega?hl=en
+.. _Firefox extension: https://addons.mozilla.org/en-US/firefox/addon/bookie/
+.. _Android app: https://github.com/bookieio/Bookie-Android
