@@ -1,0 +1,95 @@
+drew@think$ (git::develop) make test
+bin/nosetests --with-id  -vx -s bookie/tests
+USING TEST INI:  test.ini
+#1 Properly error on an unparseable url. ... [D 130812 00:49:47 readable:144] Readable Parsed: http://whttp://lucumr.pocoo.org/2012/8/5/stateless-and-proud/
+[D 130812 00:49:47 readable:172] is error?
+[D 130812 00:49:47 readable:173] 901
+ok
+#2 Fetching a user's api key ... [D 130812 00:49:48 _transaction:178] new transaction
+ERROR
+
+======================================================================
+ERROR: Fetching a user's api key
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/Bookie/bookie/tests/test_api/__init__.py", line 32, in setUp
+    "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 149, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 934, in execute
+    clause, params or {})
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 662, in execute
+    params)
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 761, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 874, in _execute_context
+    context)
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1024, in _handle_dbapi_exception
+    exc_info
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/util/compat.py", line 195, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb)
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 867, in _execute_context
+    context)
+  File "/home/drew/Bookie/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 324, in do_execute
+    cursor.execute(statement, parameters)
+OperationalError: (OperationalError) no such table: users u"SELECT api_key FROM users WHERE username = 'admin'" ()
+-------------------- >> begin captured logging << --------------------
+txn.46912496437824: DEBUG: new transaction
+--------------------- >> end captured logging << ---------------------
+
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+bookie                                      30      2    93%   22-23
+bookie.bcelery                               3      0   100%   
+bookie.bcelery.celeryapp                     4      0   100%   
+bookie.bcelery.tasks                       140    104    26%   31-32, 92-94, 101-104, 110-113, 119-122, 128-137, 143-146, 152-156, 162-169, 175-178, 184-201, 211-241, 251-260, 266-302, 308-317
+bookie.lib                                   0      0   100%   
+bookie.lib.access                          123     82    33%   22-25, 34-42, 52-55, 63-69, 79-88, 92, 108, 117-122, 127-131, 135, 151-153, 157-158, 162, 171-176, 212-221, 237-287
+bookie.lib.applog                           61     37    39%   28, 38-51, 56-63, 68-84, 94-112, 120-127, 135-142
+bookie.lib.importer                        102     80    22%   20-24, 29-35, 40, 44, 58-70, 84-89, 103-113, 117-150, 164-169, 183-192, 200-258
+bookie.lib.message                          61     44    28%   26-38, 46-53, 59, 74-110, 120, 141
+bookie.lib.readable                         99     47    53%   19-22, 69, 74-80, 84-86, 95-104, 116, 122-124, 132, 149-151, 155-158, 161, 166-170, 178-191
+bookie.lib.rrdstats                        145    103    29%   36, 40, 44-63, 67-69, 73-126, 130-131, 135-138, 148, 152, 156-173, 177-179, 183-219, 223-224, 228-231, 236-258
+bookie.lib.tagcommands                      41     20    51%   14-15, 20, 24-27, 31-40, 52, 63-68, 87-90
+bookie.lib.urlhash                           5      3    40%   6-8
+bookie.models                              322    182    43%   71-84, 92, 101-103, 133-147, 152-170, 184-225, 238-248, 253, 264, 291-323, 336, 341-345, 358-360, 369-378, 384-391, 400-406, 412-474, 481, 494-506, 511-530, 543-562, 567-572, 581-586, 603, 658-673, 676, 680, 684, 689, 699-729
+bookie.models.applog                        27      7    74%   26-27, 42-46
+bookie.models.auth                         169    101    40%   37-41, 49, 54-63, 69-85, 112-114, 120, 124, 133, 138-151, 162-176, 186-192, 201-213, 218-229, 257-258, 262-279, 283, 302-306, 310-311, 317, 326-327, 331, 335-346, 351-353
+bookie.models.fulltext                      53     20    62%   30, 48, 62-63, 68-69, 80-103
+bookie.models.queue                         58     24    59%   26-34, 44-48, 56-57, 62-65, 72-74, 90-91, 95, 99, 103-104
+bookie.models.stats                         48     21    56%   48-57, 62-64, 69-71, 76-78, 83-85, 100-101
+bookie.routes                               82      0   100%   
+bookie.tests                                70     32    54%   42-43, 47-51, 57-58, 62-63, 72-81, 85-86, 90, 102-117
+bookie.tests.factory                        36     23    36%   17, 25-27, 32-33, 37-40, 45-57, 62-71
+bookie.tests.test_api                      155    115    26%   33, 37-38, 42-91, 97-115, 120-157, 163-166, 173-194, 199-215, 228-244, 257-269, 274-291, 300-323, 328-341, 346-367, 372-380, 385-407, 414-431, 436-440, 445-451, 455-461
+bookie.tests.test_api.test_admin            87     61    30%   27-31, 34-38, 42-43, 48-54, 59-69, 74-90, 96-111, 117-132, 137-151, 156-175
+bookie.tests.test_auth                      32     21    34%   18-23, 27, 31-40, 47-58, 65-76
+bookie.tests.test_auth.test_model           70     43    39%   30-35, 41-46, 53-58, 62-63, 67-78, 85-102, 112-115, 120-123, 128-130
+bookie.tests.test_auth.test_reset           55     38    31%   36-39, 42-47, 50-51, 55-67, 78-83, 94-110, 122-158
+bookie.tests.test_auth.test_signup          57     35    39%   26-29, 33-47, 56-64, 72-73, 77-80, 84-85, 89-95, 99-107
+bookie.tests.test_models                     0      0   100%   
+bookie.tests.test_models.test_bmarkmgr      71     56    21%   20-25, 29-30, 34-47, 51-83, 87-120
+bookie.tests.test_models.test_tagmgr        40     24    40%   21-26, 30-31, 35-41, 46-52, 58-63
+bookie.tests.test_utils                      0      0   100%   
+bookie.tests.test_utils.test_export         39     22    44%   26-40, 43-52, 56-57, 61-71
+bookie.tests.test_utils.test_fulltext       62     44    29%   22-33, 37-38, 42-60, 64-66, 72-92, 103-112, 118-140
+bookie.tests.test_utils.test_imports       160    112    30%   36-56, 62-80, 90, 95-97, 101-107, 112-118, 127-130, 134, 138, 142-147, 151-158, 162-167, 171-180, 188-191, 195, 199-204, 208-209, 213-218, 226-235, 239-256, 260-273, 277-299, 304-320
+bookie.tests.test_utils.test_readable       86     60    30%   28-34, 39-44, 49-57, 62-67, 72-76, 80-96, 104-115, 119-120, 124-139, 144-151, 157-164
+bookie.tests.test_webviews                  74     51    31%   21-32, 36-43, 48-53, 58-64, 69-74, 83-85, 90-100, 108-113, 118-123, 128-155
+bookie.views                                16     10    38%   13-28
+bookie.views.accounts                        9      3    67%   20-23
+bookie.views.api                           481    391    19%   40-43, 52, 63, 74, 89-121, 126-147, 155-243, 255-268, 281-340, 354-409, 424-435, 450-453, 471-517, 537-562, 579-581, 595-615, 629-630, 647-682, 691-746, 762-809, 823-874, 884-896, 906-911, 918-922, 933-950, 957-962, 972-980, 987-1013, 1028-1062, 1071-1091
+bookie.views.auth                           85     65    24%   32-84, 94-95, 107, 118-165, 175-193, 199-204
+bookie.views.bmarks                        100     74    26%   34-61, 77-86, 105-148, 159-208, 218-230
+bookie.views.exceptions                      6      4    33%   12-13, 18-19
+bookie.views.stats                          12      5    58%   21-28
+bookie.views.tags                           16      5    69%   17-22, 34
+bookie.views.utils                          98     68    31%   29-90, 101-103, 123-167, 180-206, 219-237
+----------------------------------------------------------------------
+TOTAL                                     3490   2239    36%   
+----------------------------------------------------------------------
+Ran 2 tests in 0.328s
+
+FAILED (errors=1)
+make: *** [test] Error 1
+

@@ -56,7 +56,6 @@ class ActivationMgr(object):
             filter(User.username == username)
 
         res = qry.first()
-
         if res is not None:
             return res.user
         else:

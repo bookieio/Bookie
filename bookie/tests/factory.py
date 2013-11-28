@@ -83,6 +83,7 @@ def make_user(username=None):
     if not username:
         username = random_string(10)
 
+
     user.username = username
 
     DBSession.add(user)

@@ -1,0 +1,17 @@
+drew@think$ (git::develop) make jstest
+xdg-open http://127.0.0.1:9000/tests/test_api.html
+xdg-open http://127.0.0.1:9000/tests/test_history.html
+xdg-open http://127.0.0.1:9000/tests/test_model.html
+xdg-open http://127.0.0.1:9000/tests/test_rsswatch.html
+xdg-open http://127.0.0.1:9000/tests/test_view.html
+xdg-open http://127.0.0.1:9000/tests/test_indicator.html
+xdg-open http://127.0.0.1:9000/tests/test_tagcontrol.html
+(bookie)~/Bookie
+drew@think$ (git::develop) Created new window in existing browser session.
+Created new window in existing browser session.
+Created new window in existing browser session.
+Created new window in existing browser session.
+Created new window in existing browser session.
+Created new window in existing browser session.
+Created new window in existing browser session.
+

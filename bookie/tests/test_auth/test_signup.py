@@ -10,10 +10,12 @@ from bookie.models import DBSession
 from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
+from bookie.models.auth import ActivationMgr
 
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 from bookie.tests import TestViewBase
+from bookie.tests.factory import make_user, random_string
 
 LOG = logging.getLogger(__name__)
 
@@ -64,6 +66,29 @@ class TestSigningUpUser(TestDBBase):
         eq_('signup', u.activation.created_by,
             'This is a new signup, so mark is as thus')
 
+    def testActivationFailsGivenIncorrectCode(TestDBBase):
+        """A new user shouldn't be able to activate with a with an incorrect
+        code"""
+
+        u = make_user()
+        # default activation code length is 12 so this should always fail
+        bad_activation_code = random_string(5)
+        res = ActivationMgr.get_user(u.username, bad_activation_code)
+
+        ok_(u.activation.code is not None,
+            'user has an activation code but its incorrect')
+        eq_(False, u.activated,
+            'given an incorrect activation code user shouldnt be activate')
+        eq_(None, res, 'given an incorrect activation code, should return\
+            None')
+
+
+
+
+
+
+
+
 
 class TestOpenSignup(TestViewBase):
     """New users can request a signup for an account."""
@@ -108,3 +133,4 @@ class TestOpenSignup(TestViewBase):
             email,
             act.user.email,
             "The activation email is the correct one.")
+        
