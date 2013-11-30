@@ -4,6 +4,7 @@ from os.path import dirname
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
+from pyramid.renderers import JSONP
 
 from bookie.lib.access import RequestWithUserAttribute
 from bookie.models import initialize_sql
@@ -45,6 +46,7 @@ def main(global_config, **settings):
 
     config = build_routes(config)
     config.add_static_view('static', 'bookie:static')
+    config.add_renderer('jsonp', JSONP(param_name='callback'))
     config.scan('bookie.views')
 
     return config.make_wsgi_app()
