@@ -45,7 +45,7 @@ def _check_with_content(params):
         return False
 
 
-@view_config(route_name="api_ping", renderer="json")
+@view_config(route_name="api_ping", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def ping(request):
     """Verify that you've setup your api correctly and verified
@@ -57,7 +57,7 @@ def ping(request):
     }
 
 
-@view_config(route_name="api_ping_missing_user", renderer="json")
+@view_config(route_name="api_ping_missing_user", renderer="jsonp")
 def ping_missing_user(request):
     """You ping'd but were missing the username in the url for some reason.
 
@@ -68,7 +68,7 @@ def ping_missing_user(request):
     }
 
 
-@view_config(route_name="api_ping_missing_api", renderer="json")
+@view_config(route_name="api_ping_missing_api", renderer="jsonp")
 def ping_missing_api(request):
     """You ping'd but didn't specify the actual api url.
 
@@ -79,7 +79,7 @@ def ping_missing_api(request):
     }
 
 
-@view_config(route_name="api_bmark_hash", renderer="json")
+@view_config(route_name="api_bmark_hash", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def bmark_get(request):
     """Return a bookmark requested via hash_id
@@ -149,8 +149,8 @@ def _update_mark(mark, params):
     return mark
 
 
-@view_config(route_name="api_bmark_add", renderer="json")
-@view_config(route_name="api_bmark_update", renderer="json")
+@view_config(route_name="api_bmark_add", renderer="jsonp")
+@view_config(route_name="api_bmark_update", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def bmark_add(request):
     """Add a new bookmark to the system"""
@@ -250,7 +250,7 @@ def bmark_add(request):
         }
 
 
-@view_config(route_name="api_bmark_remove", renderer="json")
+@view_config(route_name="api_bmark_remove", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def bmark_remove(request):
     """Remove this bookmark from the system"""
@@ -273,10 +273,10 @@ def bmark_remove(request):
         }
 
 
-@view_config(route_name="api_bmarks", renderer="json")
-@view_config(route_name="api_bmarks_user", renderer="json")
-@view_config(route_name="api_bmarks_tags", renderer="json")
-@view_config(route_name="api_bmarks_user_tags", renderer="json")
+@view_config(route_name="api_bmarks", renderer="jsonp")
+@view_config(route_name="api_bmarks_user", renderer="jsonp")
+@view_config(route_name="api_bmarks_tags", renderer="jsonp")
+@view_config(route_name="api_bmarks_user_tags", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
 def bmark_recent(request, with_content=False):
     """Get a list of the bmarks for the api call"""
@@ -345,8 +345,8 @@ def bmark_recent(request, with_content=False):
     }
 
 
-@view_config(route_name="api_bmarks_popular", renderer="json")
-@view_config(route_name="api_bmarks_popular_user", renderer="json")
+@view_config(route_name="api_bmarks_popular", renderer="jsonp")
+@view_config(route_name="api_bmarks_popular_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
 def bmark_popular(request):
     """Get a list of the most popular bmarks for the api call"""
@@ -414,7 +414,7 @@ def bmark_popular(request):
     }
 
 
-@view_config(route_name="api_bmarks_export", renderer="json")
+@view_config(route_name="api_bmarks_export", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def bmark_export(request):
     """Export via the api call to json dump
@@ -438,7 +438,7 @@ def bmark_export(request):
     }
 
 
-@view_config(route_name="api_extension_sync", renderer="json")
+@view_config(route_name="api_extension_sync", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def extension_sync(request):
     """Return a list of the bookmarks we know of in the system
@@ -454,8 +454,8 @@ def extension_sync(request):
     }
 
 
-@view_config(route_name="api_bmark_search", renderer="json")
-@view_config(route_name="api_bmark_search_user", renderer="json")
+@view_config(route_name="api_bmark_search", renderer="jsonp")
+@view_config(route_name="api_bmark_search_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
 def search_results(request):
     """Search for the query terms in the matchdict/GET params
@@ -523,8 +523,8 @@ def search_results(request):
     }
 
 
-@view_config(route_name="api_tag_complete", renderer="json")
-@view_config(route_name="api_tag_complete_user", renderer="json")
+@view_config(route_name="api_tag_complete", renderer="jsonp")
+@view_config(route_name="api_tag_complete_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
 def tag_complete(request):
     """Complete a tag based on the given text
@@ -565,7 +565,7 @@ def tag_complete(request):
 
 
 # USER ACCOUNT INFORMATION CALLS
-@view_config(route_name="api_user_account", renderer="json")
+@view_config(route_name="api_user_account", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def account_info(request):
     """Return the details of the user account specifed
@@ -580,7 +580,7 @@ def account_info(request):
     return user.safe_data()
 
 
-@view_config(route_name="api_user_account_update", renderer="json")
+@view_config(route_name="api_user_account_update", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def account_update(request):
     """Update the account information for a user
@@ -614,7 +614,7 @@ def account_update(request):
     return user_acct.safe_data()
 
 
-@view_config(route_name="api_user_api_key", renderer="json")
+@view_config(route_name="api_user_api_key", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def api_key(request):
     """Return the currently logged in user's api key
@@ -632,7 +632,7 @@ def api_key(request):
     }
 
 
-@view_config(route_name="api_user_reset_password", renderer="json")
+@view_config(route_name="api_user_reset_password", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def reset_password(request):
     """Change a user's password from the current string
@@ -684,7 +684,7 @@ def reset_password(request):
         }
 
 
-@view_config(route_name="api_user_suspend", renderer="json")
+@view_config(route_name="api_user_suspend", renderer="jsonp")
 def suspend_acct(request):
     """Reset a user account to enable them to change their password"""
     params = request.params
@@ -751,7 +751,7 @@ check your spam folder.""",
     }
 
 
-@view_config(route_name="api_user_suspend_remove", renderer="json")
+@view_config(route_name="api_user_suspend_remove", renderer="jsonp")
 def account_activate(request):
     """Reset a user after being suspended
 
@@ -812,7 +812,7 @@ def account_activate(request):
         }
 
 
-@view_config(route_name="api_user_invite", renderer="json")
+@view_config(route_name="api_user_invite", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def invite_user(request):
     """Invite a new user into the system.
@@ -878,7 +878,7 @@ def invite_user(request):
         }
 
 
-@view_config(route_name="api_admin_readable_todo", renderer="json")
+@view_config(route_name="api_admin_readable_todo", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def to_readable(request):
     """Get a list of urls, hash_ids we need to readable parse"""
@@ -900,7 +900,7 @@ def to_readable(request):
     }
 
 
-@view_config(route_name="api_admin_readable_reindex", renderer="json")
+@view_config(route_name="api_admin_readable_reindex", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def readable_reindex(request):
     """Force the fulltext index to rebuild
@@ -914,7 +914,7 @@ def readable_reindex(request):
     }
 
 
-@view_config(route_name="api_admin_accounts_inactive", renderer="json")
+@view_config(route_name="api_admin_accounts_inactive", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def accounts_inactive(request):
     """Return a list of the accounts that aren't activated."""
@@ -926,7 +926,7 @@ def accounts_inactive(request):
     return ret
 
 
-@view_config(route_name="api_admin_accounts_invites", renderer="json")
+@view_config(route_name="api_admin_accounts_invites", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def accounts_invites(request):
     """Return a list of the accounts that aren't activated."""
@@ -937,7 +937,7 @@ def accounts_invites(request):
     return ret
 
 
-@view_config(route_name="api_admin_accounts_invites_add", renderer="json")
+@view_config(route_name="api_admin_accounts_invites_add", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def accounts_invites_add(request):
     """Set the number of invites a user has available.
@@ -965,7 +965,7 @@ def accounts_invites_add(request):
         return ret
 
 
-@view_config(route_name="api_admin_imports_list", renderer="json")
+@view_config(route_name="api_admin_imports_list", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def import_list(request):
     """Provide some import related data."""
@@ -977,7 +977,7 @@ def import_list(request):
     return ret
 
 
-@view_config(route_name="api_admin_imports_reset", renderer="json")
+@view_config(route_name="api_admin_imports_reset", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def import_reset(request):
     """Reset an import to try again"""
@@ -999,7 +999,7 @@ def import_reset(request):
     return ret
 
 
-@view_config(route_name="api_admin_users_list", renderer="json")
+@view_config(route_name="api_admin_users_list", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def user_list(request):
     """Provide list of users in the system.
@@ -1017,7 +1017,7 @@ def user_list(request):
     return ret
 
 
-@view_config(route_name="api_admin_new_user", renderer="json")
+@view_config(route_name="api_admin_new_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def new_user(request):
     """Add a new user to the system manually."""
@@ -1052,7 +1052,7 @@ def new_user(request):
         }
 
 
-@view_config(route_name="api_admin_del_user", renderer="json")
+@view_config(route_name="api_admin_del_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def del_user(request):
     """Remove a bad user from the system via the api.
@@ -1101,7 +1101,7 @@ def del_user(request):
         }
 
 
-@view_config(route_name="api_admin_bmark_remove", renderer="json")
+@view_config(route_name="api_admin_bmark_remove", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def admin_bmark_remove(request):
     """Remove this bookmark from the system"""
@@ -1131,7 +1131,7 @@ def admin_bmark_remove(request):
         }
 
 
-@view_config(route_name="api_admin_applog", renderer="json")
+@view_config(route_name="api_admin_applog", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def admin_applog(request):
     """Return applog data for admin use."""
