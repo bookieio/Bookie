@@ -14,3 +14,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Jon Schewe
 - Cameron Macintosh
 - Ryan Kather
+- Trevor Fitzgerald
