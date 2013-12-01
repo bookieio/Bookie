@@ -23,6 +23,7 @@ Usage
 Submit a new bookmark for storing
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 :post param: description
 :post param: extended
 :post param: tags - space separated tag string
@@ -75,6 +76,7 @@ Get the information about this bookmark.
 :query param: api_key *required* - the api key for your account to make the call with
 :query param: with_content - do you wish the readable content of the urls if available
 :query param: last_bmark - do you want the information of the last bookmark saved. This is used to supply tag hints in the Chrome extension.
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -125,6 +127,7 @@ Usage
 Update the stored bookmark with new information.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 :post param: description
 :post param: extended
 :post param: tags - space separated tag string
@@ -173,6 +176,7 @@ Usage
 Remove the bookmark from the user's list
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 
 Status Codes
@@ -207,6 +211,7 @@ Return a list of the most recent bookmarks
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -285,6 +290,7 @@ include all content that we have available. It will take a while to build
 and we will be limited this call to only a few times a day at some point.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 '''''''''''''
@@ -352,6 +358,7 @@ Return a list of the most clicked on bookmarks for the user.
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -433,6 +440,7 @@ of the data it needs for loading knowledge of existing bookmarks into a new
 browser installation.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -472,6 +480,7 @@ query parameter from below.
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -555,6 +564,7 @@ Return a list of potential tags to use for the given *tag*.
 :query param: api_key *optional* - the api key for your account to make the call with
 :query param: tag *required* - the part of the word we want completions for
 :query param: current - a space separated list of the current tags selected that we should take into account when selecting a potential completion option.
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -588,6 +598,7 @@ Usage
 Return the name and email for the given user account.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 '''''''''''''
@@ -617,6 +628,7 @@ Usage
 Update the user's name or email address
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 :post param: name - a new name for the user account
 :post param: email - a new email for the user account
 
@@ -655,6 +667,7 @@ I know it's strange to require the api key to get the api key, but hey, you
 tell me how to fix it.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 '''''''''''''
@@ -683,6 +696,7 @@ Change the user's password to the new value provided. Note that the current
 password is required to perform the step.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 :post param: current_password *required* - the current password string from the user
 :post param: new_password *required* - the string to change the password to
 
@@ -721,6 +735,7 @@ Return a list of the most recent bookmarks
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -796,6 +811,7 @@ Return a list of the most clicked on bookmarks.
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
 :query param: with_content - do you wish the readable content of the urls if available
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -881,6 +897,7 @@ query parameter from below.
 :query param: page - the page number to get results for based off of the count specified
 :query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
 :query param: with_content - do you wish the readable content of the urls if available
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -964,6 +981,7 @@ contained within that is required to unlock the account.
 
 :query param: api_key *required* - the api key for your account to make the call with
 :query param: email *required* - the email address of the user we're wanting to reset
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -1000,9 +1018,10 @@ Reactive the account. Basically we're "deleting the suspend" on the
 account. This requires the reactivation key that was sent to the user in
 the activation email.
 
-:query_param: username - string username of the user we're activating
-:query_param: activation - string activation code returned emailed from the POST call
-:query_param: password - a new password to reactivate this account to
+:query param: username - string username of the user we're activating
+:query param: activation - string activation code returned emailed from the POST call
+:query param: password - a new password to reactivate this account to
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 '''''''''''''
@@ -1037,6 +1056,7 @@ Allows a user to create an invitation to another user in the system.
 
 :query param: api_key *required* - the api key for your account to make the call with
 :query param: email *required* - the email address of the new user to invite
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''
@@ -1079,6 +1099,7 @@ Usage
 Return a list of the users and the number of invites they have.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1109,6 +1130,7 @@ Usage
 Set the invite_ct for the specified user to the specified count
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1152,6 +1174,7 @@ users will have their email address as their username since they've not set
 one yet.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1192,6 +1215,7 @@ GET `/api/v1/admin/readable/todo`
     feed back into the api for readable parsing.
 
     :query param: api_key *required* - the api key for your account to make the call with
+    :query param: callback - wrap JSON response in an optional callback
 
 ::
 
@@ -1235,6 +1259,7 @@ Usage
 Return a list of the users in the system.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1270,6 +1295,7 @@ Admin override and add a new user to the system.
 :query param: api_key *required* - the api key for your account to make the call with
 :query param: username *required* - the email address of the new user
 :query param: email *required* - the email address of the new user
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1303,6 +1329,7 @@ Currently meant for bad new user accounts that removes activation and user
 account. Does not reach into bmarks/tags.
 
 :query param: api_key *required* - the api key for your account to make the call with
+:query param: callback - wrap JSON response in an optional callback
 
 Status Codes
 ''''''''''''''
@@ -1331,6 +1358,7 @@ GET `/api/v1/admin/log`
     :query param: api_key *required* - the api key for your account to make the call with
     :query param: count - the number in the result you wish to return
     :query param: page - the page number to get results for based off of the count specified
+    :query param: callback - wrap JSON response in an optional callback
 
 ::
 
@@ -1347,6 +1375,7 @@ GET `/api/v1/admin/stats/bmarks`
     :query param: api_key *required* - the api key for your account to make the call with
     :query param: count - the number in the result you wish to return
     :query param: page - the page number to get results for based off of the count specified
+    :query param: callback - wrap JSON response in an optional callback
 
 ::
 
