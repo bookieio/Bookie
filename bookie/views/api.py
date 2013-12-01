@@ -45,16 +45,27 @@ def _check_with_content(params):
         return False
 
 
+def _api_response(request, data):
+    """Perform common operations on the response."""
+    # Wrap the data response with CORS headers for cross domain JS clients.
+    request.response.headers.extend([
+        ('Access-Control-Allow-Origin', '*'),
+        ('Access-Control-Allow-Headers', 'X-Requested-With')
+    ])
+
+    return data
+
+
 @view_config(route_name="api_ping", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def ping(request):
     """Verify that you've setup your api correctly and verified
 
     """
-    return {
+    return _api_response(request, {
         'success': True,
         'message': 'Looks good'
-    }
+    })
 
 
 @view_config(route_name="api_ping_missing_user", renderer="jsonp")
@@ -62,10 +73,10 @@ def ping_missing_user(request):
     """You ping'd but were missing the username in the url for some reason.
 
     """
-    return {
+    return _api_response(request, {
         'success': False,
         'message': 'Missing username in your api url.'
-    }
+    })
 
 
 @view_config(route_name="api_ping_missing_api", renderer="jsonp")
@@ -73,10 +84,10 @@ def ping_missing_api(request):
     """You ping'd but didn't specify the actual api url.
 
     """
-    return {
+    return _api_response(request, {
         'success': False,
         'message': 'The API url should be /api/v1'
-    }
+    })
 
 
 @view_config(route_name="api_bmark_hash", renderer="jsonp")
@@ -108,7 +119,7 @@ def bmark_get(request):
         request.response.status_int = 404
         ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
         ret.update(last_bmark)
-        return ret
+        return _api_response(request, ret)
     else:
         return_obj = dict(bookmark)
 
@@ -120,7 +131,7 @@ def bmark_get(request):
 
         ret = {'bmark': return_obj}
         ret.update(last_bmark)
-        return ret
+        return _api_response(request, ret)
 
 
 def _update_mark(mark, params):
@@ -155,23 +166,24 @@ def _update_mark(mark, params):
 def bmark_add(request):
     """Add a new bookmark to the system"""
     rdict = request.matchdict
+
     if 'url' in request.params or 'hash_id' in request.params:
         params = request.params
     elif 'url' in request.json_body or 'hash_id' in request.json_body:
         params = request.json_body
     else:
         request.response.status_int = 400
-        return {
+        return _api_response(request, {
             'error': 'Bad Request: missing url',
-        }
+        })
 
     user = request.user
 
     if 'url' not in params and 'hash_id' not in rdict:
         request.response.status_int = 400
-        return {
+        return _api_response(request, {
             'error': 'Bad Request: missing url',
-        }
+        })
 
     elif 'hash_id' in rdict:
         try:
@@ -181,10 +193,10 @@ def bmark_add(request):
 
         except NoResultFound:
             request.response.status_code = 404
-            return {
+            return _api_response(request, {
                 'error': 'Bookmark with hash id {0} not found.'.format(
                          rdict['hash_id'])
-            }
+            })
 
     else:
         # check if we already have this
@@ -242,12 +254,12 @@ def bmark_add(request):
         mark_data = dict(mark)
         mark_data['tags'] = [dict(mark.tags[tag]) for tag in mark.tags.keys()]
 
-        return {
+        return _api_response(request, {
             'bmark': mark_data,
             'location': request.route_url('bmark_readable',
                                           hash_id=mark.hash_id,
                                           username=user.username),
-        }
+        })
 
 
 @view_config(route_name="api_bmark_remove", renderer="jsonp")
@@ -261,16 +273,16 @@ def bmark_remove(request):
         bmark = BmarkMgr.get_by_hash(rdict['hash_id'],
                                      username=user.username)
         DBSession.delete(bmark)
-        return {
+        return _api_response(request, {
             'message': "done",
-        }
+        })
 
     except NoResultFound:
         request.response.status_code = 404
-        return {
+        return _api_response(request, {
             'error': 'Bookmark with hash id {0} not found.'.format(
                      rdict['hash_id'])
-        }
+        })
 
 
 @view_config(route_name="api_bmarks", renderer="jsonp")
@@ -336,13 +348,13 @@ def bmark_recent(request, with_content=False):
 
         result_set.append(return_obj)
 
-    return {
+    return _api_response(request, {
         'bmarks': result_set,
         'max_count': RESULTS_MAX,
         'count': len(recent_list),
         'page': page,
         'tag_filter': tags,
-    }
+    })
 
 
 @view_config(route_name="api_bmarks_popular", renderer="jsonp")
@@ -405,13 +417,13 @@ def bmark_popular(request):
 
         result_set.append(return_obj)
 
-    return {
+    return _api_response(request, {
         'bmarks': result_set,
         'max_count': RESULTS_MAX,
         'count': len(popular_list),
         'page': page,
         'tag_filter': tags,
-    }
+    })
 
 
 @view_config(route_name="api_bmarks_export", renderer="jsonp")
@@ -429,13 +441,13 @@ def bmark_export(request):
     def build_bmark(bmark):
         d = dict(bmark)
         d['hashed'] = dict(bmark.hashed)
-        return d
+        return _api_response(request, d)
 
-    return {
+    return _api_response(request, {
         'bmarks': [build_bmark(bmark) for bmark in bmark_list],
         'count': len(bmark_list),
         'date': str(datetime.utcnow())
-    }
+    })
 
 
 @view_config(route_name="api_extension_sync", renderer="jsonp")
@@ -449,9 +461,9 @@ def extension_sync(request):
     username = request.user.username
 
     hash_list = BmarkMgr.hash_list(username=username)
-    return {
+    return _api_response(request, {
         'hash_list': [hash[0] for hash in hash_list]
-    }
+    })
 
 
 @view_config(route_name="api_bmark_search", renderer="jsonp")
@@ -513,14 +525,14 @@ def search_results(request):
 
         constructed_results.append(return_obj)
 
-    return {
+    return _api_response(request, {
         'search_results': constructed_results,
         'result_count': len(constructed_results),
         'phrase': phrase,
         'page': page,
         'with_content': search_content,
         'username': username,
-    }
+    })
 
 
 @view_config(route_name="api_tag_complete", renderer="jsonp")
@@ -558,10 +570,10 @@ def tag_complete(request):
     if current_tags is None:
         current_tags = []
 
-    return {
+    return _api_response(request, {
         'current': ",".join(current_tags),
         'tags': [t.name for t in tags]
-    }
+    })
 
 
 # USER ACCOUNT INFORMATION CALLS
@@ -577,7 +589,7 @@ def account_info(request):
     """
     user = request.user
 
-    return user.safe_data()
+    return _api_response(request, user.safe_data())
 
 
 @view_config(route_name="api_user_account_update", renderer="jsonp")
@@ -611,7 +623,7 @@ def account_update(request):
         email = json_body.get('email')
         user_acct.email = email
 
-    return user_acct.safe_data()
+    return _api_response(request, user_acct.safe_data())
 
 
 @view_config(route_name="api_user_api_key", renderer="jsonp")
@@ -626,10 +638,10 @@ def api_key(request):
 
     """
     user_acct = request.user
-    return {
+    return _api_response(request, {
         'api_key': user_acct.api_key,
         'username': user_acct.username
-    }
+    })
 
 
 @view_config(route_name="api_user_reset_password", renderer="jsonp")
@@ -663,25 +675,25 @@ def reset_password(request):
     LOG.error(new)
     if not UserMgr.acceptable_password(new):
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'username': user_acct.username,
             'error': "Come on, let's try a real password this time"
-        }
+        })
 
     # before we change the password, let's verify it
     if user_acct.validate_password(current):
         # we're good to change it
         user_acct.password = new
-        return {
+        return _api_response(request, {
             'username': user_acct.username,
             'message': "Password changed",
-        }
+        })
     else:
         request.response.status_int = 403
-        return {
+        return _api_response(request, {
             'username': user_acct.username,
             'error': "There was a typo somewhere. Please check your request"
-        }
+        })
 
 
 @view_config(route_name="api_user_suspend", renderer="jsonp")
@@ -699,29 +711,29 @@ def suspend_acct(request):
 
     if user is None and email is None:
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'error': "Please submit an email address",
-        }
+        })
 
     if user is None and email is not None:
         user = UserMgr.get(email=email)
 
     if user is None:
         request.response.status_int = 404
-        return {
+        return _api_response(request, {
             'error': "Please submit a valid address",
             'email': email
-        }
+        })
 
     # check if we've already gotten an activation for this user
     if user.activation is not None:
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'error': """You've already marked your account for reactivation.
 Please check your email for the reactivation link. Make sure to
 check your spam folder.""",
             'username': user.username,
-        }
+        })
 
     # mark them for reactivation
     user.reactivate("FORGOTTEN")
@@ -744,11 +756,11 @@ check your spam folder.""",
         'username': user.username
     })
 
-    return {
+    return _api_response(request, {
         'message': """Your account has been marked for reactivation. Please
                     check your email for instructions to reset your
                     password""",
-    }
+    })
 
 
 @view_config(route_name="api_user_suspend_remove", renderer="jsonp")
@@ -777,9 +789,9 @@ def account_activate(request):
 
     if not UserMgr.acceptable_password(password):
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'error': "Come on, pick a real password please",
-        }
+        })
 
     res = ActivationMgr.activate_user(username, activation, password)
 
@@ -795,21 +807,21 @@ def account_activate(request):
                 user.username = new_username
             except IntegrityError, exc:
                 request.response.status_int = 500
-                return {
+                return _api_response(request, {
                     'error': 'There was an issue setting your new username',
                     'exc': str(exc)
-                }
+                })
 
-        return {
+        return _api_response(request, {
             'message': "Account activated, please log in.",
             'username': username,
-        }
+        })
     else:
         AuthLog.reactivate(username, success=False, code=activation)
         request.response.status_int = 500
-        return {
+        return _api_response(request, {
             'error': "There was an issue attempting to activate this account.",
-        }
+        })
 
 
 @view_config(route_name="api_user_invite", renderer="jsonp")
@@ -833,19 +845,19 @@ def invite_user(request):
     if not email:
         # if still no email, I give up!
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'username': user.username,
             'error': "Please submit an email address"
-        }
+        })
 
     # first see if the user is already in the system
     exists = UserMgr.get(email=email)
     if exists:
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'username': exists.username,
             'error': "This user is already a Bookie user!"
-        }
+        })
 
     new_user = user.invite(email)
     if new_user:
@@ -866,16 +878,16 @@ def invite_user(request):
                 'reset',
                 username=new_user.username,
                 reset_key=new_user.activation.code))
-        return {
+        return _api_response(request, {
             'message': 'You have invited: ' + new_user.email
-        }
+        })
     else:
         # you have no invites
         request.response.status_int = 406
-        return {
+        return _api_response(request, {
             'username': user.username,
             'error': "You have no invites left at this time."
-        }
+        })
 
 
 @view_config(route_name="api_admin_readable_todo", renderer="jsonp")
@@ -894,10 +906,9 @@ def to_readable(request):
             d['url'] = url.hashed.url
             yield d
 
-    return {
+    return _api_response(request, {
         'urls': [u for u in data(url_list)]
-
-    }
+    })
 
 
 @view_config(route_name="api_admin_readable_reindex", renderer="jsonp")
@@ -909,9 +920,9 @@ def readable_reindex(request):
 
     """
     tasks.reindex_fulltext_allbookmarks.delay()
-    return {
+    return _api_response(request, {
         'success': True
-    }
+    })
 
 
 @view_config(route_name="api_admin_accounts_inactive", renderer="jsonp")
@@ -923,7 +934,7 @@ def accounts_inactive(request):
         'count': len(user_list),
         'users': [dict(h) for h in user_list],
     }
-    return ret
+    return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_accounts_invites", renderer="jsonp")
@@ -934,7 +945,7 @@ def accounts_invites(request):
     ret = {
         'users': [(u.username, u.invite_ct) for u in user_list],
     }
-    return ret
+    return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_accounts_invites_add", renderer="jsonp")
@@ -954,15 +965,15 @@ def accounts_invites_add(request):
 
         if user:
             user.invite_ct = count
-            return dict(user)
+            return _api_response(request, dict(user))
         else:
             request.response.status_int = 404
             ret = {'error': "Invalid user account."}
-            return ret
+            return _api_response(request, ret)
     else:
         request.response.status_int = 400
         ret = {'error': "Bad request, missing parameters"}
-        return ret
+        return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_imports_list", renderer="jsonp")
@@ -974,7 +985,7 @@ def import_list(request):
         'count': len(import_list),
         'imports': [dict(h) for h in import_list],
     }
-    return ret
+    return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_imports_reset", renderer="jsonp")
@@ -987,7 +998,7 @@ def import_reset(request):
     if not id:
         request.response.status_int = 400
         ret = {'error': "Bad request, missing parameters"}
-        return ret
+        return _api_response(request, ret)
 
     imp = ImportQueueMgr.get(int(import_id))
     imp.status = 0
@@ -996,7 +1007,7 @@ def import_reset(request):
     ret = {
         'import': dict(imp)
     }
-    return ret
+    return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_users_list", renderer="jsonp")
@@ -1014,7 +1025,7 @@ def user_list(request):
         'count': len(user_list),
         'users': [dict(h) for h in user_list],
     }
-    return ret
+    return _api_response(request, ret)
 
 
 @view_config(route_name="api_admin_new_user", renderer="jsonp")
@@ -1041,15 +1052,15 @@ def new_user(request):
         # password.
         ret = dict(u)
         ret['random_pass'] = passwd
-        return ret
+        return _api_response(request, ret)
 
     except IntegrityError, exc:
         # We might try to add a user that already exists.
         LOG.error(exc)
         request.response.status_int = 400
-        return {
+        return _api_response(request, {
             'error': 'Bad Request: User exists.',
-        }
+        })
 
 
 @view_config(route_name="api_admin_del_user", renderer="jsonp")
@@ -1070,35 +1081,35 @@ def del_user(request):
     if del_username is None:
         LOG.error('No username to remove.')
         request.response.status_int = 400
-        return {
+        return _api_response(request, {
             'error': 'Bad Request: No username to remove.',
-        }
+        })
 
     u = UserMgr.get(username=del_username)
 
     if not u:
         LOG.error('Username not found.')
         request.response.status_int = 404
-        return {
+        return _api_response(request, {
             'error': 'User not found.',
-        }
+        })
 
     try:
         # Delete all of the bmarks for this year.
         Bmark.query.filter(Bmark.username == u.username).delete()
         DBSession.delete(u)
-        return {
+        return _api_response(request, {
             'success': True,
             'message': 'Removed user: ' + del_username
-        }
+        })
     except Exception, exc:
         # There might be cascade issues or something that causes us to fail in
         # removing.
         LOG.error(exc)
         request.response.status_int = 500
-        return {
+        return _api_response(request, {
             'error': 'Bad Request: ' + str(exc)
-        }
+        })
 
 
 @view_config(route_name="api_admin_bmark_remove", renderer="jsonp")
@@ -1115,20 +1126,20 @@ def admin_bmark_remove(request):
         print bmark
         if bmark:
             DBSession.delete(bmark)
-            return {
+            return _api_response(request, {
                 'message': "done",
-            }
+            })
         else:
-            return {
+            return _api_response(request, {
                 'error': 'Bookmark not found.',
-            }
+            })
 
     except NoResultFound:
         request.response.status_code = 404
-        return {
+        return _api_response(request, {
             'error': 'Bookmark with hash id {0} not found.'.format(
                 rdict['hash_id'])
-        }
+        })
 
 
 @view_config(route_name="api_admin_applog", renderer="jsonp")
@@ -1152,4 +1163,4 @@ def admin_applog(request):
         'count': len(log_list),
         'logs': [dict(l) for l in log_list],
     }
-    return ret
+    return _api_response(request, ret)

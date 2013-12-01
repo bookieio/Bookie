@@ -38,6 +38,11 @@ class BookieAPITest(unittest.TestCase):
         testing.tearDown()
         empty_db()
 
+    def _check_cors_headers(self, res):
+        """ Make sure that the request has proper CORS headers."""
+        eq_(res.headers['access-control-allow-origin'], '*')
+        eq_(res.headers['access-control-allow-headers'], 'X-Requested-With')
+
     def _get_good_request(self, content=False, second_bmark=False):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
@@ -117,6 +122,7 @@ class BookieAPITest(unittest.TestCase):
             "Should have a location result: " + res.body)
         ok_('description": "Bookie"' in res.body,
             "Should have Bookie in description: " + res.body)
+        self._check_cors_headers(res)
 
     def test_bookmark_fetch(self):
         """Test that we can get a bookmark and it's details"""
@@ -160,16 +166,18 @@ class BookieAPITest(unittest.TestCase):
         ok_('dude' in bmark['readable']['content'],
             "We should have 'dude' in our content: " +
             bmark['readable']['content'])
+        self._check_cors_headers(res)
 
     def test_bookmark_fetch_fail(self):
         """Verify we get a failed response when wrong bookmark"""
         self._get_good_request()
 
         # test that we get a 404
-        self.testapp.get(
+        res = self.testapp.get(
             '/api/v1/admin/bmark/{0}?api_key={1}'.format(BMARKUS_HASH,
                                                          API_KEY),
             status=404)
+        self._check_cors_headers(res)
 
     def test_bookmark_remove(self):
         """A delete call should remove the bookmark from the system"""
@@ -196,6 +204,7 @@ class BookieAPITest(unittest.TestCase):
             "Should not have the google hash: " + res.body)
         ok_(BMARKUS_HASH in res.body,
             "Should have the bmark.us hash: " + res.body)
+        self._check_cors_headers(res)
 
     def test_bookmark_recent_user(self):
         """Test that we can get list of bookmarks with details"""
@@ -218,6 +227,7 @@ class BookieAPITest(unittest.TestCase):
         res = self.testapp.get(
             '/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
             status=200)
+        self._check_cors_headers(res)
 
         # make sure we can decode the body
         # @todo this is out because of the issue noted in the code. We'll
@@ -247,6 +257,7 @@ class BookieAPITest(unittest.TestCase):
         res = self.testapp.get(
             '/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
             status=200)
+        self._check_cors_headers(res)
 
         # make sure we can decode the body
         # @todo this is out because of the issue noted in the code. We'll
@@ -271,6 +282,7 @@ class BookieAPITest(unittest.TestCase):
             "The google hash id should be in the json: " + res.body)
         ok_(BMARKUS_HASH in res.body,
             "The bmark.us hash id should be in the json: " + res.body)
+        self._check_cors_headers(res)
 
     def test_search_api(self):
         """Test that we can get list of bookmarks ordered by clicks"""
@@ -293,6 +305,7 @@ class BookieAPITest(unittest.TestCase):
 
         ok_('clicks' in bmark,
             "The clicks field should be in there")
+        self._check_cors_headers(res)
 
     def test_bookmark_tag_complete(self):
         """Test we can complete tags in the system
@@ -325,6 +338,7 @@ class BookieAPITest(unittest.TestCase):
 
         ok_('python' not in res.body,
             "Should not have python as a tag completion: " + res.body)
+        self._check_cors_headers(res)
 
     def test_account_information(self):
         """Test getting a user's account information"""
@@ -343,6 +357,7 @@ class BookieAPITest(unittest.TestCase):
             'Should not have a field password {0}'.format(user))
         ok_('api_key' not in user,
             'Should not have a field password {0}'.format(user))
+        self._check_cors_headers(res)
 
     def test_account_update(self):
         """Test updating a user's account information"""
@@ -369,6 +384,7 @@ class BookieAPITest(unittest.TestCase):
             "Should not have a field password {0}".format(user))
         ok_('api_key' not in user,
             "Should not have a field password {0}".format(user))
+        self._check_cors_headers(res)
 
     def test_account_apikey(self):
         """Fetching a user's api key"""
@@ -382,6 +398,7 @@ class BookieAPITest(unittest.TestCase):
             "Should have a username of admin {0}".format(user))
         ok_('api_key' in user,
             "Should have an api key in there: {0}".format(user))
+        self._check_cors_headers(res)
 
     def test_account_password_change(self):
         """Change a user's password"""
@@ -412,6 +429,8 @@ class BookieAPITest(unittest.TestCase):
             params=params,
             status=200)
 
+        self._check_cors_headers(res)
+
     def test_account_password_failure(self):
         """Change a user's password, in bad ways"""
         params = {
@@ -433,6 +452,7 @@ class BookieAPITest(unittest.TestCase):
             "Should have a error key in there: {0}".format(user))
         ok_('typo' in user['error'],
             "Should have a error key in there: {0}".format(user))
+        self._check_cors_headers(res)
 
     def test_api_ping_success(self):
         """We should be able to ping and make sure we auth'd and are ok"""
@@ -443,6 +463,8 @@ class BookieAPITest(unittest.TestCase):
         ok_(ping['success'],
             "Should success be true")
 
+        self._check_cors_headers(res)
+
     def test_api_ping_failed_nouser(self):
         """If you don't supply a username, you've failed the ping"""
         res = self.testapp.get('/api/v1/ping?api_key=' + API_KEY,
@@ -452,6 +474,7 @@ class BookieAPITest(unittest.TestCase):
         ok_(not ping['success'],
             "Success should be false")
         eq_(ping['message'], "Missing username in your api url.")
+        self._check_cors_headers(res)
 
     def test_api_ping_failed_missing_api(self):
         """If you don't supply a username, you've failed the ping"""
@@ -462,3 +485,4 @@ class BookieAPITest(unittest.TestCase):
         ok_(not ping['success'],
             "Success should be false")
         eq_(ping['message'], "The API url should be /api/v1")
+        self._check_cors_headers(res)
