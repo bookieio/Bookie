@@ -8,10 +8,12 @@ breadability <= 0.2
 celery==3.0.21
 celery-with-redis==3.0
 Chameleon==1.3.0-rc1
+charade==1.0.3
 chardet==2.1.1
 convoy==0.2.2
 coverage==3.4
 decorator==3.3.1
+docopt==0.6.1
 docutils==0.7
 feedparser==5.1.3
 gunicorn
@@ -19,7 +21,7 @@ Jinja2==2.5.5
 kombu==2.5.12
 logilab-astng==0.21.1
 logilab-common==0.55.0
-lxml==2.3
+lxml==3.2.4 
 Mako==0.4.1
 MarkupSafe==0.12
 mock==0.7.0
