@@ -112,7 +112,7 @@ class DelImporter(Importer):
         uses <h3> tags and Delicious does not in order to differentiate these
         two formats.
         """
-        delicious_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
+        delicious_doctype = u'DOCTYPE NETSCAPE-Bookmark-file-1'
 
         soup = BeautifulSoup(file_io)
         can_handle = False
@@ -207,6 +207,7 @@ class DelXMLImporter(Importer):
         """
 
         try:
+            file_io.seek(0)
             parsed = etree.parse(file_io)
         except XMLSyntaxError:
             # IF etree can't parse it, it's not our file.
@@ -223,6 +224,7 @@ class DelXMLImporter(Importer):
         if self.file_handle.closed:
             self.file_handle = open(self.file_handle.name)
 
+        self.file_handle.seek(0)
         parsed = etree.parse(self.file_handle)
         count = 0
 
@@ -298,6 +300,7 @@ class GBookmarkImporter(Importer):
         """
         if (file_io.closed):
             file_io = open(file_io.name)
+        file_io.seek(0)
         soup = BeautifulSoup(file_io)
         can_handle = False
         gbookmark_doctype = "DOCTYPE NETSCAPE-Bookmark-file-1"
