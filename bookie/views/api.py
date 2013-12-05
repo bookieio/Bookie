@@ -173,7 +173,7 @@ def bmark_add(request):
             params = request.json_body
         else:
             raise ValueError('No url provided')
-    except ValueError, exc:
+    except ValueError:
         request.response.status_int = 400
         return _api_response(request, {
             'error': 'Bad Request: No url provided'
