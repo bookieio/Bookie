@@ -1,13 +1,16 @@
 """Provide tools for generating objects for testing purposes."""
 from random import randint
+import datetime
 import random
 import string
 
 from bookie.models import DBSession
 from bookie.models import Bmark
+
 from bookie.models import Tag
 from bookie.models.applog import AppLog
 from bookie.models.auth import User
+from bookie.models.queue import ImportQueue
 
 
 def random_int(max=1000):
@@ -88,3 +91,23 @@ def make_user(username=None):
     DBSession.add(user)
     DBSession.flush()
     return user
+
+
+def make_import_queue(id=None, username=None, file_path=None, completed=None):
+    """Generate a fake import queue to test against."""
+    import_queue = ImportQueue()
+
+    if id is not None:
+        import_queue.id = randint(0, 100)
+
+    if username is not None:
+        import_queue.username = random_string(10)
+
+    if file_path is not None:
+        import_queue.file_path = 'does/not/exist/'
+
+    import_queue.completed = completed
+
+    DBSession.add(import_queue)
+    DBSession.flush()
+    return import_queue
