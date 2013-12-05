@@ -24,6 +24,7 @@ Submit a new bookmark for storing
 
 :query param: api_key *required* - the api key for your account to make the call with
 :query param: callback - wrap JSON response in an optional callback
+:post param: url *required*
 :post param: description
 :post param: extended
 :post param: tags - space separated tag string

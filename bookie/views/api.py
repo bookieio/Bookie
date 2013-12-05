@@ -166,15 +166,17 @@ def _update_mark(mark, params):
 def bmark_add(request):
     """Add a new bookmark to the system"""
     rdict = request.matchdict
-
-    if 'url' in request.params or 'hash_id' in request.params:
-        params = request.params
-    elif 'url' in request.json_body or 'hash_id' in request.json_body:
-        params = request.json_body
-    else:
+    try:
+        if 'url' in request.params or 'hash_id' in request.params:
+            params = request.params
+        elif 'url' in request.json_body or 'hash_id' in request.json_body:
+            params = request.json_body
+        else:
+            raise ValueError('No url provided')
+    except ValueError:
         request.response.status_int = 400
         return _api_response(request, {
-            'error': 'Bad Request: missing url',
+            'error': 'Bad Request: No url provided'
         })
 
     user = request.user
