@@ -91,7 +91,7 @@ def ping_missing_api(request):
 
 
 @view_config(route_name="api_bmark_hash", renderer="jsonp")
-@api_auth('api_key', UserMgr.get)
+@api_auth('api_key', UserMgr.get, anon=True)
 def bmark_get(request):
     """Return a bookmark requested via hash_id
 
@@ -103,7 +103,11 @@ def bmark_get(request):
     params = request.params
 
     hash_id = rdict.get('hash_id', None)
-    username = request.user.username
+
+    if request.user and request.user.username:
+        username = request.user.username
+    else:
+        username = None
 
     # the hash id will always be there or the route won't match
     bookmark = BmarkMgr.get_by_hash(hash_id,
