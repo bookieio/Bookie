@@ -74,7 +74,7 @@ Usage
 
 Get the information about this bookmark.
 
-:query param: api_key *required* - the api key for your account to make the call with
+:query param: api_key *optional* - the api key for your account to make the call with
 :query param: with_content - do you wish the readable content of the urls if available
 :query param: last_bmark - do you want the information of the last bookmark saved. This is used to supply tag hints in the Chrome extension.
 :query param: callback - wrap JSON response in an optional callback

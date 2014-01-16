@@ -217,6 +217,26 @@ class BookieAPITest(unittest.TestCase):
             status=404)
         self._check_cors_headers(res)
 
+    def test_bookmark_diff_user(self):
+        """Verify that anon users can access the bookmark"""
+        self._get_good_request()
+
+        # test that we get a 404
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH),
+            status=200)
+        self._check_cors_headers(res)
+
+    def test_bookmark_diff_user_authed(self):
+        """Verify an auth'd user can fetch another's bookmark"""
+        self._get_good_request()
+
+        # test that we get a 404
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH, 'invalid'),
+            status=200)
+        self._check_cors_headers(res)
+
     def test_bookmark_remove(self):
         """A delete call should remove the bookmark from the system"""
         self._get_good_request(content=True, second_bmark=True)
