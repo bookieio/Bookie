@@ -222,14 +222,14 @@ def bmark_add(request):
                 stored_time = None
 
             # check to see if we know where this is coming from
-            inserted_by = params.get('inserted_by', 'unknown_api')
+            inserted_by = params.get('inserted_by', u'unknown_api')
 
             mark = BmarkMgr.store(
                 params['url'],
                 user.username,
-                params.get('description', ''),
-                params.get('extended', ''),
-                params.get('tags', ''),
+                params.get('description', u''),
+                params.get('extended', u''),
+                params.get('tags', u''),
                 dt=stored_time,
                 inserted_by=inserted_by,
             )
@@ -243,7 +243,7 @@ def bmark_add(request):
             content = StringIO(params['content'])
             content.seek(0)
             parsed = ReadContent.parse(content,
-                                       content_type="text/html",
+                                       content_type=u"text/html",
                                        url=mark.hashed.url)
 
             mark.readable = Readable()
@@ -674,9 +674,6 @@ def reset_password(request):
 
     user_acct = request.user
 
-    LOG.error("PASSWD")
-    LOG.error(current)
-    LOG.error(new)
     if not UserMgr.acceptable_password(new):
         request.response.status_int = 406
         return _api_response(request, {
@@ -740,7 +737,7 @@ check your spam folder.""",
         })
 
     # mark them for reactivation
-    user.reactivate("FORGOTTEN")
+    user.reactivate(u"FORGOTTEN")
 
     # log it
     AuthLog.reactivate(user.username)
@@ -865,7 +862,7 @@ def invite_user(request):
 
     new_user = user.invite(email)
     if new_user:
-        LOG.error(new_user.username)
+        LOG.debug(new_user.username)
         # then this user is able to invite someone
         # log it
         AuthLog.reactivate(new_user.username)

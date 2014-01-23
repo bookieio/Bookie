@@ -88,9 +88,7 @@ class TestReadable(TestCase):
         }
 
         for key, url in urls.iteritems():
-            LOG.debug(url)
             read = ReadUrl.parse(url)
-            LOG.debug(read)
 
             ok_(read.status == 200, "The status is 200: " + str(read.status))
             ok_(read.content is not None, "Content should not be none: ")

@@ -6,6 +6,12 @@ from pyramid.view import view_config
 from bookie.models.auth import UserMgr
 
 
+class BookieView(object):
+
+    def __init__(self, request):
+        self.request = request
+
+
 @view_config(route_name="home", renderer="index.mako")
 @view_config(route_name="user_home", renderer="index.mako")
 def home(request):

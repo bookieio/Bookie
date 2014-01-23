@@ -39,7 +39,7 @@ def _delicious_data_test():
         "We should have 19 results, we got: " + str(len(res)))
 
     # verify we can find a bookmark by url and check tags, etc
-    check_url = 'http://www.ndftz.com/nickelanddime.png'
+    check_url = u'http://www.ndftz.com/nickelanddime.png'
     check_url_hashed = generate_hash(check_url)
     found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
@@ -127,7 +127,7 @@ class ImporterBaseTest(unittest.TestCase):
         del_file = os.path.join(loc, 'delicious.html')
 
         with open(del_file) as del_io:
-            imp = Importer(del_io, username="admin")
+            imp = Importer(del_io, username=u"admin")
 
             ok_(isinstance(imp, DelImporter),
                 "Instance should be a delimporter instance")
@@ -138,7 +138,7 @@ class ImporterBaseTest(unittest.TestCase):
         google_file = os.path.join(loc, 'googlebookmarks.html')
 
         with open(google_file) as google_io:
-            imp = Importer(google_io, username="admin")
+            imp = Importer(google_io, username=u"admin")
 
             ok_(isinstance(imp, GBookmarkImporter),
                 "Instance should be a GBookmarkImporter instance")
@@ -185,7 +185,7 @@ class ImportDeliciousTest(unittest.TestCase):
     def test_import_process(self):
         """Verify importer inserts the correct records"""
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -194,11 +194,11 @@ class ImportDeliciousTest(unittest.TestCase):
     def test_dupe_imports(self):
         """If we import twice, we shouldn't end up with duplicate bmarks"""
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -239,7 +239,7 @@ class ImportDeliciousXMLTest(unittest.TestCase):
     def test_import_process(self):
         """Verify importer inserts the correct records"""
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -248,11 +248,11 @@ class ImportDeliciousXMLTest(unittest.TestCase):
     def test_dupe_imports(self):
         """If we import twice, we shouldn't end up with duplicate bmarks"""
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         good_file = self._get_del_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         # Now let's do some db sanity checks.
@@ -290,7 +290,7 @@ class ImportGoogleTest(unittest.TestCase):
     def test_import_process(self):
         """Verify importer inserts the correct google bookmarks"""
         good_file = self._get_google_file()
-        imp = Importer(good_file, username="admin")
+        imp = Importer(good_file, username=u"admin")
         imp.process()
 
         # now let's do some db sanity checks
@@ -302,7 +302,7 @@ class ImportGoogleTest(unittest.TestCase):
         bmarklet_file = os.path.join(loc, 'bookmarklet_error.htm')
         fh = open(bmarklet_file)
 
-        imp = Importer(fh, username="admin")
+        imp = Importer(fh, username=u"admin")
         imp.process()
 
         res = Bmark.query.all()
@@ -370,10 +370,10 @@ class ImportViews(TestViewBase):
         # Prep the db with 2 other imports ahead of this user's.
         # We have to commit these since the request takes place in a new
         # session/transaction.
-        DBSession.add(ImportQueue(username='testing',
-                                  file_path='testing.txt'))
-        DBSession.add(ImportQueue(username='testing2',
-                                  file_path='testing2.txt'))
+        DBSession.add(ImportQueue(username=u'testing',
+                                  file_path=u'testing.txt'))
+        DBSession.add(ImportQueue(username=u'testing2',
+                                  file_path=u'testing2.txt'))
         DBSession.flush()
         transaction.commit()
 
@@ -396,8 +396,8 @@ class ImportViews(TestViewBase):
 
         # add out completed one
         q = ImportQueue(
-            username='admin',
-            file_path='testing.txt'
+            username=u'admin',
+            file_path=u'testing.txt'
         )
         q.completed = datetime.now()
         q.status = 2

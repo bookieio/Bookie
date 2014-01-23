@@ -105,7 +105,7 @@ class TestFulltext(TestCase):
         self._get_good_request()
 
         # now we need to do another request with updated tag string
-        self._get_good_request(new_tags="google books icons")
+        self._get_good_request(new_tags=u"google books icons")
 
         search_res = self.testapp.get('/admin/results?search=icon')
         ok_(search_res.status == '200 OK',

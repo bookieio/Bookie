@@ -1,9 +1,12 @@
 import ConfigParser
+import logging
 import os
 import random
 import shutil
 import transaction
 import unittest
+
+from logging.config import fileConfig
 from pyramid import testing
 
 # tools we use to empty tables
@@ -32,6 +35,12 @@ if not test_ini:
 
 ini.read(test_ini)
 settings = dict(ini.items('app:bookie'))
+# Setup logging to read from the test ini file.
+fileConfig(test_ini)
+LOG = logging.getLogger(__name__)
+
+# Shut up the transaction logger
+transaction._transaction._LOGGER = LOG
 
 BOOKIE_TEST_INI = test_ini
 print "USING TEST INI: ", BOOKIE_TEST_INI
@@ -46,10 +55,10 @@ except:
 
 
 def gen_random_word(wordLen):
-    word = ''
+    word = u''
     for i in xrange(wordLen):
-        word += random.choice(('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs'
-                               'tuvwxyz0123456789/&='))
+        word += random.choice((u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs'
+                               u'tuvwxyz0123456789/&='))
     return word
 
 
@@ -92,9 +101,9 @@ class TestViewBase(unittest.TestCase):
         self.app.post(
             '/login',
             params={
-                "login": "admin",
-                "password": "admin",
-                "form.submitted": "Log In",
+                "login": u"admin",
+                "password": u"admin",
+                "form.submitted": u"Log In",
             },
             status=302)
 
@@ -111,7 +120,7 @@ def empty_db():
     ImportQueue.query.delete()
     # Delete the users not admin in the system.
     Activation.query.delete()
-    User.query.filter(User.username != 'admin').delete()
+    User.query.filter(User.username != u'admin').delete()
 
     AppLog.query.delete()
     DBSession.flush()
@@ -119,7 +128,3 @@ def empty_db():
 
     # Clear the fulltext index as well.
     _reset_index()
-
-
-# unit tests we want to make sure get run
-# from bookie.lib.test_tagcommands import *

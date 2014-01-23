@@ -1,4 +1,7 @@
 """Importers for bookmarks"""
+import os
+import random
+import string
 import time
 import transaction
 from datetime import datetime
@@ -13,8 +16,29 @@ from bookie.models import DBSession
 from bookie.models import InvalidBookmark
 
 
-IMPORTED = "importer"
+IMPORTED = u"importer"
 COMMIT_SIZE = 25
+
+
+def store_import_file(storage_dir, username, files):
+    # save the file off to the temp storage
+    out_dir = "{storage_dir}/{randdir}".format(
+        storage_dir=storage_dir,
+        randdir=random.choice(string.letters),
+    )
+
+    # make sure the directory exists
+    # we create it with parents as well just in case
+    if not os.path.isdir(out_dir):
+        os.makedirs(out_dir)
+
+    out_fname = "{0}/{1}.{2}".format(
+        out_dir, username, files.filename)
+    out = open(out_fname, 'w')
+    out.write(files.file.read())
+    out.close()
+
+    return out_fname
 
 
 class Importer(object):
@@ -137,7 +161,7 @@ class DelImporter(Importer):
             if tag.nextSibling and tag.nextSibling.name == 'dd':
                 extended = tag.nextSibling.text
             else:
-                extended = ""
+                extended = u""
 
             link = tag.a
 
@@ -150,14 +174,14 @@ class DelImporter(Importer):
 
             try:
                 bmark = self.save_bookmark(
-                    link['href'],
-                    link.text,
-                    extended,
-                    " ".join(link.get('tags', '').split(',')),
+                    unicode(link['href']),
+                    unicode(link.text),
+                    unicode(extended),
+                    u" ".join(unicode(link.get('tags', '')).split(u',')),
                     dt=add_date)
                 count = count + 1
                 DBSession.flush()
-            except InvalidBookmark, exc:
+            except InvalidBookmark:
                 bmark = None
 
             if bmark:
@@ -237,16 +261,16 @@ class DelXMLImporter(Importer):
 
             try:
                 bmark = self.save_bookmark(
-                    post.get('href'),
-                    post.get('description'),
-                    post.get('extended'),
-                    post.get('tag'),
+                    unicode(post.get('href')),
+                    unicode(post.get('description')),
+                    unicode(post.get('extended')),
+                    unicode(post.get('tag')),
                     dt=add_date)
                 count = count + 1
                 if bmark:
                     bmark.stored = bmark.stored.replace(tzinfo=None)
                     DBSession.flush()
-            except InvalidBookmark, exc:
+            except InvalidBookmark:
                 bmark = None
 
             if bmark:
@@ -372,14 +396,17 @@ class GBookmarkImporter(Importer):
         ids = []
         for url, metadata in urls.items():
             try:
+                if type(url) is not unicode:
+                    import pdb; pdb.set_trace()
+
                 bmark = self.save_bookmark(
-                    url,
-                    metadata['description'],
-                    metadata['extended'],
-                    " ".join(metadata['tags']),
+                    unicode(url),
+                    unicode(metadata['description']),
+                    unicode(metadata['extended']),
+                    u" ".join(metadata['tags']),
                     dt=metadata['date_added'])
                 DBSession.flush()
-            except InvalidBookmark, exc:
+            except InvalidBookmark:
                 bmark = None
             if bmark:
                 ids.append(bmark.bid)

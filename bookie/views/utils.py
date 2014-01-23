@@ -1,100 +1,101 @@
 """View callables for utilities like bookmark imports, etc"""
-import logging
-import os
-import random
-import string
 
-from pyramid.httpexceptions import HTTPFound
-from pyramid.httpexceptions import HTTPNotFound
+import logging
+from pyramid.httpexceptions import (
+    HTTPFound,
+    HTTPNotFound,
+)
 from pyramid.view import view_config
 from sqlalchemy.orm import contains_eager
 
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.applog import BmarkLog
+from bookie.lib.importer import store_import_file
 
 from bookie.bcelery import tasks
-from bookie.models import Bmark
-from bookie.models import DBSession
-from bookie.models import Hashed
+from bookie.models import (
+    Bmark,
+    DBSession,
+    Hashed,
+)
 from bookie.models.fulltext import get_fulltext_handler
-from bookie.models.queue import NEW
-from bookie.models.queue import ImportQueue
-from bookie.models.queue import ImportQueueMgr
+from bookie.models.queue import (
+    NEW,
+    ImportQueue,
+    ImportQueueMgr,
+)
+from bookie.views import BookieView
 
 
 LOG = logging.getLogger(__name__)
 
 
-@view_config(route_name="user_import", renderer="/utils/import.mako")
-def import_bmarks(request):
-    """Allow users to upload a delicious bookmark export"""
-    rdict = request.matchdict
-    username = rdict.get('username')
+class ImportViews(BookieView):
+    def _helpers(self):
+        self.matchdict = self.request.matchdict
+        self.GET = self.request.GET
+        self.POST = self.request.POST
+        self.settings = self.request.registry.settings
 
-    # if auth fails, it'll raise an HTTPForbidden exception
-    with ReqAuthorize(request):
-        data = {}
-        post = request.POST
+    @view_config(route_name="user_import", renderer="/utils/import.mako")
+    def import_bmarks(self):
+        """Allow users to upload a bookmark export file for processing"""
+        self._helpers()
+        username = self.matchdict.get('username')
 
-        # we can't let them submit multiple times, check if this user has an
-        # import in process
-        if ImportQueueMgr.get(username=username, status=NEW):
-            # they have an import, get the information about it and shoot to
-            # the template
-            return {
-                'existing': True,
-                'import_stats': ImportQueueMgr.get_details(username=username)
-            }
+        # if auth fails, it'll raise an HTTPForbidden exception
+        with ReqAuthorize(self.request):
+            data = {}
+            post = self.POST
 
-        if post:
-            # we have some posted values
-            files = post.get('import_file', None)
+            # We can't let them submit multiple times, check if this user has
+            # an import in process.
+            if ImportQueueMgr.get(username=username, status=NEW):
+                # They have an import, get the information about it and shoot
+                # to the template.
+                return {
+                    'existing': True,
+                    'import_stats': ImportQueueMgr.get_details(
+                        username=username)
+                }
 
-            if files is not None:
-                # save the file off to the temp storage
-                out_dir = "{storage_dir}/{randdir}".format(
-                    storage_dir=request.registry.settings.get(
-                        'import_files',
-                        '/tmp/bookie').format(
-                            here=request.registry.settings.get('app_root')),
-                    randdir=random.choice(string.letters),
-                )
+            if post:
+                # we have some posted values
+                files = post.get('import_file', None)
 
-                # make sure the directory exists
-                # we create it with parents as well just in case
-                if not os.path.isdir(out_dir):
-                    os.makedirs(out_dir)
+                if files is not None:
+                    storage_dir_tpl = self.settings.get('import_files',
+                                                        '/tmp/bookie')
+                    storage_dir = storage_dir_tpl.format(
+                        here=self.settings.get('app_root'))
 
-                out_fname = "{0}/{1}.{2}".format(
-                    out_dir, username, files.filename)
-                out = open(out_fname, 'w')
-                out.write(files.file.read())
-                out.close()
+                    out_fname = store_import_file(storage_dir, username, files)
 
-                # mark the system that there's a pending import that needs to
-                # be completed
-                q = ImportQueue(username, out_fname)
-                DBSession.add(q)
-                DBSession.flush()
-                # Schedule a task to start this import job.
-                tasks.importer_process.delay(q.id)
+                    # Mark the system that there's a pending import that needs
+                    # to be completed
+                    q = ImportQueue(username, unicode(out_fname))
+                    DBSession.add(q)
+                    DBSession.flush()
+                    # Schedule a task to start this import job.
+                    tasks.importer_process.delay(q.id)
 
-                return HTTPFound(location=request.route_url('user_import',
-                                                            username=username))
-            else:
-                msg = request.session.pop_flash()
-                if msg:
-                    data['error'] = msg
+                    return HTTPFound(
+                        location=self.request.route_url('user_import',
+                                                        username=username))
                 else:
-                    data['error'] = None
+                    msg = self.request.session.pop_flash()
+                    if msg:
+                        data['error'] = msg
+                    else:
+                        data['error'] = None
 
-            return data
-        else:
-            # we need to see if they've got
-            # just display the form
-            return {
-                'existing': False
-            }
+                return data
+            else:
+                # we need to see if they've got
+                # just display the form
+                return {
+                    'existing': False
+                }
 
 
 @view_config(route_name="search", renderer="/utils/search.mako")

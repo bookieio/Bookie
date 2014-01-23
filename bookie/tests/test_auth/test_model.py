@@ -66,7 +66,7 @@ class TestAuthUserDB(TestDBBase):
         """Make sure removing an activation does not remove a user."""
         tst = User()
         tst.username = gen_random_word(10)
-        tst.activation = Activation('signup')
+        tst.activation = Activation(u'signup')
         DBSession.add(tst)
         DBSession.flush()
 
@@ -84,7 +84,7 @@ class TestAuthUserDB(TestDBBase):
         """Removing a user cascades the activations as well."""
         tst = User()
         tst.username = gen_random_word(10)
-        tst.activation = Activation('signup')
+        tst.activation = Activation(u'signup')
         DBSession.add(tst)
         DBSession.flush()
 
@@ -102,7 +102,6 @@ class TestAuthUserDB(TestDBBase):
         eq_(0, len(activations), 'There should be no activations left')
 
 
-
 class TestAuthMgr(TestCase):
     """Test User Manager"""
 
@@ -117,7 +116,7 @@ class TestAuthMgr(TestCase):
 
     def test_get_username(self):
         """Fetching the user by the username"""
-        user = UserMgr.get(username='admin')
+        user = UserMgr.get(username=u'admin')
         eq_(user.id, 1,
             "Should have a user id of 1: " + str(user.id))
         eq_(user.username, 'admin',
@@ -125,7 +124,7 @@ class TestAuthMgr(TestCase):
 
     def test_get_bad_user(self):
         """We shouldn't get a hit if the user is inactive"""
-        user = UserMgr.get(username='noexist')
+        user = UserMgr.get(username=u'noexist')
 
         eq_(user, None,
             "Should not find a non-existant user: " + str(user))
