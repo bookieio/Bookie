@@ -11,6 +11,7 @@ from pyramid.view import view_config
 
 from bookie.bcelery import tasks
 from bookie.lib.applog import AuthLog
+from bookie.models import IntegrityError
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
 
@@ -32,13 +33,13 @@ def login(request):
     login_url = route_url('login', request)
     referrer = request.url
     if referrer == login_url:
-        referrer = '/'  # never use the login form itself as came_from
+        referrer = u'/'  # never use the login form itself as came_from
 
     came_from = request.params.get('came_from', referrer)
 
-    message = ''
-    login = ''
-    password = ''
+    message = u''
+    login = u''
+    password = u''
 
     if 'form.submitted' in request.params:
         login = request.params['login']
@@ -202,17 +203,18 @@ def reset(request):
                 # success so respond nicely
                 AuthLog.reactivate(username, success=True, code=activation)
 
-                # if there's a new username and it's not the same as our current
-                # username, update it
+                # if there's a new username and it's not the same as our
+                # current username, update it
                 if new_username and new_username != username:
                     try:
                         user = UserMgr.get(username=username)
                         user.username = new_username
-                    except IntegrityError, exc:
+                    except IntegrityError:
                         error = 'There was an issue setting your new username'
             else:
                 AuthLog.reactivate(username, success=False, code=activation)
-                error = 'There was an issue attempting to activate this account.'
+                error = ('There was an issue attempting to activate'
+                         'this account.')
 
         if error:
             return {

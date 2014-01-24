@@ -31,10 +31,10 @@ class TestInviteSetup(TestDBBase):
     def testInviteCreatesUser(self):
         """We should get a new user when inviting something"""
         me = User()
-        me.username = 'me'
-        me.email = 'me.com'
+        me.username = u'me'
+        me.email = u'me.com'
         me.invite_ct = 2
-        you = me.invite('you.com')
+        you = me.invite(u'you.com')
 
         eq_('you.com', you.username,
             'The email should be the username')
@@ -70,7 +70,7 @@ class TestOpenSignup(TestViewBase):
 
     def tearDown(self):
         super(TestOpenSignup, self).tearDown()
-        User.query.filter(User.email == 'testing@newuser.com').delete()
+        User.query.filter(User.email == u'testing@newuser.com').delete()
 
     def testSignupRenders(self):
         """A signup form is kind of required."""
@@ -96,8 +96,8 @@ class TestOpenSignup(TestViewBase):
 
     def testSignupWorks(self):
         """Signing up stores an activation."""
-        email = 'testing@newuser.com'
-        UserMgr.signup_user(email, 'testcase')
+        email = u'testing@newuser.com'
+        UserMgr.signup_user(email, u'testcase')
 
         activations = Activation.query.all()
 

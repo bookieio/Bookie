@@ -95,9 +95,12 @@ class WhooshFulltext(object):
             except ValueError, exc:
                 raise(exc)
 
-            qry = Bmark.query.filter(
-                Bmark.bid.in_([r['bid'] for r in res])
-            )
-            qry = qry.options(joinedload('hashed'))
+            if res:
+                qry = Bmark.query.filter(
+                    Bmark.bid.in_([r['bid'] for r in res])
+                )
+                qry = qry.options(joinedload('hashed'))
 
-            return qry.all()
+                return qry.all()
+            else:
+                return []

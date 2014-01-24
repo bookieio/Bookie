@@ -21,7 +21,7 @@
 
 <%def name="password_reset(user, reset)">
     <%
-        if user.activation and user.activation.created_by == 'invite':
+        if user.activation and user.activation.created_by == u'invite':
             title = "Please activate your new Bookie account"
             submit = "Activate"
         elif reset:
@@ -62,7 +62,7 @@
                         </li>
                     % endif
 
-                    % if user.activation and user.activation.created_by == 'invite':
+                    % if user.activation and user.activation.created_by == u'invite':
                         <li>
                             <label>Choose Username</label>
                             <input type="text" id="new_username" name="new_username" />

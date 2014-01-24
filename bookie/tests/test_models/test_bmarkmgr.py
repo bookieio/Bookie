@@ -49,7 +49,7 @@ class TestBmarkMgrStats(TestDBBase):
     def test_unique_ct(self):
         """Verify that our unique count method is working"""
         ct = 5
-        common = 'testing.com'
+        common = u'testing.com'
         users = []
         for i in range(ct):
             user = User()
@@ -85,7 +85,7 @@ class TestBmarkMgrStats(TestDBBase):
     def test_per_user(self):
         """We should only get a pair of results for this single user"""
         ct = 5
-        common = 'testing.com'
+        common = u'testing.com'
         user = User()
         user.username = gen_random_word(10)
         DBSession.add(user)

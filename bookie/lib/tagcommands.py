@@ -54,8 +54,8 @@ class Command(object):
 
 class ToRead(Command):
     """Command to mark a bookmark as toread"""
-    command_tag = "!toread"
-    read_tag = "toread"
+    command_tag = u"!toread"
+    read_tag = u"toread"
 
     @staticmethod
     def run(bmark):

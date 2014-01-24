@@ -222,7 +222,7 @@ class UserMgr(object):
         new_user.api_key = User.gen_api_key()
 
         # they need to be deactivated
-        new_user.reactivate('invite')
+        new_user.reactivate(u'invite')
 
         # decrement the invite counter
         DBSession.add(new_user)
@@ -254,7 +254,7 @@ class User(Base):
 
     def __init__(self):
         """By default a user starts out deactivated"""
-        self.activation = Activation('signup')
+        self.activation = Activation(u'signup')
         self.activated = False
 
     def _set_password(self, password):

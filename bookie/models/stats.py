@@ -33,10 +33,10 @@ from bookie.models import TagMgr
 from bookie.models.queue import ImportQueueMgr
 
 
-IMPORTER_CT = 'importer_queue'
-TOTAL_CT = 'user_bookmarks'
-UNIQUE_CT = 'unique_bookmarks'
-TAG_CT = 'total_tags'
+IMPORTER_CT = u'importer_queue'
+TOTAL_CT = u'user_bookmarks'
+UNIQUE_CT = u'unique_bookmarks'
+TAG_CT = u'total_tags'
 
 
 class StatBookmarkMgr(object):

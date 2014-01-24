@@ -5,7 +5,7 @@ CELERY := bin/celery worker --app=bookie.bcelery -B -l debug
 PEP8 := bin/pep8
 PIP := bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
-NOSE := bin/nosetests
+NOSE := bin/nose2
 PASTER := bin/pserve
 PYSCSS := bin/pyscss
 GUNICORN := bin/gunicorn
@@ -134,7 +134,7 @@ deps: venv
 		else git clone --depth=1 "http://github.com/mitechie/bookie-download-cache.git" download-cache; \
 	fi
 	@echo "Making sure the latest version of pip is available"
-	$(PIP) install -U pip
+	# $(PIP) install -U pip
 	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
 
 # TESTS
@@ -147,7 +147,7 @@ smtp:
 
 .PHONY: test
 test:
-	$(NOSE) --with-id $(ID) -vx -s bookie/tests
+	INI="test.ini" $(NOSE) -s bookie/tests
 
 .PHONY: testcoverage
 testcoverage:

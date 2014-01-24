@@ -124,8 +124,8 @@ def edit(request):
                 return HTTPNotFound()
         else:
             # hash the url and make sure that it doesn't exist
-            url = params.get('url', "")
-            if url != "":
+            url = params.get('url', u"")
+            if url != u"":
                 new_url_hash = generate_hash(url)
 
                 test_exists = BmarkMgr.get_by_hash(new_url_hash,

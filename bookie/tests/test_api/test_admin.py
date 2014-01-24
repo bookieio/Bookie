@@ -46,8 +46,8 @@ class AdminApiTest(unittest.TestCase):
         """DB Needs some imports to be able to query."""
         # add out completed one
         q = ImportQueue(
-            username='admin',
-            file_path='testing.txt'
+            username=u'admin',
+            file_path=u'testing.txt'
         )
         DBSession.add(q)
         transaction.commit()
@@ -153,8 +153,8 @@ class AdminApiTest(unittest.TestCase):
 
     def test_user_delete(self):
         """Verify we can remove a user and their bookmarks via api."""
-        bob = factory.make_user(username='bob')
-        bob.activation = Activation('signup')
+        bob = factory.make_user(username=u'bob')
+        bob.activation = Activation(u'signup')
 
         factory.make_bookmark(user=bob)
         transaction.commit()
@@ -171,5 +171,5 @@ class AdminApiTest(unittest.TestCase):
         ok_(data.get('success'))
 
         # Verify that we have no bookmark for the user any longer.
-        bmarks = Bmark.query.filter(Bmark.username == 'bob').all()
+        bmarks = Bmark.query.filter(Bmark.username == u'bob').all()
         eq_(0, len(bmarks))
