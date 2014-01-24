@@ -23,6 +23,7 @@ MSG_STATUS = {
 
 
 def sendmail(to, from_addr, subject, body):
+    import pdb; pdb.set_trace()
     sendmail_location = "/usr/sbin/sendmail"
     p = os.popen("{0} -t".format(sendmail_location), "w")
     p.write("From: {0}\n".format(from_addr))

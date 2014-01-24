@@ -19,6 +19,7 @@ import json
 import logging
 import transaction
 
+from mock import patch
 from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
@@ -67,7 +68,8 @@ class TestReactivateFunctional(TestCase):
         ok_('error' in success,
             "Should not be successful with invalid email address: " + str(res))
 
-    def test_activate_form(self):
+    @patch('bookie.lib.message.sendmail')
+    def test_activate_form(self, mock_sendmail):
         """ Functional test to see if we can submit the api to reset an account
 
         Now by doing this we end up marking the account deactivated which
@@ -82,8 +84,10 @@ class TestReactivateFunctional(TestCase):
         success = json.loads(res.body)
         ok_('message' in success,
             "Should be successful with admin email address: " + str(res))
+        ok_(mock_sendmail.called)
 
-    def test_activate_form_dual(self):
+    @patch('bookie.lib.message.sendmail')
+    def test_activate_form_dual(self, mock_sendmail):
         """Test that we can't resubmit for reset, get prompted to email
 
         If we reset and then try to say "I've forgotten" a second time, we
@@ -94,6 +98,7 @@ class TestReactivateFunctional(TestCase):
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': u'testing@dummy.com'},
                                 status=200)
+        ok_(mock_sendmail.called)
 
         success = json.loads(res.body)
         ok_('message' in success,
@@ -110,7 +115,8 @@ class TestReactivateFunctional(TestCase):
         ok_('already' in str(res),
             "Should find 'already' in the response: " + str(res))
 
-    def test_reactivate_process(self):
+    @patch('bookie.lib.message.sendmail')
+    def test_reactivate_process(self, mock_sendmail):
         """Walk through all of the steps at a time
 
         - First we mark that we've forgotten
@@ -122,6 +128,7 @@ class TestReactivateFunctional(TestCase):
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': u'testing@dummy.com'},
                                 status=200)
+        ok_(mock_sendmail.called)
 
         success = json.loads(res.body)
         ok_('message' in success,

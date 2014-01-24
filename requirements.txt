@@ -24,7 +24,7 @@ logilab-common==0.55.0
 lxml==3.2.4
 Mako==0.4.1
 MarkupSafe==0.12
-mock==0.7.0
+mock==1.0.1
 nose2 <= 0.5
 nose-selecttests
 Paste==1.7.5.1
