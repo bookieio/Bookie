@@ -1,11 +1,8 @@
-import unittest
 import transaction
-from celery.utils.log import get_task_logger
-from nose.tools import ok_, eq_
+from nose.tools import eq_
 
 from bookie.bcelery import tasks
 from bookie.models import Bmark
-from bookie.models import BmarkMgr
 from bookie.models import DBSession
 from bookie.models import Tag
 from bookie.models import stats
@@ -13,7 +10,6 @@ from bookie.models.auth import User
 from bookie.models.stats import StatBookmark
 
 from bookie.tests import empty_db
-from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 

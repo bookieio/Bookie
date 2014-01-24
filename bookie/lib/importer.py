@@ -396,9 +396,6 @@ class GBookmarkImporter(Importer):
         ids = []
         for url, metadata in urls.items():
             try:
-                if type(url) is not unicode:
-                    import pdb; pdb.set_trace()
-
                 bmark = self.save_bookmark(
                     unicode(url),
                     unicode(metadata['description']),
