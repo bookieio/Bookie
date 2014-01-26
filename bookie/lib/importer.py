@@ -378,11 +378,15 @@ class GBookmarkImporter(Importer):
                         else:
                             extended = ""
 
-                        # date the site was bookmarked
-                        if 'add_date' not in link:
+                        # Must use has_key here due to the link coming from
+                        # the parser and it's not a true dict.
+                        if link.has_key('add_date'):
+                            if int(link['add_date']) < 9999999999:
+                                timestamp_added = int(link['add_date'])
+                            else:
+                                timestamp_added = float(link['add_date']) / 1e6
+                        else:
                             link['add_date'] = time.time()
-
-                        timestamp_added = float(link['add_date']) / 1e6
 
                         urls[url] = {
                             'description': link.text,
