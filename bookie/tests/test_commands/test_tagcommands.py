@@ -1,5 +1,4 @@
 """Test the tag commands system"""
-from nose.tools import ok_
 from unittest import TestCase
 from bookie.lib.tagcommands import COMMANDLIST
 from bookie.lib.tagcommands import Commander
@@ -50,7 +49,8 @@ class TestTagCommander(TestCase):
         commander = Commander(bm)
         commander.build_commands()
 
-        ok_('!toread' in commander.commands,
+        self.assertTrue(
+            '!toread' in commander.commands,
             "Our commander should find !toread command to run")
 
     def test_command_tags_removed(self):
@@ -63,7 +63,8 @@ class TestTagCommander(TestCase):
         commander = Commander(bm)
         updated = commander.process()
 
-        ok_('!toread' not in updated.tags,
+        self.assertTrue(
+            '!toread' not in updated.tags,
             "Our commander should find !toread command to run")
 
 
@@ -87,7 +88,8 @@ class TestToRead(TestCase):
         """If marked toread, then should end up with tag 'toread' on it"""
         bm = BmarkMock()
         updated = ToRead.run(bm)
-        ok_('toread' in updated.tags,
+        self.assertTrue(
+            'toread' in updated.tags,
             "Updated bmark should have 'toread' tag set")
 
     def test_toread_in_commandset(self):
@@ -99,9 +101,11 @@ class TestToRead(TestCase):
         commander = Commander(bm)
         updated = commander.process()
 
-        ok_('toread' in updated.tags,
+        self.assertTrue(
+            'toread' in updated.tags,
             "Should have the toread tag in the updated bookmark")
-        ok_('!toread' not in updated.tags,
+        self.assertTrue(
+            '!toread' not in updated.tags,
             "Should not have the !toread tag in the updated bookmark")
 
 
@@ -124,5 +128,6 @@ class TestIsRead(TestCase):
         bm = BmarkMock()
         bm.tags['toread'] = True
         updated = IsRead.run(bm)
-        ok_('toread' not in updated.tags,
+        self.assertTrue(
+            'toread' not in updated.tags,
             "Updated bmark should not have 'toread' tag set")

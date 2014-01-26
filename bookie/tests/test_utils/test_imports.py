@@ -6,9 +6,6 @@ import transaction
 import unittest
 
 from datetime import datetime
-from nose.tools import ok_
-from nose.tools import eq_
-from nose.tools import raises
 
 from bookie.models import DBSession
 from bookie.models import Bmark
@@ -30,96 +27,116 @@ LOG = logging.getLogger(__name__)
 API_KEY = None
 
 
-def _delicious_data_test():
-    """Test that we find the correct set of declicious data after import"""
-    # blatant copy/paste, but I'm ona plane right now so oh well
-    # now let's do some db sanity checks
-    res = Bmark.query.all()
-    eq_(len(res), 19,
-        "We should have 19 results, we got: " + str(len(res)))
+class TestImports(unittest.TestCase):
 
-    # verify we can find a bookmark by url and check tags, etc
-    check_url = u'http://www.ndftz.com/nickelanddime.png'
-    check_url_hashed = generate_hash(check_url)
-    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+    def _delicious_data_test(self):
+        """Test that we find the correct set of declicious data after import"""
+        # blatant copy/paste, but I'm ona plane right now so oh well
+        # now let's do some db sanity checks
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            19,
+            "We should have 19 results, we got: " + str(len(res)))
 
-    ok_(found.hashed.url == check_url, "The url should match our search")
-    eq_(len(found.tags), 7,
-        "We should have gotten 7 tags, got: " + str(len(found.tags)))
-    eq_('importer', found.inserted_by,
-        "The bookmark should have come from importing: " + found.inserted_by)
+        # verify we can find a bookmark by url and check tags, etc
+        check_url = u'http://www.ndftz.com/nickelanddime.png'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
-    # and check we have a right tag or two
-    ok_('canonical' in found.tag_string(),
-        'Canonical should be a valid tag in the bookmark')
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags),
+            7,
+            "We should have gotten 7 tags, got: " + str(len(found.tags)))
+        self.assertEqual(
+            'importer',
+            found.inserted_by,
+            "The bookmark should have imported: " + found.inserted_by)
 
-    # and check the long description field
-    ok_("description" in found.extended,
-        "The extended attrib should have a nice long string in it")
+        # and check we have a right tag or two
+        self.assertTrue(
+            'canonical' in found.tag_string(),
+            'Canonical should be a valid tag in the bookmark')
+
+        # and check the long description field
+        self.assertTrue(
+            "description" in found.extended,
+            "The extended attrib should have a nice long string in it")
+
+    def _delicious_xml_data_test(self):
+        """Test that we find the correct google bmark data after import"""
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            25,
+            "We should have 25 results, we got: " + str(len(res)))
+
+        # verify we can find a bookmark by url and check tags, etc
+        check_url = 'http://jekyllrb.com/'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags), 6,
+            "We should have gotten 6 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        self.assertTrue(
+            'ruby' in found.tag_string(),
+            'ruby should be a valid tag in the bookmark')
+
+        # and check the long description field
+        self.assertTrue(
+            'added for test' in found.extended,
+            "'added for test' should be in the extended description")
+
+    def _google_data_test(self):
+        """Test that we find the correct google bmark data after import"""
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            10,
+            "We should have 10 results, we got: " + str(len(res)))
+
+        # verify we can find a bookmark by url and check tags, etc
+        check_url = 'http://www.alistapart.com/'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags),
+            4,
+            "We should have gotten 4 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        self.assertTrue(
+            'html' in found.tag_string(),
+            'html should be a valid tag in the bookmark')
+
+        # and check the long description field
+        self.assertTrue(
+            "make websites" in found.extended,
+            "'make websites' should be in the extended description")
 
 
-def _delicious_xml_data_test():
-    """Test that we find the correct google bmark data after import"""
-    res = Bmark.query.all()
-    eq_(len(res), 25,
-        "We should have 25 results, we got: " + str(len(res)))
-
-    # verify we can find a bookmark by url and check tags, etc
-    check_url = 'http://jekyllrb.com/'
-    check_url_hashed = generate_hash(check_url)
-    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
-
-    ok_(found.hashed.url == check_url, "The url should match our search")
-    eq_(len(found.tags), 6,
-        "We should have gotten 6 tags, got: " + str(len(found.tags)))
-
-    # and check we have a right tag or two
-    ok_('ruby' in found.tag_string(),
-        'ruby should be a valid tag in the bookmark')
-
-    # and check the long description field
-    ok_('added for test' in found.extended,
-        "'added for test' should be in the extended description")
-
-
-def _google_data_test():
-    """Test that we find the correct google bmark data after import"""
-    res = Bmark.query.all()
-    eq_(len(res), 10,
-        "We should have 10 results, we got: " + str(len(res)))
-
-    # verify we can find a bookmark by url and check tags, etc
-    check_url = 'http://www.alistapart.com/'
-    check_url_hashed = generate_hash(check_url)
-    found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
-
-    ok_(found.hashed.url == check_url, "The url should match our search")
-    eq_(len(found.tags), 4,
-        "We should have gotten 4 tags, got: " + str(len(found.tags)))
-
-    # and check we have a right tag or two
-    ok_('html' in found.tag_string(),
-        'html should be a valid tag in the bookmark')
-
-    # and check the long description field
-    ok_("make websites" in found.extended,
-        "'make websites' should be in the extended description")
-
-
-class ImporterBaseTest(unittest.TestCase):
+class ImporterBaseTest(TestImports):
     """Verify the base import class is working"""
 
-    @raises(NotImplementedError)
     def test_doesnt_implement_can_handle(self):
         """Verify we get the exception expected when running can_handle"""
-        Importer.can_handle("")
+        self.assertRaises(NotImplementedError, Importer.can_handle, "")
 
-    @raises(NotImplementedError)
     def test_doesnt_implement_process(self):
         """Verify we get the exception expected when running process"""
         some_io = StringIO.StringIO()
         imp = Importer(some_io)
-        imp.process()
+        self.assertRaises(NotImplementedError, imp.process)
 
     def test_factory_gives_delicious(self):
         """"Verify that the base importer will give DelImporter"""
@@ -129,7 +146,8 @@ class ImporterBaseTest(unittest.TestCase):
         with open(del_file) as del_io:
             imp = Importer(del_io, username=u"admin")
 
-            ok_(isinstance(imp, DelImporter),
+            self.assertTrue(
+                isinstance(imp, DelImporter),
                 "Instance should be a delimporter instance")
 
     def test_factory_gives_google(self):
@@ -140,11 +158,12 @@ class ImporterBaseTest(unittest.TestCase):
         with open(google_file) as google_io:
             imp = Importer(google_io, username=u"admin")
 
-            ok_(isinstance(imp, GBookmarkImporter),
+            self.assertTrue(
+                isinstance(imp, GBookmarkImporter),
                 "Instance should be a GBookmarkImporter instance")
 
 
-class ImportDeliciousTest(unittest.TestCase):
+class ImportDeliciousTest(TestImports):
     """Test the Bookie importer for delicious"""
 
     def _get_del_file(self):
@@ -166,7 +185,8 @@ class ImportDeliciousTest(unittest.TestCase):
         """Verify that this is a delicious file"""
         good_file = self._get_del_file()
 
-        ok_(DelImporter.can_handle(good_file),
+        self.assertTrue(
+            DelImporter.can_handle(good_file),
             "DelImporter should handle this file")
 
         good_file.close()
@@ -177,7 +197,8 @@ class ImportDeliciousTest(unittest.TestCase):
         bad_file.write('failing tests please')
         bad_file.seek(0)
 
-        ok_(not DelImporter.can_handle(bad_file),
+        self.assertTrue(
+            not DelImporter.can_handle(bad_file),
             "DelImporter cannot handle this file")
 
         bad_file.close()
@@ -189,7 +210,7 @@ class ImportDeliciousTest(unittest.TestCase):
         imp.process()
 
         # now let's do some db sanity checks
-        _delicious_data_test()
+        self._delicious_data_test()
 
     def test_dupe_imports(self):
         """If we import twice, we shouldn't end up with duplicate bmarks"""
@@ -202,10 +223,10 @@ class ImportDeliciousTest(unittest.TestCase):
         imp.process()
 
         # now let's do some db sanity checks
-        _delicious_data_test()
+        self._delicious_data_test()
 
 
-class ImportDeliciousXMLTest(unittest.TestCase):
+class ImportDeliciousXMLTest(TestImports):
     """Test the Bookie XML version importer for delicious"""
 
     def _get_del_file(self):
@@ -221,7 +242,8 @@ class ImportDeliciousXMLTest(unittest.TestCase):
     def test_is_delicious_file(self):
         """Verify that this is a delicious file"""
         good_file = self._get_del_file()
-        ok_(DelXMLImporter.can_handle(good_file),
+        self.assertTrue(
+            DelXMLImporter.can_handle(good_file),
             "DelXMLImporter should handle this file")
         good_file.close()
 
@@ -231,7 +253,8 @@ class ImportDeliciousXMLTest(unittest.TestCase):
         bad_file.write('failing tests please')
         bad_file.seek(0)
 
-        ok_(not DelXMLImporter.can_handle(bad_file),
+        self.assertTrue(
+            not DelXMLImporter.can_handle(bad_file),
             "DelXMLImporter cannot handle this file")
 
         bad_file.close()
@@ -243,7 +266,7 @@ class ImportDeliciousXMLTest(unittest.TestCase):
         imp.process()
 
         # now let's do some db sanity checks
-        _delicious_xml_data_test()
+        self._delicious_xml_data_test()
 
     def test_dupe_imports(self):
         """If we import twice, we shouldn't end up with duplicate bmarks"""
@@ -256,10 +279,10 @@ class ImportDeliciousXMLTest(unittest.TestCase):
         imp.process()
 
         # Now let's do some db sanity checks.
-        _delicious_xml_data_test()
+        self._delicious_xml_data_test()
 
 
-class ImportGoogleTest(unittest.TestCase):
+class ImportGoogleTest(TestImports):
     """Test the Bookie importer for google bookmarks"""
 
     def _get_google_file(self):
@@ -277,7 +300,8 @@ class ImportGoogleTest(unittest.TestCase):
         """Verify that this is a delicious file"""
         good_file = self._get_google_file()
 
-        ok_(GBookmarkImporter.can_handle(good_file),
+        self.assertTrue(
+            GBookmarkImporter.can_handle(good_file),
             "GBookmarkImporter should handle this file")
 
         good_file.close()
@@ -294,7 +318,7 @@ class ImportGoogleTest(unittest.TestCase):
         imp.process()
 
         # now let's do some db sanity checks
-        _google_data_test()
+        self._google_data_test()
 
     def test_bookmarklet_file(self):
         """Verify we can import a file with a bookmarklet in it."""
@@ -306,7 +330,7 @@ class ImportGoogleTest(unittest.TestCase):
         imp.process()
 
         res = Bmark.query.all()
-        eq_(len(res), 3)
+        self.assertEqual(len(res), 3)
 
 
 class ImportViews(TestViewBase):
@@ -331,27 +355,32 @@ class ImportViews(TestViewBase):
 
         # verify we get the form
         res = self.app.get('/admin/import')
-        ok_('<form' in res.body,
+        self.assertTrue(
+            '<form' in res.body,
             'Should have a form in the body for submitting the upload')
 
         res = self._upload()
 
-        eq_(res.status, "302 Found",
+        self.assertEqual(
+            res.status,
+            "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
         # now verify that we've got our record
         imp = ImportQueueMgr.get_ready()
         imp = imp[0]
-        ok_(imp, 'We should have a record')
-        ok_(imp.file_path.endswith('admin.delicious.html'))
-        eq_(imp.status, 0, 'start out as default status of 0')
+        self.assertTrue(imp, 'We should have a record')
+        self.assertTrue(imp.file_path.endswith('admin.delicious.html'))
+        self.assertEqual(imp.status, 0, 'start out as default status of 0')
 
     def test_skip_running(self):
         """Verify that if running, it won't get returned again"""
         self._login_admin()
         res = self._upload()
 
-        eq_(res.status, "302 Found",
+        self.assertEqual(
+            res.status,
+            "302 Found",
             msg='Import status is 302 redirect by home, ' + res.status)
 
         # now verify that we've got our record
@@ -361,7 +390,7 @@ class ImportViews(TestViewBase):
         DBSession.flush()
 
         imp = ImportQueueMgr.get_ready()
-        ok_(not imp, 'We should get no results back')
+        self.assertTrue(not imp, 'We should get no results back')
 
     def test_one_import(self):
         """You should be able to only get one import running at a time"""
@@ -384,10 +413,12 @@ class ImportViews(TestViewBase):
         # message about our import
         res = self.app.get('/admin/import')
 
-        ok_('<form' not in res.body, "We shouldn't have a form")
-        ok_('waiting in the queue' in res.body,
+        self.assertTrue('<form' not in res.body, "We shouldn't have a form")
+        self.assertTrue(
+            'waiting in the queue' in res.body,
             "We want to display a waiting message.")
-        ok_('2 other imports' in res.body,
+        self.assertTrue(
+            '2 other imports' in res.body,
             "We want to display a count message." + res.body)
 
     def test_completed_dont_count(self):
@@ -408,4 +439,4 @@ class ImportViews(TestViewBase):
         # message about our import
         res = self.app.get('/admin/import')
 
-        ok_('<form' in res.body, "We should have a form")
+        self.assertTrue('<form' in res.body, "We should have a form")

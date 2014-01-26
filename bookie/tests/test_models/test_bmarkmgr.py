@@ -1,5 +1,4 @@
 """Test the basics including the bmark and tags"""
-from nose.tools import eq_
 from pyramid import testing
 
 from bookie.models import DBSession
@@ -44,7 +43,7 @@ class TestBmarkMgrStats(TestDBBase):
             DBSession.add(b)
 
         ct = BmarkMgr.count()
-        eq_(5, ct, 'We should have a total of 5: ' + str(ct))
+        self.assertEqual(5, ct, 'We should have a total of 5: ' + str(ct))
 
     def test_unique_ct(self):
         """Verify that our unique count method is working"""
@@ -80,7 +79,7 @@ class TestBmarkMgrStats(TestDBBase):
         DBSession.flush()
 
         ct = BmarkMgr.count(distinct=True)
-        eq_(4, ct, 'We should have a total of 4: ' + str(ct))
+        self.assertEqual(4, ct, 'We should have a total of 4: ' + str(ct))
 
     def test_per_user(self):
         """We should only get a pair of results for this single user"""
@@ -117,4 +116,4 @@ class TestBmarkMgrStats(TestDBBase):
         DBSession.flush()
 
         ct = BmarkMgr.count(username=usercommon.username)
-        eq_(2, ct, 'We should have a total of 2: ' + str(ct))
+        self.assertEqual(2, ct, 'We should have a total of 2: ' + str(ct))

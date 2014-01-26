@@ -3,7 +3,6 @@ import logging
 import json
 import transaction
 import unittest
-from nose.tools import ok_, eq_
 from pyramid import testing
 
 from bookie.models import Bmark
@@ -66,7 +65,7 @@ class AdminApiTest(unittest.TestCase):
         data = json.loads(res.body)
         users = [u for u in data['users']]
         for u in users:
-            eq_(0, u['invite_ct'], "Count should be 0 to start.")
+            self.assertEqual(0, u['invite_ct'], "Count should be 0 to start.")
 
     def test_invite_ct(self):
         """Test we can call and get the invite counts."""
@@ -86,8 +85,10 @@ class AdminApiTest(unittest.TestCase):
                 found = True
                 invite_count = count
 
-        ok_(found, "There should be the admin user." + res.body)
-        eq_(0, invite_count,
+        self.assertTrue(found, "There should be the admin user." + res.body)
+        self.assertEqual(
+            0,
+            invite_count,
             "The admin user shouldn't have any invites." + res.body)
 
     def test_set_invite_ct(self):
@@ -101,9 +102,13 @@ class AdminApiTest(unittest.TestCase):
                                 status=200)
         # we should get back tuples of username/count
         data = json.loads(res.body)
-        eq_('admin', data.get('username'),
+        self.assertEqual(
+            'admin',
+            data.get('username'),
             "The admin user data is returned to us." + res.body)
-        eq_(10, int(data.get('invite_ct')),
+        self.assertEqual(
+            10,
+            int(data.get('invite_ct')),
             "The admin user now has 10 invites." + res.body)
 
         # and of course when we're done we need to unset it back to 0 or else
@@ -125,11 +130,16 @@ class AdminApiTest(unittest.TestCase):
         # we should get back tuples of username/count
         data = json.loads(res.body)
 
-        eq_(1, data.get('count'), "There are none by default. " + res.body)
+        self.assertEqual(
+            1, data.get('count'), "There are none by default. " + res.body)
 
-        eq_('admin', data.get('imports')[0]['username'],
+        self.assertEqual(
+            'admin',
+            data.get('imports')[0]['username'],
             "The first import is from admin " + res.body)
-        eq_(0, data.get('imports')[0]['status'],
+        self.assertEqual(
+            0,
+            data.get('imports')[0]['status'],
             "And it has a status of 0 " + res.body)
 
     def test_user_list(self):
@@ -145,10 +155,15 @@ class AdminApiTest(unittest.TestCase):
         # we should get back dict of count, users.
         data = json.loads(res.body)
 
-        eq_(1, data.get('count'), "There are none by default. " + res.body)
-        eq_('admin', data.get('users')[0]['username'],
+        self.assertEqual(
+            1, data.get('count'), "There are none by default. " + res.body)
+        self.assertEqual(
+            'admin',
+            data.get('users')[0]['username'],
             "The first user is from admin " + res.body)
-        eq_('testing@dummy.com', data.get('users')[0]['email'],
+        self.assertEqual(
+            'testing@dummy.com',
+            data.get('users')[0]['email'],
             "The first user is from testing@dummy.com " + res.body)
 
     def test_user_delete(self):
@@ -168,8 +183,8 @@ class AdminApiTest(unittest.TestCase):
         # we should get back dict of count, users.
         data = json.loads(res.body)
 
-        ok_(data.get('success'))
+        self.assertTrue(data.get('success'))
 
         # Verify that we have no bookmark for the user any longer.
         bmarks = Bmark.query.filter(Bmark.username == u'bob').all()
-        eq_(0, len(bmarks))
+        self.assertEqual(0, len(bmarks))

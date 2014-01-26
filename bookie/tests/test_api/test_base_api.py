@@ -6,7 +6,6 @@ import logging
 import json
 import transaction
 import unittest
-from nose.tools import ok_, eq_
 from pyramid import testing
 
 from bookie.bcelery import tasks
@@ -43,8 +42,9 @@ class BookieAPITest(unittest.TestCase):
 
     def _check_cors_headers(self, res):
         """ Make sure that the request has proper CORS headers."""
-        eq_(res.headers['access-control-allow-origin'], '*')
-        eq_(res.headers['access-control-allow-headers'], 'X-Requested-With')
+        self.assertEqual(res.headers['access-control-allow-origin'], '*')
+        self.assertEqual(
+            res.headers['access-control-allow-headers'], 'X-Requested-With')
 
     def _get_good_request(self, content=False, second_bmark=False):
         """Return the basics for a good add bookmark request"""
@@ -66,7 +66,7 @@ class BookieAPITest(unittest.TestCase):
         if content:
             prms['content'] = u"<p>There's some content in here dude</p>"
 
-        # req_params = urllib.urlencode(prms)
+        # rself.assertEqualparams = urllib.urlencode(prms)
         res = self.testapp.post(
             '/api/v1/admin/bmark?',
             content_type='application/json',
@@ -88,7 +88,7 @@ class BookieAPITest(unittest.TestCase):
             # sure we pass content into the new bookmark
             prms['content'] = u"<h1>Second bookmark man</h1>"
 
-            # req_params = urllib.urlencode(prms)
+            # rself.assertEqualparams = urllib.urlencode(prms)
             res = self.testapp.post(
                 '/api/v1/admin/bmark?',
                 content_type='application/json',
@@ -121,9 +121,11 @@ class BookieAPITest(unittest.TestCase):
                                 params=test_bmark,
                                 status=200)
 
-        ok_('"location":' in res.body,
+        self.assertTrue(
+            '"location":' in res.body,
             "Should have a location result: " + res.body)
-        ok_('description": "Bookie"' in res.body,
+        self.assertTrue(
+            'description": "Bookie"' in res.body,
             "Should have Bookie in description: " + res.body)
         self._check_cors_headers(res)
 
@@ -139,8 +141,8 @@ class BookieAPITest(unittest.TestCase):
             status=400)
 
         data = json.loads(res.body)
-        ok_('error' in data)
-        eq_(data['error'], 'Bad Request: No url provided')
+        self.assertTrue('error' in data)
+        self.assertEqual(data['error'], 'Bad Request: No url provided')
 
     def test_add_bookmark_missing_url_in_JSON(self):
         """When missing the url in the JSON POST we get an error response."""
@@ -159,8 +161,8 @@ class BookieAPITest(unittest.TestCase):
             status=400)
 
         data = json.loads(res.body)
-        ok_('error' in data)
-        eq_(data['error'], 'Bad Request: No url provided')
+        self.assertTrue('error' in data)
+        self.assertEqual(data['error'], 'Bad Request: No url provided')
 
     def test_bookmark_fetch(self):
         """Test that we can get a bookmark and it's details"""
@@ -172,36 +174,44 @@ class BookieAPITest(unittest.TestCase):
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmark']
-        eq_(GOOGLE_HASH, bmark[u'hash_id'],
+        self.assertEqual(
+            GOOGLE_HASH,
+            bmark[u'hash_id'],
             "The hash_id should match: " + str(bmark[u'hash_id']))
 
-        ok_(u'tags' in bmark,
+        self.assertTrue(
+            u'tags' in bmark,
             "We should have a list of tags in the bmark returned")
 
-        ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
+        self.assertTrue(
+            bmark[u'tags'][0][u'name'] in [u'python', u'search'],
             "Tag should be either python or search:" +
             str(bmark[u'tags'][0][u'name']))
 
-        ok_(u'readable' not in bmark,
+        self.assertTrue(
+            u'readable' not in bmark,
             "We should not have readable content")
 
-        eq_(u'python search', bmark[u'tag_str'],
+        self.assertEqual(
+            u'python search', bmark[u'tag_str'],
             "tag_str should be populated: " + str(dict(bmark)))
 
         # to get readble content we need to pass the flash with_content
         res = self.testapp.get(
             '/api/v1/admin/bmark/{0}?api_key={1}&with_content=true'.format(
-            GOOGLE_HASH,
-            API_KEY),
+                GOOGLE_HASH,
+                API_KEY),
             status=200)
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmark']
 
-        ok_(u'readable' in bmark,
+        self.assertTrue(
+            u'readable' in bmark,
             "We should have readable content")
 
-        ok_('dude' in bmark['readable']['content'],
+        self.assertTrue(
+            'dude' in bmark['readable']['content'],
             "We should have 'dude' in our content: " +
             bmark['readable']['content'])
         self._check_cors_headers(res)
@@ -248,7 +258,8 @@ class BookieAPITest(unittest.TestCase):
                 API_KEY),
             status=200)
 
-        ok_('message": "done"' in res.body,
+        self.assertTrue(
+            'message": "done"' in res.body,
             "Should have a message of done: " + res.body)
 
         # we're going to cheat like mad, use the sync call to get the hash_ids
@@ -258,9 +269,11 @@ class BookieAPITest(unittest.TestCase):
                                params={'api_key': API_KEY},
                                status=200)
 
-        ok_(GOOGLE_HASH not in res.body,
+        self.assertTrue(
+            GOOGLE_HASH not in res.body,
             "Should not have the google hash: " + res.body)
-        ok_(BMARKUS_HASH in res.body,
+        self.assertTrue(
+            BMARKUS_HASH in res.body,
             "Should have the bmark.us hash: " + res.body)
         self._check_cors_headers(res)
 
@@ -272,13 +285,17 @@ class BookieAPITest(unittest.TestCase):
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmarks'][0]
-        eq_(GOOGLE_HASH, bmark[u'hash_id'],
+        self.assertEqual(
+            GOOGLE_HASH,
+            bmark[u'hash_id'],
             "The hash_id should match: " + str(bmark[u'hash_id']))
 
-        ok_(u'tags' in bmark,
+        self.assertTrue(
+            u'tags' in bmark,
             "We should have a list of tags in the bmark returned")
 
-        ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
+        self.assertTrue(
+            bmark[u'tags'][0][u'name'] in [u'python', u'search'],
             "Tag should be either python or search:" +
             str(bmark[u'tags'][0][u'name']))
 
@@ -291,7 +308,7 @@ class BookieAPITest(unittest.TestCase):
         # @todo this is out because of the issue noted in the code. We'll
         # clean this up at some point.
         # bmark = json.loads(res.body)['bmarks'][0]
-        # ok_('here dude' in bmark[u'readable']['content'],
+        # self.assertTrue('here dude' in bmark[u'readable']['content'],
         #     "There should be content: " + str(bmark))
 
     def test_bookmark_recent(self):
@@ -302,13 +319,17 @@ class BookieAPITest(unittest.TestCase):
 
         # make sure we can decode the body
         bmark = json.loads(res.body)['bmarks'][0]
-        eq_(GOOGLE_HASH, bmark[u'hash_id'],
+        self.assertEqual(
+            GOOGLE_HASH,
+            bmark[u'hash_id'],
             "The hash_id should match: " + str(bmark[u'hash_id']))
 
-        ok_(u'tags' in bmark,
+        self.assertTrue(
+            u'tags' in bmark,
             "We should have a list of tags in the bmark returned")
 
-        ok_(bmark[u'tags'][0][u'name'] in [u'python', u'search'],
+        self.assertTrue(
+            bmark[u'tags'][0][u'name'] in [u'python', u'search'],
             "Tag should be either python or search:" +
             str(bmark[u'tags'][0][u'name']))
 
@@ -321,7 +342,7 @@ class BookieAPITest(unittest.TestCase):
         # @todo this is out because of the issue noted in the code. We'll
         # clean this up at some point.
         # bmark = json.loads(res.body)['bmarks'][0]
-        # ok_('here dude' in bmark[u'readable']['content'],
+        # self.assertTrue('here dude' in bmark[u'readable']['content'],
         #     "There should be content: " + str(bmark))
 
     def test_bookmark_sync(self):
@@ -333,12 +354,15 @@ class BookieAPITest(unittest.TestCase):
                                params={'api_key': API_KEY},
                                status=200)
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status, "200 OK",
             msg='Get status is 200, ' + res.status)
 
-        ok_(GOOGLE_HASH in res.body,
+        self.assertTrue(
+            GOOGLE_HASH in res.body,
             "The google hash id should be in the json: " + res.body)
-        ok_(BMARKUS_HASH in res.body,
+        self.assertTrue(
+            BMARKUS_HASH in res.body,
             "The bmark.us hash id should be in the json: " + res.body)
         self._check_cors_headers(res)
 
@@ -351,17 +375,22 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         bmark_list = json.loads(res.body)
         results = bmark_list['search_results']
-        eq_(len(results), 1,
+        self.assertEqual(
+            len(results),
+            1,
             "We should have one result coming back: {0}".format(len(results)))
 
         bmark = results[0]
 
-        eq_(GOOGLE_HASH, bmark[u'hash_id'],
+        self.assertEqual(
+            GOOGLE_HASH,
+            bmark[u'hash_id'],
             "The hash_id {0} should match: {1} ".format(
                 str(GOOGLE_HASH),
                 str(bmark[u'hash_id'])))
 
-        ok_('clicks' in bmark,
+        self.assertTrue(
+            'clicks' in bmark,
             "The clicks field should be in there")
         self._check_cors_headers(res)
 
@@ -380,7 +409,8 @@ class BookieAPITest(unittest.TestCase):
                 'api_key': API_KEY},
             status=200)
 
-        ok_('python' in res.body,
+        self.assertTrue(
+            'python' in res.body,
             "Should have python as a tag completion: " + res.body)
 
         # we shouldn't get python as an option if we supply bookmarks as the
@@ -394,7 +424,8 @@ class BookieAPITest(unittest.TestCase):
             },
             status=200)
 
-        ok_('python' not in res.body,
+        self.assertTrue(
+            'python' not in res.body,
             "Should not have python as a tag completion: " + res.body)
         self._check_cors_headers(res)
 
@@ -406,14 +437,18 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         user = json.loads(res.body)
 
-        eq_(user['username'], 'admin',
+        self.assertEqual(
+            user['username'], 'admin',
             "Should have a username of admin {0}".format(user))
 
-        ok_('password' not in user,
+        self.assertTrue(
+            'password' not in user,
             'Should not have a field password {0}'.format(user))
-        ok_('_password' not in user,
+        self.assertTrue(
+            '_password' not in user,
             'Should not have a field password {0}'.format(user))
-        ok_('api_key' not in user,
+        self.assertTrue(
+            'api_key' not in user,
             'Should not have a field password {0}'.format(user))
         self._check_cors_headers(res)
 
@@ -431,16 +466,21 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         user = json.loads(res.body)
 
-        eq_(user['username'], 'admin',
+        self.assertEqual(
+            user['username'], 'admin',
             "Should have a username of admin {0}".format(user))
-        eq_(user['name'], 'Test Admin',
+        self.assertEqual(
+            user['name'], 'Test Admin',
             "Should have a new name of Test Admin {0}".format(user))
 
-        ok_('password' not in user,
+        self.assertTrue(
+            'password' not in user,
             "Should not have a field password {0}".format(user))
-        ok_('_password' not in user,
+        self.assertTrue(
+            '_password' not in user,
             "Should not have a field password {0}".format(user))
-        ok_('api_key' not in user,
+        self.assertTrue(
+            'api_key' not in user,
             "Should not have a field password {0}".format(user))
         self._check_cors_headers(res)
 
@@ -453,9 +493,11 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         user = json.loads(res.body)
 
-        eq_(user['username'], 'admin',
+        self.assertEqual(
+            user['username'], 'admin',
             "Should have a username of admin {0}".format(user))
-        ok_('api_key' in user,
+        self.assertTrue(
+            'api_key' in user,
             "Should have an api key in there: {0}".format(user))
         self._check_cors_headers(res)
 
@@ -474,9 +516,11 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         user = json.loads(res.body)
 
-        eq_(user['username'], 'admin',
+        self.assertEqual(
+            user['username'], 'admin',
             "Should have a username of admin {0}".format(user))
-        ok_('message' in user,
+        self.assertTrue(
+            'message' in user,
             "Should have a message key in there: {0}".format(user))
 
         params = {
@@ -505,11 +549,14 @@ class BookieAPITest(unittest.TestCase):
         # make sure we can decode the body
         user = json.loads(res.body)
 
-        eq_(user['username'], 'admin',
+        self.assertEqual(
+            user['username'], 'admin',
             "Should have a username of admin {0}".format(user))
-        ok_('error' in user,
+        self.assertTrue(
+            'error' in user,
             "Should have a error key in there: {0}".format(user))
-        ok_('typo' in user['error'],
+        self.assertTrue(
+            'typo' in user['error'],
             "Should have a error key in there: {0}".format(user))
         self._check_cors_headers(res)
 
@@ -519,8 +566,7 @@ class BookieAPITest(unittest.TestCase):
                                status=200)
         ping = json.loads(res.body)
 
-        ok_(ping['success'],
-            "Should success be true")
+        self.assertTrue(ping['success'])
 
         self._check_cors_headers(res)
 
@@ -530,9 +576,8 @@ class BookieAPITest(unittest.TestCase):
                                status=200)
         ping = json.loads(res.body)
 
-        ok_(not ping['success'],
-            "Success should be false")
-        eq_(ping['message'], "Missing username in your api url.")
+        self.assertTrue(not ping['success'])
+        self.assertEqual(ping['message'], "Missing username in your api url.")
         self._check_cors_headers(res)
 
     def test_api_ping_failed_missing_api(self):
@@ -541,7 +586,6 @@ class BookieAPITest(unittest.TestCase):
                                status=200)
         ping = json.loads(res.body)
 
-        ok_(not ping['success'],
-            "Success should be false")
-        eq_(ping['message'], "The API url should be /api/v1")
+        self.assertTrue(not ping['success'])
+        self.assertEqual(ping['message'], "The API url should be /api/v1")
         self._check_cors_headers(res)

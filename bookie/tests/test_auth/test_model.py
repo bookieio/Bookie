@@ -1,7 +1,5 @@
 """Test the Auth model setup"""
 from unittest import TestCase
-from nose.tools import eq_
-from nose.tools import ok_
 from pyramid import testing
 
 
@@ -30,9 +28,13 @@ class TestAuthUser(TestCase):
         tst = User()
         tst.password = self.test_password
 
-        eq_(len(tst.password), 60,
+        self.assertEqual(
+            len(tst.password),
+            60,
             "Hashed should be 60 char long: " + tst.password)
-        eq_('$2a$', tst.password[:4],
+        self.assertEqual(
+            '$2a$',
+            tst.password[:4],
             "Hash should start with the right complexity: " + tst.password[:4])
 
     def test_password_match(self):
@@ -41,9 +43,12 @@ class TestAuthUser(TestCase):
         tst = User()
         tst._password = self.test_hash
 
-        ok_(tst._password == self.test_hash, "Setting should have hash")
-        ok_(tst.password == self.test_hash, "Getting should have hash")
-        ok_(tst.validate_password(self.test_password),
+        self.assertTrue(
+            tst._password == self.test_hash, "Setting should have hash")
+        self.assertTrue(
+            tst.password == self.test_hash, "Getting should have hash")
+        self.assertTrue(
+            tst.validate_password(self.test_password),
             "The password should pass against the given hash: " + tst.password)
 
 
@@ -75,7 +80,7 @@ class TestAuthUserDB(TestDBBase):
         users = UserMgr.get_list()
 
         # We still have the admin user as well so the count is two.
-        eq_(
+        self.assertEqual(
             2,
             len(users),
             'We should have a total of 2 users still: ' + str(len(users)))
@@ -93,13 +98,14 @@ class TestAuthUserDB(TestDBBase):
         users = UserMgr.get_list()
 
         # We still have the admin user as well so the count is one.
-        eq_(
+        self.assertEqual(
             1,
             len(users),
             'We should have a total of 1 user still: ' + str(len(users)))
 
         activations = DBSession.query(Activation).all()
-        eq_(0, len(activations), 'There should be no activations left')
+        self.assertEqual(
+            0, len(activations), 'There should be no activations left')
 
 
 class TestAuthMgr(TestCase):
@@ -109,22 +115,32 @@ class TestAuthMgr(TestCase):
         """Fetching user by the id"""
         # the migration adds an initial admin user to the system
         user = UserMgr.get(user_id=1)
-        eq_(user.id, 1,
+        self.assertEqual(
+            user.id,
+            1,
             "Should have a user id of 1: " + str(user.id))
-        eq_(user.username, 'admin',
+        self.assertEqual(
+            user.username,
+            'admin',
             "Should have a username of admin: " + user.username)
 
     def test_get_username(self):
         """Fetching the user by the username"""
         user = UserMgr.get(username=u'admin')
-        eq_(user.id, 1,
+        self.assertEqual(
+            user.id,
+            1,
             "Should have a user id of 1: " + str(user.id))
-        eq_(user.username, 'admin',
+        self.assertEqual(
+            user.username,
+            'admin',
             "Should have a username of admin: " + user.username)
 
     def test_get_bad_user(self):
         """We shouldn't get a hit if the user is inactive"""
         user = UserMgr.get(username=u'noexist')
 
-        eq_(user, None,
+        self.assertEqual(
+            user,
+            None,
             "Should not find a non-existant user: " + str(user))

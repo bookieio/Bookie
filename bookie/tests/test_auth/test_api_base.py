@@ -1,7 +1,6 @@
 """Test the auth related web calls"""
 import logging
 
-from nose.tools import ok_, eq_
 from pyramid import testing
 from unittest import TestCase
 
@@ -31,11 +30,13 @@ class TestAuthWeb(TestCase):
         body_str = u"Log In"
         form_str = u'name="login"'
 
-        ok_(body_str in res.body,
+        self.assertTrue(
+            body_str in res.body,
             msg="Request should contain Log In: " + res.body)
 
-        # there should be a login form on there
-        ok_(form_str in res.body,
+        # There should be a login form on there.
+        self.assertTrue(
+            form_str in res.body,
             msg="The login input should be visible in the body:" + res.body)
 
     def test_login_success(self):
@@ -48,12 +49,15 @@ class TestAuthWeb(TestCase):
 
         res = self.testapp.post('/login',
                                 params=user_data)
-        eq_(res.status, "302 Found",
+        self.assertEqual(
+            res.status,
+            "302 Found",
             msg='status is 302 Found, ' + res.status)
 
         # should end up back at the recent page
         res = res.follow()
-        ok_('recent' in str(res),
+        self.assertTrue(
+            'recent' in str(res),
             "Should have 'recent' in the resp: " + str(res))
 
     def test_login_failure(self):
@@ -67,11 +71,14 @@ class TestAuthWeb(TestCase):
         res = self.testapp.post('/login',
                                 params=user_data)
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='status is 200 OK, ' + res.status)
 
         # should end up back at login with an error message
-        ok_('has failed' in str(res),
+        self.assertTrue(
+            'has failed' in str(res),
             "Should have 'Failed login' in the resp: " + str(res))
 
     def test_login_null(self):
@@ -86,9 +93,12 @@ class TestAuthWeb(TestCase):
         res = self.testapp.post('/login',
                                 params=user_data)
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='status is 200 OK, ' + res.status)
 
         # should end up back at login with an error message
-        ok_('Failed login' in str(res),
+        self.assertTrue(
+            'Failed login' in str(res),
             "Should have 'Failed login' in the resp: " + str(res))

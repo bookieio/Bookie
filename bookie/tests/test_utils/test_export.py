@@ -6,8 +6,6 @@ import transaction
 import unittest
 import urllib
 
-from nose.tools import ok_
-from nose.tools import eq_
 from pyramid import testing
 
 from bookie.models import DBSession
@@ -64,9 +62,12 @@ class TestExport(unittest.TestCase):
             '/api/v1/admin/bmarks/export?api_key=' + API_KEY,
             status=200)
 
-        ok_("google.com" in res.body,
+        self.assertTrue(
+            "google.com" in res.body,
             msg='Google is in the exported body: ' + res.body)
         data = json.loads(res.body)
 
-        eq_(1, data['count'],
+        self.assertEqual(
+            1,
+            data['count'],
             "Should be one result: " + str(data['count']))

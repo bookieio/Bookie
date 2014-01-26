@@ -1,6 +1,4 @@
 """Test the basics including the bmark and tags"""
-from nose.tools import eq_
-from nose.tools import ok_
 from pyramid import testing
 
 from bookie.models import DBSession
@@ -38,7 +36,7 @@ class TestTagMgrStats(TestDBBase):
             DBSession.add(t)
 
         ct = TagMgr.count()
-        eq_(5, ct, 'We should have a total of 5: ' + str(ct))
+        self.assertEqual(5, ct, 'We should have a total of 5: ' + str(ct))
 
     def test_basic_complete(self):
         """Tags should provide completion options."""
@@ -49,7 +47,8 @@ class TestTagMgrStats(TestDBBase):
         test_str = tags[0].name[0:2]
         suggestions = TagMgr.complete(test_str)
 
-        ok_(tags[0] in suggestions,
+        self.assertTrue(
+            tags[0] in suggestions,
             "The sample tag was found in the completion set")
 
     def test_case_insensitive(self):
@@ -60,5 +59,6 @@ class TestTagMgrStats(TestDBBase):
 
         test_str = tags[0].name[0:4].upper()
         suggestions = TagMgr.complete(test_str)
-        ok_(tags[0] in suggestions,
+        self.assertTrue(
+            tags[0] in suggestions,
             "The sample tag was found in the completion set")

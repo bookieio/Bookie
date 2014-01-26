@@ -4,7 +4,6 @@ import logging
 import time
 import transaction
 from datetime import datetime
-from nose.tools import ok_, eq_
 
 from bookie.models import Bmark
 from bookie.tests import TestViewBase
@@ -35,9 +34,12 @@ class BookieViewsTest(TestViewBase):
 
         res = self.app.get('/recent')
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent status is 200, ' + res.status)
-        ok_(body_str in res.body,
+        self.assertTrue(
+            body_str in res.body,
             msg="Request should contain body_str: " + res.body)
 
     def test_recent_page(self):
@@ -45,9 +47,12 @@ class BookieViewsTest(TestViewBase):
         body_str = u"Prev"
 
         res = self.app.get('/recent?page=1')
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent page 1 status is 200, ' + res.status)
-        ok_(body_str in res.body,
+        self.assertTrue(
+            body_str in res.body,
             msg="Page 1 should contain body_str: " + res.body)
 
     def test_import_auth_failed(self):
@@ -58,7 +63,8 @@ class BookieViewsTest(TestViewBase):
 
         res = self.app.post('/admin/import', params=post, status=403)
 
-        eq_(res.status, "403 Forbidden",
+        self.assertEqual(
+            res.status, "403 Forbidden",
             msg='Import status is 403, ' + res.status)
 
     def test_changes_link_in_footer(self):
@@ -66,9 +72,12 @@ class BookieViewsTest(TestViewBase):
         changes_link = "https://github.com/mitechie/Bookie/commits/develop"
         res = self.app.get('/')
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent status is 200, ' + res.status)
-        ok_(changes_link in res.body,
+        self.assertTrue(
+            changes_link in res.body,
             msg="Changes link should appear: " + res.body)
 
 
@@ -79,7 +88,8 @@ class TestNewBookmark(TestViewBase):
         """Verify that we can call the /new url"""
         self._login_admin()
         res = self.app.get('/admin/new')
-        ok_('Add Bookmark' in res.body,
+        self.assertTrue(
+            'Add Bookmark' in res.body,
             "Should see the add bookmark title")
 
     def test_manual_entry_error(self):
@@ -105,9 +115,12 @@ class TestRSSFeeds(TestViewBase):
         body_str = "application/rss+xml"
         res = self.app.get('/recent')
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent status is 200, ' + res.status)
-        ok_(body_str in res.body,
+        self.assertTrue(
+            body_str in res.body,
             msg="Request should contain rss str: " + res.body)
 
     def test_rss_matches_request(self):
@@ -115,9 +128,12 @@ class TestRSSFeeds(TestViewBase):
         body_str = "rss/ubuntu"
         res = self.app.get('/recent/ubuntu')
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent status is 200, ' + res.status)
-        ok_(body_str in res.body,
+        self.assertTrue(
+            body_str in res.body,
             msg="Request should contain rss url: " + res.body)
 
     def test_rss_is_parseable(self):
@@ -127,7 +143,9 @@ class TestRSSFeeds(TestViewBase):
 
         res = self.app.get('/rss')
 
-        eq_(res.status, "200 OK",
+        self.assertEqual(
+            res.status,
+            "200 OK",
             msg='recent status is 200, ' + res.status)
 
         # http://packages.python.org/feedparser/
@@ -143,10 +161,14 @@ class TestRSSFeeds(TestViewBase):
                 'link': entry.link,
             })
 
-        ok_(links, 'The feed should have a list of links.')
-        eq_(10, len(links), 'There are 10 links in the feed.')
+        self.assertTrue(links, 'The feed should have a list of links.')
+        self.assertEqual(10, len(links), 'There are 10 links in the feed.')
 
         sample_item = links[0]
-        ok_(sample_item['title'], 'Items have a title.')
-        ok_(sample_item['link'], 'Items have a link to reach things.')
-        ok_('description' in sample_item, 'Items have a description string.')
+        self.assertTrue(sample_item['title'], 'Items have a title.')
+        self.assertTrue(
+            sample_item['link'],
+            'Items have a link to reach things.')
+        self.assertTrue(
+            'description' in sample_item,
+            'Items have a description string.')

@@ -20,7 +20,6 @@ import logging
 import transaction
 
 from mock import patch
-from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
@@ -58,14 +57,16 @@ class TestReactivateFunctional(TestCase):
             content_type='application/json',
             status=406)
         success = json.loads(res.body)['error']
-        ok_(success is not None,
+        self.assertTrue(
+            success is not None,
             "Should not be successful with no email address: " + str(res))
 
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': 'notexist@gmail.com'},
                                 status=404)
         success = json.loads(res.body)
-        ok_('error' in success,
+        self.assertTrue(
+            'error' in success,
             "Should not be successful with invalid email address: " + str(res))
 
     @patch('bookie.lib.message.sendmail')
@@ -82,9 +83,10 @@ class TestReactivateFunctional(TestCase):
                                 status=200)
 
         success = json.loads(res.body)
-        ok_('message' in success,
+        self.assertTrue(
+            'message' in success,
             "Should be successful with admin email address: " + str(res))
-        ok_(mock_sendmail.called)
+        self.assertTrue(mock_sendmail.called)
 
     @patch('bookie.lib.message.sendmail')
     def test_activate_form_dual(self, mock_sendmail):
@@ -98,10 +100,11 @@ class TestReactivateFunctional(TestCase):
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': u'testing@dummy.com'},
                                 status=200)
-        ok_(mock_sendmail.called)
+        self.assertTrue(mock_sendmail.called)
 
         success = json.loads(res.body)
-        ok_('message' in success,
+        self.assertTrue(
+            'message' in success,
             "Should be successful with admin email address")
 
         res = self.testapp.post('/api/v1/suspend',
@@ -109,10 +112,12 @@ class TestReactivateFunctional(TestCase):
                                 status=406)
 
         success = json.loads(res.body)
-        ok_('error' in success,
+        self.assertTrue(
+            'error' in success,
             "Should not be successful on second try: " + str(res))
 
-        ok_('already' in str(res),
+        self.assertTrue(
+            'already' in str(res),
             "Should find 'already' in the response: " + str(res))
 
     @patch('bookie.lib.message.sendmail')
@@ -128,10 +133,11 @@ class TestReactivateFunctional(TestCase):
         res = self.testapp.post('/api/v1/suspend',
                                 params={'email': u'testing@dummy.com'},
                                 status=200)
-        ok_(mock_sendmail.called)
+        self.assertTrue(mock_sendmail.called)
 
         success = json.loads(res.body)
-        ok_('message' in success,
+        self.assertTrue(
+            'message' in success,
             "Should be successful with admin email address")
 
         # now let's try to login
@@ -144,7 +150,8 @@ class TestReactivateFunctional(TestCase):
                                 params=user_data,
                                 status=200)
 
-        ok_('account deactivated' in str(res),
+        self.assertTrue(
+            'account deactivated' in str(res),
             "Login should have failed since we're not active: " + str(res))
 
         act = Activation.query.first()
@@ -155,7 +162,8 @@ class TestReactivateFunctional(TestCase):
                 'admin'),
             status=200)
 
-        ok_('activated' in str(res),
+        self.assertTrue(
+            'activated' in str(res),
             "Should be prompted to login now: " + str(res))
 
         user_data = {'login': 'admin',

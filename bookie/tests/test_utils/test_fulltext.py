@@ -2,7 +2,6 @@
 import transaction
 import urllib
 
-from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
@@ -65,7 +64,8 @@ class TestFulltext(TestCase):
         """Verify we get the right type of full text store object"""
         handler = get_fulltext_handler("")
 
-        ok_(isinstance(handler, WhooshFulltext),
+        self.assertTrue(
+            isinstance(handler, WhooshFulltext),
             "Should get a whoosh fulltext by default")
 
     def test_sqlite_save(self):
@@ -74,24 +74,30 @@ class TestFulltext(TestCase):
         self._get_good_request()
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/google')
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
-        ok_('my google desc' in search_res.body,
+        self.assertTrue(
+            'my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
         search_res = self.testapp.get('/api/v1/admin/bmarks/search/python')
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
 
-        ok_('my google desc' in search_res.body,
+        self.assertTrue(
+            'my google desc' in search_res.body,
             "Tag search should find our description on the page: " +
             search_res.body)
 
         search_res = self.testapp.get(
             '/api/v1/admin/bmarks/search/extended%20notes')
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
-        ok_('extended notes' in search_res.body,
+        self.assertTrue(
+            'extended notes' in search_res.body,
             "Extended search should find our description on the page: " +
             search_res.body)
 
@@ -108,10 +114,12 @@ class TestFulltext(TestCase):
         self._get_good_request(new_tags=u"google books icons")
 
         search_res = self.testapp.get('/admin/results?search=icon')
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
 
-        ok_('icon' in search_res.body,
+        self.assertTrue(
+            'icon' in search_res.body,
             "We should find the new tag icon on the page: " + search_res.body)
 
     def test_ajax_search(self):
@@ -126,18 +134,23 @@ class TestFulltext(TestCase):
             }
         )
 
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
 
-        ok_('my google desc' in search_res.body,
+        self.assertTrue(
+            'my google desc' in search_res.body,
             "We should find our description on the page: " + search_res.body)
 
         # also check for our specific json bits
-        ok_('success' in search_res.body,
+        self.assertTrue(
+            'success' in search_res.body,
             "We should see a success bit in the json: " + search_res.body)
 
-        ok_('payload' in search_res.body,
+        self.assertTrue(
+            'payload' in search_res.body,
             "We should see a payload bit in the json: " + search_res.body)
 
-        ok_('message' in search_res.body,
+        self.assertTrue(
+            'message' in search_res.body,
             "We should see a message bit in the json: " + search_res.body)

@@ -4,7 +4,6 @@ import os
 import transaction
 import urllib
 
-from nose.tools import ok_
 from pyramid import testing
 from unittest import TestCase
 
@@ -29,10 +28,12 @@ class TestReadable(TestCase):
         url = 'http://lococast.net/archives/475'
         read = ReadUrl.parse(url)
 
-        ok_(read.status == 200, "The status is 200" + str(read.status))
-        ok_(not read.is_image(), "The content is not an image")
-        ok_(read.content is not None, "Content should not be none")
-        ok_('Lococast' in read.content,
+        self.assertTrue(
+            read.status == 200, "The status is 200" + str(read.status))
+        self.assertTrue(not read.is_image(), "The content is not an image")
+        self.assertTrue(read.content is not None, "Content should not be none")
+        self.assertTrue(
+            'Lococast' in read.content,
             "The word Lococast is in the content: " + str(read.content))
 
     def test_404_url(self):
@@ -40,9 +41,12 @@ class TestReadable(TestCase):
         url = 'http://lococast.net/archives/001'
         read = ReadUrl.parse(url)
 
-        ok_(read.status == 404, "The status is 404: " + str(read.status))
-        ok_(not read.is_image(), "The content is not an image")
-        ok_(read.content is None, "Content should be none")
+        self.assertTrue(
+            read.status == 404, "The status is 404: " + str(read.status))
+        self.assertTrue(
+            not read.is_image(), "The content is not an image")
+        self.assertTrue(
+            read.content is None, "Content should be none")
 
     def test_given_content(self):
         """Test that we can parse out given html content ahead of time"""
@@ -52,10 +56,12 @@ class TestReadable(TestCase):
 
         read = ReadContent.parse(html_content)
 
-        ok_(read.status == 1, "The status is 1: " + str(read.status))
-        ok_(not read.is_image(), "The content is not an image")
-        ok_(read.content is not None, "Content should not be none")
-        ok_('Bookie' in read.content,
+        self.assertTrue(
+            read.status == 1, "The status is 1: " + str(read.status))
+        self.assertTrue(not read.is_image(), "The content is not an image")
+        self.assertTrue(read.content is not None, "Content should not be none")
+        self.assertTrue(
+            'Bookie' in read.content,
             u"The word Bookie is in the content: " + unicode(read.content))
 
     def test_non_net_url(self):
@@ -63,9 +69,12 @@ class TestReadable(TestCase):
         test_url = "http://r2"
         read = ReadUrl.parse(test_url)
 
-        ok_(read.status == 901, "The status is 901: " + str(read.status))
-        ok_(not read.is_image(), "The content is not an image")
-        ok_(read.content is None,
+        self.assertTrue(
+            read.status == 901,
+            "The status is 901: " + str(read.status))
+        self.assertTrue(not read.is_image(), "The content is not an image")
+        self.assertTrue(
+            read.content is None,
             "Content should be none: " + str(read.content))
 
     def test_image_url(self):
@@ -73,8 +82,10 @@ class TestReadable(TestCase):
         img_url = 'http://www.ndftz.com/nickelanddime.png'
         read = ReadUrl.parse(img_url)
 
-        ok_(read.status == 200, "The status is 200: " + str(read.status))
-        ok_(read.content is None, "Content should be none: ")
+        self.assertTrue(
+            read.status == 200, "The status is 200: " + str(read.status))
+        self.assertTrue(
+            read.content is None, "Content should be none: ")
 
     def test_nonworking_url(self):
         """Testing some urls we know we had issues with initially"""
@@ -90,8 +101,10 @@ class TestReadable(TestCase):
         for key, url in urls.iteritems():
             read = ReadUrl.parse(url)
 
-            ok_(read.status == 200, "The status is 200: " + str(read.status))
-            ok_(read.content is not None, "Content should not be none: ")
+            self.assertTrue(
+                read.status == 200, "The status is 200: " + str(read.status))
+            self.assertTrue(
+                read.content is not None, "Content should not be none: ")
 
 
 class TestReadableFulltext(TestCase):
@@ -145,7 +158,9 @@ class TestReadableFulltext(TestCase):
         search_res = self.testapp.get(
             '/api/v1/admin/bmarks/search/search?search_content=True')
 
-        ok_(search_res.status == '200 OK',
+        self.assertTrue(
+            search_res.status == '200 OK',
             "Status is 200: " + search_res.status)
-        ok_('python' in search_res.body,
+        self.assertTrue(
+            'python' in search_res.body,
             "We should find the python tag in the results: " + search_res.body)
