@@ -124,6 +124,35 @@ class TestImports(unittest.TestCase):
             "make websites" in found.extended,
             "'make websites' should be in the extended description")
 
+    def _chrome_data_test(self):
+        """Test that we find the correct Chrome bmark data after import"""
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            4,
+            "We should have 4 results, we got: " + str(len(res)))
+
+        # Verify we can find a bookmark by url and check tags, etc
+        check_url = 'https://addons.mozilla.org/en-US/firefox/bookmarks/'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags),
+            2,
+            "We should have gotten 2 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        self.assertTrue(
+            'imported-from-firefox' in found.tag_string(),
+            'imported-from-firefox should be a valid tag in the bookmark')
+
+        # and check the timestamp is correct
+        date_should_be = datetime(2012, 10, 15, 22, 8, 54)
+        self.assertEqual(date_should_be, found.stored)
+
 
 class ImporterBaseTest(TestImports):
     """Verify the base import class is working"""
@@ -331,6 +360,51 @@ class ImportGoogleTest(TestImports):
 
         res = Bmark.query.all()
         self.assertEqual(len(res), 3)
+
+
+class ImportChromeTest(TestImports):
+    """Test the Bookie importer for Chrome export"""
+
+    def _get_file(self):
+        loc = os.path.dirname(__file__)
+        del_file = os.path.join(loc, 'chrome.html')
+
+        return open(del_file)
+
+    def tearDown(self):
+        """Regular tear down method"""
+        empty_db()
+
+    def test_is_google_file(self):
+        """Verify that this is a delicious file"""
+        good_file = self._get_file()
+
+        self.assertTrue(
+            GBookmarkImporter.can_handle(good_file),
+            "GBookmarkImporter should handle this file")
+
+        good_file.close()
+
+    def test_is_not_google_file(self):
+        """And that it returns false when it should"""
+        bad_file = StringIO.StringIO()
+        bad_file.write('failing tests please')
+        bad_file.seek(0)
+
+        self.assertTrue(
+            not GBookmarkImporter.can_handle(bad_file),
+            "GBookmarkImporter cannot handle this file")
+
+        bad_file.close()
+
+    def test_import_process(self):
+        """Verify importer inserts the correct google bookmarks"""
+        good_file = self._get_file()
+        imp = Importer(good_file, username=u"admin")
+        imp.process()
+
+        # now let's do some db sanity checks
+        self._chrome_data_test()
 
 
 class ImportViews(TestViewBase):
