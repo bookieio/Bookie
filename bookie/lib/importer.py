@@ -89,7 +89,7 @@ class Importer(object):
         """
         # If a bookmark has the tag "private" then we ignore it to prevent
         # leaking user data.
-        if tags and 'private' in tags.split(' '):
+        if tags and 'private' in tags.lower().split(' '):
             return None
 
         check_hash = generate_hash(url)
@@ -179,7 +179,6 @@ class DelImporter(Importer):
 
             # Skip any bookmarks with an attribute of PRIVATE.
             if link.has_key('PRIVATE'):
-                import pdb; pdb.set_trace()
                 continue
 
             import_add_date = float(link['add_date'])
