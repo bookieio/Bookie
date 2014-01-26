@@ -90,7 +90,7 @@ ${password_reset(user, reset=False)}
     <p>We have browser extensions that work with Bookie for:</p>
     <ul>
         <li><a href="https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega">Google Chrome</a></li>
-        <li><a href="https://github.com/mitechie/bookie-firefox">Firefox</a> [in development]</li>
+        <li><a href="https://addons.mozilla.org/en-US/firefox/addon/bookie/">Firefox</a></li>
     </ul>
 </div>
 
