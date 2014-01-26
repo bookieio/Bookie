@@ -31,8 +31,8 @@ class TestImports(unittest.TestCase):
 
     def _delicious_data_test(self):
         """Test that we find the correct set of declicious data after import"""
-        # blatant copy/paste, but I'm ona plane right now so oh well
-        # now let's do some db sanity checks
+        # Blatant copy/paste, but I'm on a plane right now so oh well.
+        # Now let's do some db sanity checks.
         res = Bmark.query.all()
         self.assertEqual(
             len(res),
@@ -99,8 +99,8 @@ class TestImports(unittest.TestCase):
         res = Bmark.query.all()
         self.assertEqual(
             len(res),
-            10,
-            "We should have 10 results, we got: " + str(len(res)))
+            9,
+            "We should have 9 results, we got: " + str(len(res)))
 
         # verify we can find a bookmark by url and check tags, etc
         check_url = 'http://www.alistapart.com/'

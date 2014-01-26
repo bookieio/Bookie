@@ -11,9 +11,11 @@ from lxml import etree
 from lxml.etree import XMLSyntaxError
 
 from bookie.lib.urlhash import generate_hash
-from bookie.models import BmarkMgr
-from bookie.models import DBSession
-from bookie.models import InvalidBookmark
+from bookie.models import (
+    BmarkMgr,
+    DBSession,
+    InvalidBookmark,
+)
 
 
 IMPORTED = u"importer"
@@ -85,9 +87,15 @@ class Importer(object):
         :param mark: Instance of Bmark that we're storing to db
 
         """
-        # we should make sure that this url isn't already bookmarked before
-        # adding it...if the hash matches, you must skip!
+        # If a bookmark has the tag "private" then we ignore it to prevent
+        # leaking user data.
+        if tags and 'private' in tags.lower().split(' '):
+            return None
+
         check_hash = generate_hash(url)
+
+        # We should make sure that this url isn't already bookmarked before
+        # adding it...if the hash matches, you must skip!
         if check_hash not in self.hash_list:
             bmark = BmarkMgr.store(
                 url,
@@ -96,14 +104,17 @@ class Importer(object):
                 ext,
                 tags,
                 dt=dt,
-                inserted_by=IMPORTED)
+                inserted_by=IMPORTED
+            )
 
-            # add this hash to the list so that we can skip dupes in the same
-            # import set
+            # Add this hash to the list so that we can skip dupes in the
+            # same import set.
             self.hash_list.add(check_hash)
             return bmark
-        else:
-            return None
+
+        # If we don't store a bookmark then just return None back to the
+        # importer.
+        return None
 
 
 class DelImporter(Importer):
@@ -157,6 +168,7 @@ class DelImporter(Importer):
         for tag in soup.findAll('dt'):
             if 'javascript:' in str(tag):
                 continue
+
             # if we have a dd as next sibling, get it's content
             if tag.nextSibling and tag.nextSibling.name == 'dd':
                 extended = tag.nextSibling.text
@@ -164,6 +176,10 @@ class DelImporter(Importer):
                 extended = u""
 
             link = tag.a
+
+            # Skip any bookmarks with an attribute of PRIVATE.
+            if link.has_key('PRIVATE'):
+                continue
 
             import_add_date = float(link['add_date'])
 
