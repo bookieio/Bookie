@@ -57,6 +57,11 @@ ${account_nav()}
     </div>
     <div class="yui3-u-1-4">
         <div class="note">
+            <p>There are no <strong>private</strong> bookmarks in Bookie at
+            this time. Note that any bookmarks with the tag <em>private</em>
+            will not be imported.</p>
+        </div>
+        <div class="note">
             <p>Use the <em>Import Bookmarks</em> tool to import your bookmarks from Delicious
             or Google Bookmarks.</p>
             <p>You will need an html export file from either of these services.</p>
