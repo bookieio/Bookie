@@ -491,10 +491,17 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
-    if request.user and request.user.username:
-        username = request.user.username
+    if rdict.get('search_mine') or 'username' in mdict:
+        with_user = True
     else:
-        username = None
+        with_user = False
+
+    username = None
+    if with_user:
+        if 'username' in mdict:
+            username = mdict.get('username')
+        elif request.user and request.user.username:
+            username = request.user.username
 
     # with content is always in the get string
     search_content = asbool(rdict.get('search_content', False))
@@ -505,11 +512,6 @@ def search_results(request):
     # check if we have a page count submitted
     page = rdict.get('page', 0)
     count = rdict.get('count', 10)
-
-    if 'username' in mdict:
-        with_user = True
-    else:
-        with_user = False
 
     res_list = searcher.search(phrase,
                                content=search_content,
