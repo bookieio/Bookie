@@ -15,17 +15,14 @@
             <div>
                 <input type="search" name="search" id="search" placeholder="keywords.." />
                 <input type="hidden" name="content" id="search_content" value="true" />
+                <p>
+                    <input type="checkbox" name="search_mine" id="search_mine" />
+                    <label for="search_mine">Search only my bookmarks</label>
+                </p>
                 <input style="line-height: 1.5;" type="submit" name="submit" class="button" id="submit_search" value="Search"/>
             </div>
         </form>
     </div>
 
     <p>&nbsp;</p>
-    <div class="note">
-        <p>Search will check for terms in your bookmark tags, descriptions, and
-        extended descriptions</p>
-        <p>You can also check the parsed and cached versions of the pages by
-        including the cached content. This will be much slower on large
-        bookmark sets.</p>
-    </div>
 </div>

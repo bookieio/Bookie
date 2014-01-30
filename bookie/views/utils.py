@@ -122,8 +122,6 @@ class ImportViews(BookieView):
         mdict = self.matchdict
         rdict = self.GET
 
-        username = rdict.get('username', None)
-
         if 'terms' in mdict:
             phrase = " ".join(mdict['terms'])
         else:
@@ -140,10 +138,22 @@ class ImportViews(BookieView):
         page = params.get('page', 0)
         count = params.get('count', 50)
 
+        if rdict.get('search_mine') or 'username' in mdict:
+            with_user = True
+        else:
+            with_user = False
+
+        username = None
+        if with_user:
+            if 'username' in mdict:
+                username = mdict.get('username')
+            elif self.request.user and self.request.user.username:
+                username = self.request.user.username
+
         res_list = searcher.search(
             phrase,
             content=with_content,
-            username=username,
+            username=username if with_user else None,
             ct=count,
             page=page,
         )
