@@ -30,7 +30,7 @@
                 <label>Url</label>
                 % if new:
                     <input type="url" name="url" value="${bmark.hashed.url}"
-                        placeholder="url of website..."/>
+                        placeholder="url of website..."  onblur="checkURL(this)"/>
                 % else:
                     <input type="hidden" name="url" value="${bmark.hashed.url}"
                         placeholder="url of website..."/>
@@ -155,5 +155,14 @@
             });
             % endif
         });
+    </script>
+    <script type="text/javascript">
+        function checkURL(urlString){
+            string = urlString.value
+            if (!/^(f|ht)tps?:\/\//i.test(string)) {
+                string = "http://" + string;
+            }
+                urlString.value=string
+        }
     </script>
 </%def>
