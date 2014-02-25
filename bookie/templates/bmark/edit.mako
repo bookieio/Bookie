@@ -29,8 +29,8 @@
             <li>
                 <label>Url</label>
                 % if new:
-                    <input type="url" name="url" value="${bmark.hashed.url}"
-                        placeholder="url of website..." onkeyup="checkURL(this)"/>
+                    <input id="url" type="url" name="url" value="${bmark.hashed.url}"
+                        placeholder="url of website..."/>
                 % else:
                     <input type="hidden" name="url" value="${bmark.hashed.url}"
                         placeholder="url of website..."/>
@@ -103,7 +103,7 @@
                'with_submit': false
             });
             tagcontrol.render();
-
+            bmark_edit_view = new Y.bookie.BmarkEditView();
             // Watch the form for the submit event and make sure that the tag
             // control is up to date before we submit the form.
             Y.one('form').on('submit', function(ev) {
@@ -155,14 +155,5 @@
             });
             % endif
         });
-    </script>
-    <script type="text/javascript">
-    	function checkURL(urlString){
-	    	string = urlString.value
-	    	if(!(/^(https?|ftp):\/\//.test(string))){
-	        	string = "http://" + string;
-	    	}
-	    		urlString.value=string
-		}
     </script>
 </%def>

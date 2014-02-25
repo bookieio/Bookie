@@ -917,7 +917,55 @@ YUI.add('bookie-view', function (Y) {
             }
         }
     });
+    
+    
+    /**
+     * Adding Javascript help for Bookmark Edit
+     *
+     * @class BmarkEditView
+     * @extends Y.View
+     *
+     */        
+    ns.BmarkEditView = Y.Base.create('bmark-edit-view', Y.View, [], {
+        
+        /**
+         * Binds event to html view.
+         *
+         * @method _bind
+         *
+         */
+        _bind: function () {
+            Y.one('#url')._node.onblur = this._check_and_edit_url;
+        },
 
+        /**
+         * Checks if header is persent for the url if not add http:// to
+         * the url
+         *
+         * @method _check_and_edit_url
+         * @param {Event} e
+         *
+         */
+        _check_and_edit_url: function (e) {
+            string = e.target.value;
+	    	if(!(/^(f|ht)tps?:\/\//.test(string))){
+	        	string = "http://" + string;
+	    	}
+	    	e.target.value=string;
+        },
+
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function () {
+            this._bind();        
+        }
+
+    });
 
     /**
      * Generate the html view for a User's account
