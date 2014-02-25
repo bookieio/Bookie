@@ -9,6 +9,8 @@ from bookie.models import Bmark
 from bookie.tests import TestViewBase
 from bookie.tests.factory import make_bookmark
 
+GOOGLE_HASH = u'aa2239c17609b2'
+BMARKUS_HASH = u'c5c21717c99797'
 LOG = logging.getLogger(__name__)
 
 
@@ -172,7 +174,7 @@ class TestRSSFeeds(TestViewBase):
         self.assertTrue(
             'description' in sample_item,
             'Items have a description string.')
-        
+
 class ReadableTest(TestViewBase):
     def _add_bmark_w_desc(self):
         # setup the default bookie bookmark
