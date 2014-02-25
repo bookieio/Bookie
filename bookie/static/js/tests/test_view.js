@@ -303,10 +303,8 @@ YUI.add('bookie-test-view', function (Y) {
                       cfg.error(null, null, {
                           response: resp
                       });
-
-
                     }
-                }
+                };
             };
 
             var login = new Y.bookie.LoginView();
@@ -330,9 +328,25 @@ YUI.add('bookie-test-view', function (Y) {
                     'error');
 
                 Y.bookie.Api.route.SuspendUser = old_method;
-            }, 500)
+            }, 500);
         },
     }));
+
+
+    ns.suite.add(new Y.Test.Case({
+        name: 'Url Edit Tests',
+
+        test_Url_edit: function () {
+            var page = new Y.bookie.BmarkEditView();
+            page.render();
+            Y.one('#url').set('value','google.com');
+            Y.one('#url').simulate('blur');
+            editedurl = Y.one('#url').get('value');
+            Y.Assert.areEqual('http://google.com', editedurl,
+                'Should edit the url');
+        }
+    }));
+
 
 }, '0.4', {
     requires: [
