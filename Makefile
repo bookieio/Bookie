@@ -1,20 +1,21 @@
 # Makefile to help automate tasks in bookie
 WD := $(shell pwd)
 PY := bin/python
-CELERY := bin/celery worker --app=bookie.bcelery -B -l debug
-PEP8 := bin/pep8
-PIP := bin/pip
+ALEMBIC := $(PY) bin/alembic
+CELERY := $(PY) bin/celery worker --app=bookie.bcelery -B -l debug
+PEP8 := $(PY) bin/pep8
+PIP := $(PY) bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
-NOSE := bin/nose2
-PASTER := bin/pserve
-PYSCSS := bin/pyscss
-GUNICORN := bin/gunicorn
+NOSE := $(PY) bin/nose2
+PASTER := $(PY) bin/pserve
+PYSCSS := $(PY) bin/pyscss
+GUNICORN := $(PY) bin/gunicorn
 S3 := s3cp.py --bucket files.bmark.us --public
 
 BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 
-CACHE := $(WD)/download-cache
+CACHE := "$(WD)/download-cache"
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
@@ -24,7 +25,7 @@ BUILD_JSMIN_FILES := $(patsubst $(JS_BUILD_PATH)/b/%.js,,$(JS_BUILD_PATH)/b/%-mi
 YUI := yui_3.11.0.zip
 JSTESTURL = http://127.0.0.1:9000/tests
 
-EXTENSION = $(WD)/extensions
+EXTENSION = "$(WD)/extensions"
 CHROME = /usr/bin/google-chrome
 CHROME_BUILD = $(EXTENSION)/chrome_ext/lib
 CHROME_EXT_PATH = $(EXTENSION)/chrome_ext
@@ -72,29 +73,29 @@ $(BOOKIE_INI):
 #
 # Need a series of commands to handle migrations
 bookie.db: develop
-	bin/alembic upgrade head
+	$(ALEMBIC) upgrade head
 
 test_bookie.db: develop
-	bin/alembic -c test_alembic.ini upgrade head
+	$(ALEMBIC) -c test_alembic.ini upgrade head
 
 # The upgade/etc commands are only for the live db. Test databases are
 # expected to be torn down and resetup each time.
 .PHONY: db_up
 db_up: bookie.db
-	bin/alembic upgrade head
+	$(ALEMBIC) upgrade head
 
 .PHONY: db_down
 db_down: bookie.db
-	bin/alembic downgrade
+	$(ALEMBIC) downgrade
 
 # make db_new desc="This is a new migration"
 .PHONY: db_new
 db_new: bookie.db
-	bin/alembic revision -m "$(desc)"
+	$(ALEMBIC) revision -m "$(desc)"
 
 .PHONY: db_version
 db_version: bookie.db
-	bin/alembic current
+	$(ALEMBIC) current
 
 .PHONY: first_bookmark
 first_bookmark: develop
@@ -182,7 +183,7 @@ pgsql_test:
 
 .PHONY: jstestserver
 jstestserver:
-	cd bookie/static/js && $(WD)/$(PY) -m SimpleHTTPServer 9000
+	cd bookie/static/js && "$(WD)/$(PY)" -m SimpleHTTPServer 9000
 .PHONY: jstest
 jstest: test_api test_history test_model test_rsswatch test_view test_indicator test_tagcontrol
 .PHONY: jstest_index
@@ -275,12 +276,12 @@ clean_downloadcache:
 	rm -rf download-cache || true
 
 static_upload: js css
-	cd $(WD)/$(JS_BUILD_PATH)/b && tar cf $(WD)/bookie_static.tar *.js
-	cd $(WD)/$(BOOKIE_CSS) && tar uf $(WD)/bookie_static.tar base.css
-	cd $(WD)/bookie/static/images && tar uf $(WD)/bookie_static.tar *
-	gzip $(WD)/bookie_static.tar
-	cd $(WD) && $(S3) bookie_static.tar.gz
-	rm $(WD)/bookie_static.tar.gz
+	cd "$(WD)/$(JS_BUILD_PATH)/b" && tar cf "$(WD)/bookie_static.tar" *.js
+	cd "$(WD)/$(BOOKIE_CSS)" && tar uf "$(WD)/bookie_static.tar" base.css
+	cd "$(WD)/bookie/static/images" && tar uf "$(WD)/bookie_static.tar" *
+	gzip "$(WD)/bookie_static.tar"
+	cd "$(WD) && $(S3) bookie_static.tar.gz"
+	rm "$(WD)/bookie_static.tar.gz"
 
 js_doc: js
 	rm $(JS_BUILD_PATH)/b/meta.js $(JS_BUILD_PATH)/b/*-min.js
