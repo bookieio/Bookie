@@ -18,3 +18,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Michael Hanna
 - Akash Agrawall
 - Rishi Raj Singh Jhelumi
+- badanomaly

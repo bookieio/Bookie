@@ -1,6 +1,12 @@
 <%inherit file="/main_wrap.mako" />
 <div class="readable">
-    <%def name="title()">Displaying: ${bmark.hashed.url}</%def>
+    <%def name="title()">Displaying: 
+        % if bmark.description:
+            ${bmark.description}
+        % else:
+            ${bmark.hashed.url}
+        % endif
+    </%def>
 
     <h1>Displaying: <a class="bmark"
                     % if username:

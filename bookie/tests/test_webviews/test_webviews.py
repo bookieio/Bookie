@@ -4,10 +4,13 @@ import logging
 import time
 import transaction
 from datetime import datetime
-
+from bookie.models import DBSession
 from bookie.models import Bmark
 from bookie.tests import TestViewBase
 from bookie.tests.factory import make_bookmark
+
+GOOGLE_HASH = u'aa2239c17609b2'
+BMARKUS_HASH = u'c5c21717c99797'
 
 LOG = logging.getLogger(__name__)
 
@@ -45,7 +48,6 @@ class BookieViewsTest(TestViewBase):
     def test_recent_page(self):
         """We should be able to page through the list"""
         body_str = u"Prev"
-
         res = self.app.get('/recent?page=1')
         self.assertEqual(
             res.status,
@@ -172,3 +174,58 @@ class TestRSSFeeds(TestViewBase):
         self.assertTrue(
             'description' in sample_item,
             'Items have a description string.')
+
+class ReadableTest(TestViewBase):
+    def _add_bmark_w_desc(self):
+        # setup the default bookie bookmark
+        bmark_us = Bmark(u'http://bmark.us',
+                         username=u"admin",
+                         desc=u"Bookie Website",
+                         ext=u"Bookie Documentation Home",
+                         tags=u"bookmarks")
+
+        bmark_us.stored = datetime.now()
+        bmark_us.updated = datetime.now()
+        DBSession.add(bmark_us)
+        transaction.commit()
+    
+    def _add_bmark_wt_desc(self):
+        #setup the default google bookmark
+        bmark_us = Bmark(u'http://google.com',
+                         username=u"admin",
+                         desc=u"",
+                         ext=u"Google Search Engine",
+                         tags=u"bookmarks")
+
+        bmark_us.stored = datetime.now()
+        bmark_us.updated = datetime.now()
+        DBSession.add(bmark_us)
+        transaction.commit()
+
+    def test_readable_w_title(self):
+        self._add_bmark_w_desc()
+        body_str = "Bookie Website"
+
+        res = self.app.get("/bmark/readable/"+BMARKUS_HASH)
+
+        self.assertEqual(
+            res.status,
+            "200 OK",
+            msg='recent status is 200, ' + res.status)
+        self.assertTrue(
+            body_str in res.body,
+            msg="Request should contain body_str: " + res.body)
+
+    def test_readable_title_wt_desc(self):
+        self._add_bmark_wt_desc()
+        body_str = "http://google.com"
+        
+        res = self.app.get("/bmark/readable/"+GOOGLE_HASH)
+
+        self.assertEqual(
+            res.status,
+            "200 OK",
+            msg='recent status is 200, ' + res.status)
+        self.assertTrue(
+            body_str in res.body,
+            msg="Request should contain body_str: " + res.body)
