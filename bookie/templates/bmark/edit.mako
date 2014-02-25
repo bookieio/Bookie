@@ -35,7 +35,7 @@
                     <input type="hidden" name="url" value="${bmark.hashed.url}"
                         placeholder="url of website..."/>
                     <div class="url">
-                        ${bmark.hashed.url}
+                        <a href="${bmark.hashed.url}">${bmark.hashed.url}</a>
                     </div>
                 % endif
             </li>
