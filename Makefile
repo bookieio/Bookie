@@ -136,7 +136,7 @@ deps: venv
 	fi
 	@echo "Making sure the latest version of pip is available"
 	# $(PIP) install -U pip
-	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
+	$(PIP) install --no-index --no-dependencies --find-links "file:///$(CACHE)/python" -r requirements.txt
 
 # TESTS
 #
