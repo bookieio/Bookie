@@ -16,3 +16,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Ryan Kather
 - Trevor Fitzgerald
 - Michael Hanna
+- Akash Agrawall
