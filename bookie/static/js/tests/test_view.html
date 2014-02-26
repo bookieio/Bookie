@@ -48,8 +48,36 @@
     <div class="bmarks"></div>
     <div class="invites"></div>
     <div id="#log"></div>
+
+
+    <!-- For the forgotten login tests  -->
+        <div class="block form">
+            <a href="" id="show_forgotten" class="heading">Forgotten Password</a>
+            <div id="forgotten_password" style="display: none; opacity: 0;">
+                <%include file="forgot.mako"/>
+            </div>
+        </div>
+
+        <form>
+            <ul>
+                <li>
+                    <label>Email</label>
+                    <input type="email" id="email" name="email" value="" />
+                </li>
+                <li>
+                    <label></label>
+                    <input type="button" id="submit_forgotten" value="Reset" class="button" />
+                </li>
+            </ul>
+        </form>
+        <div id="forgotten_msg" class="error"></div>
+
+
     <script src="test_view.js"></script>
     <script src="test_view_account.js"></script>
+
+
+
 
     <script type="text/javascript">
         YUI().use('test-console', 'test', 'bookie-test-view', 'bookie-test-view-account', function (Y) {

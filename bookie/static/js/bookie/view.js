@@ -858,6 +858,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         render: function () {
+            debugger;
             // Render this view's HTML into the container element.
             var tpl_data = this.get('model').getAttrs();
             tpl_data.owner = this.get('current_user') === this.get('model').get('username');
@@ -1570,6 +1571,8 @@ YUI.add('bookie-view', function (Y) {
                 error: function (data, status_str, response, args) {
                     console.log(data);
                     console.log(response);
+                    var responseJSON = JSON.parse(response.response);
+                    that._show_message(responseJSON.error);
                 }
             });
         },
