@@ -929,16 +929,6 @@ YUI.add('bookie-view', function (Y) {
     ns.BmarkEditView = Y.Base.create('bmark-edit-view', Y.View, [], {
         
         /**
-         * Binds event to html view.
-         *
-         * @method _bind
-         *
-         */
-        _bind: function () {
-            Y.one('#url')._node.onblur = this._check_and_edit_url;
-        },
-
-        /**
          * Checks if header is persent for the url if not add http:// to
          * the url
          *
@@ -962,7 +952,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         initializer: function () {
-            this._bind();        
+            Y.one('#url')._node.onblur = this._check_and_edit_url;        
         }
 
     });
