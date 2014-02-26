@@ -165,6 +165,14 @@ def edit_error(request):
     with ReqAuthorize(request, username=rdict['username']):
         if 'new' in request.url:
             try:
+		bmark = BmarkMgr.get_by_url(post['url'])
+		if bmark:
+               		return {
+                    		'new': False,
+				'bmark': bmark,
+				'message': "URL already Exists",
+				'user': request.user,
+                	}
                 bmark = BmarkMgr.store(
                     post['url'],
                     request.user.username,
