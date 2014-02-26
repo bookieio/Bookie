@@ -104,6 +104,7 @@
             });
             tagcontrol.render();
             bmark_edit_view = new Y.bookie.BmarkEditView();
+            bmark_edit_view.render();
             // Watch the form for the submit event and make sure that the tag
             // control is up to date before we submit the form.
             Y.one('form').on('submit', function(ev) {
