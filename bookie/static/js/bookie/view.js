@@ -1570,6 +1570,8 @@ YUI.add('bookie-view', function (Y) {
                 error: function (data, status_str, response, args) {
                     console.log(data);
                     console.log(response);
+                    var responseJSON = JSON.parse(response.response);
+                    that._show_message(responseJSON.error);
                 }
             });
         },
