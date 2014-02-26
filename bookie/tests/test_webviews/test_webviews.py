@@ -108,6 +108,38 @@ class TestNewBookmark(TestViewBase):
             })
         self.assertIn('not valid', res.body)
 
+    def test_existing_url_entry_error(self):
+        """ Verify the User has received error message that URL exists"""
+        self._login_admin()
+
+        test_url = u"http://bmark.us/test"
+        existing_url_message = "URL already Exists"
+
+        # Add The Bookmark Once
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': ''
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='recent status is 302 Found, ' + res.status)
+
+        # Add the Bookmark Again
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': ''
+            })
+        self.assertIn(existing_url_message, res.body)
+
 
 class TestRSSFeeds(TestViewBase):
     """Verify the RSS feeds function correctly."""
