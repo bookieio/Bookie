@@ -421,8 +421,10 @@ class BmarkMgr(object):
                     from_obj=[
                         bmarks_tags.join(
                             'tags',
-                            and_(Tag.name.in_(tags),
-                            bmarks_tags.c.tag_id == Tag.tid)
+                            and_(
+                                Tag.name.in_(tags),
+                                bmarks_tags.c.tag_id == Tag.tid
+                            )
                         ).
                         join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
                     ]).\

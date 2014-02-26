@@ -42,6 +42,8 @@ def recent(request):
     # check for auth related stuff
     # are we looking for a specific user
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
 
     # do we have any tags to filter upon
     tags = rdict.get('tags', None)
@@ -81,6 +83,8 @@ def recent_rss(request):
 
     tags = rdict.get('tags', None)
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
 
     ret = api.bmark_recent(request, with_content=True)
     ret['username'] = username
@@ -108,7 +112,7 @@ def edit(request):
     params = request.params
     new = False
 
-    with ReqAuthorize(request, username=rdict['username']):
+    with ReqAuthorize(request, username=rdict['username'].lower()):
 
         if 'hash_id' in rdict:
             hash_id = rdict['hash_id']
@@ -162,7 +166,7 @@ def edit_error(request):
     params = request.params
     post = request.POST
 
-    with ReqAuthorize(request, username=rdict['username']):
+    with ReqAuthorize(request, username=rdict['username'].lower()):
         if 'new' in request.url:
             try:
                 try:
@@ -237,6 +241,8 @@ def readable(request):
     rdict = request.matchdict
     bid = rdict.get('hash_id', None)
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
 
     if bid:
         found = BmarkMgr.get_by_hash(bid, username=username)

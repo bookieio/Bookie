@@ -1,6 +1,5 @@
 """Controllers related to viewing Tag information"""
 import logging
-from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 
 from bookie.models import TagMgr
@@ -16,6 +15,8 @@ def tag_list(request):
     """Display a list of your tags"""
     rdict = request.matchdict
     username = rdict.get("username", None)
+    if username:
+        username = username.lower()
 
     tags_found = TagMgr.find(username=username)
 
