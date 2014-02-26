@@ -151,6 +151,7 @@
                     console.log(data);
                     console.log(status_str);
                     console.log(response);
+                    indicator.hide();
                 }
             });
             % endif
