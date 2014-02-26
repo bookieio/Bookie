@@ -15,8 +15,11 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    # the database update code goes here
-    pass
+    connection = op.get_bind()
+    connection.execute("update users set username = 
+		    subquery.newusername from (select id, lower(username)
+		    as newusername from users) as subquery where users.id = subquery.id",
+		    execution_options = None)
 
 
 def downgrade():
