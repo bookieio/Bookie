@@ -70,7 +70,6 @@ Contents:
    extensions
    hosting
    development
-   events
 
 .. Indices and tables
 .. ==================
