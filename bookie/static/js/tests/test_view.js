@@ -279,11 +279,9 @@ YUI.add('bookie-test-view', function (Y) {
     ns.suite.add(new Y.Test.Case({
         name: 'Options View',
         setUp: function () {
-
         },
 
         tearDown: function () {
-
         },
 
         test_exists: function () {
@@ -292,6 +290,23 @@ YUI.add('bookie-test-view', function (Y) {
         }
     }));
 
+    ns.suite.add(new Y.Test.Case({
+        name: 'Forgot password',
+        setUp: function () {
+        },
+
+        tearDown: function () {
+        },
+
+        test_error_message: function () {
+            // simulate click on submit button
+            Y.one('#submit_forgotten').simulate('click');
+            // Assert that it returns error
+            Y.Assert.areEqual("Please submit a valid address",
+                Y.one('#forgotten_msg').value,
+                "should set content of #forgotten_msg to responseText of AJAX request");
+        },
+    }));
 
 }, '0.4', {
     requires: [
