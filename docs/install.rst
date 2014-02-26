@@ -84,14 +84,22 @@ If you're using Postgres or MySQL as your database for Bookie you'll also want
 to grab the dev package for your db so that the Python drivers for them can
 compile.
 
-- libmysqlclient-dev
-- postgresql-server-dev-8.4
+- libmysqlclient-dev (Mysql)
+- postgresql-server-dev-8.4 (Postgres)
 
 ::
 
-    $ sudo apt-get install postgresql-server-dev-8.4
-    - OR -
     $ sudo apt-get install libmysqlclient-dev
+    - OR -
+    $ sudo apt-get install postgresql-server-dev-8.4
+
+You will also need to install python db drivers for MySql.
+
+- MySQL-python
+
+::
+
+    $ bin/pip install MySQL-python
 
 Then you'll need to update the database connection string in your `bookie.ini`
 file. The database and user account need to exist in order for it to bootstrap

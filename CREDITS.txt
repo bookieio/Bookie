@@ -17,3 +17,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Trevor Fitzgerald
 - Michael Hanna
 - Akash Agrawall
+- Rishi Raj Singh Jhelumi
