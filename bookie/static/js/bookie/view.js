@@ -1407,22 +1407,37 @@ YUI.add('bookie-view', function (Y) {
             e.preventDefault();
             Y.one('#account_msg').hide();
 
+	    var name = Y.one('#name').get('value');
+	    var email = Y.one('#email').get('value');
+	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    // validate email and username
+	    if(!name | !email | !re.test(email)) {
+		if(!name) {
+                    that._show_message('Please enter valid Name', true);
+		}
+		else if(!email | !re.test(email)) {
+                    that._show_message('Please enter valid Email', true);
+		}
+	    }
             // add the password data to the cfg passed to the api
-            api_cfg = Y.merge(api_cfg, {
-                name: Y.one('#name').get('value'),
-                email: Y.one('#email').get('value')
-            });
+	    else {
+                api_cfg = Y.merge(api_cfg, {
+                    name: Y.one('#name').get('value'),
+                    email: Y.one('#email').get('value')
+                });
 
-            api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
-            api.call({
-                success: function (data, request) {
-                    that._show_message('Account updated...', true);
-                },
-                error: function (data, status_str, response, args) {
-                    console.log(data);
-                    console.log(response);
-                }
-            });
+                api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
+                api.call({
+                    success: function (data, request) {
+                        that._show_message('Account updated...', true);
+                    },
+                    error: function (data, status_str, response, args) {
+                        console.log(data);
+                        console.log(response);
+                        that._show_message('Some error ocurred while making changes...', true);
+                    }
+                });
+	    }
         },
 
         /**
