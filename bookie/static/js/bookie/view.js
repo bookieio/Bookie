@@ -952,7 +952,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         initializer: function () {
-            Y.one('#url')._node.onblur = this._check_and_edit_url;        
+            Y.one('#url').set('onblur', this._check_and_edit_url);        
         }
 
     });
