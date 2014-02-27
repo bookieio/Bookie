@@ -23,6 +23,6 @@ If you're on Ubuntu, you should be able to get started with:
 
 ::
 
-    $ git clone git://github.com/mitechie/Bookie.git
+    $ git clone git://github.com/bookieio/Bookie.git
     $ cd Bookie && make sysdeps && make install && make run
     $ google-chrome (or other browser) http://127.0.0.1:6543
