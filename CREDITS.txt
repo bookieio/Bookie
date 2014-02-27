@@ -17,7 +17,11 @@ Thanks to these people that have contributed code/assistance to bookie
 - Trevor Fitzgerald
 - Michael Hanna
 - Akash Agrawall
+<<<<<<< HEAD
 - Rishi Raj Singh Jhelumi
 - badanomaly
 - Saurabh Kathpalia
 - Parth P. Panchal
+=======
+- badanomaly
+>>>>>>> 85b0f36aafc3efea79399f05fc28e29971f332c1
