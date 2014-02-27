@@ -42,7 +42,7 @@ def recent(request):
     # check for auth related stuff
     # are we looking for a specific user
     username = rdict.get('username', None)
-    if username != None:
+    if username:
     	username = username.lower()
 
     # do we have any tags to filter upon
@@ -83,7 +83,7 @@ def recent_rss(request):
 
     tags = rdict.get('tags', None)
     username = rdict.get('username', None)
-    if username != None:
+    if username:
         username = username.lower()
 
     ret = api.bmark_recent(request, with_content=True)
@@ -230,7 +230,7 @@ def readable(request):
     rdict = request.matchdict
     bid = rdict.get('hash_id', None)
     username = rdict.get('username', None)
-    if username != None:
+    if username:
 	username = username.lower()
 
     if bid:

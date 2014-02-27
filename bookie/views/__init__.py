@@ -26,7 +26,7 @@ def home(request):
     """Inital / view for now until we find a better one"""
     rdict = request.matchdict
     username = rdict.get('username', None)
-    if username != None:
+    if username:
 	username = username.lower()
 
     if not request.user:
