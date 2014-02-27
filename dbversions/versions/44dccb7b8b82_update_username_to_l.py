@@ -13,14 +13,14 @@ down_revision = '9f274a38d84'
 from alembic import op
 import sqlalchemy as sa
 
-
 def upgrade():
     connection = op.get_bind()
-    connection.execute("update users set username = 
-		    subquery.newusername from (select id, lower(username)
-		    as newusername from users) as subquery where users.id = subquery.id",
-		    execution_options = None)
-
+    current_context = op.get_context()
+    meta = current_context.opts['target_metadata']
+    users = sa.Table('users', meta, autoload=True)
+    stmt = users.update().\
+	   values(username=sa.func.lower(users.c.username))
+    connection.execute(stmt)
 
 def downgrade():
     pass
