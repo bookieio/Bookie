@@ -305,9 +305,9 @@ YUI.add('bookie-test-view', function (Y) {
         test_Url_edit: function () {
             var page = new Y.bookie.BmarkEditView();
             page.render();
-            Y.one('#url')._node.value = 'google.com';
+            Y.one('#url').set('value','google.com');
             Y.one('#url').simulate('blur');
-            editedurl = Y.one('#url')._node.value;
+            editedurl = Y.one('#url').get('value');
             Y.Assert.areEqual('http://google.com', editedurl, 
                 'Should edit the url');
         }
