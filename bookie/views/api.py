@@ -104,6 +104,8 @@ def bmark_get(request):
 
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
+    if username != None:
+        username = username.lower()
 
     # the hash id will always be there or the route won't match
     bookmark = BmarkMgr.get_by_hash(hash_id,
@@ -305,6 +307,8 @@ def bmark_recent(request, with_content=False):
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
+    if username != None:
+        username = username.lower()
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -961,6 +965,8 @@ def accounts_invites_add(request):
     """
     rdict = request.matchdict
     username = rdict.get('username', None)
+    if username != None:
+        username = username.lower()
     count = rdict.get('count', None)
 
     if username is not None and count is not None:
@@ -1040,6 +1046,8 @@ def new_user(request):
     u = User()
 
     u.username = unicode(rdict.get('username'))
+    if u.username != None:
+        u.username = u.username.lower()
     u.email = unicode(rdict.get('email'))
     passwd = get_random_word(8)
     u.password = passwd
@@ -1121,6 +1129,8 @@ def admin_bmark_remove(request):
     """Remove this bookmark from the system"""
     rdict = request.matchdict
     username = rdict.get('username')
+    if username != None:
+	username = username.lower()
     hash_id = rdict.get('hash_id')
 
     try:
