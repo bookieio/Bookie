@@ -21,3 +21,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - badanomaly
 - Saurabh Kathpalia
 - Parth P. Panchal
+- Daniel Dyla
