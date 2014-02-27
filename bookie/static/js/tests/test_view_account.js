@@ -23,6 +23,28 @@ YUI.add('bookie-test-view-account', function (Y) {
         }
     }));
 
+    ns.suite.add(new Y.Test.Suite({
+        name: "Account Information Change",
+	
+	setup:function () {
+
+	},
+	
+	tearDown: function () {
+
+	},
+	
+	test_account_edit: function () {
+	    var accountinfoview = new Y.bookie.AccountInfoView();
+	    accountinfoview.render();
+	    Y.one('#email').set('value','test');
+	    Y.one('#email').simulate('checkemail');
+	    editedemail = Y.one('#email').get('value');
+	    Y.assert.areEqual('',editedemail,'Should empty the email');
+	}
+	
+    }));
+
     ns.suite.add(new Y.Test.Case({
         name: 'Test the invite bits',
         setUp: function () {
