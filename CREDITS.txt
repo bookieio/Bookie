@@ -20,3 +20,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Rishi Raj Singh Jhelumi
 - badanomaly
 - Saurabh Kathpalia
+- Parth P. Panchal
