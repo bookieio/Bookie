@@ -1417,6 +1417,7 @@ YUI.add('bookie-view', function (Y) {
 		}
 		else if(!email | !re.test(email)) {
                     that._show_message('Please enter valid Email', true);
+		    Y.one('#email').set('value','');
 		}
 	    }
             // add the password data to the cfg passed to the api
