@@ -521,7 +521,7 @@ def search_results(request):
                                page=page)
     except ValueError, exc:
         request.response.status_int = 404
-        ret = {'error': "Bad Request:Page number out of bound"}
+        ret = {'error': "Bad Request: Page number out of bound"}
         return _api_response(request, ret)
 
     constructed_results = []
