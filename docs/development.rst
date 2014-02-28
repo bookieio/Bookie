@@ -30,5 +30,5 @@ Contents:
    todo
    events
 
-.. _Pyramid: http://docs.pylonsproject.org/docs/pyramid.html
+.. _Pyramid: http://docs.pylonsproject.org/en/latest/docs/pyramid.html
 .. _`git flow`: https://github.com/nvie/gitflow

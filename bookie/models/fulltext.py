@@ -99,6 +99,10 @@ class WhooshFulltext(object):
                 qry = Bmark.query.filter(
                     Bmark.bid.in_([r['bid'] for r in res])
                 )
+
+                if username:
+                    qry = qry.filter(Bmark.username == username)
+
                 qry = qry.options(joinedload('hashed'))
 
                 return qry.all()

@@ -117,7 +117,6 @@ YUI.add('bookie-test-view', function (Y) {
                 }),
                 hit = false,
                 test = this;
-            debugger;
 
             model.remove = function () {
                 hit = true;
@@ -146,7 +145,6 @@ YUI.add('bookie-test-view', function (Y) {
             this.wait(function () {
                 // and verify that our node is now gone
                 var click_points = Y.all('.bmark');
-                debugger;
                 Y.Assert.areEqual(0, click_points.size(),
                     "We shouldn't have any html elements left after deleting");
             }, 700);
@@ -279,16 +277,73 @@ YUI.add('bookie-test-view', function (Y) {
     ns.suite.add(new Y.Test.Case({
         name: 'Options View',
         setUp: function () {
-
         },
 
         tearDown: function () {
-
         },
 
         test_exists: function () {
             Y.Assert.isObject(Y.bookie.OptionsView,
                 'We should be able to find the OptionsView object');
+        }
+    }));
+
+    ns.suite.add(new Y.Test.Case({
+        name: 'Forgot password',
+
+        test_error_message: function () {
+            var test = this,
+                resp = '{"error": "Please submit a valid address"}';
+
+            // Stub out the API call with a fake response.
+            var old_method = Y.bookie.Api.route.SuspendUser;
+            Y.bookie.Api.route.SuspendUser = function(cfg) {
+                return {
+                    call: function(cfg) {
+                      cfg.error(null, null, {
+                          response: resp
+                      });
+                    }
+                };
+            };
+
+            var login = new Y.bookie.LoginView();
+            login.render();
+
+            // The error message should be shows to the user.
+            // simulate click on submit button
+            Y.one('#submit_forgotten').simulate('click');
+            this.wait(function() {
+                // Assert that it returns error
+                var message = Y.one('#forgotten_msg');
+
+                Y.Assert.areEqual(
+                    "Please submit a valid address",
+                    message.get('innerHTML'));
+
+                // And verify that the message changed after the ajax
+                // call completes.
+                Y.Assert.areEqual(
+                    message.getAttribute('class'),
+                    'error');
+
+                Y.bookie.Api.route.SuspendUser = old_method;
+            }, 500);
+        },
+    }));
+
+
+    ns.suite.add(new Y.Test.Case({
+        name: 'Url Edit Tests',
+
+        test_Url_edit: function () {
+            var page = new Y.bookie.BmarkEditView();
+            page.render();
+            Y.one('#url').set('value','google.com');
+            Y.one('#url').simulate('blur');
+            editedurl = Y.one('#url').get('value');
+            Y.Assert.areEqual('http://google.com', editedurl,
+                'Should edit the url');
         }
     }));
 

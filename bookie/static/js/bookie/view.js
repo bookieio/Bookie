@@ -858,6 +858,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         render: function () {
+            debugger;
             // Render this view's HTML into the container element.
             var tpl_data = this.get('model').getAttrs();
             tpl_data.owner = this.get('current_user') === this.get('model').get('username');
@@ -918,6 +919,44 @@ YUI.add('bookie-view', function (Y) {
         }
     });
 
+
+    /**
+     * Adding Javascript help for Bookmark Edit
+     *
+     * @class BmarkEditView
+     * @extends Y.View
+     *
+     */
+    ns.BmarkEditView = Y.Base.create('bmark-edit-view', Y.View, [], {
+
+        /**
+         * Checks if header is persent for the url if not add http:// to
+         * the url
+         *
+         * @method _check_and_edit_url
+         * @param {Event} e
+         *
+         */
+        _check_and_edit_url: function (e) {
+            string = e.target.value;
+		if(!(/^(f|ht)tps?:\/\//.test(string))){
+			string = "http://" + string;
+		}
+		e.target.value=string;
+        },
+
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function () {
+            Y.one('#url').set('onblur', this._check_and_edit_url);
+        }
+
+    });
 
     /**
      * Generate the html view for a User's account
@@ -1570,6 +1609,8 @@ YUI.add('bookie-view', function (Y) {
                 error: function (data, status_str, response, args) {
                     console.log(data);
                     console.log(response);
+                    var responseJSON = JSON.parse(response.response);
+                    that._show_message(responseJSON.error);
                 }
             });
         },
