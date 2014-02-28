@@ -175,7 +175,10 @@ class TestRSSFeeds(TestViewBase):
             'description' in sample_item,
             'Items have a description string.')
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9a9a63aa964b4f3d804ad5b994469de9fdbb3392
 class ReadableTest(TestViewBase):
     def _add_bmark_w_desc(self):
         # setup the default bookie bookmark
@@ -189,7 +192,11 @@ class ReadableTest(TestViewBase):
         bmark_us.updated = datetime.now()
         DBSession.add(bmark_us)
         transaction.commit()
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> 9a9a63aa964b4f3d804ad5b994469de9fdbb3392
     def _add_bmark_wt_desc(self):
         #setup the default google bookmark
         bmark_us = Bmark(u'http://google.com',
@@ -220,7 +227,11 @@ class ReadableTest(TestViewBase):
     def test_readable_title_wt_desc(self):
         self._add_bmark_wt_desc()
         body_str = "http://google.com"
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> 9a9a63aa964b4f3d804ad5b994469de9fdbb3392
         res = self.app.get("/bmark/readable/"+GOOGLE_HASH)
 
         self.assertEqual(
@@ -229,4 +240,8 @@ class ReadableTest(TestViewBase):
             msg='recent status is 200, ' + res.status)
         self.assertTrue(
             body_str in res.body,
+<<<<<<< HEAD
             msg="Request should contain body_str: " + res.body)
+=======
+            msg="Request should contain body_str: " + res.body)
+>>>>>>> 9a9a63aa964b4f3d804ad5b994469de9fdbb3392
