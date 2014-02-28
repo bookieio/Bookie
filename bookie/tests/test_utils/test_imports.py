@@ -150,7 +150,8 @@ class TestImports(unittest.TestCase):
             'imported-from-firefox should be a valid tag in the bookmark')
 
         # and check the timestamp is correct
-        date_should_be = datetime(2012, 10, 15, 22, 8, 54)
+        # relative to user's timezone
+        date_should_be = datetime.fromtimestamp(1350353334)
         self.assertEqual(date_should_be, found.stored)
 
 
