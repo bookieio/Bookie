@@ -402,14 +402,15 @@ class BookieAPITest(unittest.TestCase):
                 status=404)
         # make sure we can decode the body
         bmark_list = json.loads(res.body)
-        #results = bmark_list['search_results']
+        
+        self.assertTrue(
+            'error' in bmark_list,
+            "The error field should be in there")
         self.assertEqual(
             bmark_list['error'],
             "Bad Request: Page number out of bound",
             "We should have the error message: {0}".format(bmark_list['error']))
-        self.assertTrue(
-            'error' in bmark_list,
-            "The error field should be in there")
+        
         self._check_cors_headers(res);
 
     def test_bookmark_tag_complete(self):
