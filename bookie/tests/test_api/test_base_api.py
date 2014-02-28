@@ -394,6 +394,28 @@ class BookieAPITest(unittest.TestCase):
             "The clicks field should be in there")
         self._check_cors_headers(res)
 
+    def test_search_api_fail(self):
+        """Test that request to an out of bound page returns error message"""
+        self._get_good_request(content=True, second_bmark=False)
+
+        res = self.testapp.get(
+            '/api/v1/bmarks/search/google?page=10',
+            status=404
+        )
+        # make sure we can decode the body
+        bmark_list = json.loads(res.body)
+
+        self.assertTrue(
+            'error' in bmark_list,
+            "The error field should be in there")
+        self.assertEqual(
+            bmark_list['error'],
+            "Bad Request: Page number out of bound",
+            "We should have the error message: {0}".format(bmark_list['error'])
+        )
+
+        self._check_cors_headers(res)
+
     def test_bookmark_tag_complete(self):
         """Test we can complete tags in the system
 

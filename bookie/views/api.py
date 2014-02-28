@@ -513,11 +513,18 @@ def search_results(request):
     page = rdict.get('page', 0)
     count = rdict.get('count', 10)
 
-    res_list = searcher.search(phrase,
-                               content=search_content,
-                               username=username if with_user else None,
-                               ct=count,
-                               page=page)
+    try:
+        res_list = searcher.search(
+            phrase,
+            content=search_content,
+            username=username if with_user else None,
+            ct=count,
+            page=page
+        )
+    except ValueError:
+        request.response.status_int = 404
+        ret = {'error': "Bad Request: Page number out of bound"}
+        return _api_response(request, ret)
 
     constructed_results = []
     for res in res_list:
