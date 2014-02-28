@@ -515,3 +515,14 @@ class ImportViews(TestViewBase):
         res = self.app.get('/admin/import')
 
         self.assertTrue('<form' in res.body, "We should have a form")
+
+    def test_empty_upload(self):
+        """Verify if error message is shown if no file is tried to upload"""
+        self._login_admin()
+
+        res = self.app.post(
+            '/admin/import',
+            params={'api_key': self.api_key},
+            upload_files=[],
+        )
+        self.assertTrue('Please provide a file to import' in res.body,"Error message should be present")

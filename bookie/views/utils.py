@@ -57,7 +57,7 @@ class ImportViews(BookieView):
                 # we have some posted values
                 files = post.get('import_file', None)
 
-                if files is not None:
+                if hasattr(files, 'filename'):
                     storage_dir_tpl = self.settings.get('import_files',
                                                         '/tmp/bookie')
                     storage_dir = storage_dir_tpl.format(
@@ -77,11 +77,7 @@ class ImportViews(BookieView):
                         location=self.request.route_url('user_import',
                                                         username=username))
                 else:
-                    msg = self.request.session.pop_flash()
-                    if msg:
-                        data['error'] = msg
-                    else:
-                        data['error'] = None
+                    data['error'] = ["Please provide a file to import"]
 
                 return data
             else:
