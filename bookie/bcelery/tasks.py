@@ -27,7 +27,7 @@ logger = get_task_logger(__name__)
 
 @celery.task(ignore_result=True)
 def hourly_stats():
-    """Hourly we want to runa series of numbers to track
+    """Hourly we want to run a series of numbers to track
 
     Currently we're monitoring:
     - Total number of bookmarks in the system
@@ -41,10 +41,31 @@ def hourly_stats():
 
 
 @celery.task(ignore_result=True)
+def daily_stats():
+    """Daily we want to run a series of numbers to track
+
+    Currently we're monitoring:
+    - Total number of bookmarks for each user in the system
+
+    """
+    count_total_each_user.delay()
+
+
+@celery.task(ignore_result=True)
 def count_total():
     """Count the total number of bookmarks in the system"""
     trans = transaction.begin()
     StatBookmarkMgr.count_total_bookmarks()
+    trans.commit()
+
+
+@celery.task(ignore_result=True)
+def count_total_each_user():
+    """Count the total number of bookmarks for each user in the system"""
+    trans = transaction.begin()
+    user_list = UserMgr.get_list(active=True)
+    for user in user_list:
+        StatBookmarkMgr.count_user_bookmarks(user.username)
     trans.commit()
 
 
