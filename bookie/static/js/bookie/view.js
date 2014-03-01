@@ -1453,7 +1453,7 @@ YUI.add('bookie-view', function (Y) {
                             ,'|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'].join(''));
             // validate email and username
             if (!name || !email || !re.test(email)) {
-                if(!name) {
+                if (!name) {
                     that._show_message('Please enter valid Name', true);
                 }
                 else if (!email || !re.test(email)) {
