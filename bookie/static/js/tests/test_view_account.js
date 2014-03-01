@@ -51,7 +51,7 @@ YUI.add('bookie-test-view-account', function (Y) {
                     message.get('innerHTML'));
                 Y.Assert.areEqual(
                     message.getAttribute('class'),
-                    'success');
+                    'error');
                 Y.bookie.Api.route.UserAccountChange = old_method;
 	    },500)
 	},

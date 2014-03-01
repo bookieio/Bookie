@@ -1454,10 +1454,10 @@ YUI.add('bookie-view', function (Y) {
             // validate email and username
             if (!name || !email || !re.test(email)) {
                 if (!name) {
-                    that._show_message('Please enter valid Name', true);
+                    that._show_message('Please enter valid Name', false);
                 }
                 else if (!email || !re.test(email)) {
-                    that._show_message('Please enter valid Email', true);
+                    that._show_message('Please enter valid Email', false);
                     Y.one('#email').set('value','');
                 }
             }
@@ -1477,7 +1477,7 @@ YUI.add('bookie-view', function (Y) {
                         console.log(data);
                         console.log(response);
                         that._show_message(
-                            'Some error ocurred while making changes...', true
+                            'Some error ocurred while making changes...', false
                         );
                     }
                 });
