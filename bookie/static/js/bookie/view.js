@@ -1452,11 +1452,11 @@ YUI.add('bookie-view', function (Y) {
                             ,'|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])'
                             ,'|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'].join(''));
             // validate email and username
-            if(!name || !email || !re.test(email)) {
+            if (!name || !email || !re.test(email)) {
                 if(!name) {
                     that._show_message('Please enter valid Name', true);
                 }
-                else if(!email || !re.test(email)) {
+                else if (!email || !re.test(email)) {
                     that._show_message('Please enter valid Email', true);
                     Y.one('#email').set('value','');
                 }
