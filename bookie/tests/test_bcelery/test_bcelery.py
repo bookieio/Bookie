@@ -21,6 +21,7 @@ class BCeleryTaskTest(TestDBBase):
         trans = transaction.begin()
         user = User()
         user.username = gen_random_word(10)
+        self.username = user.username
         DBSession.add(user)
 
         for i in range(3):
@@ -29,7 +30,8 @@ class BCeleryTaskTest(TestDBBase):
             DBSession.add(b)
 
         # add bookmark with duplicate url
-        b = self.__create_bookmark(url, gen_random_word(10))
+        self.new_username = gen_random_word(10)
+        b = self.__create_bookmark(url, self.new_username)
         DBSession.add(b)
 
         trans.commit()
@@ -71,3 +73,15 @@ class BCeleryTaskTest(TestDBBase):
         stat = StatBookmark.query.first()
         self.assertEqual(stat.attrib, stats.TAG_CT)
         self.assertEqual(stat.data, 4)
+
+    def test_task_count_user_total(self):
+        """The task should generate a total count stat record of a user"""
+        tasks.count_total_each_user()
+
+        stat = StatBookmark.query.first()
+        self.assertEqual(stat.attrib, self.username)
+        if self.username == self.new_username:
+            self.data = 4
+        else:
+            self.data = 3
+        self.assertEqual(stat.data, self.data)
