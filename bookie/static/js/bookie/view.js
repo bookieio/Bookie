@@ -1409,15 +1409,17 @@ YUI.add('bookie-view', function (Y) {
 	    
 	    var name = Y.one('#name').get('value');
 	    var email = Y.one('#email').get('value');
-	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    var re = RegExp(['/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)'
+		            ,'|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])'
+		            ,'|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'].join(''));
 	    // validate email and username
-	    if(!name | !email | !re.test(email)) {
+	    if(!name || !email || !re.test(email)) {
 		if(!name) {
                     that._show_message('Please enter valid Name', true);
 		}
-		else if(!email | !re.test(email)) {
+		else if(!email || !re.test(email)) {
                     that._show_message('Please enter valid Email', true);
-		    Y.one('#email').set('value','');
+                    Y.one('#email').set('value','');
 		}
 	    }
             // add the password data to the cfg passed to the api
@@ -1435,7 +1437,8 @@ YUI.add('bookie-view', function (Y) {
                     error: function (data, status_str, response, args) {
                         console.log(data);
                         console.log(response);
-                        that._show_message('Some error ocurred while making changes...', true);
+                        that._show_message('Some error ocurred while \
+				making changes...', true);
                     }
                 });
 	    }
