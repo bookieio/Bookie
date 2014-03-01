@@ -23,6 +23,52 @@ YUI.add('bookie-test-view-account', function (Y) {
         }
     }));
 
+
+    ns.suite.add(new Y.Test.Case({
+        name: "Account Information Change",
+
+        setUp: function() {
+            this.view = new Y.bookie.AccountInfoView();
+            this.view.render();
+        },
+
+        tearDown: function() {
+            this.view.destroy();
+            Y.one('#email').setAttribute('value', '');
+            Y.one('#name').setAttribute('value', '');
+        },
+
+        test_invalid_name: function () {
+            Y.one('#submit_account_change').simulate('click');
+            this.wait(function() {
+
+                var message = Y.one('#account_msg');
+                Y.Assert.areEqual(
+                    "Please enter valid name",
+                    message.get('innerHTML'));
+                Y.Assert.areEqual(
+                    message.getAttribute('class'),
+                    'error');
+            },500);
+        },
+
+        test_invalid_email: function () {
+            Y.one('#name').setAttribute('value', 'admin');
+            Y.one('#submit_account_change').simulate('click');
+
+            this.wait(function() {
+                var message = Y.one('#account_msg');
+                Y.Assert.areEqual(
+                    "Please enter valid email address",
+                    message.get('innerHTML'));
+                Y.Assert.areEqual(
+                    message.getAttribute('class'),
+                    'error');
+            },500);
+        }
+    }));
+
+
     ns.suite.add(new Y.Test.Case({
         name: 'Test the invite bits',
         setUp: function () {
