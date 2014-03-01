@@ -16,6 +16,8 @@ def tag_list(request):
     """Display a list of your tags"""
     rdict = request.matchdict
     username = rdict.get("username", None)
+    if username:
+	username = username.lower()
 
     tags_found = TagMgr.find(username=username)
 
