@@ -37,6 +37,7 @@ IMPORTER_CT = u'importer_queue'
 TOTAL_CT = u'user_bookmarks'
 UNIQUE_CT = u'unique_bookmarks'
 TAG_CT = u'total_tags'
+USER_CT = u'user_bookmarks_{}'
 
 
 class StatBookmarkMgr(object):
@@ -82,6 +83,16 @@ class StatBookmarkMgr(object):
         """Mark how deep the importer queue is at the moment"""
         total = ImportQueueMgr.size()
         stat = StatBookmark(attrib=IMPORTER_CT, data=total)
+        DBSession.add(stat)
+
+    @staticmethod
+    def count_user_bookmarks(username):
+        """Count the total number of bookmarks for the user in the system"""
+        total = BmarkMgr.count(username)
+        stat = StatBookmark(
+            attrib=USER_CT.format(username),
+            data=total
+        )
         DBSession.add(stat)
 
 

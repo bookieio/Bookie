@@ -339,6 +339,7 @@ class Hashed(Base):
 
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
+
     @staticmethod
     def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
