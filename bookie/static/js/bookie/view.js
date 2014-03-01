@@ -1446,7 +1446,7 @@ YUI.add('bookie-view', function (Y) {
             e.preventDefault();
             Y.one('#account_msg').hide();
 
-            var name = Y.one('#name').get('value');
+	    var name = Y.one('#name').get('value');
 	    var email = Y.one('#email').get('value');
 	    var re = RegExp(['/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)'
 		            ,'|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])'
@@ -1461,7 +1461,7 @@ YUI.add('bookie-view', function (Y) {
                     Y.one('#email').set('value','');
 		}
 	    }
-            // add the password data to the cfg passed to the api
+	    // add the password data to the cfg passed to the api
 	    else {
                 api_cfg = Y.merge(api_cfg, {
                     name: Y.one('#name').get('value'),
