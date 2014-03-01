@@ -23,6 +23,42 @@ YUI.add('bookie-test-view-account', function (Y) {
         }
     }));
 
+
+    ns.suite.add(new Y.Test.Case({
+        name: "Account Information Change",
+ 
+        test_error_message: function () {
+		
+            var old_method = Y.bookie.Api.route.UserAccountChange;
+            Y.bookie.Api.route.UserAccountChange = function(cfg) {
+		return {
+                    call: function(cfg) {
+                        cfg.error(null, null, {
+                            response: resp
+                        });
+                    }
+		}
+	    };
+            var accountinfoview = new Y.bookie.AccountInfoView();
+            accountinfoview.render();
+	
+            Y.one('#submit_account_change').simulate('click');
+            this.wait(function() {
+	
+                var message = Y.one('#account_msg');
+                Y.Assert.areEqual(
+                    "Please enter valid Name",
+                    message.get('innerHTML'));
+                Y.Assert.areEqual(
+                    message.getAttribute('class'),
+                    'success');
+                Y.bookie.Api.route.UserAccountChange = old_method;
+	    },500)
+	},
+	
+    }));
+
+
     ns.suite.add(new Y.Test.Case({
         name: 'Test the invite bits',
         setUp: function () {
