@@ -23,3 +23,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Parth P. Panchal
 - Daniel Dyla
 - Pradyumna
+- Sambuddha Basu
