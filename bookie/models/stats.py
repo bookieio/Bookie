@@ -84,6 +84,15 @@ class StatBookmarkMgr(object):
         stat = StatBookmark(attrib=IMPORTER_CT, data=total)
         DBSession.add(stat)
 
+    @staticmethod
+    def count_total_each_user():
+        """Count the total number of bookmarks for each user in the system"""
+        usernames = BmarkMgr.get_username()
+        for username in usernames:
+            total = BmarkMgr.count(username[0])
+            stat = StatBookmark(attrib=username[0], data=total)
+            DBSession.add(stat)
+
 
 class StatBookmark(Base):
     """First stats we track are the counts of things.

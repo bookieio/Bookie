@@ -340,6 +340,14 @@ class Hashed(Base):
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
     @staticmethod
+    def get_username():
+        """Get usernames from the system"""
+        from bookie.models.auth import User
+        qry = DBSession.query(User.username).\
+            filter(User.activated == True)
+        return qry.all()
+
+    @staticmethod
     def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
         # normalize the url
