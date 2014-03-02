@@ -552,6 +552,58 @@ Example
          }
 
 
+/:username/stats/bmarkcount
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usage
+''''''
+*GET* `/api/v1/admin/stats/bmarkcount`
+
+Get a json dump of the bookmark count for a user's account for a time period.
+The time period can be specified or else a json dump of the bookmark count of
+the past 30 days will be returned.  If the start_date is specified to be the
+first day of the month and the end_date is not supplied, a json response of
+the bookmark count of the whole month will be returned.
+
+:query param: api_key *required* - the api key for your account to make the call with
+:query param: start_date *optional* - Find the bookmark count in the specified time window,
+              beginning with start_date.
+:query param: end_date *optional* - Find the bookmark count in the specified time window,
+              ending with end_date.
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/stats/bmarkcount?start_date=2014-03-01&end_date=2014-03-05&api_key=12345..')
+    >>> {
+            "count": [
+              {
+                "attrib": "user_bookmarks_admin",
+                "data": 0,
+                "id": 1,
+                "tstamp": "2014-03-02 20:50:52"
+              },
+              {
+                "attrib": "user_bookmarks_admin",
+                "data": 3,
+                "id": 10,
+                "tstamp": "2014-03-03 20:50:52"
+              },
+              {
+                "attrib": "user_bookmarks_admin",
+                "data": 5,
+                "id": 21,
+                "tstamp": "2014-03-04 20:50:52"
+              }
+            ]
+        }
+
 
 /:username/tags/complete
 ~~~~~~~~~~~~~~~~~~~~~~~~~

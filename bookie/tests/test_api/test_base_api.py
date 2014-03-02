@@ -12,6 +12,12 @@ from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
+from bookie.tests import factory
+
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 GOOGLE_HASH = u'aa2239c17609b2'
 BMARKUS_HASH = u'c5c21717c99797'
@@ -100,6 +106,23 @@ class BookieAPITest(unittest.TestCase):
         # Run the celery task for indexing this bookmark.
         tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
+
+    def _setup_user_bookmark_count(self):
+        """Fake user bookmark counts are inserted into the database"""
+        test_date_1 = datetime(2013, 11, 25, 3, 3, 3)
+        stat1 = factory.make_user_bookmark_count(username=u'admin',
+                                                 data=20,
+                                                 tstamp=test_date_1)
+        test_date_2 = datetime(2013, 11, 15, 4, 4, 4)
+        stat2 = factory.make_user_bookmark_count(username=u'admin',
+                                                 data=30,
+                                                 tstamp=test_date_2)
+        test_date_3 = datetime(2013, 12, 28, 5, 5, 5)
+        stat3 = factory.make_user_bookmark_count(username=u'admin',
+                                                 data=15,
+                                                 tstamp=test_date_3)
+        transaction.commit()
+        return [stat1, stat2, stat3]
 
     def test_add_bookmark(self):
         """We should be able to add a new bookmark to the system"""
@@ -450,6 +473,111 @@ class BookieAPITest(unittest.TestCase):
             'python' not in res.body,
             "Should not have python as a tag completion: " + res.body)
         self._check_cors_headers(res)
+
+    def test_start_defined_end(self):
+        """Test getting a user's bookmark count over a period of time when
+        only start_date is defined and end_date is None"""
+        test_dates = self._setup_user_bookmark_count()
+        test_start_date = datetime(2013, 11, 16, 6, 6, 6)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_start_date},
+                               status=200)
+        data = json.loads(res.body)
+        count = data['count'][0]
+        self.assertEqual(
+            count['attrib'], test_dates[0][0])
+        self.assertEqual(
+            count['data'], test_dates[0][1])
+        self.assertEqual(
+            count['tstamp'], str(test_dates[0][2]))
+        # Test start_date and end_date.
+        self.assertEqual(
+            data['start_date'], str(test_start_date))
+        self.assertEqual(
+            data['end_date'], str(test_start_date + timedelta(days=30)))
+
+    def test_start_defined_end_defined(self):
+        """Test getting a user's bookmark count over a period of time when both
+        start_date and end_date are defined"""
+        test_dates = self._setup_user_bookmark_count()
+        test_start_date = datetime(2013, 11, 14, 7, 7, 7)
+        test_end_date = datetime(2013, 11, 16, 7, 7, 7)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_start_date,
+                                       u'end_date': test_end_date},
+                               status=200)
+        data = json.loads(res.body)
+        count = data['count'][0]
+        self.assertEqual(
+            count['attrib'], test_dates[1][0])
+        self.assertEqual(
+            count['data'], test_dates[1][1])
+        self.assertEqual(
+            count['tstamp'], str(test_dates[1][2]))
+        # Test start_date and end_date.
+        self.assertEqual(
+            data['start_date'], str(test_start_date))
+        self.assertEqual(
+            data['end_date'], str(test_end_date))
+
+    def test_start_end_defined(self):
+        """Test getting a user's bookmark count over a period of time when
+        start_date is None and end_date is defined"""
+        test_dates = self._setup_user_bookmark_count()
+        test_end_date = datetime(2013, 12, 29, 8, 8, 8)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'end_date': test_end_date},
+                               status=200)
+        data = json.loads(res.body)
+        count = data['count'][0]
+        self.assertEqual(
+            count['attrib'], test_dates[2][0])
+        self.assertEqual(
+            count['data'], test_dates[2][1])
+        self.assertEqual(
+            count['tstamp'], str(test_dates[2][2]))
+        # Test start_date and end_date.
+        self.assertEqual(
+            data['start_date'], str(test_end_date - timedelta(days=30)))
+        self.assertEqual(
+            data['end_date'], str(test_end_date))
+
+    def test_start_of_month(self):
+        """Test getting a user's bookmark count when start_date is the
+        first day of the month"""
+        test_dates = self._setup_user_bookmark_count()
+        test_start_date = datetime(2013, 11, 1, 9, 9, 9)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_start_date},
+                               status=200)
+        data = json.loads(res.body)
+        count = data['count']
+        self.assertEqual(
+            count[0]['attrib'], test_dates[1][0])
+        self.assertEqual(
+            count[0]['data'], test_dates[1][1])
+        self.assertEqual(
+            count[0]['tstamp'], str(test_dates[1][2]))
+        self.assertEqual(
+            count[1]['attrib'], test_dates[0][0])
+        self.assertEqual(
+            count[1]['data'], test_dates[0][1])
+        self.assertEqual(
+            count[1]['tstamp'], str(test_dates[0][2]))
+        # Test start_date and end_date.
+        self.assertEqual(
+            data['start_date'], str(test_start_date))
+        self.assertEqual(
+            data['end_date'], str(datetime(2013, 11, 30, 9, 9, 9)))
+
+    def user_bookmark_count_authorization(self):
+        """If no API_KEY is present, it is unauthorized request"""
+        self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                         status=403)
 
     def test_account_information(self):
         """Test getting a user's account information"""
