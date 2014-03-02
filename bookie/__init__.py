@@ -5,7 +5,6 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSONP
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
 
 from bookie.lib.access import RequestWithUserAttribute
 from bookie.models import initialize_sql
@@ -38,12 +37,11 @@ def main(global_config, **settings):
         settings.get('auth.secret'),
         callback=UserMgr.auth_groupfinder)
     authz_policy = ACLAuthorizationPolicy()
-    bookie_session_factory = UnencryptedCookieSessionFactoryConfig('bookie cookie')
+
     config = Configurator(settings=settings,
                           root_factory='bookie.RootFactory',
                           authentication_policy=authn_policy,
-                          authorization_policy=authz_policy,
-                          session_factory=bookie_session_factory)
+                          authorization_policy=authz_policy)
     config.set_request_factory(RequestWithUserAttribute)
 
     config = build_routes(config)
