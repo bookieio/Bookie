@@ -67,6 +67,8 @@ class StatBookmarkMgr(object):
             filter(StatBookmark.attrib==USER_CT.format(username)).\
             filter(StatBookmark.tstamp>=start_date).\
             filter(StatBookmark.tstamp<=end_date)
+        
+        qry.order_by(StatBookmark.tstamp)
         return qry.all()
 
     @staticmethod
