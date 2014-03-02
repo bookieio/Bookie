@@ -377,7 +377,7 @@ def user_bmark_count(request):
     username = request.user.username
     start_date = params.get('start_date', None)
     end_date = params.get('end_date', None)
-    bmark_count_list = StatBookmarkMgr.user_count_bmark(
+    bmark_count_list = StatBookmarkMgr.count_user_bmarks(
         username=username,
         start_date=start_date,
         end_date=end_date
