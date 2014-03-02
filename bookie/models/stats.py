@@ -61,14 +61,12 @@ class StatBookmarkMgr(object):
         return qry.all()
 
     @staticmethod
-    def get_user_stat(username, start_date=None, end_date=None):
+    def get_user_bmark_count(username, start_date, end_date):
         """Fetch the bookmark count for the user from the stats table"""
         qry = StatBookmark.query.\
-            filter(StatBookmark.attrib==username)
-        if start_date:
-            qry = qry.filter(StatBookmark.tstamp>=start_date)
-        if end_date:
-            qry = qry.filter(StatBookmark.tstamp<=end_date)
+            filter(StatBookmark.attrib==USER_CT.format(username)).\
+            filter(StatBookmark.tstamp>=start_date).\
+            filter(StatBookmark.tstamp<=end_date)
         return qry.all()
 
     @staticmethod
@@ -110,10 +108,9 @@ class StatBookmarkMgr(object):
         DBSession.add(stat)
 
     @staticmethod
-    def user_count_bmark(username, start_date=None, end_date=None):
+    def count_user_bmarks(username, start_date=None, end_date=None):
         """Get a list of user bookmark count
         """
-        username = USER_CT.format(username) 
         if not start_date:
             if not end_date:
                 """If both start_date and end_date are None,
@@ -126,7 +123,7 @@ class StatBookmarkMgr(object):
                 global STATS_WINDOW
                 STATS_WINDOW = monthrange(start_date.year, start_date.day)[1] - 1
             end_date = start_date + timedelta(days=STATS_WINDOW)
-        return StatBookmarkMgr.get_user_stat(username, start_date, end_date)
+        return StatBookmarkMgr.get_user_bmark_count(username, start_date, end_date)
 
 
 class StatBookmark(Base):
