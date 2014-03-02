@@ -57,7 +57,7 @@ class ImportViews(BookieView):
                 # we have some posted values
                 files = post.get('import_file', None)
 
-                if files:
+                if hasattr(files, 'filename'):
                     storage_dir_tpl = self.settings.get('import_files',
                                                         '/tmp/bookie')
                     storage_dir = storage_dir_tpl.format(
