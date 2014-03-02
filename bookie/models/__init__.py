@@ -470,26 +470,6 @@ class BmarkMgr(object):
             filter(Bmark.username == username).all()
 
     @staticmethod
-    def user_count_bmark(username, start_date=None, end_date=None):
-        """Get a list of user bookmark count
-        """
-        from bookie.models.stats import StatBookmark
-        days = 30
-        qry = StatBookmark.query.\
-            filter(StatBookmark.attrib == username)
-        if not start_date:
-            if not end_date:
-                end_date = datetime.utcnow()
-            start_date = end_date - timedelta(days=days)
-        elif start_date and not end_date:
-            if start_date.day == 1:
-                days = monthrange(start_date.year, start_date.day)[1] - 1
-            end_date = start_date + timedelta(days=days)
-        qry = qry.filter(StatBookmark.tstamp <= end_date)
-        qry = qry.filter(StatBookmark.tstamp >= start_date)
-        return qry.all()
-
-    @staticmethod
     def recent(limit=50, page=0, with_tags=False):
         """Get a recent set of bookmarks"""
         qry = Bmark.query
