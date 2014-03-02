@@ -4,9 +4,9 @@ import logging
 from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 
+from calendar import monthrange
 from datetime import datetime
 from datetime import timedelta
-from calendar import monthrange
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import event
