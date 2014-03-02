@@ -365,6 +365,33 @@ def bmark_recent(request, with_content=False):
     })
 
 
+@view_config(route_name="api_count_bmarks_user", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, anon=False)
+def user_bmark_count(request):
+    """Get a list of bookmark count for the api call"""
+    rdict = request.matchdict
+    params = request.params
+
+    username = 'user_bookmarks_' + request.user.username
+    start_date = params.get('start_date', None)
+    end_date = params.get('end_date', None)
+    bmark_count_list = BmarkMgr.user_count_bmark(
+        username=username,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    result_set = []
+    for res in bmark_count_list:
+        return_obj = dict(res)
+
+        result_set.append(return_obj)
+
+    return _api_response(request, {
+        'bookmark_count': result_set
+    })
+
+
 @view_config(route_name="api_bmarks_popular", renderer="jsonp")
 @view_config(route_name="api_bmarks_popular_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
