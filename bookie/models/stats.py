@@ -123,9 +123,10 @@ class StatBookmarkMgr(object):
         elif start_date and not end_date:
             if start_date.day == 1:
                 """If the starting day is 1, stats of the month is returned"""
-                global STATS_WINDOW
-                STATS_WINDOW = monthrange(start_date.year, start_date.day)[1] - 1
-            end_date = start_date + timedelta(days=STATS_WINDOW)
+                days = monthrange(start_date.year, start_date.day)[1] - 1
+                end_date = start_date + timedelta(days=days)
+            else:
+                end_date = start_date + timedelta(days=STATS_WINDOW)
         return StatBookmarkMgr.get_user_bmark_count(username, start_date, end_date)
 
 
