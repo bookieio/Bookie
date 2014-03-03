@@ -81,7 +81,7 @@ def make_bookmark(user=None):
 def make_user_bookmark_count(username, data, tstamp=None):
     """Generate a fake user bookmark count for testing use"""
     from bookie.models.stats import USER_CT
-    if not tstamp:
+    if tstamp is None:
         tstamp = datetime.utcnow()
     bmark_count = StatBookmark(tstamp=tstamp,
                                attrib=USER_CT.format(username),
