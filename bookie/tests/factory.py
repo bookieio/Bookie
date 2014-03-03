@@ -1,4 +1,5 @@
 """Provide tools for generating objects for testing purposes."""
+from datetime import datetime
 from random import randint
 import random
 import string
@@ -8,7 +9,8 @@ from bookie.models import Bmark
 from bookie.models import Tag
 from bookie.models.applog import AppLog
 from bookie.models.auth import User
-
+from bookie.models.stats import StatBookmark
+from bookie.models.stats import USER_CT
 
 def random_int(max=1000):
     """Generate a random integer value
@@ -75,6 +77,17 @@ def make_bookmark(user=None):
     DBSession.flush()
     return bmark
 
+
+def make_user_bookmark_count(username, data, tstamp=None):
+    """Generate a fake user bookmark count for testing use"""
+    if tstamp is None:
+        tstamp = datetime.utcnow()
+    bmark_count = StatBookmark(tstamp=tstamp,
+                               attrib=USER_CT.format(username),
+                               data=data)
+    DBSession.add(bmark_count)
+    DBSession.flush()
+    return bmark_count
 
 def make_user(username=None):
     """Generate a fake user to test against."""
