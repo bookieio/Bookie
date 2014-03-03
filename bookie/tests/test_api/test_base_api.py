@@ -311,11 +311,6 @@ class BookieAPITest(unittest.TestCase):
         # self.assertTrue('here dude' in bmark[u'readable']['content'],
         #     "There should be content: " + str(bmark))
 
-    def test_user_bookmark_count(self):
-        self._get_good_request(content=True)
-        res = self.testapp.get('/api/v1/admin/stats/bmarkcount',
-                               params={'api_key': API_KEY},
-                               status=200)
 
     def test_bookmark_recent(self):
         """Test that we can get list of bookmarks with details"""
@@ -456,6 +451,12 @@ class BookieAPITest(unittest.TestCase):
             'python' not in res.body,
             "Should not have python as a tag completion: " + res.body)
         self._check_cors_headers(res)
+
+    def test_user_bookmark_count(self):
+        """Test getting a user's bookmark count over a period of time"""
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={'api_key': API_KEY},
+                               status=200)
 
     def test_account_information(self):
         """Test getting a user's account information"""

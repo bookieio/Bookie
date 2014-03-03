@@ -8,6 +8,7 @@ from bookie.models import Bmark
 from bookie.models import Tag
 from bookie.models.applog import AppLog
 from bookie.models.auth import User
+from bookie.models.stats import StatBookmark
 
 
 def random_int(max=1000):
@@ -75,6 +76,15 @@ def make_bookmark(user=None):
     DBSession.flush()
     return bmark
 
+
+def make_user_bookmark_count(tstamp, username, data):
+    """Generate a fake user bookmark couont for testing use"""
+    bmark_count = StatBookmark(tstamp=tstamp,
+                               attrib=username,
+                               data=data)
+    DBSession.add(bmark_count)
+    DBSession.flush()
+    return bmark_count
 
 def make_user(username=None):
     """Generate a fake user to test against."""
