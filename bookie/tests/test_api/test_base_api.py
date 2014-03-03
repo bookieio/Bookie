@@ -458,19 +458,79 @@ class BookieAPITest(unittest.TestCase):
 
     def test_user_bookmark_count(self):
         """Test getting a user's bookmark count over a period of time"""
-        """Firstly, we have to generate some fake user bookmark count 
-        into the system"""
+        """Fake user bookmark counts are inserted into the database"""
+        test_date_1 = datetime(2013, 11, 25, 3, 3, 3)
         factory.make_user_bookmark_count(username=u'admin',
-                                             data=20,
-                                             tstamp=(datetime.utcnow() - timedelta(hours=2)))
+                                         data=20,
+                                         tstamp=test_date_1)
+        test_date_2 = datetime(2013, 11, 15, 4, 4, 4)
         factory.make_user_bookmark_count(username=u'admin',
-                                             data=30,
-                                             tstamp=(datetime.utcnow() - timedelta(days=2)))
+                                         data=30,
+                                         tstamp=test_date_2)
+        test_date_3 = datetime(2013, 12, 28, 5, 5, 5)
+        factory.make_user_bookmark_count(username=u'admin',
+                                         data=15,
+                                         tstamp=test_date_3)
         transaction.commit()
+
+        """If only the start_date is defined and end_date is None"""
+        test_start_date1 = datetime(2013, 11, 16, 6, 6, 6)
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
-                               params={'api_key': API_KEY},
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_start_date1},
                                status=200)
-        print res.body
+        count = json.loads(res.body)['count'][0]
+        self.assertEqual(
+            count['attrib'], 'user_bookmarks_admin',
+            "Should have an attribute of user_bookmarks_admin")
+        self.assertEqual(
+            count['data'], 20,
+            "Should have a data value of 20")
+        self.assertEqual(
+            count['tstamp'], str(test_date_1),
+            "Should have datetime " + str(test_date_1))
+
+        """If both start_date and end_date are defined"""
+        test_start_date2 = datetime(2013, 11, 14, 7, 7, 7)
+        test_end_date2 = datetime(2013, 11, 16, 7, 7, 7)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_start_date2,
+                                       u'end_date': test_end_date2},
+                               status=200)
+        count = json.loads(res.body)['count'][0]
+        self.assertEqual(
+            count['attrib'], 'user_bookmarks_admin',
+            "Should have an attribute of user_bookmarks_admin")
+        self.assertEqual(
+            count['data'], 30,
+            "Should have a data value of 30")
+        self.assertEqual(
+            count['tstamp'], str(test_date_2),
+            "Should have datetime " + str(test_date_2))
+
+        """If start_date is None and end_date is defined"""
+        test_end_date3 = datetime(2013, 12, 29, 8, 8, 8)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'end_date': test_end_date3},
+                               status=200)
+        count = json.loads(res.body)['count'][0]
+        self.assertEqual(
+            count['attrib'], 'user_bookmarks_admin',
+            "Should have an attribute of user_bookmarks_admin")
+        self.assertEqual(
+            count['data'], 15,
+            "Should have a data value of 30")
+        self.assertEqual(
+            count['tstamp'], str(test_date_3),
+            "Should have datetime " + str(test_date_3))
+
+        """If no API_KEY is present, it is unauthorized request"""
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               status=403)
+
+        
 
     def test_account_information(self):
         """Test getting a user's account information"""
