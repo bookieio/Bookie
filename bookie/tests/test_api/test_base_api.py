@@ -12,6 +12,10 @@ from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
+from bookie.tests import factory
+
+from datetime import datetime
+from datetime import timedelta
 
 GOOGLE_HASH = u'aa2239c17609b2'
 BMARKUS_HASH = u'c5c21717c99797'
@@ -454,9 +458,19 @@ class BookieAPITest(unittest.TestCase):
 
     def test_user_bookmark_count(self):
         """Test getting a user's bookmark count over a period of time"""
+        """Firstly, we have to generate some fake user bookmark count 
+        into the system"""
+        factory.make_user_bookmark_count(username=u'admin',
+                                             data=20,
+                                             tstamp=(datetime.utcnow() - timedelta(hours=2)))
+        factory.make_user_bookmark_count(username=u'admin',
+                                             data=30,
+                                             tstamp=(datetime.utcnow() - timedelta(days=2)))
+        transaction.commit()
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
                                params={'api_key': API_KEY},
                                status=200)
+        print res.body
 
     def test_account_information(self):
         """Test getting a user's account information"""

@@ -10,6 +10,7 @@ from bookie.models.applog import AppLog
 from bookie.models.auth import User
 from bookie.models.stats import StatBookmark
 
+from datetime import datetime
 
 def random_int(max=1000):
     """Generate a random integer value
@@ -77,10 +78,13 @@ def make_bookmark(user=None):
     return bmark
 
 
-def make_user_bookmark_count(tstamp, username, data):
-    """Generate a fake user bookmark couont for testing use"""
+def make_user_bookmark_count(username, data, tstamp=None):
+    """Generate a fake user bookmark count for testing use"""
+    from bookie.models.stats import USER_CT
+    if not tstamp:
+        tstamp = datetime.utcnow()
     bmark_count = StatBookmark(tstamp=tstamp,
-                               attrib=username,
+                               attrib=USER_CT.format(username),
                                data=data)
     DBSession.add(bmark_count)
     DBSession.flush()
