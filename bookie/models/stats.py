@@ -32,12 +32,15 @@ from bookie.models import BmarkMgr
 from bookie.models import TagMgr
 from bookie.models.queue import ImportQueueMgr
 
+from datetime import timedelta
+
 
 IMPORTER_CT = u'importer_queue'
 TOTAL_CT = u'user_bookmarks'
 UNIQUE_CT = u'unique_bookmarks'
 TAG_CT = u'total_tags'
 USER_CT = u'user_bookmarks_{}'
+STATS_WINDOW = 30
 
 
 class StatBookmarkMgr(object):
@@ -55,6 +58,18 @@ class StatBookmarkMgr(object):
 
         # order things up by their date so they're grouped together
         qry.order_by(StatBookmark.tstamp)
+        return qry.all()
+
+    @staticmethod
+    def get_user_bmark_count(username, start_date, end_date):
+        """Fetch the bookmark count for the user from the stats table"""
+        qry = StatBookmark.query.\
+            filter(StatBookmark.attrib==USER_CT.format(username)).\
+            filter(StatBookmark.tstamp>=start_date).\
+            filter(StatBookmark.tstamp<=end_date)
+
+        # order the result by their date
+        qry = qry.order_by(StatBookmark.tstamp)
         return qry.all()
 
     @staticmethod
@@ -94,6 +109,25 @@ class StatBookmarkMgr(object):
             data=total
         )
         DBSession.add(stat)
+
+    @staticmethod
+    def count_user_bmarks(username, start_date=None, end_date=None):
+        """Get a list of user bookmark count
+        """
+        if not start_date:
+            if not end_date:
+                """If both start_date and end_date are None,
+                end_date will be the current date"""
+                end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=STATS_WINDOW)
+        elif start_date and not end_date:
+            if start_date.day == 1:
+                """If the starting day is 1, stats of the month is returned"""
+                days = monthrange(start_date.year, start_date.day)[1] - 1
+                end_date = start_date + timedelta(days=days)
+            else:
+                end_date = start_date + timedelta(days=STATS_WINDOW)
+        return StatBookmarkMgr.get_user_bmark_count(username, start_date, end_date)
 
 
 class StatBookmark(Base):

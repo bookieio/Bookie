@@ -365,6 +365,35 @@ def bmark_recent(request, with_content=False):
     })
 
 
+@view_config(route_name="api_count_bmarks_user", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, anon=False)
+def user_bmark_count(request):
+    """Get the user's daily bookmark total for the given time window"""
+    rdict = request.matchdict
+    params = request.params
+
+    from bookie.models.stats import StatBookmarkMgr
+
+    username = request.user.username
+    start_date = params.get('start_date', None)
+    end_date = params.get('end_date', None)
+    bmark_count_list = StatBookmarkMgr.count_user_bmarks(
+        username=username,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    result_set = []
+    for res in bmark_count_list:
+        return_obj = dict(res)
+
+        result_set.append(return_obj)
+
+    return _api_response(request, {
+        'count': result_set
+    })
+
+
 @view_config(route_name="api_bmarks_popular", renderer="jsonp")
 @view_config(route_name="api_bmarks_popular_user", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, anon=True)
