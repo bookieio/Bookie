@@ -561,23 +561,25 @@ Usage
 
 Get a json dump of the bookmark count for a user's account for a time period. The 
 time period can be specified or else a json dump of the bookmark count of the past 30 days will be returned.
-If the start_date is specified to be the first day of the month and the end_date is left as None, 
-a json dump of the bookmark count of the whole month will be returned.
+If the start_date is specified to be the first day of the month and the end_date is not supplied, 
+a json response of the bookmark count of the whole month will be returned.
 
 :query param: api_key *required* - the api key for your account to make the call with
-:query param: start_date *optional* - the bookmark count date should be after start_date
-:query param: end_date *optional* - the bookmark count date should be before end_date
+:query param: start_date *optional* - Find the bookmark count in the specified time window,
+              beginning with start_date.
+:query param: end_date *optional* - Find the bookmark count in the specified time window,
+              ending with end_date.
 
 Status Codes
 ''''''''''''
-:success 200: If successful a "200 OK" will be returned, with the json of message: done
+:success 200: If successful a "200 OK" will be returned
 :error 403: if the api key is not valid or missing then this is an unauthorized request
 
 Example
 '''''''
 ::
 
-    requests.get('http://127.0.0.1:6543/api/v1/admin/stats/bmarkcount?api_key=12345...&start_date=2014-...&end_date=2014-...')
+    requests.get('http://127.0.0.1:6543/api/v1/admin/stats/bmarkcount?start_date=2014-03-01&end_date=2014-03-05&api_key=12345..')
     >>> {
             "count": [
               {
