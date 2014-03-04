@@ -27,7 +27,7 @@ To push code for review, cleanup the commit history.
   # Optional: rebase your commit history into one or more meaningful commits.
   git rebase -i --autosquash
   # And push your feature branch up to your fork on Github.
-  git push origin {featureBranchName}
+  git push origin {featureBranchName}:{featureBranchName}
 
 
 In order to submit your code for review, you need to generate a pull request.
