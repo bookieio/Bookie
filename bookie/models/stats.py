@@ -41,7 +41,7 @@ IMPORTER_CT = u'importer_queue'
 TOTAL_CT = u'user_bookmarks'
 UNIQUE_CT = u'unique_bookmarks'
 TAG_CT = u'total_tags'
-USER_CT = u'user_bookmarks_{}'
+USER_CT = u'user_bookmarks_{0}'
 STATS_WINDOW = 30
 
 
