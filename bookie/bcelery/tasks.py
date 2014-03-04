@@ -12,6 +12,7 @@ from bookie.lib.importer import Importer
 from bookie.lib.readable import ReadUrl
 from bookie.models import initialize_sql
 from bookie.models import Bmark
+from bookie.models import BmarkMgr
 from bookie.models import Readable
 from bookie.models.auth import UserMgr
 from bookie.models.stats import StatBookmarkMgr
@@ -84,6 +85,12 @@ def count_tags():
     StatBookmarkMgr.count_total_tags()
     trans.commit()
 
+@celery.task(ignore_result=True)
+def delete_all_bookmarks(username):
+    """ Deletes all bookmarks for the current user"""
+    trans = transaction.begin()
+    BmarkMgr.delete_all_bookmarks(username)
+    trans.commit()
 
 @celery.task()
 def importer_process(import_id):

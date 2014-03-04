@@ -1,4 +1,6 @@
 """Test the basics including the bmark and tags"""
+
+from random import randint
 from pyramid import testing
 
 from bookie.models import DBSession
@@ -9,7 +11,6 @@ from bookie.models.auth import User
 from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
-
 
 class TestBmarkMgrStats(TestDBBase):
     """Handle some bmarkmgr stats checks"""
@@ -117,3 +118,31 @@ class TestBmarkMgrStats(TestDBBase):
 
         ct = BmarkMgr.count(username=usercommon.username)
         self.assertEqual(2, ct, 'We should have a total of 2: ' + str(ct))
+
+    def test_delete_all_bookmarks(self):
+        """Testing working of delete all bookmarks
+                Case 1: No bookmark present
+                Case 2: One bookmark present
+                Case 3: Multiple bookmarks present"""
+
+        l = [0, 1]
+        for i in range(10):
+            l.append(randint(10, 100))
+
+        for i in range(len(l)):
+            user = User()
+            user.username = gen_random_word(10)
+
+            DBSession.add(user)
+            for j in range(i):
+                b = Bmark(
+                    url=gen_random_word(12),
+                    username=user.username
+                )
+                b.hash_id = gen_random_word(3)
+                DBSession.add(b)
+
+            BmarkMgr.delete_all_bookmarks(user.username) 
+            ct = BmarkMgr.count(user.username)
+            self.assertEqual(ct, 0, 'All the bookmarks should be deleted')
+            DBSession.flush()
