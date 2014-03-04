@@ -567,6 +567,25 @@ class BmarkMgr(object):
             qry = DBSession.query(Bmark.username).distinct()
         return qry.count()
 
+    @staticmethod
+    def delete_all_bookmarks(username):
+        """Deletes all the bookmarks of the user
+
+        :param username : The username of the logged-in user
+        """
+        bids = DBSession.query(Bmark.bid).\
+            filter(Bmark.username == username).\
+            all()
+        if len(bids):
+            Bmark.query.filter(Bmark.username == username).delete()
+            deltags = bmarks_tags.delete().where(
+                bmarks_tags.c.bmark_id.in_([i[0] for i in bids])
+            )
+            DBSession.execute(deltags)
+            return len(bids)
+        else:
+            return None
+
 
 class BmarkTools(object):
     """Some stupid tools to help work with bookmarks"""

@@ -6,7 +6,17 @@
 %>
 ${account_nav()}
 
+<div class="message" style="text-align:center">
+    <br/>
+    <h3 style="color:green">
+        % if message:
+            ${message}
+        % endif
+    </h3>
+</div>
+
 <%include file="../jstpl.mako"/>
+
 
 <div class="form yui3-g">
     <div class="yui3-u-1-4 account_info">
@@ -112,9 +122,17 @@ ${password_reset(user, reset=False)}
         <textarea style="display: none; opacity: 0; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea>
     </div>
     </p>
-
-
 </div>
+
+<div class="form">
+    <div class="heading">Delete all bookmarks</div>
+     <form method="post" action="${request.route_url('user_delete_all_bookmarks', username=request.user.username)}">
+     <p>Enter 'Delete' (without quotes) in the space below and confirm to delete all bookmarks.</p> <br/>
+     <input type="text" id="delete" name="delete" value="" />
+     <input type="submit" value="Confirm" class="button" />
+     </form>
+</div>
+
 <%def name="add_js()">
     <script type="text/javascript">
         YUI().use('node', 'bookie-view', 'console', function (Y) {
