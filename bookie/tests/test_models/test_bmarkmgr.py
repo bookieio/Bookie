@@ -12,6 +12,7 @@ from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 
+
 class TestBmarkMgrStats(TestDBBase):
     """Handle some bmarkmgr stats checks"""
 
@@ -125,11 +126,11 @@ class TestBmarkMgrStats(TestDBBase):
                 Case 2: One bookmark present
                 Case 3: Multiple bookmarks present"""
 
-        l = [0, 1]
+        bmark_counts = [0, 1]
         for i in range(10):
-            l.append(randint(10, 100))
+            bmark_counts.append(randint(10, 100))
 
-        for i in range(len(l)):
+        for i in range(len(bmark_counts)):
             user = User()
             user.username = gen_random_word(10)
 
@@ -142,7 +143,7 @@ class TestBmarkMgrStats(TestDBBase):
                 b.hash_id = gen_random_word(3)
                 DBSession.add(b)
 
-            BmarkMgr.delete_all_bookmarks(user.username) 
+            BmarkMgr.delete_all_bookmarks(user.username)
             ct = BmarkMgr.count(user.username)
             self.assertEqual(ct, 0, 'All the bookmarks should be deleted')
             DBSession.flush()

@@ -571,10 +571,9 @@ class BmarkMgr(object):
     def delete_all_bookmarks(username):
         """Deletes all the bookmarks of the user
 
-	:param username : The username of the logged-in user
-
+        :param username : The username of the logged-in user
         """
-	Bmark.query.filter(Bmark.username == username).delete()
+        Bmark.query.filter(Bmark.username == username).delete()
 
 
 class BmarkTools(object):

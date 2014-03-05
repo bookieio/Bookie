@@ -85,12 +85,14 @@ def count_tags():
     StatBookmarkMgr.count_total_tags()
     trans.commit()
 
+
 @celery.task(ignore_result=True)
 def delete_all_bookmarks(username):
     """ Deletes all bookmarks for the current user"""
     trans = transaction.begin()
     BmarkMgr.delete_all_bookmarks(username)
     trans.commit()
+
 
 @celery.task()
 def importer_process(import_id):

@@ -6,14 +6,13 @@ from bookie.tests import gen_random_word
 
 LOG = logging.getLogger(__name__)
 
+
 class AccountViewsTest(TestViewBase):
-    """Test the account web views for a user"""
+
+    """Test the account web views for a user when deleting all bookmarks"""
 
     def test_delete_all_bookmarks_with_correct_confirmation(self):
-        """
-           Verify the various views workflow when deleting
-           all bookmarks from the user account page.
-        """
+        """Verify the workflow with correct confirmation."""
         self._login_admin()
         res = self.app.post(
             '/admin/account/delete_all_bookmarks',
@@ -27,15 +26,12 @@ class AccountViewsTest(TestViewBase):
             "200 OK",
             msg='recent status is 200, ' + res.status)
         self.assertTrue(
-            "The delete request has been queued and will be acted upon shortly." in res.body,
+            "The delete request has been queued" +
+            " and will be acted upon shortly." in res.body,
             msg="Request should contain the appropriate message.")
 
     def test_delete_all_bookmarks_with_wong_confirmation(self):
-        """
-           Verify the various views workflow when trying to
-	   delete all bookmarks from the user account page but
-           with wrong confirmation.
-        """
+        """Verify the workflow with wrong confirmation."""
         self._login_admin()
         res = self.app.post(
             '/admin/account/delete_all_bookmarks',
@@ -49,15 +45,12 @@ class AccountViewsTest(TestViewBase):
             "200 OK",
             msg='recent status is 200, ' + res.status)
         self.assertTrue(
-            "Delete request NOT initiated due to incorrect confirmation." in res.body,
+            "Delete request not confirmed. Please make sure" +
+            " to enter &#39;Delete&#39; to confirm." in res.body,
             msg="Request should contain the appropriate message.")
 
     def test_delete_all_bookmarks_without_confirmation(self):
-        """
-           Verify the various views workflow when trying to
-           delete all bookmarks from the user account page
-	   but without any confirmation.
-        """
+        """Verify the workflow without any confirmation."""
         self._login_admin()
         res = self.app.post(
             '/admin/account/delete_all_bookmarks',
@@ -71,5 +64,6 @@ class AccountViewsTest(TestViewBase):
             "200 OK",
             msg='recent status is 200, ' + res.status)
         self.assertTrue(
-            "Delete request NOT initiated due to incorrect confirmation." in res.body,
+            "Delete request not confirmed. Please make sure" +
+            " to enter &#39;Delete&#39; to confirm." in res.body,
             msg="Request should contain the appropriate message.")
