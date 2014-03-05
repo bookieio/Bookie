@@ -339,6 +339,7 @@ class Hashed(Base):
 
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
+
     @staticmethod
     def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
@@ -421,8 +422,10 @@ class BmarkMgr(object):
                     from_obj=[
                         bmarks_tags.join(
                             'tags',
-                            and_(Tag.name.in_(tags),
-                            bmarks_tags.c.tag_id == Tag.tid)
+                            and_(
+                                Tag.name.in_(tags),
+                                bmarks_tags.c.tag_id == Tag.tid
+                            )
                         ).
                         join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
                     ]).\
