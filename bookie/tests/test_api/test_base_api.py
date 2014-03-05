@@ -478,10 +478,9 @@ class BookieAPITest(unittest.TestCase):
         """Test getting a user's bookmark count over a period of time when
         only start_date is defined and end_date is None"""
         test_dates = self._setup_user_bookmark_count()
-        test_start_date = datetime(2013, 11, 16)
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
                                params={u'api_key': API_KEY,
-                                       u'start_date': test_start_date},
+                                       u'start_date': u'2013-11-16'},
                                status=200)
         data = json.loads(res.body)
         count = data['count'][0]
@@ -493,20 +492,18 @@ class BookieAPITest(unittest.TestCase):
             count['tstamp'], str(test_dates[0][2]))
         # Test start_date and end_date.
         self.assertEqual(
-            data['start_date'], str(test_start_date))
+            data['start_date'], u'2013-11-16 00:00:00')
         self.assertEqual(
-            data['end_date'], str(test_start_date + timedelta(days=30)))
+            data['end_date'], u'2013-12-16 00:00:00')
 
     def test_start_defined_end_defined(self):
         """Test getting a user's bookmark count over a period of time when both
         start_date and end_date are defined"""
         test_dates = self._setup_user_bookmark_count()
-        test_start_date = datetime(2013, 11, 14)
-        test_end_date = datetime(2013, 11, 16)
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
                                params={u'api_key': API_KEY,
-                                       u'start_date': test_start_date,
-                                       u'end_date': test_end_date},
+                                       u'start_date': u'2013-11-14',
+                                       u'end_date': u'2013-11-16'},
                                status=200)
         data = json.loads(res.body)
         count = data['count'][0]
@@ -518,18 +515,17 @@ class BookieAPITest(unittest.TestCase):
             count['tstamp'], str(test_dates[1][2]))
         # Test start_date and end_date.
         self.assertEqual(
-            data['start_date'], str(test_start_date))
+            data['start_date'], u'2013-11-14 00:00:00')
         self.assertEqual(
-            data['end_date'], str(test_end_date))
+            data['end_date'], u'2013-11-16 00:00:00')
 
     def test_start_end_defined(self):
         """Test getting a user's bookmark count over a period of time when
         start_date is None and end_date is defined"""
         test_dates = self._setup_user_bookmark_count()
-        test_end_date = datetime(2013, 12, 29)
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
                                params={u'api_key': API_KEY,
-                                       u'end_date': test_end_date},
+                                       u'end_date': u'2013-12-29'},
                                status=200)
         data = json.loads(res.body)
         count = data['count'][0]
@@ -541,18 +537,17 @@ class BookieAPITest(unittest.TestCase):
             count['tstamp'], str(test_dates[2][2]))
         # Test start_date and end_date.
         self.assertEqual(
-            data['start_date'], str(test_end_date - timedelta(days=30)))
+            data['start_date'], u'2013-11-29 00:00:00')
         self.assertEqual(
-            data['end_date'], str(test_end_date))
+            data['end_date'], u'2013-12-29 00:00:00')
 
     def test_start_of_month(self):
         """Test getting a user's bookmark count when start_date is the
         first day of the month"""
         test_dates = self._setup_user_bookmark_count()
-        test_start_date = datetime(2013, 11, 1)
         res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
                                params={u'api_key': API_KEY,
-                                       u'start_date': test_start_date},
+                                       u'start_date': u'2013-11-1'},
                                status=200)
         data = json.loads(res.body)
         count = data['count']
@@ -570,9 +565,9 @@ class BookieAPITest(unittest.TestCase):
             count[1]['tstamp'], str(test_dates[0][2]))
         # Test start_date and end_date.
         self.assertEqual(
-            data['start_date'], str(test_start_date))
+            data['start_date'], u'2013-11-01 00:00:00')
         self.assertEqual(
-            data['end_date'], str(datetime(2013, 11, 30)))
+            data['end_date'], u'2013-11-30 00:00:00')
 
     def user_bookmark_count_authorization(self):
         """If no API_KEY is present, it is unauthorized request"""
