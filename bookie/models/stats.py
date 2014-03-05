@@ -106,11 +106,9 @@ class StatBookmarkMgr(object):
     def count_user_bookmarks(username):
         """Count the total number of bookmarks for the user in the system"""
         total = BmarkMgr.count(username)
-        tstamp = datetime.utcnow()
         stat = StatBookmark(
             attrib=USER_CT.format(username),
-            data=total,
-            tstamp=datetime(tstamp.year, tstamp.month, tstamp.day)
+            data=total
         )
         DBSession.add(stat)
 

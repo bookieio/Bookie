@@ -9,6 +9,7 @@ ${account_nav()}
 <div class="yui3-g">
     <div class="yui3-u-1">
         <div class="form">
+            <div id="userstats_msg" class="error"></div>
             <div id="calendar"></div>
             <div id="bmark_count_graph"></div>
             <%def name="add_js()">

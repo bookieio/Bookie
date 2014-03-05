@@ -20,7 +20,7 @@ YUI.add('bookie-test-readable', function (Y) {
 
         testModuleExists: function () {
             Y.Assert.isObject(Y.bookie.readable.Api,
-                "Should find an objcet for readable api module");
+                "Should find an object for readable api module");
         },
 
         testInitCorrect: function () {
