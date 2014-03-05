@@ -6,7 +6,6 @@ from pyramid.httpexceptions import (
     HTTPNotFound,
 )
 from pyramid.view import view_config
-from sqlalchemy.orm import contains_eager
 
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.applog import BmarkLog
@@ -15,6 +14,7 @@ from bookie.lib.importer import store_import_file
 from bookie.bcelery import tasks
 from bookie.models import (
     Bmark,
+    BmarkMgr,
     DBSession,
     Hashed,
 )
@@ -189,16 +189,7 @@ class ImportViews(BookieView):
         else:
             current_user = None
 
-        bmark_list = Bmark.query.join(Bmark.tags).\
-            options(
-                contains_eager(Bmark.tags)
-            ).\
-            join(Bmark.hashed).\
-            options(
-                contains_eager(Bmark.hashed)
-            ).\
-            filter(Bmark.username == username).all()
-
+        bmark_list = BmarkMgr.user_dump(username)
         BmarkLog.export(username, current_user)
 
         self.request.response_content_type = 'text/html'

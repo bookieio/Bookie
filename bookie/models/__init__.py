@@ -458,7 +458,7 @@ class BmarkMgr(object):
         """Get a list of all of the user's bookmarks for an export dump usually
 
         """
-        return Bmark.query.join(Bmark.tags).\
+        return Bmark.query.outerjoin(Bmark.tags).\
             options(
                 contains_eager(Bmark.tags)
             ).\
