@@ -28,6 +28,7 @@ from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
+from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 from bookie.models.fulltext import get_fulltext_handler
@@ -362,6 +363,33 @@ def bmark_recent(request, with_content=False):
         'count': len(recent_list),
         'page': page,
         'tag_filter': tags,
+    })
+
+
+@view_config(route_name="api_count_bmarks_user", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, anon=False)
+def user_bmark_count(request):
+    """Get the user's daily bookmark total for the given time window"""
+    params = request.params
+
+    username = request.user.username
+    start_date = params.get('start_date', None)
+    end_date = params.get('end_date', None)
+    bmark_count_list = StatBookmarkMgr.count_user_bmarks(
+        username=username,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    result_set = []
+    for res in bmark_count_list[0]:
+        return_obj = dict(res)
+
+        result_set.append(return_obj)
+    return _api_response(request, {
+        'count': result_set,
+        'start_date': str(bmark_count_list[1]),
+        'end_date': str(bmark_count_list[2])
     })
 
 
