@@ -189,7 +189,7 @@ class ImportViews(BookieView):
         else:
             current_user = None
 
-        bmark_list = Bmark.query.join(Bmark.tags).\
+        bmark_list = Bmark.query.outerjoin(Bmark.tags).\
             options(
                 contains_eager(Bmark.tags)
             ).\
