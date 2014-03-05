@@ -71,3 +71,40 @@ class TestExport(unittest.TestCase):
             1,
             data['count'],
             "Should be one result: " + str(data['count']))
+
+    def _get_good_request_wt_tags(self):
+        """Return the basics for a good add bookmark request 
+            without any tags"""
+        session = DBSession()
+        prms = {
+            'url': u'http://bmark.us',
+            'description': u'This is my bmark desc',
+            'extended': u'And some extended notes about it in full form',
+            'tags': u'',
+            'api_key': API_KEY
+        }
+
+        req_params = urllib.urlencode(prms)
+        res = self.testapp.post('/api/v1/admin/bmark?api_key=' + API_KEY,
+                                params=req_params,)
+        session.flush()
+        transaction.commit()
+        return res
+
+    def test_export_wt_tags(self):
+        """Test that we can upload/import our test file"""
+        self._get_good_request_wt_tags()
+
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks/export?api_key=' + API_KEY,
+            status=200)
+
+        self.assertTrue(
+            "bmark.us" in res.body,
+            msg='Bmark is in the exported body: ' + res.body)
+        data = json.loads(res.body)
+
+        self.assertEqual(
+            1,
+            data['count'],
+            "Should be one result: " + str(data['count']))
