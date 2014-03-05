@@ -253,3 +253,31 @@ def readable(request):
             }
         else:
             return HTTPNotFound()
+
+
+@view_config(route_name="user_delete_all_bookmarks",
+             renderer="/accounts/index.mako")
+def delete_all_bookmarks(request):
+    """Delete all bookmarks of the current user"""
+    rdict = request.matchdict
+    post = request.POST
+    with ReqAuthorize(request, username=rdict['username'].lower()):
+        username = request.user.username
+        if username:
+            if post['delete'] == 'Delete':
+                from bookie.bcelery import tasks
+                tasks.delete_all_bookmarks.delay(username)
+                return {
+                    'user': request.user,
+                    'message': 'The delete request has been queued' +
+                               ' and will be acted upon shortly.',
+                }
+            else:
+                return {
+                    'user': request.user,
+                    'message': 'Delete request not confirmed. ' +
+                               'Please make sure to enter' +
+                               ' \'Delete\' to confirm.',
+                }
+        else:
+            return HTTPNotFound()
