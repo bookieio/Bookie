@@ -193,8 +193,13 @@ def reset(request):
         password = params.get('new_password', None)
         new_username = params.get('new_username', None)
         error = None
-
-        if not UserMgr.acceptable_password(password):
+        
+        #Check whether username already exists.
+        if UserMgr.get(username) == None:
+            # Set an error message to the template.
+            error = "Username already exits."
+        
+        elif not UserMgr.acceptable_password(password):
             # Set an error message to the template.
             error = "Come on, pick a real password please."
         else:
