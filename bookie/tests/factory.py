@@ -85,6 +85,7 @@ def make_user_bookmark_count(username, data, tstamp=None):
     """Generate a fake user bookmark count for testing use"""
     if tstamp is None:
         tstamp = datetime.utcnow()
+        tstamp = datetime(tstamp.year, tstamp.month, tstamp.day)
     bmark_count = StatBookmark(tstamp=tstamp,
                                attrib=USER_CT.format(username),
                                data=data)
