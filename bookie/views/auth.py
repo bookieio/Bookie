@@ -194,8 +194,8 @@ def reset(request):
         new_username = params.get('new_username', None)
         error = None
         
-        #Check whether username already exists.
-        if UserMgr.get(username) == None:
+        # Check whether username already exists.
+        if UserMgr.get(username) is None:
             # Set an error message to the template.
             error = "Username already exits."
         
