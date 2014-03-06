@@ -970,10 +970,20 @@ YUI.add('bookie-view', function (Y) {
             var api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
             api.call({
                 success: function (data, request) {
-                    var check = '';
-                    for(var i=0;i<data.count.length;i++)
-                        check = check + data.count[i].data + ' ';
-                    user_stats.setContent(check);
+                    // Data for the chart
+                    var myDataValues = [];
+                    for(var i=0;i<data.count.length;i++) {
+                        myDataValues.push({
+                            category: data.count[i].tstamp.split(' ')[0],
+                            values: data.count[i].data
+                        });
+                    }
+
+                    // Instantiate and render the chart
+                    var mychart = new Y.Chart({
+                        dataProvider: myDataValues,
+                        render: "#mychart"
+                    });
                 }
             });
         }
