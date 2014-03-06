@@ -116,14 +116,17 @@ class StatBookmarkMgr(object):
     def count_user_bmarks(username, start_date=None, end_date=None):
         """Get a list of user bookmark count"""
         if start_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+            start_date = start_date.split(' ')
+            start_date = datetime.strptime(start_date[0], '%Y-%m-%d')
         if end_date:
-            end_date = datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')
+            end_date = end_date.split(' ')
+            end_date = datetime.strptime(end_date[0], '%Y-%m-%d')
         if not start_date:
             if not end_date:
                 # If both start_date and end_date are None,
                 # end_date will be the current date
                 end_date = datetime.utcnow()
+                end_date = datetime(end_date.year, end_date.month, end_date.day)
             # Otherwise if there's no start_date but we have an end_date,
             # assume that the user wants the STATS_WINDOW worth of stats.
             start_date = end_date - timedelta(days=STATS_WINDOW)
