@@ -195,7 +195,7 @@ def reset(request):
         error = None
         
         # Check whether username already exists.
-        if UserMgr.get(username) is None:
+        if UserMgr.get(username) is not None:
             # Set an error message to the template.
             error = "Username already exits."
         
