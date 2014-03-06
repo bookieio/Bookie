@@ -4,7 +4,8 @@
 </%def>
 <style>
 #mychart {
-    width: 600px;
+    margin-left: 50px;
+    width: 1000px;
     height: 500px;
 }
 </style>
@@ -29,6 +30,7 @@ import json
                 user_stats_view = new Y.bookie.UserBmarkCountView({
                     api_cfg: api_cfg
                 });
+                user_stats_view.render();
             });
         });
     </script>

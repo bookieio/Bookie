@@ -693,6 +693,14 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
+
+    /**
+     * Fetch user bookmark count over a period of time
+     *
+     * @class Api.route.UserBmarkCount
+     * @extends Api.route
+     *
+     */
     Y.bookie.Api.route.UserBmarkCount = Y.Base.create(
         'bookie-api-route-user-bmark-count',
         Y.bookie.Api.route,

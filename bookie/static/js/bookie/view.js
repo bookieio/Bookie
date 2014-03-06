@@ -965,27 +965,110 @@ YUI.add('bookie-view', function (Y) {
      *
      */
     ns.UserBmarkCountView = Y.Base.create('user-bmark-count-view', Y.View, [], {
-        initializer: function (cfg) {
-            var user_stats = Y.one('#user_stats');
-            var api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
-            api.call({
-                success: function (data, request) {
-                    // Data for the chart
+
+        /**
+         * Handles the json response after the api call
+         *
+         * @method _fetch_dataset
+         * @private
+         *
+         */
+        _fetch_dataset: function(data) {
+            var that = this;
+            this.api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
+            this.api.call({
+                success: function(data, request) {
+                    //Stores the data for the graph
                     var myDataValues = [];
                     for(var i=0;i<data.count.length;i++) {
                         myDataValues.push({
-                            category: data.count[i].tstamp.split(' ')[0],
-                            values: data.count[i].data
+                            date: data.count[i].tstamp.split(' ')[0],
+                            bookmarks: data.count[i].data,
                         });
                     }
-
-                    // Instantiate and render the chart
-                    var mychart = new Y.Chart({
+                    var user_graph = Y.one('#mychart');
+                    var graph_render = new Y.Chart({
                         dataProvider: myDataValues,
-                        render: "#mychart"
+                        axes: that.myAxes,
+                        seriesCollection: that.seriesCollection,
+                        render: user_graph
                     });
-                }
+		}
             });
+	},
+
+        /**
+         * Sets the graph properties
+         *
+         * @method _graph_properties
+         * @private
+         *
+         */
+        _graph_properties: function() {
+            this.myAxes = {
+                bookmarks:{
+                    keys:["bookmarks"],
+                    position:"left",
+                    type:"numeric",
+                    minimum: 0,
+                    styles:{
+                        majorTicks:{
+                            display: "none"
+                        }
+                    }
+                },
+                dateRange:{
+                    keys:["date"],
+                    position:"bottom",
+                    type:"category",
+                    styles:{
+                        majorTicks:{
+                            display: "none"
+                        },
+                        label: {
+                            rotation:-45,
+                            margin:{top:5}
+                        }
+                    }
+                }
+            };
+
+            this.seriesCollection = [
+                {
+                    xAxis: "dateRange",
+                    yAxis: "bookmarks",
+                    xKey: "date",
+                    yKey: "bookmarks",
+                    xDisplayName: "Date",
+                    yDisplayName: "Bookmarks"
+                }
+            ];
+
+        },
+        initializer: function (cfg) {
+            this._graph_properties();
+        },
+
+        /**
+         * Build the UI for the result set we have
+         *
+         * @method render
+         *
+         */
+        render: function() {
+            this._fetch_dataset();
+        }
+    }, {
+        ATTRS: {
+            /**
+             * @attribute api_cfg
+             * @default undefined
+             * @type Object
+             *
+             */
+            api_cfg: {
+                required: true
+            }
         }
     });
 
