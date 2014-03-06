@@ -693,7 +693,20 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
-
+    Y.bookie.Api.route.UserBmarkCount = Y.Base.create(
+        'bookie-api-route-user-bmark-count',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/{username}/stats/bmarkcount'
+                }
+            }
+        }
+    );
 
     /**
      * Change a user's password to a new value.

@@ -958,6 +958,28 @@ YUI.add('bookie-view', function (Y) {
     });
 
     /**
+     * Generate the graph for user bookmark count
+     *
+     * @class UserBmarkCountView
+     * @extends Y.View
+     *
+     */
+    ns.UserBmarkCountView = Y.Base.create('user-bmark-count-view', Y.View, [], {
+        initializer: function (cfg) {
+            var user_stats = Y.one('#user_stats');
+            var api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
+            api.call({
+                success: function (data, request) {
+                    var check = '';
+                    for(var i=0;i<data.count.length;i++)
+                        check = check + data.count[i].data + ' ';
+                    user_stats.setContent(check);
+                }
+            });
+        }
+    });
+
+    /**
      * Generate the html view for a User's account
      *
      * @class AccountView
