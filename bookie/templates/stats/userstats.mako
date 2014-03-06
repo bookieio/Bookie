@@ -15,9 +15,6 @@
 <span id="user_stats"></span>
 <div id="mychart"></div>
 <%def name="add_js()">
-<%
-import json
-%>
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
         YUI().use('bookie-view', 'charts', function (Y) {
@@ -35,5 +32,3 @@ import json
         });
     </script>
 </%def>
-
-

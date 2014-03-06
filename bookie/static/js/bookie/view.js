@@ -978,14 +978,14 @@ YUI.add('bookie-view', function (Y) {
             this.api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
             this.api.call({
                 success: function(data, request) {
-                    //Stores the data for the graph
+                    // Stores the data for the graph.
                     var myDataValues = [];
-                    for(var i=0;i<data.count.length;i++) {
+                    data.count.forEach(function(value) {
                         myDataValues.push({
-                            date: data.count[i].tstamp.split(' ')[0],
-                            bookmarks: data.count[i].data,
+                            date: value['tstamp'].split(' ')[0],
+                            bookmarks: value['data']
                         });
-                    }
+                    });
                     var user_graph = Y.one('#mychart');
                     var graph_render = new Y.Chart({
                         dataProvider: myDataValues,
@@ -1045,6 +1045,7 @@ YUI.add('bookie-view', function (Y) {
             ];
 
         },
+
         initializer: function (cfg) {
             this._graph_properties();
         },
