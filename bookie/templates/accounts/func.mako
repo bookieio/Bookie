@@ -4,7 +4,7 @@
     %>
     <ul class="tabs">
         <li ${check_selected('user_account', route_name)} class="details"><a href="${request.route_url('user_account', username=request.user.username)}">Details</a></li>
-        <li ${check_selected('stats', route_name)}><a href="#">Stats</a></li>
+        <li ${check_selected('stats', route_name)}><a href="${request.route_url('user_stats', username=request.user.username)}">Stats</a></li>
         <li class="export"><a href="${request.route_url('user_export', username=request.user.username)}">Export</a></li>
         <li ${check_selected('user_import', route_name)}><a href="${request.route_url('user_import', username=request.user.username)}">Import</a></li>
         <li class="logout"><a href="${request.route_url('logout')}">Logout</a></li>
