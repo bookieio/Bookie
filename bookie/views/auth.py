@@ -194,7 +194,18 @@ def reset(request):
         new_username = params.get('new_username', None)
         error = None
 
-        if not UserMgr.acceptable_password(password):
+        # Check whether username exists or not.  During signup request , a
+        # record of current user is created with username as his email id
+        # which is already checked for uniqueness. So when new_username is
+        # equal to username ie the email id then no need to check for
+        # uniqueness , but if new_username is something else it has to be
+        # verified
+
+        if username != new_username and \
+                UserMgr.get(username=new_username) is not None:
+            # Set an error message to the template.
+            error = "Username already exists."
+        elif not UserMgr.acceptable_password(password):
             # Set an error message to the template.
             error = "Come on, pick a real password please."
         else:
