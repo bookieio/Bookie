@@ -139,7 +139,26 @@ class TestNewBookmark(TestViewBase):
                 'tags': ''
             })
         self.assertIn(existing_url_message, res.body)
-
+    
+    def test_utm_trim(self):
+        """Verify if UTM parameters are trimmed of a new url"""
+        import time
+        self._login_admin()
+        test_url=u"http://localhost:6543/index.php?a=1&utm_source=1&utm_a=yes&b=2#hash"
+        expected_url = u"http://localhost:6543/index.php?a=1&b=2#hash"
+        self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': ''
+            })
+        html = self.app.get('/admin/recent')
+        self.assertTrue(
+            expected_url in html,
+            msg="UTM Parameters should be trimmed from url")
+            
 
 class TestRSSFeeds(TestViewBase):
     """Verify the RSS feeds function correctly."""
