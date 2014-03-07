@@ -19,9 +19,9 @@ from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 from .celery import load_ini
+
 INI = load_ini()
 initialize_sql(INI)
-
 
 logger = get_task_logger(__name__)
 

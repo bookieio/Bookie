@@ -8,16 +8,13 @@ import transaction
 import unittest
 from pyramid import testing
 
-from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 from bookie.tests import factory
 
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime
+
 
 GOOGLE_HASH = u'aa2239c17609b2'
 BMARKUS_HASH = u'c5c21717c99797'
@@ -104,6 +101,7 @@ class BookieAPITest(unittest.TestCase):
         session.flush()
         transaction.commit()
         # Run the celery task for indexing this bookmark.
+        from bookie.bcelery import tasks
         tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
 

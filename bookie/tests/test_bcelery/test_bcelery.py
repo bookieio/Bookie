@@ -52,6 +52,7 @@ class BCeleryTaskTest(TestDBBase):
 
     def test_task_unique_total(self):
         """The task should generate a unique count stat record"""
+        # from bookie.bcelery import tasks
         tasks.count_unique()
 
         stat = StatBookmark.query.first()

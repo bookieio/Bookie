@@ -43,7 +43,7 @@ LOG = logging.getLogger(__name__)
 transaction._transaction._LOGGER = LOG
 
 BOOKIE_TEST_INI = test_ini
-print "USING TEST INI: ", BOOKIE_TEST_INI
+print "\nUSING TEST INI: ", BOOKIE_TEST_INI
 
 # clean up whoosh index between test runs
 whoosh_idx = settings['fulltext.index']

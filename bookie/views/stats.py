@@ -39,6 +39,7 @@ class DashboardView(BookieView):
             }
         }
 
+
 @view_config(route_name="user_stats", renderer="/stats/userstats.mako")
 def userstats(request):
     """Stats for an individual user"""
@@ -47,4 +48,4 @@ def userstats(request):
     return {
         'user': user,
         'username': user.username,
-}
+    }
