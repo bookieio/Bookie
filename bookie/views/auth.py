@@ -202,7 +202,7 @@ def reset(request):
         if username != new_username and UserMgr.get(username = new_username) is not None:
             # Set an error message to the template.
             error = "Username already exists."
-       
+
         elif not UserMgr.acceptable_password(password):
             # Set an error message to the template.
             error = "Come on, pick a real password please."
