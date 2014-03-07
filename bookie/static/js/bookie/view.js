@@ -967,22 +967,25 @@ YUI.add('bookie-view', function (Y) {
     ns.UserBmarkCountView = Y.Base.create('user-bmark-count-view', Y.View, [], {
 
         /**
-         * Handle events for the UI.
+         * Handles the start and end dates when dates are changed.
          *
-         * @attribute events
-         * @type Object
-         *
+         * @method _date_range
+         * @private
          *
          */
-        events: {
-            '#show_graph': {
-                click: '_date_range'
-            }
-        },
-
         _date_range: function(e) {
-            var start_date = Y.one('#start_date').get('value');
-            var end_date = Y.one('#end_date').get('value');
+            var dtdate = Y.DataType.Date;
+            var start_date = e.newSelection[0];
+            var end_date = e.newSelection[1];
+            if (start_date && end_date && (end_date < start_date)) {
+                var temp_date = start_date;
+                start_date = dtdate.format(end_date);
+                end_date = dtdate.format(temp_date);
+            }
+            else {
+                start_date = dtdate.format(start_date);
+                end_date = dtdate.format(end_date);
+            }
             this.api_cfg = Y.merge(this.api_cfg, {
                 start_date: start_date,
                 end_date: end_date,
@@ -1023,6 +1026,36 @@ YUI.add('bookie-view', function (Y) {
                 }
             });
 	},
+
+        /**
+         * Renders the calendar to the html view.
+         *
+         * @method _set_calendar
+         * @private
+         *
+         */
+        _set_calendar: function() {
+            Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
+            this.calendar = new Y.Calendar({
+                contentBox: "#calendar",
+                selectionMode: "multiple",
+                showPrevMonth: true,
+                showNextMonth: true,
+                date: new Date()}).render();
+            this.calendar.on('selectionChange',
+                             this._date_range,
+			     this
+                            );
+            this.calendar.set("headerRenderer", function (curDate) {
+                var ydate = Y.DataType.Date,
+                    output = ydate.format(curDate, {
+                        format: "%B %Y"
+                    }) + " &mdash; " + ydate.format(ydate.addMonths(curDate, 1), {
+                        format: "%B %Y"
+                    });
+                return output;
+            }); 
+       },
 
         /**
          * Sets the graph properties
@@ -1086,6 +1119,7 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         render: function() {
+            this._set_calendar();
             this._fetch_dataset();
         }
     }, {

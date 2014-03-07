@@ -5,14 +5,12 @@
 <div class="bmarks"></div>
 <%include file="../jstpl.mako"/>
 <p>Bookmark count stats for ${request.user.username}</p>
-<input type="date" id="start_date">
-<input type="date" id="end_date">
-<button id="show_graph">Click</button>
+<div id="calendar"></div>
 <div id="bmark_count_graph"></div>
 <%def name="add_js()">
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.
-        YUI().use('bookie-view', 'charts', function (Y) {
+        YUI().use('bookie-view', 'calendar', 'charts', 'datatype-date', function (Y) {
             Y.on('domready', function() {
                 var api_cfg = {
                     url: APP_URL + '/api/v1',
