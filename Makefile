@@ -378,7 +378,7 @@ stop_livereload:
 .PHONY: venv
 venv: bin/python
 bin/python:
-	virtualenv .
+	virtualenv -p python2 .
 
 .PHONY: clean_venv
 clean_venv:
