@@ -167,7 +167,7 @@ class TestOpenSignup(TestViewBase):
 
         # Activate the user, setting their new username which we want to
         # verify does get lower cased during this process.
-        self.app.delete_json(url)
+        self.app.delete(url)
 
         user = DBSession.query(User).filter(User.email == email.lower()).one()
         self.assertIn('testlowercase', user.username)
