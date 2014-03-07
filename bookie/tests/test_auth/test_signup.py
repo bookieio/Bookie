@@ -11,6 +11,7 @@ from bookie.models.auth import UserMgr
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 from bookie.tests import TestViewBase
+from bookie.tests.factory import make_user
 
 LOG = logging.getLogger(__name__)
 
@@ -104,7 +105,25 @@ class TestOpenSignup(TestViewBase):
             }
         )
         self.assertIn('already signed up', res.body)
-
+        
+    def testUsernameAlreadyThere(self):
+        """Signup requires an unique username entry."""
+        make_user(username = u'test_username')
+        email = u'testing@username.com'
+        new_user = UserMgr.signup_user(email,u'invite')
+        new_user.activation.code = 'dummycode'
+        
+        new_user.activation.created_by = u'invite'
+        res = self.app.post(
+            '/reset',
+        params={
+                'email': u'testing@username.com',
+                'new_password': u'testing',
+                'username': u'testing@username.com',
+                'code': 'dummycode' ,
+                'new_username': u'test_username' ,
+        })
+        self.assertIn('Username already', res.body)
     def testSignupWorks(self):
         """Signing up stores an activation."""
         email = u'testing@newuser.com'
