@@ -6,7 +6,6 @@ from pyramid.httpexceptions import (
     HTTPNotFound,
 )
 from pyramid.view import view_config
-from sqlalchemy.orm import contains_eager
 
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.applog import BmarkLog
@@ -15,6 +14,7 @@ from bookie.lib.importer import store_import_file
 from bookie.bcelery import tasks
 from bookie.models import (
     Bmark,
+    BmarkMgr,
     DBSession,
     Hashed,
 )
@@ -57,7 +57,7 @@ class ImportViews(BookieView):
                 # we have some posted values
                 files = post.get('import_file', None)
 
-                if files is not None:
+                if hasattr(files, 'filename'):
                     storage_dir_tpl = self.settings.get('import_files',
                                                         '/tmp/bookie')
                     storage_dir = storage_dir_tpl.format(
@@ -77,11 +77,7 @@ class ImportViews(BookieView):
                         location=self.request.route_url('user_import',
                                                         username=username))
                 else:
-                    msg = self.request.session.pop_flash()
-                    if msg:
-                        data['error'] = msg
-                    else:
-                        data['error'] = None
+                    data['error'] = ["Please provide a file to import"]
 
                 return data
             else:
@@ -193,16 +189,7 @@ class ImportViews(BookieView):
         else:
             current_user = None
 
-        bmark_list = Bmark.query.join(Bmark.tags).\
-            options(
-                contains_eager(Bmark.tags)
-            ).\
-            join(Bmark.hashed).\
-            options(
-                contains_eager(Bmark.hashed)
-            ).\
-            filter(Bmark.username == username).all()
-
+        bmark_list = BmarkMgr.user_dump(username)
         BmarkLog.export(username, current_user)
 
         self.request.response_content_type = 'text/html'

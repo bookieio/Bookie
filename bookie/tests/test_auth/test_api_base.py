@@ -60,6 +60,27 @@ class TestAuthWeb(TestCase):
             'recent' in str(res),
             "Should have 'recent' in the resp: " + str(res))
 
+    def test_login_success_username_case_insensitive(self):
+        """Verify a good login"""
+
+        # the migrations add a default admin account
+        user_data = {'login': u'ADMIN',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+
+        res = self.testapp.post('/login',
+                                params=user_data)
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='status is 302 Found, ' + res.status)
+
+        # should end up back at the recent page
+        res = res.follow()
+        self.assertTrue(
+            'recent' in str(res),
+            "Should have 'recent' in the resp: " + str(res))
+
     def test_login_failure(self):
         """Verify a bad login"""
 

@@ -339,6 +339,7 @@ class Hashed(Base):
 
 class BmarkMgr(object):
     """Class to handle non-instance Bmark functions"""
+
     @staticmethod
     def get_by_url(url, username=None):
         """Get a bmark from the system via the url"""
@@ -421,8 +422,10 @@ class BmarkMgr(object):
                     from_obj=[
                         bmarks_tags.join(
                             'tags',
-                            and_(Tag.name.in_(tags),
-                            bmarks_tags.c.tag_id == Tag.tid)
+                            and_(
+                                Tag.name.in_(tags),
+                                bmarks_tags.c.tag_id == Tag.tid
+                            )
                         ).
                         join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
                     ]).\
@@ -455,7 +458,7 @@ class BmarkMgr(object):
         """Get a list of all of the user's bookmarks for an export dump usually
 
         """
-        return Bmark.query.join(Bmark.tags).\
+        return Bmark.query.outerjoin(Bmark.tags).\
             options(
                 contains_eager(Bmark.tags)
             ).\
@@ -563,6 +566,25 @@ class BmarkMgr(object):
         if distinct_users:
             qry = DBSession.query(Bmark.username).distinct()
         return qry.count()
+
+    @staticmethod
+    def delete_all_bookmarks(username):
+        """Deletes all the bookmarks of the user
+
+        :param username : The username of the logged-in user
+        """
+        bids = DBSession.query(Bmark.bid).\
+            filter(Bmark.username == username).\
+            all()
+        if len(bids):
+            Bmark.query.filter(Bmark.username == username).delete()
+            deltags = bmarks_tags.delete().where(
+                bmarks_tags.c.bmark_id.in_([i[0] for i in bids])
+            )
+            DBSession.execute(deltags)
+            return len(bids)
+        else:
+            return None
 
 
 class BmarkTools(object):

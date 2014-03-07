@@ -858,7 +858,6 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         render: function () {
-            debugger;
             // Render this view's HTML into the container element.
             var tpl_data = this.get('model').getAttrs();
             tpl_data.owner = this.get('current_user') === this.get('model').get('username');
@@ -1446,22 +1445,39 @@ YUI.add('bookie-view', function (Y) {
             e.preventDefault();
             Y.one('#account_msg').hide();
 
-            // add the password data to the cfg passed to the api
-            api_cfg = Y.merge(api_cfg, {
-                name: Y.one('#name').get('value'),
-                email: Y.one('#email').get('value')
-            });
+            var name = Y.one('#name').get('value');
+            var email = Y.one('#email').get('value');
 
-            api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
-            api.call({
-                success: function (data, request) {
-                    that._show_message('Account updated...', true);
-                },
-                error: function (data, status_str, response, args) {
-                    console.log(data);
-                    console.log(response);
+            // validate email and username
+            if (!name || !email) {
+                if (!name) {
+                    that._show_message(
+                        'Please enter valid name', false);
+                } else if (!email) {
+                    that._show_message(
+                        'Please enter valid email address', false);
                 }
-            });
+            } else {
+                // Add the password data to the cfg passed to the api.
+                api_cfg = Y.merge(api_cfg, {
+                    name: Y.one('#name').get('value'),
+                    email: Y.one('#email').get('value')
+                });
+
+                api = new Y.bookie.Api.route.UserAccountChange(api_cfg);
+                api.call({
+                    success: function (data, request) {
+                        that._show_message('Account updated...', true);
+                    },
+                    error: function (data, status_str, response, args) {
+                        console.log(data);
+                        console.log(response);
+                        that._show_message(
+                            'Some error ocurred while making changes...', false
+                        );
+                    }
+                });
+            }
         },
 
         /**

@@ -49,6 +49,7 @@ def build_routes(config):
                      "{username}/edit_error/{hash_id}")
     config.add_route("user_bmark_new", "{username}/new")
     config.add_route("user_bmark_new_error", "{username}/new_error")
+    config.add_route("user_delete_all_bookmarks", "{username}/account/delete_all_bookmarks")
 
     # config.add_route("bmark_delete", "/bmark/delete")
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -135,6 +136,8 @@ def build_routes(config):
     config.add_route('api_bmarks_tags', 'api/v1/bmarks/*tags')
     config.add_route('api_bmarks_user', 'api/v1/{username}/bmarks')
     config.add_route('api_bmarks_user_tags', 'api/v1/{username}/bmarks/*tags')
+    config.add_route('api_count_bmarks_user',
+                     'api/v1/{username}/stats/bmarkcount')
 
     config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
     config.add_route('api_bmarks_popular_user',

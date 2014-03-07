@@ -28,6 +28,7 @@ from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
 from bookie.models.auth import User
 from bookie.models.auth import UserMgr
+from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
 from bookie.models.fulltext import get_fulltext_handler
@@ -104,6 +105,8 @@ def bmark_get(request):
 
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
 
     # the hash id will always be there or the route won't match
     bookmark = BmarkMgr.get_by_hash(hash_id,
@@ -305,6 +308,8 @@ def bmark_recent(request, with_content=False):
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -358,6 +363,33 @@ def bmark_recent(request, with_content=False):
         'count': len(recent_list),
         'page': page,
         'tag_filter': tags,
+    })
+
+
+@view_config(route_name="api_count_bmarks_user", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, anon=False)
+def user_bmark_count(request):
+    """Get the user's daily bookmark total for the given time window"""
+    params = request.params
+
+    username = request.user.username
+    start_date = params.get('start_date', None)
+    end_date = params.get('end_date', None)
+    bmark_count_list = StatBookmarkMgr.count_user_bmarks(
+        username=username,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    result_set = []
+    for res in bmark_count_list[0]:
+        return_obj = dict(res)
+
+        result_set.append(return_obj)
+    return _api_response(request, {
+        'count': result_set,
+        'start_date': str(bmark_count_list[1]),
+        'end_date': str(bmark_count_list[2])
     })
 
 
@@ -513,11 +545,18 @@ def search_results(request):
     page = rdict.get('page', 0)
     count = rdict.get('count', 10)
 
-    res_list = searcher.search(phrase,
-                               content=search_content,
-                               username=username if with_user else None,
-                               ct=count,
-                               page=page)
+    try:
+        res_list = searcher.search(
+            phrase,
+            content=search_content,
+            username=username if with_user else None,
+            ct=count,
+            page=page
+        )
+    except ValueError:
+        request.response.status_int = 404
+        ret = {'error': "Bad Request: Page number out of bound"}
+        return _api_response(request, ret)
 
     constructed_results = []
     for res in res_list:
@@ -961,6 +1000,8 @@ def accounts_invites_add(request):
     """
     rdict = request.matchdict
     username = rdict.get('username', None)
+    if username:
+        username = username.lower()
     count = rdict.get('count', None)
 
     if username is not None and count is not None:
@@ -1040,6 +1081,8 @@ def new_user(request):
     u = User()
 
     u.username = unicode(rdict.get('username'))
+    if u.username:
+        u.username = u.username.lower()
     u.email = unicode(rdict.get('email'))
     passwd = get_random_word(8)
     u.password = passwd
@@ -1121,6 +1164,8 @@ def admin_bmark_remove(request):
     """Remove this bookmark from the system"""
     rdict = request.matchdict
     username = rdict.get('username')
+    if username:
+        username = username.lower()
     hash_id = rdict.get('hash_id')
 
     try:
