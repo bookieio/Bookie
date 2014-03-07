@@ -1076,6 +1076,7 @@ YUI.add('bookie-view', function (Y) {
         initializer: function (cfg) {
             this.api_cfg = this.get('api_cfg');
             this._graph_properties();
+            this.get('container');
         },
 
         /**

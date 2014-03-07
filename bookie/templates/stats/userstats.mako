@@ -20,7 +20,8 @@
                     api_key: '${request.user.api_key}',
                 },
                 user_stats_view = new Y.bookie.UserBmarkCountView({
-                    api_cfg: api_cfg
+                    api_cfg: api_cfg,
+                    container: Y.one('body')
                 });
                 user_stats_view.render();
             });
