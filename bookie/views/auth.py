@@ -42,7 +42,7 @@ def login(request):
     password = u''
 
     if 'form.submitted' in request.params:
-        login = request.params['login'].lower()
+        login = request.params['login']
         password = request.params['password']
 
         LOG.debug(login)
