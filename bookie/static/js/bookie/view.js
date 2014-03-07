@@ -967,20 +967,20 @@ YUI.add('bookie-view', function (Y) {
     ns.UserBmarkCountView = Y.Base.create('user-bmark-count-view', Y.View, [], {
 
         /**
-         * Bind all events for the html view.
+         * Handle events for the UI.
          *
-         * @method _bind
+         * @attribute events
+         * @type Object
+         *
          *
          */
-        _bind: function() {
-            Y.one('#show_graph').on(
-                'click',
-                this._date_range,
-                this
-            );
+        events: {
+            '#show_graph': {
+                click: '_date_range'
+            }
         },
 
-        _date_range: function() {
+        _date_range: function(e) {
             var start_date = Y.one('#start_date').get('value');
             var end_date = Y.one('#end_date').get('value');
             this.api_cfg = Y.merge(this.api_cfg, {
@@ -1019,9 +1019,8 @@ YUI.add('bookie-view', function (Y) {
                         render: user_graph
                     });
 		},
-error: function (data, status_str, response, args) {
-console.log('nanannanan');
-       }
+                error: function (data, status_str, response, args) {
+                }
             });
 	},
 
@@ -1077,7 +1076,6 @@ console.log('nanannanan');
         initializer: function (cfg) {
             this.api_cfg = this.get('api_cfg');
             this._graph_properties();
-            this._bind();
         },
 
         /**
