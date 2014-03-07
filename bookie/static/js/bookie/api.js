@@ -706,9 +706,31 @@ YUI.add('bookie-api', function (Y) {
         Y.bookie.Api.route,
         [], {
             initializer: function (cfg) {
+                if(this.get('start_date') && this.get('end_date')) {
+                    this.data = {
+                        start_date: this.get('start_date'),
+                        end_date: this.get('end_date')
+                    };
+		}
+                else if(this.get('start_date') && !this.get('end_date')) {
+                    this.data = {
+                        start_date: this.get('start_date'),
+                    };
+                }
+                else if(!this.get('start_date') && this.get('end_date')) {
+                    this.data = {
+                        end_date: this.get('end_date'),
+                    };
+                }
             }
         }, {
             ATTRS: {
+                start_date: {
+                    required: true
+                },
+                end_date: {
+                    required: true
+                },
                 url_element: {
                     value: '/{username}/stats/bmarkcount'
                 }

@@ -2,18 +2,13 @@
 <%def name="title()">Recent Bookmarks</%def>
 <%def name="header()">
 </%def>
-<style>
-#mychart {
-    margin-left: 50px;
-    width: 1000px;
-    height: 500px;
-}
-</style>
 <div class="bmarks"></div>
 <%include file="../jstpl.mako"/>
 <p>Bookmark count stats for ${request.user.username}</p>
-<span id="user_stats"></span>
-<div id="mychart"></div>
+<input type="date" id="start_date">
+<input type="date" id="end_date">
+<button id="show_graph">Click</button>
+<div id="bmark_count_graph"></div>
 <%def name="add_js()">
     <script type="text/javascript">
         // Create a new YUI instance and populate it with the required modules.

@@ -967,6 +967,30 @@ YUI.add('bookie-view', function (Y) {
     ns.UserBmarkCountView = Y.Base.create('user-bmark-count-view', Y.View, [], {
 
         /**
+         * Bind all events for the html view.
+         *
+         * @method _bind
+         *
+         */
+        _bind: function() {
+            Y.one('#show_graph').on(
+                'click',
+                this._date_range,
+                this
+            );
+        },
+
+        _date_range: function() {
+            var start_date = Y.one('#start_date').get('value');
+            var end_date = Y.one('#end_date').get('value');
+            this.api_cfg = Y.merge(this.api_cfg, {
+                start_date: start_date,
+                end_date: end_date,
+            });
+            this._fetch_dataset();
+        },
+
+        /**
          * Handles the json response after the api call
          *
          * @method _fetch_dataset
@@ -975,7 +999,7 @@ YUI.add('bookie-view', function (Y) {
          */
         _fetch_dataset: function(data) {
             var that = this;
-            this.api = new Y.bookie.Api.route.UserBmarkCount(this.get('api_cfg'));
+            this.api = new Y.bookie.Api.route.UserBmarkCount(this.api_cfg);
             this.api.call({
                 success: function(data, request) {
                     // Stores the data for the graph.
@@ -986,14 +1010,18 @@ YUI.add('bookie-view', function (Y) {
                             bookmarks: value['data']
                         });
                     });
-                    var user_graph = Y.one('#mychart');
+                    var user_graph = Y.one('#bmark_count_graph');
+                    user_graph.setContent();
                     var graph_render = new Y.Chart({
                         dataProvider: myDataValues,
                         axes: that.myAxes,
                         seriesCollection: that.seriesCollection,
                         render: user_graph
                     });
-		}
+		},
+error: function (data, status_str, response, args) {
+console.log('nanannanan');
+       }
             });
 	},
 
@@ -1047,7 +1075,9 @@ YUI.add('bookie-view', function (Y) {
         },
 
         initializer: function (cfg) {
+            this.api_cfg = this.get('api_cfg');
             this._graph_properties();
+            this._bind();
         },
 
         /**
