@@ -8,7 +8,7 @@ YUI.add('bookie-test-history', function (Y) {
 
         testHistoryExists: function () {
             Y.Assert.isObject(Y.bookie.BmarkListHistory,
-                              "Should find an objcet for History module");
+                              "Should find an object for History module");
         }
     }));
 }, '0.4', {

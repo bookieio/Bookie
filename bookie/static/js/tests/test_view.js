@@ -73,7 +73,7 @@ YUI.add('bookie-test-view', function (Y) {
 
         testViewExists: function () {
             Y.Assert.isObject(Y.bookie.BmarkView,
-                              "Should find an objcet for Bmark view");
+                              "Should find an object for Bmark view");
         },
 
         test_render_view: function () {
