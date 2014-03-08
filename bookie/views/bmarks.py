@@ -8,11 +8,14 @@ from pyramid.view import view_config
 from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
-from bookie.models import Bmark
-from bookie.models import BmarkMgr
-from bookie.models import DBSession
-from bookie.models import InvalidBookmark
-from bookie.models import TagMgr
+from bookie.models import (
+    Bmark,
+    BmarkMgr,
+    DBSession,
+    InvalidBookmark,
+    NoResultFound,
+    TagMgr,
+)
 from bookie.views import api
 
 LOG = logging.getLogger(__name__)
@@ -172,8 +175,8 @@ def edit_error(request):
                 try:
                     bmark = BmarkMgr.get_by_url(
                         post['url'],
-                        username=request.user)
-                except:
+                        username=request.user.username)
+                except NoResultFound:
                     bmark = None
                 if bmark:
                     return {
@@ -182,17 +185,18 @@ def edit_error(request):
                         'message': "URL already Exists",
                         'user': request.user,
                     }
-                bmark = BmarkMgr.store(
-                    post['url'],
-                    request.user.username,
-                    post['description'],
-                    post['extended'],
-                    post['tags'])
+                else:
+                    bmark = BmarkMgr.store(
+                        post['url'],
+                        request.user.username,
+                        post['description'],
+                        post['extended'],
+                        post['tags'])
 
-                # Assign a task to fetch this pages content and parse it out
-                # for storage and indexing.
-                DBSession.flush()
-                tasks.fetch_bmark_content.delay(bmark.bid)
+                    # Assign a task to fetch this pages content and parse it
+                    # out for storage and indexing.
+                    DBSession.flush()
+                    tasks.fetch_bmark_content.delay(bmark.bid)
 
             except InvalidBookmark, exc:
                 # There was an issue using the supplied data to create a new
