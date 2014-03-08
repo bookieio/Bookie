@@ -6,6 +6,8 @@ YUI.add('bookie-test-userstats', function (Y) {
     ns.suite.add(new Y.Test.Case({
         name: "User Stats Tests",
 
+        setUp: function() {
+        }
     }));
 }, '0.4', {
     requires: [
