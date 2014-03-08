@@ -170,7 +170,9 @@ def edit_error(request):
         if 'new' in request.url:
             try:
                 try:
-                    bmark = BmarkMgr.get_by_url(post['url'])
+                    bmark = BmarkMgr.get_by_url(
+                        post['url'],
+                        username=request.user)
                 except:
                     bmark = None
                 if bmark:
