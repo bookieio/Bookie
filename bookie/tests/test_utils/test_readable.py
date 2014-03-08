@@ -7,7 +7,6 @@ import urllib
 from pyramid import testing
 from unittest import TestCase
 
-from bookie.bcelery import tasks
 from bookie.lib.readable import ReadContent
 from bookie.lib.readable import ReadUrl
 
@@ -147,6 +146,7 @@ class TestReadableFulltext(TestCase):
                                 params=req_params)
         session.flush()
         transaction.commit()
+        from bookie.bcelery import tasks
         tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
 

@@ -7,6 +7,7 @@ PEP8 := $(PY) bin/pep8
 PIP := $(PY) bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 NOSE := $(PY) bin/nose2
+PYTEST := $(PY) bin/py.test
 PASTER := $(PY) bin/pserve
 PYSCSS := $(PY) bin/pyscss
 GUNICORN := $(PY) bin/gunicorn
@@ -148,7 +149,7 @@ smtp:
 
 .PHONY: test
 test:
-	INI="test.ini" $(NOSE) -s bookie/tests
+	INI="test.ini" $(PYTEST) -s bookie/tests
 
 .PHONY: testcoverage
 testcoverage:
