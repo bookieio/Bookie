@@ -6,7 +6,11 @@
     </div>
 
     <div class="description">
+    {{#if username}}
+        <a href="/{{username}}/redirect/{{hash_id}}"
+    {{else}}
         <a href="/redirect/{{hash_id}}"
+    {{/if}}
             title="{{extended}}">
             <img class="favicon" src="https://s2.googleusercontent.com/s2/favicons?domain={{domain}}" />
             {{#if description}}
