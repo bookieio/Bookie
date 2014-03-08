@@ -8,6 +8,7 @@ from pyramid.view import view_config
 from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
+from bookie.lib.urlparsing import trim_utm
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import DBSession
@@ -129,6 +130,7 @@ def edit(request):
         else:
             # hash the url and make sure that it doesn't exist
             url = params.get('url', u"")
+            url = trim_utm(url)
             if url != u"":
                 new_url_hash = generate_hash(url)
 
@@ -165,12 +167,12 @@ def edit_error(request):
     rdict = request.matchdict
     params = request.params
     post = request.POST
-
+    parsed_url = trim_utm(post['url'])
     with ReqAuthorize(request, username=rdict['username'].lower()):
         if 'new' in request.url:
             try:
                 try:
-                    bmark = BmarkMgr.get_by_url(post['url'])
+                    bmark = BmarkMgr.get_by_url(parsed_url)
                 except:
                     bmark = None
                 if bmark:
@@ -181,7 +183,7 @@ def edit_error(request):
                         'user': request.user,
                     }
                 bmark = BmarkMgr.store(
-                    post['url'],
+                    parsed_url,
                     request.user.username,
                     post['description'],
                     post['extended'],
@@ -197,7 +199,7 @@ def edit_error(request):
                 # bookmark. Send the data back to the user with the error
                 # message.
                 bmark = Bmark(
-                    post['url'],
+                    parsed_url,
                     request.user.username,
                     desc=post['description'],
                     ext=post['extended'],
