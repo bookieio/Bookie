@@ -49,6 +49,9 @@ def build_routes(config):
                      "{username}/edit_error/{hash_id}")
     config.add_route("user_bmark_new", "{username}/new")
     config.add_route("user_bmark_new_error", "{username}/new_error")
+    config.add_route(
+        "user_delete_all_bookmarks",
+        "{username}/account/delete_all_bookmarks")
 
     # config.add_route("bmark_delete", "/bmark/delete")
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -83,6 +86,7 @@ def build_routes(config):
 
     config.add_route("user_account", "{username}/account")
     config.add_route("user_export", "{username}/export")
+    config.add_route("user_stats", "{username}/stats")
 
     #
     # NEW API

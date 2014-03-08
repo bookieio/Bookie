@@ -2,6 +2,7 @@
 import logging
 from pyramid.view import view_config
 
+from bookie.lib.access import ReqAuthorize
 from bookie.models import BmarkMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr
@@ -37,3 +38,14 @@ class DashboardView(BookieView):
                 'with_bookmarks': users_with_bookmarks,
             }
         }
+
+
+@view_config(route_name="user_stats", renderer="/stats/userstats.mako")
+def userstats(request):
+    """Stats for an individual user"""
+    with ReqAuthorize(request):
+        user = UserMgr.get(username=request.user.username)
+    return {
+        'user': user,
+        'username': user.username,
+    }

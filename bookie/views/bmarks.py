@@ -8,11 +8,14 @@ from pyramid.view import view_config
 from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
 from bookie.lib.urlhash import generate_hash
-from bookie.models import Bmark
-from bookie.models import BmarkMgr
-from bookie.models import DBSession
-from bookie.models import InvalidBookmark
-from bookie.models import TagMgr
+from bookie.models import (
+    Bmark,
+    BmarkMgr,
+    DBSession,
+    InvalidBookmark,
+    NoResultFound,
+    TagMgr,
+)
 from bookie.views import api
 
 LOG = logging.getLogger(__name__)
@@ -170,8 +173,10 @@ def edit_error(request):
         if 'new' in request.url:
             try:
                 try:
-                    bmark = BmarkMgr.get_by_url(post['url'])
-                except:
+                    bmark = BmarkMgr.get_by_url(
+                        post['url'],
+                        username=request.user.username)
+                except NoResultFound:
                     bmark = None
                 if bmark:
                     return {
@@ -180,17 +185,18 @@ def edit_error(request):
                         'message': "URL already Exists",
                         'user': request.user,
                     }
-                bmark = BmarkMgr.store(
-                    post['url'],
-                    request.user.username,
-                    post['description'],
-                    post['extended'],
-                    post['tags'])
+                else:
+                    bmark = BmarkMgr.store(
+                        post['url'],
+                        request.user.username,
+                        post['description'],
+                        post['extended'],
+                        post['tags'])
 
-                # Assign a task to fetch this pages content and parse it out
-                # for storage and indexing.
-                DBSession.flush()
-                tasks.fetch_bmark_content.delay(bmark.bid)
+                    # Assign a task to fetch this pages content and parse it
+                    # out for storage and indexing.
+                    DBSession.flush()
+                    tasks.fetch_bmark_content.delay(bmark.bid)
 
             except InvalidBookmark, exc:
                 # There was an issue using the supplied data to create a new
@@ -251,5 +257,33 @@ def readable(request):
                 'bmark': found,
                 'username': username,
             }
+        else:
+            return HTTPNotFound()
+
+
+@view_config(route_name="user_delete_all_bookmarks",
+             renderer="/accounts/index.mako")
+def delete_all_bookmarks(request):
+    """Delete all bookmarks of the current user"""
+    rdict = request.matchdict
+    post = request.POST
+    with ReqAuthorize(request, username=rdict['username'].lower()):
+        username = request.user.username
+        if username:
+            if post['delete'] == 'Delete':
+                from bookie.bcelery import tasks
+                tasks.delete_all_bookmarks.delay(username)
+                return {
+                    'user': request.user,
+                    'message': 'The delete request has been queued' +
+                               ' and will be acted upon shortly.',
+                }
+            else:
+                return {
+                    'user': request.user,
+                    'message': 'Delete request not confirmed. ' +
+                               'Please make sure to enter' +
+                               ' \'Delete\' to confirm.',
+                }
         else:
             return HTTPNotFound()

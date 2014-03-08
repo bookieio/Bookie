@@ -525,4 +525,6 @@ class ImportViews(TestViewBase):
             params={'api_key': self.api_key},
             upload_files=[],
         )
-        self.assertTrue('Please provide a file to import' in res.body,"Error message should be present")
+        self.assertTrue(
+            'Please provide a file to import' in res.body,
+            "Error message should be present")

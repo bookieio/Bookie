@@ -306,6 +306,7 @@ form {
         display: inline-block;
         overflow: hidden;
         width: 35em;
+        vertical-align: bottom;
     }
 }
 
@@ -788,3 +789,4 @@ form ul .yui3-bookie-tagcontrol {
     visibility: hidden;
 }
 
+@import "stats";

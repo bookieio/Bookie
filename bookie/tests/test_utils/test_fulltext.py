@@ -5,7 +5,6 @@ import urllib
 from pyramid import testing
 from unittest import TestCase
 
-from bookie.bcelery import tasks
 from bookie.models import DBSession
 from bookie.models.fulltext import WhooshFulltext
 from bookie.models.fulltext import get_fulltext_handler
@@ -57,6 +56,7 @@ class TestFulltext(TestCase):
 
         session.flush()
         transaction.commit()
+        from bookie.bcelery import tasks
         tasks.reindex_fulltext_allbookmarks(sync=True)
         return res
 
