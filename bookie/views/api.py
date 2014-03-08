@@ -16,6 +16,7 @@ from bookie.lib.message import ReactivateMsg
 from bookie.lib.message import InvitationMsg
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
+from bookie.lib.urlparsing import trim_utm
 
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -208,7 +209,7 @@ def bmark_add(request):
     else:
         # check if we already have this
         try:
-            mark = BmarkMgr.get_by_url(params['url'],
+            mark = BmarkMgr.get_by_url(trim_utm(params['url']),
                                        username=user.username)
             mark = _update_mark(mark, params)
 
@@ -228,7 +229,7 @@ def bmark_add(request):
             inserted_by = params.get('inserted_by', u'unknown_api')
 
             mark = BmarkMgr.store(
-                params['url'],
+                trim_utm(params['url']),
                 user.username,
                 params.get('description', u''),
                 params.get('extended', u''),

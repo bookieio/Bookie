@@ -186,6 +186,30 @@ class BookieAPITest(unittest.TestCase):
         data = json.loads(res.body)
         self.assertTrue('error' in data)
         self.assertEqual(data['error'], 'Bad Request: No url provided')
+    
+    def test_add_bookmark_utm_trim(self):
+        """Check if UTM parameters are trimmed of bookmark url"""
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+        test_url=u"http://localhost:6543/index.php?a=1&utm_source=1&utm_a=yes&b=2#hash"
+        expected_url = u"http://localhost:6543/index.php?a=1&b=2#hash"
+        test_bmark = {
+            'url': test_url,
+            'description': u'Bookie',
+            'extended': u'Extended notes',
+            'tags': u'bookmarks',
+            'api_key': key,
+        }
+
+        self.testapp.post('/api/v1/admin/bmark',
+                                params=test_bmark,
+                                status=200)
+        bmark = self.testapp.get('/api/v1/admin/bmarks?api_key=' + API_KEY,
+                               status=200)
+        self.assertEqual(
+            expected_url, json.loads(bmark.body)['bmarks'][0]['url'],
+            "UTM parameters should be trimmed from url")
 
     def test_bookmark_fetch(self):
         """Test that we can get a bookmark and it's details"""
