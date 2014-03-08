@@ -1044,7 +1044,7 @@ YUI.add('bookie-view', function (Y) {
                 date: new Date()}).render();
             this.calendar.on('selectionChange',
                              this._date_range,
-			     this
+                             this
                             );
             this.calendar.set("headerRenderer", function (curDate) {
                 var ydate = Y.DataType.Date,
