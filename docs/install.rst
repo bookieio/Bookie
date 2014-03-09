@@ -23,6 +23,10 @@ Login as admin
     user: admin
     pass: admin
 
+You can create new users by writing a script or going through the signup process.
+You just need to install inbox (bin/pip install inbox) and run make smtp to get a 
+fake email server to catch the activation emails.
+
 
 Where to go from here
 ~~~~~~~~~~~~~~~~~~~~~~~
