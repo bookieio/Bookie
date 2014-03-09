@@ -15,6 +15,15 @@ and your distro for the following:
     $ make run
     $ (YOUR BROWSER) http://127.0.0.1:6543/
 
+
+You should have JavaScipt enabled.
+
+Login as admin
+::
+    user: admin
+    pass: admin
+
+
 Where to go from here
 ~~~~~~~~~~~~~~~~~~~~~~~
 
