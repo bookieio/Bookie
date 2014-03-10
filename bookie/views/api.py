@@ -66,7 +66,7 @@ def ping(request):
     params = request.params
     username = params.get('username', None)
     api_key = params.get('api_key', None)
-    user = UserMgr(username = username)
+    user = UserMgr.get(username = username)
     if api_key == user.api_key:
         return _api_response(request, {
             'success': True,
