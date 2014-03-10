@@ -8,23 +8,24 @@
     <title>User Stats Tests</title>
 </head>
 <body class="yui3-skin-sam">
+    <div id="log"></div>
     <div id="userstats_msg" class="error"></div>
     <div id="calendar"></div>
-    <div id="bmark_count_graph"></div>
+    <div id="bmark_count_graph" style="margin-left: auto; margin-right: auto; width: 1000px; height: 500px;"></div>
     <script type="text/javascript">
-        YUI().use('calendar', 'test-console', 'bookie-test-userstats', function (Y) {
-        // RUN ALL THE TESTS!!!!!
-        var yconsole = new Y.Test.Console({
-            filters: {
-                pass: true,
-                fail: true
-            },
-            newestOnTop: false
-        });
-        yconsole.render('#log');
+        YUI().use('calendar', 'charts', 'datatype-date', 'test-console', 'bookie-test-userstats', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
+                newestOnTop: false
+            });
+            yconsole.render('#log');
 
-        Y.Test.Runner.add(Y.bookie.test.userstats.suite);
-        Y.Test.Runner.run();
+            Y.Test.Runner.add(Y.bookie.test.userstats.suite);
+            Y.Test.Runner.run();
         });
     </script>
 </body>
