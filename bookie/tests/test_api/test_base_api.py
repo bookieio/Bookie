@@ -715,6 +715,18 @@ class BookieAPITest(unittest.TestCase):
 
         self._check_cors_headers(res)
 
+    def test_api_ping_failed_invalid_api(self):
+        """If you don't supply a valid api key, you've failed the ping"""
+        res = self.testapp.get('/api/v1/admin/ping?api_key=' + "invalid_api_key",
+                               status=200)
+        ping = json.loads(res.body)
+
+        self.assertTrue(not ping['success'])
+        self.assertEqual(ping['message'], "API keys does not match.")
+
+        self._check_cors_headers(res)
+
+
     def test_api_ping_failed_nouser(self):
         """If you don't supply a username, you've failed the ping"""
         res = self.testapp.get('/api/v1/ping?api_key=' + API_KEY,
