@@ -500,6 +500,22 @@ YUI().add('bookie-chrome', function (Y) {
         init_background: function () {
             var that = this;
 
+            // Keep checking until the user configures a working
+            // combination for the first time.
+            chrome.storage.local.get("optionsConfigured", function(obj) {
+                if (!obj["optionsConfigured"]) {
+                    chrome.tabs.create({
+                        url: "options.html"
+                    });
+                    var n = new Y.bookie.chrome.Notification({
+                        code: '9999',
+                        type: 'error',
+                        title: 'Options Not Configured',
+                        message: 'To start using the extension, fill in the api_key, api_username and the api_url'
+                    });
+                }
+            });
+
             // bind to the events to check if the current url is bookmarked or not
             chrome.tabs.onUpdated.addListener(
                 function(tabId, changeInfo, tab) {

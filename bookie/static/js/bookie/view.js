@@ -2042,7 +2042,14 @@ YUI.add('bookie-view', function (Y) {
                             opts.set('cache_content', 'false');
                         }
 
-                        // one updated, now save it
+                        // Set the flag so that it doesn't bug the user
+                        // for the configuration every single time.
+                        chrome.storage.local.set({
+                            "optionsConfigured": true
+                        });
+                        
+                        // Now that we have updated the settings in memory, 
+                        // do the same with offline chrome.storage
                         opts.save();
                         that._show_message('Saved your settings...', true);
                     } else {
