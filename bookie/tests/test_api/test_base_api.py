@@ -732,7 +732,7 @@ class BookieAPITest(unittest.TestCase):
                                status=200)
         ping = json.loads(res.body)
 
-        self.assertTrue(not ping['success'])
+        self.assertFalse(ping['success'])
         self.assertEqual(ping['message'], "API key is invalid.")
         self._check_cors_headers(res)
         
