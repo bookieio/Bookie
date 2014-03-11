@@ -3,6 +3,7 @@ import logging
 
 from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
+from bookie.lib.urlparsing import clean_url
 
 from datetime import datetime
 from datetime import timedelta
@@ -610,6 +611,7 @@ class Bmark(Base):
 
     bid = Column(Integer, autoincrement=True, primary_key=True)
     hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'))
+    clean_hash_id = Column(Unicode(22), ForeignKey('url_hash.hash_id'))
     description = Column(UnicodeText())
     extended = Column(UnicodeText())
     stored = Column(DateTime, default=datetime.utcnow)
@@ -635,7 +637,14 @@ class Bmark(Base):
     )
 
     hashed = relation(Hashed,
+                      foreign_keys="Bmark.hash_id",
                       backref="bmark",
+                      uselist=False
+                      )
+
+    clean_hashed = relation(Hashed,
+                      foreign_keys="Bmark.clean_hash_id",
+                      backref="clean_bmark",
                       uselist=False
                       )
 
@@ -656,12 +665,19 @@ class Bmark(Base):
 
         """
         # if we already have this url hashed, get that hash
+        cleanurl = clean_url(url)
         existing = HashedMgr.get_by_url(url)
+        existing_clean_hash = HashedMgr.get_by_url(url)
 
         if not existing:
             self.hashed = Hashed(url)
         else:
             self.hashed = existing
+
+        if not existing_clean_hash:
+            self.clean_hashed = Hashed(cleanurl)
+        else:
+            self.clean_hashed = existing_clean_hash
 
         self.username = username
         self.description = desc
