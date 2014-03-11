@@ -19,6 +19,7 @@ YUI.add('bookie-test-userstats', function (Y) {
 
         test_error: function() {
             // Stub out the API call with a fake response.
+            var old_method = Y.bookie.Api.route.UserBmarkCount;
             Y.bookie.Api.route.UserBmarkCount = function(cfg) {
                 return {
                     call: function(cfg) {
@@ -32,6 +33,7 @@ YUI.add('bookie-test-userstats', function (Y) {
             this.wait(function() {
                 var error_msg = Y.one('#userstats_msg');
                 Y.Assert.areEqual('Error fetching the bookmark count', error_msg.getContent());
+                Y.bookie.Api.route.UserBmarkCount = old_method;
             }, 500);
         },
 
@@ -49,6 +51,7 @@ YUI.add('bookie-test-userstats', function (Y) {
                 "data": 22}
             ];
             // Stub out the API call with a fake response.
+            var old_method = Y.bookie.Api.route.UserBmarkCount;
             Y.bookie.Api.route.UserBmarkCount = function(cfg) {
                 return {
                     call: function(cfg) {
@@ -64,6 +67,7 @@ YUI.add('bookie-test-userstats', function (Y) {
             this.wait(function() {
                 var success_msg = Y.one('#userstats_msg');
                 Y.Assert.areEqual('', success_msg.getContent());
+                Y.bookie.Api.route.UserBmarkCount = old_method;
             }, 500);
         }
         
