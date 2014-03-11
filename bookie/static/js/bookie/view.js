@@ -1005,6 +1005,8 @@ YUI.add('bookie-view', function (Y) {
             this.api = new Y.bookie.Api.route.UserBmarkCount(this.api_cfg);
             this.api.call({
                 success: function(data, request) {
+                    Y.one('#userstats_msg').setContent('');
+                    Y.one('#userstats_msg').hide();
                     // Stores the data for the graph.
                     var myDataValues = [];
                     data.count.forEach(function(value) {
@@ -1023,6 +1025,8 @@ YUI.add('bookie-view', function (Y) {
                     });
 		},
                 error: function (data, status_str, response, args) {
+                    Y.one('#userstats_msg').show();
+                    Y.one('#userstats_msg').setContent('Error fetching the bookmark count');
                 }
             });
 	},

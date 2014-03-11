@@ -46,7 +46,7 @@ YUI.add('bookie-test-model', function (Y) {
         "Bmark model should exist": function () {
             A.isObject(
                 Y.bookie.Bmark,
-                "Should find an objcet for Bmark model"
+                "Should find an object for Bmark model"
             );
         },
 
