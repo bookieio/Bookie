@@ -63,10 +63,23 @@ def ping(request):
     """Verify that you've setup your api correctly and verified
 
     """
-    return _api_response(request, {
-        'success': True,
-        'message': 'Looks good'
-    })
+    rdict = request.matchdict
+    params = request.params
+    username = rdict.get('username', None)
+    api_key = params.get('api_key', None)
+    user = UserMgr.get(username=username)
+    
+    # Check if user provided the correct api_key
+    if api_key == user.api_key:
+        return _api_response(request, {
+            'success': True,
+            'message': 'Looks good'
+        })
+    else:
+        return _api_response(request, {
+            'success': False,
+            'message': 'API key is invalid.'
+        })   
 
 
 @view_config(route_name="api_ping_missing_user", renderer="jsonp")
