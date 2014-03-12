@@ -51,7 +51,7 @@ def _api_response(request, data):
     # Wrap the data response with CORS headers for cross domain JS clients.
     request.response.headers.extend([
         ('Access-Control-Allow-Origin', '*'),
-        ('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type')
+        ('Access-Control-Allow-Headers', 'X-Requested-With')
     ])
 
     return data
