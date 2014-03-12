@@ -65,6 +65,9 @@ def recent(request):
     ret['count'] = params.get('count') if 'count' in params else RESULTS_MAX
     ret['page'] = params.get('page') if 'page' in params else 0
 
+    # Do we have any sorting criteria?
+    ret['sort'] = params.get('sort') if 'sort' in params else None
+
     return ret
 
 

@@ -276,7 +276,7 @@ def fetch_unfetched_bmark_content(ignore_result=True):
 
     url_list = Bmark.query.outerjoin(
         Readable, Bmark.readable).\
-        filter(Readable.imported == None).all()
+        filter(Readable.imported.is_(None)).all()
 
     for bmark in url_list:
         fetch_bmark_content.delay(bmark.bid)

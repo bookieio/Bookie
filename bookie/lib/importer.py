@@ -479,9 +479,9 @@ class FBookmarkImporter(Importer):
         except:
             file_io.seek(0)
             return can_handle
-            
+
         can_handle = FBookmarkImporter._is_firefox_format(backup_json,
-                                                         can_handle)
+                                                          can_handle)
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
@@ -534,29 +534,35 @@ class FBookmarkImporter(Importer):
                 if child["type"] == self.MOZ_CONTAINER:
                     folders.append(child)
                     tagfolders.append(child)
-                elif child["type"] == MOZ_PLACE and child.get("uri") and is_good(child):
+                elif child["type"] == MOZ_PLACE and \
+                        child.get("uri") and \
+                        is_good(child):
                     self.bmap_add(child, bmap)
             visited.add(next["id"])
 
         # visit all tag folders
         for tag in tagfolders:
             for bmark in tag["children"]:
-                if bmark["type"] == MOZ_PLACE and bmark.get("uri") and is_good(bmark):
+                if bmark["type"] == MOZ_PLACE and \
+                        bmark.get("uri") and \
+                        is_good(bmark):
                     self.bmap_add(bmark, bmap)
                     if not "tags" in bmap[bmark["uri"]]:
                         bmap[bmark["uri"]]["tags"] = []
-                    bmap[bmark["uri"]]["tags"].append(tag["title"].replace(" ", "-"))
+                    bmap[bmark["uri"]]["tags"].append(
+                        tag["title"].replace(" ", "-"))
 
         # save the bookmarks
-        # annos has the information about the url like name, flags, expires, value, type etc
+        # annos has the information about the url like name, flags, expires,
+        # value, type etc
         ids = []
         for url, metadata in bmap.items():
             if metadata.get('annos') is not None:
                 if metadata.get('annos')[0].get('value') is None:
                     metadata['annos'][0]['value'] = ''
             else:
-                metadata['annos']=[{}]
-                metadata['annos'][0]['value']=''
+                metadata['annos'] = [{}]
+                metadata['annos'][0]['value'] = ''
             if metadata.get('tags') is None:
                 metadata['tags'] = ''
             try:

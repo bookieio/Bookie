@@ -56,6 +56,11 @@ import json
                 tags = [];
             }
 
+            // Get the sorting criteria if available.
+            % if sort:
+                listview.api.data.sort = '${sort}';
+            % endif
+
             // bind up the history tracker
             var hist = new Y.bookie.BmarkListHistory({
                 pager: pager,

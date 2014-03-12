@@ -712,22 +712,21 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(ping['success'])
 
         self._check_cors_headers(res)
- 
+
     def test_api_ping_failed_invalid_api(self):
         """If you don't supply a valid api key, you've failed the ping"""
-        
+
         # Login a user and then test the validation of api key
-        
+
         user_data = {'login': u'admin',
                      'password': u'admin',
                      'form.submitted': u'true'}
 
         # Assuming user logged in without errors
-        login_res = self.testapp.post('/login',
-                                params=user_data)
-        
+        self.testapp.post('/login', params=user_data)
+
         # Check for authentication of api key
-        
+
         res = self.testapp.get('/api/v1/admin/ping?api_key=' + 'invalid',
                                status=200)
         ping = json.loads(res.body)
@@ -735,7 +734,7 @@ class BookieAPITest(unittest.TestCase):
         self.assertFalse(ping['success'])
         self.assertEqual(ping['message'], "API key is invalid.")
         self._check_cors_headers(res)
-        
+
     def test_api_ping_failed_nouser(self):
         """If you don't supply a username, you've failed the ping"""
         res = self.testapp.get('/api/v1/ping?api_key=' + API_KEY,
