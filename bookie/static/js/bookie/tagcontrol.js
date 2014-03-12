@@ -204,24 +204,38 @@ YUI.add('bookie-tagcontrol', function (Y) {
                         parent: this.ui,
                         silent: silent
                     });
+                    
+                // Add necessary YUI modules at the end.
+                // Requires transition module. 
 
-                // keep this up
-                var unique = true;
-                Y.Array.each(this.get('tags'), function (t) {
-                    if (t.get('text') === current_text) {
-                        unique = false;
+                Y.Array.find(this.get('tags'), function(item, index, list) {
+                    if (item.get('text') === current_text) {
+                        item.ui.transition({
+                            easing: 'ease',
+                            duration: 0.1,
+                            opacity: 0
+                        }, function() {
+
+                            // call destructor after animation has finished
+                            item.destroy();
+                        });
+                        return true;
                     }
-                });
+                }, this);
 
-                if (unique) {
-                    this.get('tags').push(new_tag);
-                    // add a new li element before the input one
-                    parent.get('parentNode').insertBefore(new_tag.ui, parent);
+                // Array.each is unncessary. Since we are sure that the tag list
+                // contains unique elements, removing the first (and only!) tag that
+                // matches the latest tag would suffice.
+                // Remove the unique flag which is unnecessary. 
 
-                    // fire an event that a new tag was added
-                    if (!silent) {
-                        this.set('events_waiting', true);
-                    }
+                this.get('tags').push(new_tag);
+
+                // add a new li element before the input one
+                parent.get('parentNode').insertBefore(new_tag.ui, parent);
+
+                // fire an event that a new tag was added
+                if (!silent) {
+                    this.set('events_waiting', true);
                 }
             }
         },
@@ -767,6 +781,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
         'base',
         'event-valuechange',
         'handlebars',
+        'transition',
         'widget'
     ]
 });
