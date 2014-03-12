@@ -156,7 +156,7 @@ class TestImports(unittest.TestCase):
         self.assertEqual(date_should_be, found.stored)
 
     def _firefox_data_test(self):
-        """Test that we find the correct firefox backup bmark data after import"""
+        """Verify we find the correct firefox backup bmark data after import"""
         res = Bmark.query.all()
         self.assertEqual(
             len(res),
@@ -184,6 +184,7 @@ class TestImports(unittest.TestCase):
         # relative to user's timezone
         date_should_be = datetime.fromtimestamp(1394649032847102/1e6)
         self.assertEqual(date_should_be, found.stored)
+
 
 class ImporterBaseTest(TestImports):
     """Verify the base import class is working"""
@@ -488,7 +489,6 @@ class ImportFirefoxTest(TestImports):
         imp = Importer(good_file, username=u"admin")
         imp.process()
 
-        res = Bmark.query.all()
         check_url = 'https://github.com/bookieio/Bookie/issues/71'
         check_url_hashed = generate_hash(check_url)
         found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()

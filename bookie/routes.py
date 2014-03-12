@@ -142,10 +142,6 @@ def build_routes(config):
     config.add_route('api_count_bmarks_user',
                      'api/v1/{username}/stats/bmarkcount')
 
-    config.add_route('api_bmarks_popular', 'api/v1/bmarks/popular')
-    config.add_route('api_bmarks_popular_user',
-                     'api/v1/{username}/bmarks/popular')
-
     # user bookmark api calls
     config.add_route("api_bmark_add",
                      "/api/v1/{username}/bmark",

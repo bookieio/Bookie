@@ -99,7 +99,7 @@
                                 <em class="icon">Account Details</em>
 
                             % endif
-                            <span class="text">Account</span>
+                            <span class="text">${request.user.username}</span>
                     </a></span>
                 % else:
                     <span class="item">
@@ -129,6 +129,10 @@
             <div class="yui3-u-1-4"></div>
             <div class="yui3-u-3-4">
                 <div class="right body">
+                    <a href="/recent?sort=popular">All Popular Bookmarks</a> |
+                    % if request.user and request.user.username:
+                        <a href="/${request.user.username}/recent?sort=popular">My Popular Bookmarks</a> |
+                    % endif
                     <a href="http://docs.bmark.us">Bookie</a> |
                     <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
                     <a href="${request.route_url('dashboard')}">Dashboard</a> |
