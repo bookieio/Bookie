@@ -185,6 +185,8 @@ YUI.add('bookie-tagcontrol', function (Y) {
          * making sure we're updating our srcNode with the list of tags for
          * form submitting later on.
          *
+         * Checks for duplicate tags and fades away the existing tag.
+         *
          * @method add
          * @param {String} current_text
          * @param {Boolean} silent
@@ -192,7 +194,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
          */
         add: function (current_text, silent) {
             var that = this;
-            // only add if there's text here
+            // Only add if there's text here.
             current_text = Y.Lang.trim(current_text);
 
             if (current_text) {
@@ -204,10 +206,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                         parent: this.ui,
                         silent: silent
                     });
-                    
-                // Add necessary YUI modules at the end.
-                // Requires transition module. 
-
+                
                 Y.Array.find(this.get('tags'), function(item, index, list) {
                     if (item.get('text') === current_text) {
                         item.ui.transition({
@@ -216,24 +215,19 @@ YUI.add('bookie-tagcontrol', function (Y) {
                             opacity: 0
                         }, function() {
 
-                            // call destructor after animation has finished
+                            // Call destructor after animation has finished.
                             item.destroy();
                         });
                         return true;
                     }
                 }, this);
 
-                // Array.each is unncessary. Since we are sure that the tag list
-                // contains unique elements, removing the first (and only!) tag that
-                // matches the latest tag would suffice.
-                // Remove the unique flag which is unnecessary. 
-
                 this.get('tags').push(new_tag);
 
-                // add a new li element before the input one
+                // Add a new li element before the input one.
                 parent.get('parentNode').insertBefore(new_tag.ui, parent);
 
-                // fire an event that a new tag was added
+                // Fire an event that a new tag was added.
                 if (!silent) {
                     this.set('events_waiting', true);
                 }

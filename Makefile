@@ -211,6 +211,9 @@ test_rsswatch:
 .PHONY: test_tagcontrol
 test_tagcontrol:
 	xdg-open $(JSTESTURL)/test_tagcontrol.html
+.PHONY: test_userstats
+test_userstats:
+	xdg-open $(JSTESTURL)/test_user_stats.html
 .PHONY: test_view
 test_view:
 	xdg-open $(JSTESTURL)/test_view.html

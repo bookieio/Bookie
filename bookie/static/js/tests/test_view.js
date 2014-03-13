@@ -73,7 +73,7 @@ YUI.add('bookie-test-view', function (Y) {
 
         testViewExists: function () {
             Y.Assert.isObject(Y.bookie.BmarkView,
-                              "Should find an objcet for Bmark view");
+                              "Should find an object for Bmark view");
         },
 
         test_render_view: function () {
@@ -310,7 +310,7 @@ YUI.add('bookie-test-view', function (Y) {
             var login = new Y.bookie.LoginView();
             login.render();
 
-            // The error message should be shows to the user.
+            // The error message should be shown to the user.
             // simulate click on submit button
             Y.one('#submit_forgotten').simulate('click');
             this.wait(function() {

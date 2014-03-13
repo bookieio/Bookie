@@ -17,7 +17,7 @@ YUI.add('bookie-test-api', function (Y) {
 
         testApiExists: function () {
             Y.Assert.isObject(Y.bookie.Api,
-                              "Should find an objcet for Api module");
+                              "Should find an object for Api module");
         },
 
         testPublicBmarkList: function () {
@@ -380,6 +380,33 @@ YUI.add('bookie-test-api', function (Y) {
                     email: 'testing@me.com'
                 },
                 api = new Y.bookie.Api.route.Invite(API_CFG);
+
+            Y.io = gen_fakeio(test_func);
+            api.call({});
+            Y.Assert.isTrue(hit);
+        },
+
+        testUserBmarkCount: function() {
+            var that = this,
+                hit = false,
+                test_func = function(url, cfg) {
+                    Y.Assert.areEqual('POST', cfg.method);
+                    Y.Assert.areEqual(
+                        'http://127.0.0.1:6543/api/v1/admin/stats/bmarkcount',
+                        url);
+                    Y.Assert.areEqual(
+                        Y.JSON.stringify({
+                        api_key: '2dcf75460cb5',
+                        username: 'admin'
+                    }), cfg.data);
+                    hit = true;
+            },
+            API_CFG = {
+                url: 'http://127.0.0.1:6543/api/v1',
+                username: 'admin',
+                api_key: '2dcf75460cb5'
+	    },
+            api = new Y.bookie.Api.route.UserBmarkCount(API_CFG);
 
             Y.io = gen_fakeio(test_func);
             api.call({});

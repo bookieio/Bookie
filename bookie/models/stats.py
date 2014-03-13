@@ -126,10 +126,7 @@ class StatBookmarkMgr(object):
                 # If both start_date and end_date are None,
                 # end_date will be the current date
                 end_date = datetime.utcnow()
-                end_date = datetime(
-                    end_date.year,
-                    end_date.month,
-                    end_date.day)
+
             # Otherwise if there's no start_date but we have an end_date,
             # assume that the user wants the STATS_WINDOW worth of stats.
             start_date = end_date - timedelta(days=STATS_WINDOW)
