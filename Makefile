@@ -39,8 +39,12 @@ BOOKIE_CSS = bookie/static/css
 RESCSS = bookie/static/css/responsive.css
 BASECSS = bookie/static/css/base.css
 
-SYSDEPS := build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
+SYSDEPS_UBUNTU = build-essential libxslt1-dev libxml2-dev python-dev libpq-dev git\
 	       python-virtualenv redis-server unzip
+SYSDEPS_ARCH =  base-devel libxslt libxml2 python postgresql-libs git\
+				 python-virtualenv redis unzip
+SYSDEPS_FEDORA = automake gcc gcc-c++ libxslt-devel libxml2-devel python-devel\
+				 libpqxx-devel git python-virtualenv redis unzip
 
 .PHONY: all
 all: deps develop bookie.db db_up js
@@ -53,10 +57,25 @@ clean_all: clean_venv clean_js clean_css clean_chrome clean_downloadcache
 
 .PHONY: sysdeps
 sysdeps:
-	if [ $(NONINTERACTIVE) ]; then \
-		sudo apt-get install -y $(SYSDEPS); \
-	else \
-		sudo apt-get install $(SYSDEPS); \
+	if which apt-get &> /dev/null; then \
+		if [ $(NONINTERACTIVE) ]; then \
+			sudo apt-get install -y $(SYSDEPS_UBUNTU); \
+		else \
+			sudo apt-get install $(SYSDEPS_UBUNTU); \
+		fi \
+	elif which pacman &> /dev/null; then \
+		if [ $(NONINTERACTIVE) ]; then \
+			sudo pacman -S --noconfirm $(SYSDEPS_ARCH); \
+		else \
+			sudo pacman -S $(SYSDEPS_ARCH); \
+		fi \
+	elif which yum &> /dev/null; then \
+		if [ $(NONINTERACTIVE) ]; then \
+			sudo yum install -y $(SYSDEPS_FEDORA); \
+		else \
+			sudo yum install $(SYSDEPS_FEDORA); \
+		fi; \
+		sudo service redis start; \
 	fi
 
 .PHONY: install
