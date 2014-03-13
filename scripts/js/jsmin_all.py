@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """Handle minifying all javascript files in the build directory by walking
 
