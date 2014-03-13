@@ -206,7 +206,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                         parent: this.ui,
                         silent: silent
                     });
-                    
+                
                 Y.Array.find(this.get('tags'), function(item, index, list) {
                     if (item.get('text') === current_text) {
                         item.ui.transition({
