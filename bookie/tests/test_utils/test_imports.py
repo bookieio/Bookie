@@ -17,6 +17,7 @@ from bookie.lib.importer import Importer
 from bookie.lib.importer import DelImporter
 from bookie.lib.importer import DelXMLImporter
 from bookie.lib.importer import GBookmarkImporter
+from bookie.lib.importer import FBookmarkImporter
 
 from bookie.tests import TestViewBase
 from bookie.tests import empty_db
@@ -154,6 +155,35 @@ class TestImports(unittest.TestCase):
         date_should_be = datetime.fromtimestamp(1350353334)
         self.assertEqual(date_should_be, found.stored)
 
+    def _firefox_data_test(self):
+        """Test that we find the correct firefox backup bmark data after import"""
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            13,
+            "We should have 13 results, we got: " + str(len(res)))
+
+        # Verify we can find a bookmark by url and check tags, etc
+        check_url = 'https://github.com/bookieio/Bookie'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags),
+            2,
+            "We should have gotten 2 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        self.assertTrue(
+            'myfav' in found.tag_string(),
+            'myfav should be a valid tag in the bookmark')
+
+        # and check the timestamp is correct
+        # relative to user's timezone
+        date_should_be = datetime.fromtimestamp(1394649032847102/1e6)
+        self.assertEqual(date_should_be, found.stored)
 
 class ImporterBaseTest(TestImports):
     """Verify the base import class is working"""
@@ -406,6 +436,65 @@ class ImportChromeTest(TestImports):
 
         # now let's do some db sanity checks
         self._chrome_data_test()
+
+
+class ImportFirefoxTest(TestImports):
+    """Test the Bookie importer for Firefox backup export"""
+
+    def _get_file(self):
+        loc = os.path.dirname(__file__)
+        del_file = os.path.join(loc, 'firefox_backup.json')
+
+        return open(del_file)
+
+    def tearDown(self):
+        """Regular tear down method"""
+        empty_db()
+
+    def test_is_firefox_file(self):
+        """Verify that this is a firefox json file"""
+        good_file = self._get_file()
+
+        self.assertTrue(
+            FBookmarkImporter.can_handle(good_file),
+            "FBookmarkImporter should handle this file")
+
+        good_file.close()
+
+    def test_is_not_firefox_file(self):
+        """And that it returns false when it should"""
+        bad_file = StringIO.StringIO()
+        bad_file.write('failing tests please')
+        bad_file.seek(0)
+
+        self.assertTrue(
+            not FBookmarkImporter.can_handle(bad_file),
+            "FBookmarkImporter cannot handle this file")
+
+        bad_file.close()
+
+    def test_import_process(self):
+        """Verify importer inserts the correct firefox bookmarks"""
+        good_file = self._get_file()
+        imp = Importer(good_file, username=u"admin")
+        imp.process()
+
+        # now let's do some db sanity checks
+        self._firefox_data_test()
+
+    def test_nested_folder(self):
+        """Verify if bookmarks in nested folders are imported"""
+        good_file = self._get_file()
+        imp = Importer(good_file, username=u"admin")
+        imp.process()
+
+        res = Bmark.query.all()
+        check_url = 'https://github.com/bookieio/Bookie/issues/71'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
 
 
 class ImportViews(TestViewBase):

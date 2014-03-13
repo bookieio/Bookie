@@ -1,4 +1,5 @@
 """Importers for bookmarks"""
+import json
 import os
 import random
 import string
@@ -65,6 +66,9 @@ class Importer(object):
 
         if GBookmarkImporter.can_handle(args[0]):
             return super(Importer, cls).__new__(GBookmarkImporter)
+
+        if FBookmarkImporter.can_handle(args[0]):
+            return super(Importer, cls).__new__(FBookmarkImporter)
 
         return super(Importer, cls).__new__(Importer)
 
@@ -427,6 +431,147 @@ class GBookmarkImporter(Importer):
                 bmark = None
             if bmark:
                 ids.append(bmark.bid)
+            if count % COMMIT_SIZE == 0:
+                transaction.commit()
+                # Start a new transaction for the next grouping.
+                transaction.begin()
+
+        # Commit any that are left since the last commit performed.
+        transaction.commit()
+
+        from bookie.bcelery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # fetch its content.
+        for bid in ids:
+            tasks.fetch_bmark_content.delay(bid)
+
+
+class FBookmarkImporter(Importer):
+    """Process a FireFox backup export json file"""
+    MOZ_CONTAINER = "text/x-moz-place-container"
+
+    @staticmethod
+    def _is_firefox_format(json, can_handle):
+        """Verify that this import file is in the firefox backup
+        export format
+
+        Firefox json file has a variable "type" which is equal to
+        "text/x-moz-place-container"
+        """
+        if json['type'] == FBookmarkImporter.MOZ_CONTAINER:
+            can_handle = True
+
+        return can_handle
+
+    @staticmethod
+    def can_handle(file_io):
+        """Check if this file is a Firefox bookmarks format file
+
+        In order to check the file we have to read it and check it's content
+        has a variable "type" which is equal to "text/x-moz-place-container"
+        """
+        if (file_io.closed):
+            file_io = open(file_io.name)
+        file_io.seek(0)
+        can_handle = False
+        try:
+            backup_json = json.load(file_io)
+        except:
+            file_io.seek(0)
+            return can_handle
+            
+        can_handle = FBookmarkImporter._is_firefox_format(backup_json,
+                                                         can_handle)
+
+        # make sure we reset the file_io object so that we can use it again
+        file_io.seek(0)
+        return can_handle
+
+    def bmap_add(self, bmark, bmap):
+        if bmark["uri"] not in bmap:
+            bmap[bmark["uri"]] = bmark
+
+    def process(self):
+        """Process an json firefox bookmarks export and import them into bookie
+        """
+        MOZ_PLACE = "text/x-moz-place"
+        UNWANTED_SCHEME = ("data", "place", "javascript")
+
+        count = 0
+        if (self.file_handle.closed):
+            self.file_handle = open(self.file_handle.name)
+
+        content = self.file_handle.read().decode("UTF-8")
+        # HACK: Firefox' JSON writer leaves a trailing comma
+        # HACK: at the end of the array, which no parser accepts
+        if content.endswith(u"}]},]}"):
+            content = content[:-6] + u"}]}]}"
+        root = json.loads(content)
+
+        # make a dictionary of unique bookmarks
+        bmap = {}
+
+        # check if uri of child starts with "data", "place", "javascript"
+        def is_good(child):
+            return not child["uri"].split(":", 1)[0] in UNWANTED_SCHEME
+
+        # find toplevel subfolders and tag folders
+        folders = []
+        tagfolders = []
+        for child in root["children"]:
+            if child.get("root") == "tagsFolder":
+                tagfolders.extend(child["children"])
+            elif child.get("root"):
+                folders.append(child)
+
+        # visit all subfolders recursively
+        visited = set()
+        while folders:
+            next = folders.pop()
+            if next["id"] in visited:
+                continue
+            for child in next["children"]:
+                if child["type"] == self.MOZ_CONTAINER:
+                    folders.append(child)
+                    tagfolders.append(child)
+                elif child["type"] == MOZ_PLACE and child.get("uri") and is_good(child):
+                    self.bmap_add(child, bmap)
+            visited.add(next["id"])
+
+        # visit all tag folders
+        for tag in tagfolders:
+            for bmark in tag["children"]:
+                if bmark["type"] == MOZ_PLACE and bmark.get("uri") and is_good(bmark):
+                    self.bmap_add(bmark, bmap)
+                    if not "tags" in bmap[bmark["uri"]]:
+                        bmap[bmark["uri"]]["tags"] = []
+                    bmap[bmark["uri"]]["tags"].append(tag["title"].replace(" ", "-"))
+
+        # save the bookmarks
+        # annos has the information about the url like name, flags, expires, value, type etc
+        ids = []
+        for url, metadata in bmap.items():
+            if metadata.get('annos') is not None:
+                if metadata.get('annos')[0].get('value') is None:
+                    metadata['annos'][0]['value'] = ''
+            else:
+                metadata['annos']=[{}]
+                metadata['annos'][0]['value']=''
+            if metadata.get('tags') is None:
+                metadata['tags'] = ''
+            try:
+                bookmark = self.save_bookmark(
+                    unicode(url),
+                    unicode(metadata['title']),
+                    unicode(metadata['annos'][0]['value']),
+                    u" ".join(metadata['tags']),
+                    dt=datetime.fromtimestamp(
+                        metadata['dateAdded']/1e6))
+                DBSession.flush()
+            except InvalidBookmark:
+                bookmark = None
+            if bookmark:
+                ids.append(bookmark.bid)
             if count % COMMIT_SIZE == 0:
                 transaction.commit()
                 # Start a new transaction for the next grouping.

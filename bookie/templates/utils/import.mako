@@ -63,7 +63,7 @@ ${account_nav()}
         </div>
         <div class="note">
             <p>Use the <em>Import Bookmarks</em> tool to import your bookmarks from Delicious
-            or Google Bookmarks.</p>
+            or Google Bookmarks, Google Chrome, or Firefox.</p>
             <p>You will need an html export file from either of these services.</p>
             <h2>Delicious</h2>
             <p>To get an html file from Delicious, click on <em>Settings</em> and then click on
@@ -71,6 +71,15 @@ ${account_nav()}
             <h2>Google Bookmarks</h2>
             <p>To get an html file from Google Bookmarks, click on <em>Export Bookmarks</em>
             under the <em>Tools</em> heading on the sidebar.</p>
+            <h2>Google Chrome</h2>
+            <p>To get an html file from Google Chrome, go to the Bookmark
+                Manager, click on <em>Organize</em> and then  <em>Export bookmarks
+                to HTML file...</em>
+            <h2>Firefox</h2>
+            <p>To get the json file of your Firefox bookmarks, go to the menu
+                for Bookmarks, select <em>Show All Bookmarks</em> go to <em>Import
+                and Backup</em> and select the option for <em>Backup...</em></p>.
+
 
             <p>Note that the import process might take a bit of time on large sets of bookmarks.</p>
         </div>

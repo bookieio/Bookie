@@ -24,7 +24,7 @@ Latest Release
 Bookie Features
 ----------------
 - Open source!
-- Imports from Delicious.com and Google Bookmarks
+- Imports from Delicious.com, Google Bookmarks, Google Chrome, and Firefox.
 - `Google Chrome extension`_
 - `Firefox extension`_
 - Bookmarklet for other browsers (mobile devices)

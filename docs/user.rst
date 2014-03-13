@@ -4,11 +4,15 @@ User Docs
 
 Importing
 ----------
-Bookie currently supports the Delicious export and the Google Bookmarks export
-formats.
+Bookie currently supports the Delicious export, Google Bookmarks export,
+Google Chrome bookmarks, and Firefox JSON backups.
 
 - Delicious - You can export from Delicious by going to `Settings` and clicking the `Import / Upload Bookmarks` link under the `Bookmarks` section.
 - Google Bookmarks - You can export your Google bookmarks by going to ???
+- Google Chrome - You can export by going to `Bookmark manager`, `Organize`,
+  and then `Export bookmarks to HTML file...`.
+- Firefox - You can generate a backup by going to `Show all Bookmarks`, then
+  `Import and Backup`, and selecting `Backup...`.
 
 The importer might take a bit on large sets of bookmarks. Let us know if you
 run into any issues so we can improve our import process.
