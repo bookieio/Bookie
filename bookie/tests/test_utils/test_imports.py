@@ -437,6 +437,7 @@ class ImportChromeTest(TestImports):
         # now let's do some db sanity checks
         self._chrome_data_test()
 
+
 class ImportFirefoxTest(TestImports):
     """Test the Bookie importer for Firefox backup export"""
 
@@ -480,6 +481,21 @@ class ImportFirefoxTest(TestImports):
 
         # now let's do some db sanity checks
         self._firefox_data_test()
+
+    def test_nested_folder(self):
+        """Verify if bookmarks in nested folders are imported"""
+        good_file = self._get_file()
+        imp = Importer(good_file, username=u"admin")
+        imp.process()
+
+        res = Bmark.query.all()
+        check_url = 'https://github.com/bookieio/Bookie/issues/71'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+
 
 class ImportViews(TestViewBase):
     """Test the web import"""

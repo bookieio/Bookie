@@ -445,18 +445,20 @@ class GBookmarkImporter(Importer):
         for bid in ids:
             tasks.fetch_bmark_content.delay(bid)
 
+
 class FBookmarkImporter(Importer):
     """Process a FireFox backup export json file"""
+    MOZ_CONTAINER = "text/x-moz-place-container"
 
     @staticmethod
-    def _is_firefox_format(json, fbookmark_type, can_handle):
+    def _is_firefox_format(json, can_handle):
         """Verify that this import file is in the firefox backup
         export format
 
         Firefox json file has a variable "type" which is equal to
         "text/x-moz-place-container"
         """
-        if (json['type'] == fbookmark_type):
+        if json['type'] == FBookmarkImporter.MOZ_CONTAINER:
             can_handle = True
 
         return can_handle
@@ -475,21 +477,23 @@ class FBookmarkImporter(Importer):
         try:
             backup_json = json.load(file_io)
         except:
+            file_io.seek(0)
             return can_handle
             
-        fbookmark_type = "text/x-moz-place-container"
         can_handle = FBookmarkImporter._is_firefox_format(backup_json,
-                                                         fbookmark_type,
                                                          can_handle)
 
         # make sure we reset the file_io object so that we can use it again
         file_io.seek(0)
         return can_handle
 
+    def bmap_add(self, bmark, bmap):
+        if bmark["uri"] not in bmap:
+            bmap[bmark["uri"]] = bmark
+
     def process(self):
         """Process an json firefox bookmarks export and import them into bookie
         """
-        MOZ_CONTAINER = "text/x-moz-place-container"
         MOZ_PLACE = "text/x-moz-place"
         UNWANTED_SCHEME = ("data", "place", "javascript")
 
@@ -507,12 +511,9 @@ class FBookmarkImporter(Importer):
         # make a dictionary of unique bookmarks
         bmap = {}
 
-        def bmap_add(bmark, bmap):
-            if bmark["uri"] not in bmap:
-                bmap[bmark["uri"]] = bmark
-
-        def is_good(ch):
-            return not ch["uri"].split(":", 1)[0] in UNWANTED_SCHEME
+        # check if uri of child starts with "data", "place", "javascript"
+        def is_good(child):
+            return not child["uri"].split(":", 1)[0] in UNWANTED_SCHEME
 
         # find toplevel subfolders and tag folders
         catalogs = []
@@ -530,25 +531,26 @@ class FBookmarkImporter(Importer):
             if next["id"] in visited:
                 continue
             for child in next["children"]:
-                if child["type"] == MOZ_CONTAINER:
+                if child["type"] == self.MOZ_CONTAINER:
                     catalogs.append(child)
                     tagcatalogs.append(child)
                 elif child["type"] == MOZ_PLACE and child.get("uri") and is_good(child):
-                    bmap_add(child, bmap)
+                    self.bmap_add(child, bmap)
             visited.add(next["id"])
 
         # visit all tag folders
         for tag in tagcatalogs:
             for bmark in tag["children"]:
                 if bmark["type"] == MOZ_PLACE and bmark.get("uri") and is_good(bmark):
-                    bmap_add(bmark, bmap)
+                    self.bmap_add(bmark, bmap)
                     if not "tags" in bmap[bmark["uri"]]:
                         bmap[bmark["uri"]]["tags"] = []
                     bmap[bmark["uri"]]["tags"].append(tag["title"].replace(" ", "-"))
 
         # save the bookmarks
+        # annos has the information about the url like name, flags, expires, value, type etc
         ids = []
-        for url,metadata in bmap.items():
+        for url, metadata in bmap.items():
             if metadata.get('annos') is not None:
                 if metadata.get('annos')[0].get('value') is None:
                     metadata['annos'][0]['value'] = ''
