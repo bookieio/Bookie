@@ -206,7 +206,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
                         parent: this.ui,
                         silent: silent
                     });
-                    
+
                 Y.Array.find(this.get('tags'), function(item, index, list) {
                     if (item.get('text') === current_text) {
                         item.ui.transition({
@@ -228,6 +228,12 @@ YUI.add('bookie-tagcontrol', function (Y) {
                 parent.get('parentNode').insertBefore(new_tag.ui, parent);
 
                 // Fire an event that a new tag was added.
+                this.get('tags').push(new_tag);
+
+                // add a new li element before the input one
+                parent.get('parentNode').insertBefore(new_tag.ui, parent);
+
+                // fire an event that a new tag was added
                 if (!silent) {
                     this.set('events_waiting', true);
                 }
