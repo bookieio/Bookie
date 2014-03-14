@@ -1018,10 +1018,17 @@ YUI.add('bookie-api', function (Y) {
                     value: '/bmarks/search',
                     getter: function () {
                         var ret;
-                        if (this.get('phrase').length) {
+
+                        /* Parse all terms in 'phrase', escape chars and copy to a new Array */
+                        var terms = new Array();
+                        Y.Array.each(this.get('phrase'), function(term) {
+                            Array.prototype.push.call(terms, encodeURIComponent(term));
+                        });
+
+                        if (terms.length) {
                             ret = [
                                 '/bmarks/search',
-                                this.get('phrase').join('/')
+                                terms.join('/')
                             ].join('/');
                         } else {
                             ret = '/bmarks/search';
@@ -1086,10 +1093,17 @@ YUI.add('bookie-api', function (Y) {
                     value: '/{username}/bmarks/search',
                     getter: function () {
                         var ret;
-                        if (this.get('phrase').length) {
+
+                        /* Parse all terms in 'phrase', escape chars and copy to a new Array */
+                        var terms = new Array();
+                        Y.Array.each(this.get('phrase'), function(term) {
+                            Array.prototype.push.call(terms, encodeURIComponent(term));
+                        });
+                                                
+                        if (terms.length) {
                             ret = [
                                 '/{username}/bmarks/search',
-                                this.get('phrase').join('/')
+                                terms.join('/')
                             ].join('/');
                         } else {
                             ret = '/{username}/bmarks/search';
