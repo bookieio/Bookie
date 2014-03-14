@@ -226,7 +226,7 @@ YUI.add('bookie-tagcontrol', function (Y) {
 
                 // Add a new li element before the input one.
                 parent.get('parentNode').insertBefore(new_tag.ui, parent);
- 
+
                 // Fire an event that a new tag was added.
                 if (!silent) {
                     this.set('events_waiting', true);
