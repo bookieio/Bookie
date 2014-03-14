@@ -516,30 +516,30 @@ class FBookmarkImporter(Importer):
             return not child["uri"].split(":", 1)[0] in UNWANTED_SCHEME
 
         # find toplevel subfolders and tag folders
-        catalogs = []
-        tagcatalogs = []
+        folders = []
+        tagfolders = []
         for child in root["children"]:
             if child.get("root") == "tagsFolder":
-                tagcatalogs.extend(child["children"])
+                tagfolders.extend(child["children"])
             elif child.get("root"):
-                catalogs.append(child)
+                folders.append(child)
 
         # visit all subfolders recursively
         visited = set()
-        while catalogs:
-            next = catalogs.pop()
+        while folders:
+            next = folders.pop()
             if next["id"] in visited:
                 continue
             for child in next["children"]:
                 if child["type"] == self.MOZ_CONTAINER:
-                    catalogs.append(child)
-                    tagcatalogs.append(child)
+                    folders.append(child)
+                    tagfolders.append(child)
                 elif child["type"] == MOZ_PLACE and child.get("uri") and is_good(child):
                     self.bmap_add(child, bmap)
             visited.add(next["id"])
 
         # visit all tag folders
-        for tag in tagcatalogs:
+        for tag in tagfolders:
             for bmark in tag["children"]:
                 if bmark["type"] == MOZ_PLACE and bmark.get("uri") and is_good(bmark):
                     self.bmap_add(bmark, bmap)
