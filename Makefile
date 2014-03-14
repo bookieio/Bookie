@@ -68,8 +68,8 @@ sysdeps:
 			sudo pacman -S --noconfirm $(SYSDEPS_ARCH); \
 		else \
 			sudo pacman -S $(SYSDEPS_ARCH); \
-		fi \
-		sudo systemctl start redis
+		fi; \
+		sudo systemctl start redis; \
 	elif which yum &> /dev/null; then \
 		if [ $(NONINTERACTIVE) ]; then \
 			sudo yum install -y $(SYSDEPS_FEDORA); \
