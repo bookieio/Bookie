@@ -177,6 +177,84 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
 
             Y.Assert.areEqual(3, Y.all('.yui3-bookie-tagcontrol-item').size());
             Y.Assert.areEqual(2, this.tc.get('tags').length);
+        },
+
+        test_duplicate: function () {
+ 
+            this.t = Y.one('input');
+            this.tc3 = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc3.render();
+ 
+            // Setup a new tag.
+            var input = Y.one('.yui3-bookie-tagcontrol-input');
+            input.set('value', 'test');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            input.set('value', 'test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            input.set('value', 'test');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Test removal of tag at the beginning.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test2 test',
+                    this.t.get('value'),
+                    "The input should have 2 tags: " + this.t.get('value'));
+            }, 200);
+ 
+            input.set('value', 'test3');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            input.set('value', 'test3');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Add a duplicate tag at the right end.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test2 test test3',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
+ 
+            input.set('value', 'test');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Test removal of tag in the middle.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test2 test3 test',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
+ 
+            input.set('value', 'test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Finally, remove the tag at the front.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test3 test test2',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
         }
     }));
 
