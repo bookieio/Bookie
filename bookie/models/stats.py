@@ -146,11 +146,11 @@ class StatBookmarkMgr(object):
             end_date
         ]
         if len(response[0]) > 31:
-            i = 0
+            days = 0
             data = []
-            while i < len(response[0]):
-                data.append(response[0][i])
-                i += 7
+            while days < len(response[0]):
+                data.append(response[0][days])
+                days += 7
             response[0] = data
         return response
 
