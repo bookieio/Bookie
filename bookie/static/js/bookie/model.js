@@ -662,19 +662,22 @@ YUI.add('bookie-model', function (Y) {
          * @private
          *
          */
-        _read: function (options, callback) {
-            this.set('api_url',
-                this._get_data('api_url', this.get('api_url')));
-           this.set('api_username',
-                this._get_data('api_username', this.get('api_username')));
-           this.set('api_key',
-                this._get_data('api_key', this.get('api_key')));
-           this.set('cache_content',
-                this._get_data('cache_content', this.get('cache_content')));
-           this.set('last_bmark',
-                this._get_data('last_bmark', this.get('last_bmark')));
-        },
+        _read: function(options, callback) {
+            // At the moment, we request all of the variables at a stretch. 
+            // It maybe possible in the future to request any of these.
 
+            var keys = ['api_url', 'api_username', 'api_key', 'cache_content'];
+            var store = {
+                'api_url': this.get('api_url'),
+                'api_username': this.get('api_username'),
+                'api_key': this.get('api_key'),
+                'cache_content': this.get('cache_content'),
+                'sync_config': this.get('sync_config'),
+                'last_bmark': this.get('last_bmark'),
+            };
+
+            this._get_data(keys, store, callback);
+        },
 
         /**
          * Handle the save() event for objects that have an id and write it
@@ -686,33 +689,101 @@ YUI.add('bookie-model', function (Y) {
          * @private
          *
          */
-        _update: function (options, callback) {
-            localStorage.setItem('api_url', this.get('api_url'));
-            localStorage.setItem('api_username', this.get('api_username'));
-            localStorage.setItem('api_key', this.get('api_key'));
-            localStorage.setItem('cache_content', this.get('cache_content'));
-            localStorage.setItem('last_bmark', this.get('last_bmark'));
+        _update: function(options, callback) {
+
+            // Everything except last_bmark is synced based on the sync_config flag
+            // No error checking is done at this moment. Check for runtime.lastError
+            // if writing to chrome.storage fails
+            // Based on the current selection, store in either chrome.storage.sync/local
+            var sync = this.get('sync_config');
+
+            if (sync) {
+                chrome.storage.sync.set({
+                    'api_url': this.get('api_url'),
+                    'api_username': this.get('api_username'),
+                    'api_key': this.get('api_key'),
+                    'cache_content': this.get('cache_content')
+                });
+            } else {
+                chrome.storage.local.set({
+                    'api_url': this.get('api_url'),
+                    'api_username': this.get('api_username'),
+                    'api_key': this.get('api_key'),
+                    'cache_content': this.get('cache_content')
+                });
+            }
+
+            chrome.storage.local.set({
+                'last_bmark': this.get('last_bmark'),
+                'sync_config': sync
+            });
         },
 
         /**
-         * A helper to getting data from localStorage, but using the passed in
-         * default if the key isn't found.
+         * A helper to set the ATTRS. Unlike localStorage, 
+         * chrome.storage.local/sync is asynchronous. Instead of 
+         * returning the value from _get_data the function takes care of 
+         * setting the values once the async call returns. 
+         * 
+         * If any of the key in the array "keys" is not found, 
+         * values corresponding to that key in the object "store" is used. 
          *
          * @method _get_data
-         * @param {String} key
-         * @param def
+         * @param {Array} keys
+         * @param {Object} store
+         * @param {Function} callback
          * @private
          *
          */
-        _get_data: function (key, def) {
+        _get_data: function(keys, store, callback) {
+            // "store" is the object that contains a map of keys with
+            // their corresponding values from the memory.
             var ret,
-                found = localStorage.getItem(key);
-            if (found === null) {
-                ret = def;
-            } else {
-                ret = found;
+                found,
+                that = this,
+                sync;
+
+            // The following keys are always stored in chrome.storage.local
+            chrome.storage.local.get(['sync_config', 'last_bmark'], function(object) {
+                data = Y.merge(object, data);
+                onSyncRead();
+            });
+
+            function update() {
+                keys.push('sync_config', 'last_bmark'); 
+                Y.Array.each(keys, function(item, index, array) {
+                    if (data.hasOwnProperty(item)) {
+                        found = data[item];
+                    } else {
+                        found = null;
+                    }
+
+                    if (found === null || found === undefined) {
+                        ret = store[item];
+                    } else {
+                        ret = found;
+                    }
+                    that.set(item, ret);
+                });
+
+                if (callback) {
+                    callback();
+                }
             }
-            return ret;
+
+            function onSyncRead() {
+                if (data['sync_config']) {
+                    chrome.storage.sync.get(keys, function(object) {
+                        data = Y.merge(object, data);
+                        update();
+                    });
+                } else {
+                    chrome.storage.local.get(keys, function(object) {
+                        data = Y.merge(object, data);
+                        update();
+                    });
+                }
+            }
         },
 
         get_apicfg: function () {
@@ -825,7 +896,22 @@ YUI.add('bookie-model', function (Y) {
              *
              */
             cache_content: {
-                value: 'true'
+                value: true
+            },
+
+            /**
+             * suryatech: Since we are using a chrome extension, it makes sense
+             * to use chrome.storage instead of HTML5 localStorage.
+             * You can store objects in it and that should solve the issue of
+             * storing boolean variables as strings.
+             *
+             * @attribute sync_config
+             * @default true
+             * @type boolean
+             *
+             */
+            sync_config: {
+                value: true
             },
 
             /**

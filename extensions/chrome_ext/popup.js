@@ -5,41 +5,43 @@ YUI().use('bookie-chrome', function (Y) {
         if (tab_data) {
             var settings = new Y.bookie.OptionsModel();
             // load the settings from the extension for use
-            settings.load();
+            settings.load(onSettingsLoad);
 
             // don't worry about loading the content of the page if we
             // don't have it set in our options
-            if (settings.get('cache_content') !== 'true') {
-                // then skip it, we don't want the added load on the
-                // browser or the server
-            } else {
-                chrome.extension.onRequest.addListener(
-                    function(request, sender, sendResponse) {
-                        if (request.id === 'from_readable') {
-                            Y.one('#content').set('value', request.html);
+
+            function onSettingsLoad(){
+                if (settings.get('cache_content') !== 'true') {
+                    // then skip it, we don't want the added load on the
+                    // browser or the server
+                } else {
+                    chrome.extension.onRequest.addListener(
+                        function(request, sender, sendResponse) {
+                            if (request.id === 'from_readable') {
+                                Y.one('#content').set('value', request.html);
+                            }
                         }
-                    }
-                );
+                    );
 
-                var bkg = chrome.extension.getBackgroundPage();
-                bkg.inject_readable(function () {
-                    var c = document.getElementById('content');
-                    c.value = bkg.get_html_content();
-                });
-            }
-
-            var bookmark = new Y.bookie.Bmark(Y.merge(
-                tab_data, {
-                    api_cfg: settings.get_apicfg()
+                    var bkg = chrome.extension.getBackgroundPage();
+                    bkg.inject_readable(function() {
+                        var c = document.getElementById('content');
+                        c.value = bkg.get_html_content();
+                    });
                 }
-            ));
 
-            var c = new Y.bookie.chrome.Popup({
-                settings: settings,
-                model: bookmark
-            });
-            c.render();
+                var bookmark = new Y.bookie.Bmark(Y.merge(
+                    tab_data, {
+                        api_cfg: settings.get_apicfg()
+                    }
+                ));
 
+                var c = new Y.bookie.chrome.Popup({
+                    settings: settings,
+                    model: bookmark
+                });
+                c.render();
+            }
         } else {
             var n = new Y.bookie.chrome.Notification({
                 code: '9999',

@@ -59,7 +59,7 @@ YUI().add('bookie-chrome', function (Y) {
             var hashid = model.get('hash_id');
 
             model.remove(function () {
-                localStorage.removeItem(hashid);
+                chrome.storage.local.remove(hashid);
                 window.close();
             });
         },
@@ -106,13 +106,19 @@ YUI().add('bookie-chrome', function (Y) {
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
             model.save(function (data, request) {
-                // make sure that we store that this is a saved bookmark in
-                // the localStorage index
+                // Use chrome.storage.local to save the bookmark. 
+                // Use chrome.storage to avoid unnecessary
+                // boolean to string and string to boolean conversions. 
+                // You can save only so much info in chrome.storage/localStorage.
+                // Max size limitation for an app is 5MB
+
                 if (data.bmark.hash_id) {
-                    localStorage.setItem(data.bmark.hash_id, 'true');
+                    var obj = {};
+                    obj[data.bmark.hash_id] = true;
+                    chrome.storage.local.set(obj);
                 }
 
-                // update the badge now that we've saved
+                // Update the badge now that we've saved.
                 var b = new Y.bookie.chrome.Badge();
                 b.success();
                 window.close();
@@ -366,12 +372,14 @@ YUI().add('bookie-chrome', function (Y) {
                             n.cancel();
                         }, 5000);
                     } else {
-                        // some post notify checks
+                        // Some post notify checks.
                         if (this.get('description') === "saved") {
                             chrome.tabs.getSelected(null, function (tab) {
-                                // we need to hash this into storage
-                                var hash_id = Y.bookie.Hash.hash_url(tab.url);
-                                localStorage.setItem(hash_id, 'true');
+                                // We need to hash this into storage.
+                                var hash = Y.bookie.Hash.hash_url(tab.url);
+                                var obj = {};
+                                obj[hash] = true;
+                                chrome.storage.local.set(obj);
                             });
                             window.close();
                         }
@@ -452,7 +460,7 @@ YUI().add('bookie-chrome', function (Y) {
          */
         is_bookmarked: function () {
             this._set_badge('+', this._colors.blue);
-        },
+        },  
 
         show_error: function () {
             this._set_badge('Err', this._colors.red, this.get('time'));
@@ -479,16 +487,21 @@ YUI().add('bookie-chrome', function (Y) {
 
     ns.BackgroundPage = Y.Base.create('bookie-chrome-background', Y.Base, [], {
         _check_url_bookmarked: function (url) {
-            var is_bookmarked =
-                localStorage.getItem(Y.bookie.Hash.hash_url(url));
-
-            // check if we have this bookmarked
-            // if so update the badge text with +
-            if (is_bookmarked === 'true') {
-                this.badge.is_bookmarked();
-            } else {
-                this.badge.clear();
-            }
+            var is_bookmarked,
+                urlHash = Y.bookie.Hash.hash_url(url),
+                that = this;
+            
+            chrome.storage.local.get(urlHash, function(object) {
+                is_bookmarked = object.urlHash;
+                
+                // check if we have this bookmarked
+                // if so update the badge text with +
+                if (is_bookmarked) {
+                    that.badge.is_bookmarked();
+                } else {
+                    that.badge.clear();
+                }
+            });
         },
 
         initializer: function (cfg) {

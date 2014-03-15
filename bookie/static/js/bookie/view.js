@@ -1878,16 +1878,25 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _init_form: function () {
+        
+            // This model is populated by options.js at the beginning
+            // options.js invokes load() to read from chrome.storage
             var opts = this.get('model');
 
             Y.one('#api_url').set('value', opts.get('api_url'));
             Y.one('#api_username').set('value', opts.get('api_username'));
             Y.one('#api_key').set('value', opts.get('api_key'));
 
-            if (opts.get('cache_content') === 'true') {
+            if (opts.get('cache_content')) {
                 Y.one('#cache_content').set('checked', true);
             } else {
                 Y.one('#cache_content').set('checked', false);
+            }
+
+            if (opts.get('sync_config')) {
+                Y.one('#sync_config').set('checked', true);
+            } else {
+                Y.one('#sync_config').set('checked', false);
             }
         },
 
@@ -1958,8 +1967,15 @@ YUI.add('bookie-view', function (Y) {
             api.call({
                 'success': function (data, request) {
                     Y.Array.each(data.hash_list, function (h) {
-                        // write out each hash to localStorage
-                        localStorage.setItem(h, 'true');
+                        // Write out each hash to chrome.storage
+                        // URL hashes are stored locally while the 
+                        // bookmarks are anyways stored in the server.
+                        // Only the config ["api_url","api_username","api_key","cache_content"] 
+                        // is synced across extension instances.
+
+                        var obj = {};
+                        obj[h] = true;
+                        chrome.storage.local.set(obj);
                     });
 
                     // finally stop the indicator from spinny spinny
@@ -2037,9 +2053,15 @@ YUI.add('bookie-view', function (Y) {
                         opts.set('api_key', Y.one('#api_key').get('value'));
 
                         if (Y.one('#cache_content').get('checked')) {
-                            opts.set('cache_content', 'true');
+                            opts.set('cache_content', true);
                         } else {
-                            opts.set('cache_content', 'false');
+                            opts.set('cache_content', false);
+                        }
+
+                        if (Y.one('#sync_config').get('checked')) {
+                            opts.set('sync_config', true);
+                        } else {
+                            opts.set('sync_config', false);
                         }
 
                         // one updated, now save it
