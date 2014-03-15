@@ -180,83 +180,81 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
         },
 
         test_duplicate: function () {
-            
+ 
             this.t = Y.one('input');
-            this.tc2 = new Y.bookie.TagControl({
+            this.tc3 = new Y.bookie.TagControl({
                 srcNode: this.t
             });
-            this.tc2.render();
-            
+            this.tc3.render();
+ 
             // Setup a new tag.
             var input = Y.one('.yui3-bookie-tagcontrol-input');
-
-            input.set('value', 'test test1 test2');
+            input.set('value', 'test');
             input.simulate('keyup', {
                 keyCode: 32
             });
-
+ 
             input.set('value', 'test2');
             input.simulate('keyup', {
                 keyCode: 32
             });
-
-            // Value should be test test1 test2 test2 immediately after we hit space.
-            Y.Assert.areEqual(
-                'test test1 test2 test2',
-                this.t.get('value'),
-                "The input should have four tags as values: " + this.t.get('value')
-            );
-
-            function test1(){
-                var value = this.t.get('value');
+ 
+            input.set('value', 'test');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Test removal of tag at the beginning.
+            this.wait(function(){
                 Y.Assert.areEqual(
-                    'test test1 test2',
-                    value,
-                    "The input should have three tags as values: " + this.t.get('value')
-                );
-            }
-
-            // Make sure we allow some room for the animation complete event to invoke destroy.
-            setTimeout(test1,200);
-        },
-
-        test_duplicate_immediate: function () {
-            
-            this.t = Y.one('input');
-            this.tc2 = new Y.bookie.TagControl({
-                srcNode: this.t
-            });
-            this.tc2.render();
-
-            var that = this;
-
-            // Setup a new tag.
-            var input = Y.one('.yui3-bookie-tagcontrol-input');
-
-            input.set('value', 'test test1 test2');
+                    'test2 test',
+                    this.t.get('value'),
+                    "The input should have 2 tags: " + this.t.get('value'));
+            }, 200);
+ 
+            input.set('value', 'test3');
             input.simulate('keyup', {
                 keyCode: 32
             });
-
+ 
+            input.set('value', 'test3');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Add a duplicate tag at the right end.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test2 test test3',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
+ 
+            input.set('value', 'test');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+ 
+            // Test removal of tag in the middle.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test2 test3 test',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
+ 
             input.set('value', 'test2');
             input.simulate('keyup', {
                 keyCode: 32
             });
-
-            // Value should be test test1 test2 test2 immediately after we hit space.
-            Y.Assert.areEqual(
-                'test test1 test2 test2',
-                this.t.get('value'),
-                "The input should have four tags as values: " + this.t.get('value')
-            );
-
-            // We want the animation to invoke destroy after it finishes. 
-            // Tag count should remain the same. 
-            Y.Assert.areEqual(
-                'test test1 test2 test2',
-                this.t.get('value'),
-                "The input should have four tags as values: " + this.t.get('value')
-            );
+ 
+            // Finally, remove the tag at the front.
+            this.wait(function(){
+                Y.Assert.areEqual(
+                    'test3 test test2',
+                    this.t.get('value'),
+                    "The input should have 3 tags: " + this.t.get('value'));
+            }, 200);
         }
     }));
 
