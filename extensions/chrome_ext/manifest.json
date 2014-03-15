@@ -28,6 +28,7 @@
     "name": "Bookie", 
     "options_page": "options.html", 
     "permissions": [
+        "storage",
         "tabs", 
         "notifications", 
         "contextMenus", 
