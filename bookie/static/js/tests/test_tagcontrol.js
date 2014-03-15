@@ -177,6 +177,86 @@ YUI.add('bookie-test-tagcontrol', function (Y) {
 
             Y.Assert.areEqual(3, Y.all('.yui3-bookie-tagcontrol-item').size());
             Y.Assert.areEqual(2, this.tc.get('tags').length);
+        },
+
+        test_duplicate: function () {
+            
+            this.t = Y.one('input');
+            this.tc2 = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc2.render();
+            
+            // Setup a new tag.
+            var input = Y.one('.yui3-bookie-tagcontrol-input');
+
+            input.set('value', 'test test1 test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+
+            input.set('value', 'test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+
+            // Value should be test test1 test2 test2 immediately after we hit space.
+            Y.Assert.areEqual(
+                'test test1 test2 test2',
+                this.t.get('value'),
+                "The input should have four tags as values: " + this.t.get('value')
+            );
+
+            function test1(){
+                var value = this.t.get('value');
+                Y.Assert.areEqual(
+                    'test test1 test2',
+                    value,
+                    "The input should have three tags as values: " + this.t.get('value')
+                );
+            }
+
+            // Make sure we allow some room for the animation complete event to invoke destroy.
+            setTimeout(test1,200);
+        },
+
+        test_duplicate_immediate: function () {
+            
+            this.t = Y.one('input');
+            this.tc2 = new Y.bookie.TagControl({
+                srcNode: this.t
+            });
+            this.tc2.render();
+
+            var that = this;
+
+            // Setup a new tag.
+            var input = Y.one('.yui3-bookie-tagcontrol-input');
+
+            input.set('value', 'test test1 test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+
+            input.set('value', 'test2');
+            input.simulate('keyup', {
+                keyCode: 32
+            });
+
+            // Value should be test test1 test2 test2 immediately after we hit space.
+            Y.Assert.areEqual(
+                'test test1 test2 test2',
+                this.t.get('value'),
+                "The input should have four tags as values: " + this.t.get('value')
+            );
+
+            // We want the animation to invoke destroy after it finishes. 
+            // Tag count should remain the same. 
+            Y.Assert.areEqual(
+                'test test1 test2 test2',
+                this.t.get('value'),
+                "The input should have four tags as values: " + this.t.get('value')
+            );
         }
     }));
 
