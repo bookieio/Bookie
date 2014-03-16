@@ -484,9 +484,12 @@ YUI.add('bookie-model', function (Y) {
                  */
                 'stored': {
                     getter: function(val) {
-                      return val.replace(/-/g, '/') + " UTC";
+                        if (val) {
+                            return val.replace(/-/g, '/') + " UTC";
+                        } else {
+                            return "";
+                        }
                     }
-
                 },
 
                 'stored_date': {
