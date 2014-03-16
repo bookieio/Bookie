@@ -50,6 +50,16 @@ def daily_stats():
 
     """
     count_total_each_user.delay()
+    delete_non_activated_account.delay()
+
+
+@celery.task(ignore_result=True)
+def delete_non_activated_account():
+    """Delete user accounts which are not verified since
+    30 days of signup"""
+    trans = transaction.begin()
+    UserMgr.delete_non_activated_account()
+    trans.commit()
 
 
 @celery.task(ignore_result=True)

@@ -67,6 +67,29 @@ class AdminApiTest(unittest.TestCase):
         for u in users:
             self.assertEqual(0, u['invite_ct'], "Count should be 0 to start.")
 
+    def test_non_activated_accounts(self):
+        """Test that we can fetch the non activated accounts"""
+        params = {
+            'api_key': self.api_key
+        }
+        res = self.testapp.get('/api/v1/a/nonactivated',
+                               params=params,
+                               status=200)
+        # By default, we should not have any non activated accounts.
+        data = json.loads(res.body)
+        self.assertEqual(True, data['status'], "Status should be True")
+        self.assertEqual(0, len(data['data']), "Count should be 0 to start.")
+
+    def test_delete_non_activated_accounts(self):
+        """Test that we can delete non activated accounts"""
+        res = self.testapp.delete(
+            '/api/v1/a/nonactivated?api_key={0}'.format(
+                self.api_key),
+            status=200)
+        data = json.loads(res.body)
+        self.assertEqual(True, data['status'], "Status should be True")
+        self.assertEqual(u'Removed non activated accounts', data['message'])
+
     def test_invite_ct(self):
         """Test we can call and get the invite counts."""
         # for now just make sure we can get a 200 call on it.

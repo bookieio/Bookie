@@ -11,8 +11,10 @@ import hashlib
 import logging
 import random
 
-from datetime import datetime
-from datetime import timedelta
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -21,6 +23,7 @@ from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import Boolean
 
+from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import synonym
 
@@ -31,6 +34,7 @@ from bookie.models import DBSession
 LOG = logging.getLogger(__name__)
 GROUPS = ['admin', 'user']
 ACTIVATION_AGE = timedelta(days=3)
+NON_ACTIVATION_AGE = timedelta(days=30)
 
 
 def get_random_word(wordLen):
@@ -131,6 +135,27 @@ class UserMgr(object):
     def count():
         """Number of users in the system."""
         return User.query.count()
+
+    @staticmethod
+    def non_activated_account(delete=False):
+        """Get a list of  user accounts which are not verified since
+        30 days of signup"""
+        test_date = datetime.utcnow() - NON_ACTIVATION_AGE
+        query = DBSession.query(Activation.id).\
+            filter(Activation.valid_until < test_date).\
+            subquery(name="query")
+        qry = DBSession.query(User).\
+            filter(User.activated == False).\
+            filter(User.last_login == None).\
+            filter(User.id.in_(query))
+        # Delete the non activated accounts only if it is asked to.
+        if delete:
+            for user in qry.all():
+                DBSession.delete(user)
+        # If the non activated accounts are not asked to be deleted,
+        # return their details.
+        else:
+            return qry.all()
 
     @staticmethod
     def get_list(active=None, order=None, limit=None):

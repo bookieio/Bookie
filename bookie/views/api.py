@@ -1168,3 +1168,30 @@ def admin_applog(request):
         'logs': [dict(l) for l in log_list],
     }
     return _api_response(request, ret)
+
+
+@view_config(route_name="api_admin_non_activated", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def admin_non_activated(request):
+    """Return non activated account details"""
+    ret = []
+    res = UserMgr.non_activated_account()
+    if res:
+        ret = [u.username for u in res]
+
+    return _api_response(request, {
+        'count': len(ret),
+        'status': True,
+        'data': ret,
+    })
+
+
+@view_config(route_name="api_admin_delete_non_activated", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def admin_delete_non_activated(request):
+    """Delete non activated accounts"""
+    UserMgr.non_activated_account(delete=True)
+    return _api_response(request, {
+        'status': True,
+        'message': 'Removed non activated accounts'
+    })
