@@ -134,15 +134,13 @@ The Bookie Team""".format(**message_data)
         # return template.render(**template_vars)
 
 
-class InvitationMsg(Message):
+class ActivationMsg(Message):
     """Send an email that you've been invited to the system"""
     def _get_message_body(self, template_file, message_data):
         """Return the completed message template body
 
         """
         return """
-You've been invited to Bookie, a web service for managing your bookmarks!
-
 Please click the link below to activate your account.
 
 {0}
