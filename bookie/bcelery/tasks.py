@@ -200,8 +200,8 @@ def email_signup_user(email, msg, settings, message_data):
     :param iid: import id we need to pull and work on
 
     """
-    from bookie.lib.message import InvitationMsg
-    msg = InvitationMsg(email, msg, settings)
+    from bookie.lib.message import ActivationMsg
+    msg = ActivationMsg(email, msg, settings)
     status = msg.send(message_data)
     if status == 4:
         from bookie.lib.applog import SignupLog
