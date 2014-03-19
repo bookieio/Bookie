@@ -23,25 +23,30 @@
         <div>Features</div>
         <ul class="features">
             <li>Open source!</li>
-            <li>Imports from Delicious.com and Google Bookmarks</li>
+            <li>Imports from Delicious.com, Google Bookmarks, Chrome, and
+                Firefox</li>
             <li><a
             href="https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega"
-            alt="Bookie Chrome Extension">Google Chrome extension</a></li>
+            alt="Chrome Extension">Google Chrome extension</a></li>
+            <li><a
+            href="https://addons.mozilla.org/en-US/firefox/addon/bookie/"
+            alt="Firefox Extension">Firefox extension</a></li>
+
             <li>Bookmarklet for other browsers (mobile devices)</li>
-            <li>Parse out page content and fulltext search on it</li>
+            <li>Parse web page content and fulltext search on it</li>
             <li>Mobile friendly responsive layout</li>
         </ul>
 
         <div>Participate</div>
         <ul class="features">
             <li>
-                <a href="/signup" alt="signup for Bookie" title="Signup for Bookie">Signup and test</a>
-            </li>
-            <li>
                 <a href="https://github.com/mitechie/Bookie" title="Bookie on github">Get the source</a>
             </li>
             <li>
                 <a href="http://docs.bmark.us" title="Bookie docs">Check out the docs</a>
+            </li>
+            <li>
+                <a href="https://groups.google.com/forum/#!forum/bookie_bookmarks">Join the mailing list</a>
             </li>
         </ul>
 

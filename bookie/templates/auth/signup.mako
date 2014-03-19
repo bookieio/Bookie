@@ -9,7 +9,6 @@
         </a>
     </p>
     <div id="signup_body">
-	<p>Bookie is currently in alpha.</p>
 
         % if message:
             <p id="signup_msg" class="success">${message}</p>

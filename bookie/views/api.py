@@ -13,7 +13,7 @@ from bookie.lib.access import api_auth
 from bookie.lib.applog import AuthLog
 from bookie.lib.applog import BmarkLog
 from bookie.lib.message import ReactivateMsg
-from bookie.lib.message import InvitationMsg
+from bookie.lib.message import ActivationMsg
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 
@@ -862,7 +862,7 @@ def invite_user(request):
         # and then send an email notification
         # @todo the email side of things
         settings = request.registry.settings
-        msg = InvitationMsg(new_user.email,
+        msg = ActivationMsg(new_user.email,
                             "Enable your Bookie account",
                             settings)
 
