@@ -264,7 +264,6 @@ class TagMgr(object):
                     tag_list = []
                     for tag in tag_suggest:
                         tag_list.append((tag[0]))
-                    tag_list = list(set(tag_list))
                     # return maximum of 5 tags
                     if len(tag_list) >= 5:
                     	return tag_list[0:5]

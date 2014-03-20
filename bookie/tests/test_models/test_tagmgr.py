@@ -76,7 +76,7 @@ class TestTagMgrStats(TestDBBase):
         res = DBSession.execute(
             "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
         key = res['api_key']
-        url = u'http://bmark.us'
+        url = u'http://testing_tags.com'
         test_bmark = {
             'url': url,
             'description': u'Bookie',
@@ -94,21 +94,14 @@ class TestTagMgrStats(TestDBBase):
         bmark = BmarkMgr.get_by_url(url)    
         hash_id = bmark.hash_id
         # If bmark is not parsed return empty tag list
-        if bmark.readable.status_code == '900':
-           # Do Nothing
-        else:
-            content = bmark.readable.content
+        if bmark.readable.status_code != '900':
+            test_content_file = open("tag_test.txt",'r')
+            content=""
+            for word in test_content_file:
+                content+=line
+            bmark.readable.content = content
             # Remove unicode character while printing
-            clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii','ignore'))                     
-            get_tags = extract.TermExtractor()
-            tag_suggest = TagMgr.sort_word_strength(get_tags(clean_content))
-            tag_list = []
-            for tag in tag_suggest:
-                tag_list.append((tag[0]))
-                tag_list = list(set(tag_list))
-                # only maximum of 5 tags
-            if len(tag_list) >= 5:
-                tag_list = tag_list[0:5]
+            tags_expected = ['network','simulator','NS','user','project']
         edit_bmark = {
         'hash_id': hash_id,
         'username': 'admin',
@@ -117,5 +110,5 @@ class TestTagMgrStats(TestDBBase):
         res = self.testapp.post('/admin/edit/'+hash_id,
                                 params=edit_bmark,
                                 status=200)    
-        for tag in tag_list:
+        for tag in tags_expected:
         	self.assertIn(tag, res.body)            
