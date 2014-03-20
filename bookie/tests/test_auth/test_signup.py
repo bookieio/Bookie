@@ -109,14 +109,14 @@ class TestOpenSignup(TestViewBase):
         self.assertIn('already signed up', res.body)
 
     def testEmailIsLowercase(self):
-    	"""Signup saves email as all lowercase"""
-	res = self.app.post(
+        """Signup saves email as all lowercase"""
+        res = self.app.post(
             '/signup_process',
             params={
                 'email': 'CAPITALTesting@Dummy.cOm'
             }
         )
-	self.assertIn('capitaltesting@dummy.com', res.body)
+        self.assertIn('capitaltesting@dummy.com', res.body)
 
     def testUsernameAlreadyThere(self):
         """Signup requires an unique username entry."""
@@ -144,32 +144,32 @@ class TestOpenSignup(TestViewBase):
         self.assertIn('Username already', res.body)
 
     def testUsernameIsLowercase(self):
-    	"""Signup saves username as all lowercase"""
-	email = 'TestingUsername@test.com'
-	new_user = UserMgr.signup_user(email, u'testcase')
-	DBSession.add(new_user)
-		
-	transaction.commit()
+        """Signup saves username as all lowercase"""
+        email = 'TestingUsername@test.com'
+        new_user = UserMgr.signup_user(email, u'testcase')
+        DBSession.add(new_user)
 
-	user = DBSession.query(User).filter(User.username == email).one()
-	
-	url = quote('/{0}/reset/{1}'.format(
-	    user.email,
-	    user.activation.code
-	))
+        transaction.commit()
 
-	res = self.app.post(
-	    url,
-	    params={
-	    	'password': u'test',
-		'username': user.username,
-		'code': user.activation.code
-		'new_username': 'TESTLowercase'
-	    })
-	
-	user = DBSession.query(User).filter(User.email == email).one()
+        user = DBSession.query(User).filter(User.username == email).one()
 
-	self.assertIn('testlowercase', user.username)
+        url = quote('/{0}/reset/{1}'.format(
+            user.email,
+            user.activation.code
+        ))
+
+        self.app.post(
+            url,
+            params={
+                'password': u'test',
+                'username': user.username,
+                'code': user.activation.code,
+                'new_username': 'TESTLowercase'
+            })
+
+        user = DBSession.query(User).filter(User.email == email).one()
+
+        self.assertIn('testlowercase', user.username)
 
     def testSignupWorks(self):
         """Signing up stores an activation."""

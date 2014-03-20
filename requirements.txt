@@ -57,6 +57,7 @@ six==1.3.0
 Sphinx==1.0.7
 SQLAlchemy==0.8.2
 Tempita==0.5dev
+topia.termextract==1.1.0
 transaction==1.4.1
 translationstring==0.4
 Unidecode==0.04.7

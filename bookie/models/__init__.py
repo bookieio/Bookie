@@ -1,6 +1,7 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
 
+from topia.termextract import extract
 from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 
@@ -20,7 +21,6 @@ from sqlalchemy import select
 from unidecode import unidecode
 from urlparse import urlparse
 
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
@@ -29,6 +29,7 @@ from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Query
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from sqlalchemy.orm.collections import attribute_mapped_collection
@@ -223,7 +224,7 @@ class TagMgr(object):
             return DBSession.execute(query)
 
     @staticmethod
-    def suggestions(bmark=None, recent=True, url=None, username=None):
+    def suggestions(bmark=None, recent=True, url=None, username=None, new=False):
         """Find suggestions for tags for a bookmark
 
         The plan:
@@ -234,16 +235,42 @@ class TagMgr(object):
 
         """
         tag_suggest = []
-
+        recent_tags = []
+        tag_list = []
+        MAX_TAGS = 5
+        # Lets find the tags from the most recent bookmark if available
+        recent = BmarkMgr.get_recent_bmark(username=username)
         if recent:
-            # find the tags from the most recent bookmark if available
-            recent = BmarkMgr.get_recent_bmark(username=username)
-
-            if recent:
-                tag_suggest.extend(recent.tag_str.split(u" "))
-
-        tag_list = list(set(tag_suggest))
-        return tag_list
+            recent_tags.extend(recent.tag_str.split(u" "))
+        recent_tags = list(set(recent_tags))
+        # Suggested tags feature only supported for edits.
+        if not new:
+            #  If url is None return recent tags
+            if url is None:
+                return recent_tags
+            else:
+                bmark = BmarkMgr.get_by_url(url)
+                # If bmark is not parsed return recent tag list
+                if bmark.readable.status_code == '900':
+                    return recent_tags
+                else:
+                    content = bmark.readable.content
+                    # Remove unicode character while printing
+                    clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii', 'ignore'))
+                    get_tags = extract.TermExtractor()
+                    tag_suggest = get_tags(clean_content)
+                    tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
+                                         tag_suggest[1], reverse=True)
+                    tag_list.extend(tag[0] for tag in tag_suggest)
+                    # return maximum of 5 tags
+                    # extend the list with recent tags
+                    tag_list.extend(recent_tags)
+                    if len(tag_list) >= MAX_TAGS:
+                        return tag_list[0:MAX_TAGS]
+                    else:
+                        return tag_list
+        # If not an edit request , return recent tags
+        return recent_tags
 
     @staticmethod
     def count():

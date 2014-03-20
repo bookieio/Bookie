@@ -68,7 +68,6 @@ def ping(request):
     username = rdict.get('username', None)
     api_key = params.get('api_key', None)
     user = UserMgr.get(username=username)
-
     # Check if user provided the correct api_key
     if api_key == user.api_key:
         return _api_response(request, {
