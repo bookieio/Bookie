@@ -34,7 +34,7 @@ Where to go from here
 Getting your bookmarks into Bookie
 -----------------------------------
 Well, you might want to import a backup of your delicious bookmarks. You can do
-that by vising the *Import* link in the footer of your site installation. Make
+that by visiting the *Import* link in the footer of your site installation. Make
 sure you know the API key that you've set in your bookie install's *.ini*
 configuration file.
 
