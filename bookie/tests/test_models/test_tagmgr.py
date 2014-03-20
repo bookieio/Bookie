@@ -90,7 +90,7 @@ class TestTagMgrStats(TestDBBase):
                                 status=200)
         
         # generate tags for the bookmark
-        tag_suggest = []
+        tags_expected = []
         bmark = BmarkMgr.get_by_url(url)    
         hash_id = bmark.hash_id
         # If bmark is not parsed return empty tag list
