@@ -1,6 +1,6 @@
 """Test the basics including the bmark and tags"""
 from pyramid import testing
-
+from topia.termextract import extract
 from bookie.models import DBSession
 from bookie.models import Tag
 from bookie.models import TagMgr
@@ -62,3 +62,60 @@ class TestTagMgrStats(TestDBBase):
         self.assertTrue(
             tags[0] in suggestions,
             "The sample tag was found in the completion set")
+    def test_suggested_tags(self):        
+        """Suggestions based on the content of the bookmarked page"""
+        # login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        
+        res = self.testapp.post('/login',
+                                params=user_data)
+        
+        # Add a boookmark
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+        url = u'http://bmark.us'
+        test_bmark = {
+            'url': url,
+            'description': u'Bookie',
+            'extended': u'',
+            'tags': u'',
+            'api_key': key,
+        }
+        
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                params=test_bmark,
+                                status=200)
+        
+        # generate tags for the bookmark
+        tag_suggest = []
+        bmark = BmarkMgr.get_by_url(url)    
+        hash_id = bmark.hash_id
+        # If bmark is not parsed return empty tag list
+        if bmark.readable.status_code == '900':
+           # Do Nothing
+        else:
+            content = bmark.readable.content
+            # Remove unicode character while printing
+            clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii','ignore'))                     
+            get_tags = extract.TermExtractor()
+            tag_suggest = TagMgr.sort_word_strength(get_tags(clean_content))
+            tag_list = []
+            for tag in tag_suggest:
+                tag_list.append((tag[0]))
+                tag_list = list(set(tag_list))
+                # only maximum of 5 tags
+            if len(tag_list) >= 5:
+                tag_list = tag_list[0:5]
+        edit_bmark = {
+        'hash_id': hash_id,
+        'username': 'admin',
+        'url': url,
+        }    
+        res = self.testapp.post('/admin/edit/'+hash_id,
+                                params=edit_bmark,
+                                status=200)    
+        for tag in tag_list:
+        	self.assertIn(tag, res.body)            
