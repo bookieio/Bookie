@@ -1,6 +1,7 @@
 """Sqlalchemy Models for objects stored with Bookie"""
 import logging
 
+from topia.termextract import extract
 from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 
@@ -222,8 +223,18 @@ class TagMgr(object):
 
             return DBSession.execute(query)
 
+
     @staticmethod
-    def suggestions(bmark=None, recent=True, url=None, username=None):
+    def sort_word_strength(tags):
+        size = len(tags)
+        for x in range(0,size-1):
+            for y in range(x+1,size):
+                if tags[x][1] < tags[y][1]:
+                    tags[x] , tags[y] = tags[y] , tags[x]
+        return tags            
+
+    @staticmethod
+    def suggestions(bmark=None, recent=True, url=None, username=None,edit=False):
         """Find suggestions for tags for a bookmark
 
         The plan:
@@ -234,11 +245,34 @@ class TagMgr(object):
 
         """
         tag_suggest = []
-
+        # Suggested tags feature only supported for edits. 
+        if not edit:
+            #  If url is None return empty suggested tag list
+            if url is None:
+                return tag_suggest
+            else:
+                bmark = BmarkMgr.get_by_url(url)    
+                # If bmark is not parsed return empty tag list
+                if bmark.readable.status_code == '900':
+                    return tag_suggest
+                else:
+                    content = bmark.readable.content
+                    # Remove unicode character while printing
+                    clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii','ignore'))                     
+                    get_tags = extract.TermExtractor()
+                    tag_suggest = TagMgr.sort_word_strength(get_tags(clean_content))
+                    tag_list = []
+                    for tag in tag_suggest:
+                        tag_list.append((tag[0]))
+                    tag_list = list(set(tag_list))
+                    # return maximum of 5 tags
+                    if len(tag_list) >= 5:
+                    	return tag_list[0:5]
+                    else:
+                    	return tag_list	   
         if recent:
             # find the tags from the most recent bookmark if available
             recent = BmarkMgr.get_recent_bmark(username=username)
-
             if recent:
                 tag_suggest.extend(recent.tag_str.split(u" "))
 
