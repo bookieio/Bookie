@@ -90,16 +90,12 @@ ${account_nav()}
             as the mobile site, outside scripts, or client applications.
             </div>
             <div class="form">
-
             Genetate New Api Key : 
             <input type="submit" value="Confirm" class="button" />
-</div>
+            </div>
         </form>
     </div>
 </div>
-
-
-
 
 ${password_reset(user, reset=False)}
 
