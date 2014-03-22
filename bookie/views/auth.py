@@ -13,6 +13,7 @@ from bookie.bcelery import tasks
 from bookie.lib.applog import AuthLog
 from bookie.models import IntegrityError
 from bookie.models.auth import UserMgr
+from bookie.models.auth import User
 from bookie.models.auth import ActivationMgr
 
 LOG = logging.getLogger(__name__)
@@ -261,6 +262,27 @@ def reset(request):
         return {
             'user': user,
         }
+
+@view_config(route_name="generate_new_api", renderer="/accounts/index.mako")
+def api_key_reset(request):
+    """Change a user's password from the current string
+
+    :params username
+
+    Callable by a logged in user
+    """
+    rdict = request.matchdict
+    username = rdict.get('username', None)
+    user = UserMgr.get(username=username)     
+    if user is None:
+        raise HTTPNotFound()
+    else:
+        #change Api Key
+        user.api_key = User.gen_api_key()    
+        return {
+                    'user': user,
+                    'message': 'Api Key was successfully changed',
+                }
 
 
 def forbidden_view(request):

@@ -24,7 +24,8 @@ def build_routes(config):
     config.add_route("reset", "{username}/reset/{reset_key}")
     config.add_route("signup", "signup")
     config.add_route("signup_process", "signup_process")
-
+    config.add_route("generate_new_api", 
+                     "{username}/account/generate_new_api")
     # celery routes
     config.add_route("celery_hourly_stats", "jobhourly")
 
@@ -52,6 +53,7 @@ def build_routes(config):
     config.add_route(
         "user_delete_all_bookmarks",
         "{username}/account/delete_all_bookmarks")
+
 
     # config.add_route("bmark_delete", "/bmark/delete")
     # config.add_route("bmark_confirm_delete", "/bmark/confirm/delete/{bid}")
@@ -115,7 +117,6 @@ def build_routes(config):
     config.add_route("api_user_reset_password",
                      "/api/v1/{username}/password",
                      request_method="POST")
-
     config.add_route("api_user_suspend_remove",
                      "api/v1/suspend",
                      request_method="DELETE")

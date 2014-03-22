@@ -77,7 +77,7 @@ ${account_nav()}
         <em class="icon">Api Key</em>
         View API Key</a>
     <div id="api_key_container" style="display: none; opacity: 0;">
-        <form>
+            <form method="post" action="${request.route_url('generate_new_api', username=request.user.username)}">
             <ul>
                 <li>
                     <label>Api Key</label>
@@ -89,9 +89,17 @@ ${account_nav()}
             services. This includes anything making Api calls on your behalf such
             as the mobile site, outside scripts, or client applications.
             </div>
+            <div class="form">
+
+            Genetate New Api Key : 
+            <input type="submit" value="Confirm" class="button" />
+</div>
         </form>
     </div>
 </div>
+
+
+
 
 ${password_reset(user, reset=False)}
 
