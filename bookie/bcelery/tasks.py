@@ -335,7 +335,7 @@ def fetch_bmark_content(bid):
     else:
         logger.error(
             'No readable record for bookmark: ',
-            str(bid, bmark.hashed.url))
+            str(bid), str(bmark.hashed.url))
 
         # There was a failure reading the thing.
         bmark.readable = Readable()
