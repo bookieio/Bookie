@@ -237,7 +237,6 @@ class TagMgr(object):
         tag_suggest = []
         recent_tags = []
         tag_list = []
-        print(len(tag_list))
         # Lets find the tags from the most recent bookmark if available
         recent = BmarkMgr.get_recent_bmark(username=username)
         if recent:
