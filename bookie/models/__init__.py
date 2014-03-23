@@ -249,7 +249,7 @@ class TagMgr(object):
                 return recent_tags
             else:
                 bmark = BmarkMgr.get_by_url(url)    
-                # If bmark is not parsed return empty tag list
+                # If bmark is not parsed return recent tag list
                 if bmark.readable.status_code == '900':
                     return recent_tags
                 else:
