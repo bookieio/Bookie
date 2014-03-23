@@ -1,15 +1,19 @@
 """Test the basics including the bmark and tags"""
 from pyramid import testing
+from topia.termextract import extract
 
 from bookie.models import DBSession
 from bookie.models import Tag
 from bookie.models import TagMgr
+from bookie.models import BmarkMgr
+from bookie.models import Readable
 
 from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 from bookie.tests.factory import make_tag
 
+import os
 
 class TestTagMgrStats(TestDBBase):
     """Handle some TagMgr stats checks"""
@@ -62,3 +66,51 @@ class TestTagMgrStats(TestDBBase):
         self.assertTrue(
             tags[0] in suggestions,
             "The sample tag was found in the completion set")
+    def test_suggested_tags(self):        
+        """Suggestions based on the content of the bookmarked page"""
+        # login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        
+        res = self.testapp.post('/login',
+                                params=user_data)
+        
+        # Add a bookmark
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+        url = u'http://testing_tags.com'
+        # set the readable content for the bookmark
+        path = os.getcwd()
+        test_content_file = open(path+"/bookie/tests/test_models/tag_test.txt",'r')
+        content=""
+        for word in test_content_file:
+                content+=word
+        test_bmark = {
+            'url': url,
+            'description': u'Bookie',
+            'extended': u'',
+            'tags': u'',
+            'api_key': key,
+            'content': content,
+        }
+        
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                params=test_bmark,
+                                status=200)
+
+        bmark = BmarkMgr.get_by_url(url)
+        hash_id = bmark.hash_id
+        tags_expected = ['network','simulator','NS','user','project']
+        edit_bmark = {
+        'hash_id': hash_id,
+        'username': 'admin',
+        'url': url
+        }
+        hash_id = str(hash_id)
+        res = self.testapp.post('/admin/edit/'+hash_id,
+                                params=edit_bmark,
+                                status=200)    
+        for tag in tags_expected:
+        	self.assertIn(tag, res.body)            
