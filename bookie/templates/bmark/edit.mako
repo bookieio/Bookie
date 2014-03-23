@@ -52,7 +52,7 @@
                        placeholder="add tags..."/>
             </li>
 
-            % if tag_suggest and len(tag_suggest) > 0:
+            % if tag_suggest and len(tag_suggest) > 0 and tag_suggest != []:
                 <li>
                     <label></label>
                     <span id="tag_suggest">Suggested Tags:

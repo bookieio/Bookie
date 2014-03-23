@@ -150,6 +150,7 @@ def edit(request):
             bmark = Bmark(url, request.user.username, desc=desc)
 
         tag_suggest = TagMgr.suggestions(
+            bmark=bmark,
             url=bmark.hashed.url,
             username=request.user.username
         )

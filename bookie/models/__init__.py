@@ -243,6 +243,8 @@ class TagMgr(object):
                 tag_suggest.extend(recent.tag_str.split(u" "))
 
         tag_list = list(set(tag_suggest))
+        if bmark:
+            tag_list = list(set(tag_list) - set(bmark.tags))
         return tag_list
 
     @staticmethod
