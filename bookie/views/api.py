@@ -485,7 +485,7 @@ def search_results(request):
             username = request.user.username
 
     # with content is always in the get string
-    search_content = asbool(rdict.get('search_content', False))
+    search_content = asbool(rdict.get('with_content', False))
 
     conn_str = request.registry.settings.get('sqlalchemy.url', False)
     searcher = get_fulltext_handler(conn_str)

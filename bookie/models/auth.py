@@ -23,7 +23,6 @@ from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import Boolean
 
-from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import synonym
 
@@ -145,8 +144,8 @@ class UserMgr(object):
             filter(Activation.valid_until < test_date).\
             subquery(name="query")
         qry = DBSession.query(User).\
-            filter(User.activated == False).\
-            filter(User.last_login == None).\
+            filter(User.activated.is_(False)).\
+            filter(User.last_login.is_(None)).\
             filter(User.id.in_(query))
         # Delete the non activated accounts only if it is asked to.
         if delete:

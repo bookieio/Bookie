@@ -3,6 +3,7 @@ amqp==1.0.12
 anyjson==0.3.3
 argparse==1.2.1
 BeautifulSoup==3.2.0
+BeautifulSoup4==4.3.2
 billiard==2.7.3.31
 breadability <= 0.2
 celery==3.0.21
@@ -67,7 +68,7 @@ virtualenv==1.5.2
 waitress==0.8.5
 WebError==0.10.3
 WebOb==1.2.3
-WebTest==1.2.4
+WebTest==2.0.14
 Whoosh==2.4.1
 wsgiref==0.1.2
 zope.component==3.10.0
