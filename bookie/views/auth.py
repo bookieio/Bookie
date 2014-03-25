@@ -117,7 +117,7 @@ def signup_process(request):
 
     """
     params = request.params
-    email = params.get('email', None).lower()
+    email = params.get('email', None)
 
     if not email:
         # if still no email, I give up!
@@ -126,6 +126,8 @@ def signup_process(request):
                 'email': 'Please supply an email address to sign up.'
             }
         }
+    else:
+    	email = email.lower()
 
     # first see if the user is already in the system
     exists = UserMgr.get(email=email)
@@ -191,8 +193,11 @@ def reset(request):
         username = params.get('username', None)
         activation = params.get('code', None)
         password = params.get('new_password', None)
-        new_username = params.get('new_username', None).lower()
+        new_username = params.get('new_username', None)
         error = None
+
+	if new_username:
+		new_username = new_username.lower()
 
         # Check whether username exists or not.  During signup request , a
         # record of current user is created with username as his email id
