@@ -117,7 +117,7 @@ def signup_process(request):
 
     """
     params = request.params
-    email = params.get('email', None)
+    email = params.get('email', None).lower()
 
     if not email:
         # if still no email, I give up!
@@ -191,7 +191,7 @@ def reset(request):
         username = params.get('username', None)
         activation = params.get('code', None)
         password = params.get('new_password', None)
-        new_username = params.get('new_username', None)
+        new_username = params.get('new_username', None).lower()
         error = None
 
         # Check whether username exists or not.  During signup request , a
