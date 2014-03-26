@@ -224,7 +224,7 @@ class TagMgr(object):
             return DBSession.execute(query)
 
     @staticmethod
-    def suggestions(bmark=None, recent=True, url=None, username=None, edit=False):
+    def suggestions(bmark=None, recent=True, url=None, username=None, new=False):
         """Find suggestions for tags for a bookmark
 
         The plan:
@@ -243,7 +243,7 @@ class TagMgr(object):
             recent_tags.extend(recent.tag_str.split(u" "))
         recent_tags = list(set(recent_tags))
         # Suggested tags feature only supported for edits. 
-        if not edit:
+        if not new:
             #  If url is None return recent tags
             if url is None:
                 return recent_tags

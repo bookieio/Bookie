@@ -152,7 +152,7 @@ def edit(request):
         tag_suggest = TagMgr.suggestions(
             url=bmark.hashed.url,
             username=request.user.username,
-            edit=new
+            new=new
         )
 
         return {
