@@ -236,39 +236,39 @@ class TagMgr(object):
         """
         tag_suggest = []
         recent_tags = []
-        tag_list = []
+        tag_list = set()
+        MAX_TAGS = 5
         # Lets find the tags from the most recent bookmark if available
         recent = BmarkMgr.get_recent_bmark(username=username)
         if recent:
             recent_tags.extend(recent.tag_str.split(u" "))
         recent_tags = list(set(recent_tags))
-        # Suggested tags feature only supported for edits. 
+        # Suggested tags feature only supported for edits.
         if not new:
             #  If url is None return recent tags
             if url is None:
                 return recent_tags
             else:
-                bmark = BmarkMgr.get_by_url(url)    
+                bmark = BmarkMgr.get_by_url(url)
                 # If bmark is not parsed return recent tag list
                 if bmark.readable.status_code == '900':
                     return recent_tags
                 else:
                     content = bmark.readable.content
                     # Remove unicode character while printing
-                    clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii', 'ignore'))                     
+                    clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii', 'ignore'))
                     get_tags = extract.TermExtractor()
                     tag_suggest = get_tags(clean_content)
-                    tag_suggest = sorted(tag_suggest, key=lambda tag_suggest: 
-                                         tag_suggest[1], reverse=True) 
-                    for tag in tag_suggest:
-                        tag_list.append((tag[0]))
+                    tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
+                                         tag_suggest[1], reverse=True)
+                    tag_list.update(set(tag[0] for tag in tag_suggest))
                     # return maximum of 5 tags
                     # extend the list with recent tags
-                    tag_list.extend(recent_tags)
-                    if len(tag_list) >= 5:
-                        return tag_list[0:5]
+                    tag_list.update(recent_tags)
+                    if len(tag_list) >= MAX_TAGS:
+                        return tag_list[0:MAX_TAGS]
                     else:
-                        return tag_list  	   
+                        return tag_list
         # If not an edit request , return recent tags
         return recent_tags
 
