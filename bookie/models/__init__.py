@@ -236,7 +236,7 @@ class TagMgr(object):
         """
         tag_suggest = []
         recent_tags = []
-        tag_list = set()
+        tag_list = []
         MAX_TAGS = 5
         # Lets find the tags from the most recent bookmark if available
         recent = BmarkMgr.get_recent_bmark(username=username)
@@ -261,10 +261,10 @@ class TagMgr(object):
                     tag_suggest = get_tags(clean_content)
                     tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
                                          tag_suggest[1], reverse=True)
-                    tag_list.update(set(tag[0] for tag in tag_suggest))
+                    tag_list.extend(tag[0] for tag in tag_suggest)
                     # return maximum of 5 tags
                     # extend the list with recent tags
-                    tag_list.update(recent_tags)
+                    tag_list.extend(recent_tags)
                     if len(tag_list) >= MAX_TAGS:
                         return tag_list[0:MAX_TAGS]
                     else:
