@@ -216,8 +216,8 @@ class UserMgr(object):
     def signup_user(email, signup_method):
         # Get this invite party started, create a new user acct.
         new_user = User()
-        new_user.email = email
-        new_user.username = email
+        new_user.email = email.lower()
+        new_user.username = email.lower()
         new_user.invited_by = signup_method
         new_user.api_key = User.gen_api_key()
 

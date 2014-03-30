@@ -224,7 +224,8 @@ class TagMgr(object):
             return DBSession.execute(query)
 
     @staticmethod
-    def suggestions(bmark=None, recent=True, url=None, username=None, new=False):
+    def suggestions(bmark=None, recent=True, url=None, username=None,
+                    new=False):
         """Find suggestions for tags for a bookmark
 
         The plan:
@@ -256,12 +257,20 @@ class TagMgr(object):
                 else:
                     content = bmark.readable.content
                     # Remove unicode character while printing
-                    clean_content = ("".join(BeautifulSoup(content).findAll(text=True)).encode('ascii', 'ignore'))
+                    clean_content = (
+                        "".join(
+                            BeautifulSoup(content).findAll(text=True)).encode(
+                            'ascii', 'ignore'))
                     get_tags = extract.TermExtractor()
                     tag_suggest = get_tags(clean_content)
                     tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
                                          tag_suggest[1], reverse=True)
-                    tag_list.extend(tag[0] for tag in tag_suggest)
+                    for result in tag_suggest:
+                        # If it has a space in it, split it.
+                        tags = result[0].split()
+                        for tag in tags:
+                            tag_list.append(tag)
+
                     # return maximum of 5 tags
                     # extend the list with recent tags
                     tag_list.extend(recent_tags)

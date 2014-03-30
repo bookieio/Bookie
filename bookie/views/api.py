@@ -612,11 +612,11 @@ def account_update(request):
 
     if 'email' in params and params['email'] is not None:
         email = params.get('email')
-        user_acct.email = email
+        user_acct.email = email.lower()
 
     if 'email' in json_body and json_body['email'] is not None:
         email = json_body.get('email')
-        user_acct.email = email
+        user_acct.email = email.lower()
 
     return _api_response(request, user_acct.safe_data())
 
@@ -785,7 +785,12 @@ def account_activate(request):
             'error': "Come on, pick a real password please",
         })
 
-    res = ActivationMgr.activate_user(username, activation, password)
+    username = username.lower()
+    new_username = new_username.lower() if new_username else None
+    res = ActivationMgr.activate_user(
+        username,
+        activation,
+        password)
 
     if res:
         # success so respond nicely
@@ -842,8 +847,9 @@ def invite_user(request):
             'error': "Please submit an email address"
         })
 
+    email = email.lower()
     # first see if the user is already in the system
-    exists = UserMgr.get(email=email)
+    exists = UserMgr.get(email=email.lower())
     if exists:
         request.response.status_int = 406
         return _api_response(request, {
@@ -851,7 +857,7 @@ def invite_user(request):
             'error': "This user is already a Bookie user!"
         })
 
-    new_user = user.invite(email)
+    new_user = user.invite(email.lower())
     if new_user:
         LOG.debug(new_user.username)
         # then this user is able to invite someone
@@ -1033,7 +1039,7 @@ def new_user(request):
     u.username = unicode(rdict.get('username'))
     if u.username:
         u.username = u.username.lower()
-    u.email = unicode(rdict.get('email'))
+    u.email = unicode(rdict.get('email')).lower()
     passwd = get_random_word(8)
     u.password = passwd
     u.activated = True

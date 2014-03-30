@@ -2,7 +2,10 @@
 
 """
 import logging
-from urllib import quote
+from urllib import (
+    quote,
+    urlencode,
+)
 import transaction
 
 from bookie.models import DBSession
@@ -151,24 +154,22 @@ class TestOpenSignup(TestViewBase):
 
         transaction.commit()
 
-        user = DBSession.query(User).filter(User.username == email).one()
+        user = DBSession.query(User).filter(
+            User.username == email.lower()).one()
 
-        url = quote('/{0}/reset/{1}'.format(
-            user.email,
-            user.activation.code
-        ))
+        params = {
+            'password': u'testing',
+            'username': user.username,
+            'code': user.activation.code,
+            'new_username': 'TESTLowercase'
+        }
+        url = '/api/v1/suspend?' + urlencode(params, True)
 
-        self.app.post(
-            url,
-            params={
-                'password': u'test',
-                'username': user.username,
-                'code': user.activation.code,
-                'new_username': 'TESTLowercase'
-            })
+        # Activate the user, setting their new username which we want to
+        # verify does get lower cased during this process.
+        self.app.delete_json(url)
 
-        user = DBSession.query(User).filter(User.email == email).one()
-
+        user = DBSession.query(User).filter(User.email == email.lower()).one()
         self.assertIn('testlowercase', user.username)
 
     def testSignupWorks(self):
