@@ -210,6 +210,16 @@ def build_routes(config):
         "/api/v1/a/applog/list",
         request_method="GET")
 
+    config.add_route(
+        "api_admin_non_activated",
+        "/api/v1/a/nonactivated",
+        request_method="GET")
+
+    config.add_route(
+        "api_admin_delete_non_activated",
+        "/api/v1/a/nonactivated",
+        request_method="DELETE")
+
     # these are single word matching, they must be after /recent /popular etc
     config.add_route("user_home", "{username}")
 
