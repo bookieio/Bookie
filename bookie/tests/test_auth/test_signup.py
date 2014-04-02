@@ -146,6 +146,24 @@ class TestOpenSignup(TestViewBase):
             })
         self.assertIn('Username already', res.body)
 
+    def testResetFormDisplay(self):
+        """Make sure you can GET the reset form."""
+        email = 'testing@gmail.com'
+        new_user = UserMgr.signup_user(email, u'invite')
+        DBSession.add(new_user)
+
+        transaction.commit()
+
+        user = DBSession.query(User).filter(User.username == email).one()
+
+        url = quote('/{0}/reset/{1}'.format(
+            user.email,
+            user.activation.code
+        ))
+
+        res = self.app.get(url)
+        self.assertIn('Activate', res.body)
+
     def testUsernameIsLowercase(self):
         """Signup saves username as all lowercase"""
         email = 'TestingUsername@test.com'

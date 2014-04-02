@@ -114,7 +114,6 @@ def bmark_get(request):
     """
     rdict = request.matchdict
     params = request.params
-
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
     if username:
