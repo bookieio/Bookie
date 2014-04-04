@@ -183,7 +183,7 @@ def reset(request):
     activation_key = rdict.get('reset_key', None)
     user = ActivationMgr.get_user(username, activation_key)
     new_username = None
-    
+
     if user is None:
         # just 404 if we don't have an activation code for this user
         raise HTTPNotFound()

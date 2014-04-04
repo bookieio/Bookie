@@ -7,8 +7,8 @@ from pyramid.view import view_config
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import contains_eager
 from StringIO import StringIO
-from  urlparse import urlparse
-from textblob import TextBlob 
+from urlparse import urlparse
+from textblob import TextBlob
 
 from bookie.bcelery import tasks
 from bookie.lib.access import api_auth
@@ -122,18 +122,18 @@ def bmark_get(request):
     url = params['url']
     if username:
         username = username.lower()
-    
+
     # the hash id will always be there or the route won't match
     bookmark = BmarkMgr.get_by_hash(hash_id,
                                     username=username)
     #get the suggested tags first
-    # if the page don't have a title url will be sent 
-    # in place of title so parse title everytime 
+    # if the page don't have a title url will be sent
+    # in place of title so parse title everytime
     title_tags = []
-	# tag_list is a set - no duplicates
+    # tag_list is a set - no duplicates
     tag_list = set()
     url_tags = []
-    recent_tags = [] 
+    recent_tags = []
     parsed_title = urlparse(title)
     parsed_url = urlparse(url)
     # Get the recent tags of the user
@@ -141,12 +141,12 @@ def bmark_get(request):
     if recent:
         recent_tags.extend(recent.tag_str.split(u" "))
     recent_tags = list(set(recent_tags))
-    tag_list.update(recent_tags)	
+    tag_list.update(recent_tags)
     # Check if title is url
     # if title is not a string , url and title will be same
     # so no need to consider tags from url
     if parsed_title.hostname:
-        # Not adding hostname , will include it in a new db field 
+        # Not adding hostname , will include it in a new db field
         # title_tags.append(parsed_title.hostname)
         clean_path = " ".join(parsed_url.path.split("/"))
         path_token = TextBlob(clean_path)
@@ -157,16 +157,16 @@ def bmark_get(request):
             for noun in nouns:
                 title_tags.append(noun)
         tag_list.update(title_tags)
-    # Else extract nouns from title and tags from url	
+    # Else extract nouns from title and tags from url
     else:
         title_token = TextBlob(title)
-        title_nouns = title_token.noun_phrases # returns a string with all nouns concantenated 
+        title_nouns = title_token.noun_phrases
         for result in title_nouns:
             # if result have spaces split it
             nouns = result.split()
             for noun in nouns:
                 title_tags.append(noun)
-        # Not adding hostname , will include it in a new db field 	
+        # Not adding hostname , will include it in a new db field
         # url_tags.append(parsed_url.hostname)
         clean_path = " ".join(parsed_url.path.split("/"))
         path_token = TextBlob(clean_path)
@@ -183,7 +183,6 @@ def bmark_get(request):
         last = BmarkMgr.get_recent_bmark(username=username)
         if last is not None:
             last_bmark = {'last': dict(last)}
-
     if bookmark is None:
         request.response.status_int = 404
         ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
