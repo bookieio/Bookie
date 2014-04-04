@@ -530,7 +530,7 @@ YUI.add('bookie-api', function (Y) {
                     hash_id: this.get('hash_id'),
                     username: this.get('username'),
                     last_bmark: this.get('last_bmark'),
-					url: cfg.tab_url,
+		    url: cfg.tab_url,
                     description: cfg.tab_title
                 };
             }
