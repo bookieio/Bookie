@@ -113,28 +113,28 @@ YUI.add('bookie-api', function (Y) {
      *
      */
     Y.bookie.Api = Y.Base.create('bookie-api', Y.Base, [], {
-        base_cfg: {
-            method: "GET",
-            data: {},
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            on: {
-                start: function () {},
-                complete: function () {},
-                end: function () {}
-            },
-            args: {}
-        },
-
         /**
          * General constructor
          * @method initializer
          * @constructor
          *
          */
-        initializer : function (cfg) {},
+        initializer : function (cfg) {
+            this.base_cfg = {
+                method: "GET",
+                data: {},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                on: {
+                    start: function () {},
+                    complete: function () {},
+                    end: function () {}
+                },
+                args: {}
+            };
+        },
 
         /**
          * Generate a full api url to call
@@ -773,6 +773,53 @@ YUI.add('bookie-api', function (Y) {
             }
         }
     );
+
+
+    /**
+     * Fetch stats about the number of users on the site.
+     *
+     * @class Api.route.UserStats
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.UserStats = Y.Base.create(
+        'bookie-api-route-user-stats',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/stats/users'
+                }
+            }
+        }
+    );
+
+
+    /**
+     * Fetch stats about the number of bookmarks on the site.
+     *
+     * @class Api.route.BookmarkStats
+     * @extends Api.route
+     *
+     */
+    Y.bookie.Api.route.BookmarkStats = Y.Base.create(
+        'bookie-api-route-bookmark-stats',
+        Y.bookie.Api.route,
+        [], {
+            initializer: function (cfg) {
+            }
+        }, {
+            ATTRS: {
+                url_element: {
+                    value: '/stats/bookmarks'
+                }
+            }
+        }
+    );
+
 
     /**
      * Fetch user bookmark count over a period of time

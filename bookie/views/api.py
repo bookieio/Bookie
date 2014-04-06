@@ -62,6 +62,30 @@ def _api_response(request, data):
     return data
 
 
+@view_config(route_name="api_user_stats", renderer="jsonp")
+def user_stats(request):
+    """Return all the user stats"""
+    user_count = UserMgr.count()
+    pending_activations = ActivationMgr.count()
+    users_with_bookmarks = BmarkMgr.count(distinct_users=True)
+    return _api_response(request, {
+        'count': user_count,
+        'activations': pending_activations,
+        'with_bookmarks': users_with_bookmarks
+    })
+
+
+@view_config(route_name="api_bookmark_stats", renderer="jsonp")
+def bookmark_stats(request):
+    """Return all the bookmark stats"""
+    bookmark_count = BmarkMgr.count()
+    unique_url_count = BmarkMgr.count(distinct=True)
+    return _api_response(request, {
+        'count': bookmark_count,
+        'unique_count': unique_url_count
+    })
+
+
 @view_config(route_name="api_ping", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def ping(request):

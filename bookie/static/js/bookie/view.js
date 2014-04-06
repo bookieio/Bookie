@@ -962,6 +962,88 @@ YUI.add('bookie-view', function (Y) {
 
     });
 
+
+    /**
+     * Generate the view for user stats
+     * @class UserStatsView
+     * @extends Y.View
+     *
+     */
+    ns.UserStatsView = Y.Base.create('user-stats-view', Y.View, [], {
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function (cfg) {
+            this.api = new Y.bookie.Api.route.UserStats(cfg.api_cfg);
+        },
+        render: function () {
+            var that = this;
+            this.api.call({
+                success: function(data, request) {
+                    debugger;
+                    var cont = that.get('container');
+                    cont.one('#user_stats_count').setContent(
+                        data.count);
+                    cont.one('#user_stats_activations').setContent(
+                        data.activations);
+                    cont.one('#user_stats_with_bookmarks').setContent(
+                        data.with_bookmarks);
+                    cont.one('#user_stats_msg').setContent('');
+                },
+                error: function (data, status_str, response, args) {
+                    debugger;
+                    var cont = that.get('container');
+                    cont.one('#user_stats_msg').setContent(
+                        'Error fetching stats');
+                }
+            });
+        }
+    });
+
+
+    /**Generate the view for bookmark stats
+     * @class BookmarkStatsView
+     * extends Y.View
+     *
+     */
+    ns.BookmarkStatsView = Y.Base.create('bookmark-stats-view', Y.View, [], {
+        /**
+         *
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function(cfg) {
+            this.api = new Y.bookie.Api.route.BookmarkStats(cfg.api_cfg);
+        },
+        render: function () {
+            var that = this;
+            this.api.call({
+                success: function(data, request) {
+                    debugger;
+                    var cont = that.get('container');
+                    cont.one('#bookmark_stats_count').setContent(
+                        data.count);
+                    cont.one('#bookmark_stats_unique_count').setContent(
+                        data.unique_count);
+                    cont.one('#bookmark_stats_msg').setContent('');
+                },
+                error: function (data, status_str, response, args) {
+                    debugger;
+                    var cont = that.get('container');
+                    cont.one('#bookmark_stats_msg').setContent('Error fetching stats');
+                }
+            });
+    }
+    });
+
+
     /**
      * Generate the graph for user bookmark count
      *
@@ -1028,13 +1110,13 @@ YUI.add('bookie-view', function (Y) {
                         seriesCollection: that.seriesCollection,
                         render: user_graph
                     });
-		},
+                },
                 error: function (data, status_str, response, args) {
                     Y.one('#userstats_msg').show();
                     Y.one('#userstats_msg').setContent('Error fetching the bookmark count');
                 }
             });
-	},
+        },
 
         /**
          * Renders the calendar to the html view.
@@ -1063,7 +1145,7 @@ YUI.add('bookie-view', function (Y) {
                         format: "%B %Y"
                     });
                 return output;
-            }); 
+            });
        },
 
         /**
@@ -1282,7 +1364,7 @@ YUI.add('bookie-view', function (Y) {
                             return;
                         }
 
-                        // Update the Account View instance so that 
+                        // Update the Account View instance so that
                         // subsequent requests originating from this
                         // instance use the new API key that is generated.
                         var cfg = that.get('api_cfg');
@@ -2139,8 +2221,8 @@ YUI.add('bookie-view', function (Y) {
                         chrome.storage.local.set({
                             "optionsConfigured": true
                         });
-                        
-                        // Now that we have updated the settings in memory, 
+
+                        // Now that we have updated the settings in memory,
                         // do the same with offline chrome.storage
                         opts.save();
                         that._show_message('Saved your settings...', true);
