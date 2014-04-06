@@ -13,7 +13,10 @@ from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 from bookie.tests import factory
 
-from datetime import datetime
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 
 GOOGLE_HASH = u'aa2239c17609b2'
@@ -119,8 +122,18 @@ class BookieAPITest(unittest.TestCase):
         stat3 = factory.make_user_bookmark_count(username=u'admin',
                                                  data=15,
                                                  tstamp=test_date_3)
+        test_date_start = datetime(2014, 05, 10)
+        test_date_end = datetime(2014, 07, 10)
+        test_date_delta = test_date_end - test_date_start
+        stat4 = []
+        for day in range(test_date_delta.days + 1):
+            test_date = test_date_start + timedelta(days=day)
+            stat = factory.make_user_bookmark_count(username=u'admin',
+                                                    data=10,
+                                                    tstamp=test_date)
+            stat4.append(stat)
         transaction.commit()
-        return [stat1, stat2, stat3]
+        return [stat1, stat2, stat3, stat4]
 
     def test_add_bookmark(self):
         """We should be able to add a new bookmark to the system"""
@@ -566,6 +579,34 @@ class BookieAPITest(unittest.TestCase):
             data['start_date'], u'2013-11-01 00:00:00')
         self.assertEqual(
             data['end_date'], u'2013-11-30 00:00:00')
+
+    def test_weekly_bookmark_count(self):
+        """Test getting a user's bookmark count in a weekly manner
+        when time period > 31 days"""
+        test_dates = self._setup_user_bookmark_count()
+        test_date_start = datetime(2014, 05, 10)
+        test_date_end = datetime(2014, 07, 10)
+        res = self.testapp.get(u'/api/v1/admin/stats/bmarkcount',
+                               params={u'api_key': API_KEY,
+                                       u'start_date': test_date_start,
+                                       u'end_date': test_date_end},
+                               status=200)
+        data = json.loads(res.body)
+        count = data['count']
+        days = 0
+        for test_count in count:
+            self.assertEqual(
+                test_count['attrib'], test_dates[3][days][0])
+            self.assertEqual(
+                test_count['data'], test_dates[3][days][1])
+            self.assertEqual(
+                test_count['tstamp'], str(test_dates[3][days][2]))
+            days += 7
+        # Test start_date and end_date.
+        self.assertEqual(
+            data['start_date'], u'2014-05-10 00:00:00')
+        self.assertEqual(
+            data['end_date'], u'2014-07-10 00:00:00')
 
     def user_bookmark_count_authorization(self):
         """If no API_KEY is present, it is unauthorized request"""

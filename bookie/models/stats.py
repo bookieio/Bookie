@@ -139,12 +139,20 @@ class StatBookmarkMgr(object):
                 end_date = start_date + timedelta(days=STATS_WINDOW)
         # Since we're comparing dates with 00:00:00 we need to add one day and
         # do <=.
-        return [
+        response = [
             StatBookmarkMgr.get_user_bmark_count(
                 username, start_date, end_date + timedelta(days=1)),
             start_date,
             end_date
         ]
+        if len(response[0]) > 31:
+            days = 0
+            data = []
+            while days < len(response[0]):
+                data.append(response[0][days])
+                days += 7
+            response[0] = data
+        return response
 
 
 class StatBookmark(Base):
