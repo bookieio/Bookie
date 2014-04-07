@@ -126,7 +126,7 @@ def bmark_get(request):
     # the hash id will always be there or the route won't match
     bookmark = BmarkMgr.get_by_hash(hash_id,
                                     username=username)
-    #get the suggested tags first
+    # Get the suggested tags first
     # if the page don't have a title url will be sent
     # in place of title so parse title everytime
     title_tags = []
@@ -186,7 +186,11 @@ def bmark_get(request):
     if bookmark is None:
         request.response.status_int = 404
         ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
+        # Add tags to a list to pack that in the response
+        tags = [tag for tag in tag_list]
+        resp_tags = {'tags': tags}
         ret.update(last_bmark)
+        ret.update(resp_tags)
         return _api_response(request, ret)
     else:
         return_obj = dict(bookmark)
@@ -194,7 +198,8 @@ def bmark_get(request):
         if 'with_content' in params and params['with_content'] != 'false':
             if bookmark.readable:
                 return_obj['readable'] = dict(bookmark.readable)
-        return_obj['tags'] = [dict(tag) for tag in tag_list]
+        tags = [tag for tag in tag_list]
+        return_obj['tags'] = tags
         ret = {'bmark': return_obj}
         ret.update(last_bmark)
         return _api_response(request, ret)
