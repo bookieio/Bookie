@@ -22,8 +22,6 @@
 /usr/bin/pip install --no-install -d /home/ubuntu/packages coverage==3.4
 /usr/bin/pip install --no-install -d /home/ubuntu/packages decorator==3.3.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages docutils==0.7
-/usr/bin/pip install --no-install -d /home/ubuntu/packages logilab-astng==0.21.1
-/usr/bin/pip install --no-install -d /home/ubuntu/packages logilab-common==0.55.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages mock==0.7.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages nose==1.0.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages paramiko==1.7.6
