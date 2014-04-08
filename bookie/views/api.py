@@ -628,14 +628,13 @@ def reset_api_key(request):
        Callable by either a logged in user or the api key for mobile apps/etc
 
     """
-    print("R")
     user = request.user
     #change Api Key
-    user.api_key = User.gen_api_key()    
+    user.api_key = User.gen_api_key()
     return _api_response(request, {
-                'api_key': user.api_key,
-                'message': 'Api Key was successfully changed',
-           })
+        'api_key': user.api_key,
+        'message': 'Api Key was successfully changed',
+    })
 
 
 @view_config(route_name="api_user_api_key", renderer="jsonp")
