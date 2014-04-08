@@ -134,9 +134,9 @@
                         <a href="/${request.user.username}/recent?sort=popular">My Popular Bookmarks</a> |
                     % endif
                     <a href="http://docs.bmark.us">Bookie</a> |
-                    <a href="http://github.com/mitechie/Bookie/issues">Support</a> |
+                    <a href="http://github.com/bookieio/Bookie/issues">Support</a> |
                     <a href="${request.route_url('dashboard')}">Dashboard</a> |
-                    <a href="https://github.com/mitechie/Bookie/commits/develop">Changes</a> |
+                    <a href="https://github.com/bookieio/Bookie/commits/develop">Changes</a> |
                 </div>
             </div>
         </div>

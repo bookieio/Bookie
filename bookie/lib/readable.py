@@ -23,7 +23,7 @@ class DictObj(dict):
 
 
 USER_AGENT = 'bookie / ({url})'.format(
-    url="https://github.com/mitechie/bookie",
+    url="https://github.com/bookieio/bookie",
 )
 
 

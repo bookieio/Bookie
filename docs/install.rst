@@ -9,7 +9,7 @@ and your distro for the following:
 
 ::
 
-    $ git clone git://github.com/mitechie/Bookie.git
+    $ git clone git://github.com/bookieio/Bookie.git
     $ cd Bookie && make sysdeps && make install
     # THIS WILL TAKE A WHILE, GET A COFFEE
     $ make run

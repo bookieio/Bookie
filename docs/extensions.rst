@@ -69,7 +69,7 @@ Firefox Extension
 
 The Firefox extension is starting over from scratch. You can track it at:
 
-- https://github.com/mitechie/bookie-firefox
+- https://github.com/bookieio/bookie-firefox
 
 
 .. _Bookie bookmarklet: user.html#bookmarklet

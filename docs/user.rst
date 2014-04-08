@@ -52,7 +52,7 @@ A sample of cron'ing this to run at 6am every day would be:
 
   0 6 * * * /usr/bin/python /path/to/Bookie/scripts/misc/backup.py
 
-.. _sample script: https://github.com/mitechie/Bookie/blob/develop/scripts/misc/backup.py
+.. _sample script: https://github.com/bookieio/Bookie/blob/develop/scripts/misc/backup.py
 
 Bookmarklet
 -----------

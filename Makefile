@@ -153,7 +153,7 @@ deps: venv
 	@echo "\n\nSilently installing packages (this will take a while)..."
 	if test -d download-cache; \
 		then cd download-cache && git pull origin master || true; \
-		else git clone --depth=1 "http://github.com/mitechie/bookie-download-cache.git" download-cache; \
+		else git clone --depth=1 "http://github.com/bookieio/bookie-download-cache.git" download-cache; \
 	fi
 	@echo "Making sure the latest version of pip is available"
 	# $(PIP) install -U pip

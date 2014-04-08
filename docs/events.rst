@@ -84,7 +84,7 @@ Tasks
 The main task is to work on a full Firefox extension based off the add-on SDK.
 Current base is located:
 
-- https://github.com/mitechie/bookie-firefox
+- https://github.com/bookieio/bookie-firefox
 
 Misc Tasks
 ~~~~~~~~~~
@@ -143,7 +143,7 @@ Some potential goals:
 - Some UI design/ideas pitching/feedback
 - Test out the new readable parsing on everyone's batches of bookmarks
 - Work on some docs updates and try to knock out a few items from the issue
-  list for 0.2 : https://github.com/mitechie/Bookie/issues?milestone=5&state=open
+  list for 0.2 : https://github.com/bookieio/Bookie/issues?milestone=5&state=open
 
 Schedule
 ~~~~~~~~
@@ -151,9 +151,9 @@ The doors open up at 11am and we'll have some lunch delivered around 12:30pm.
 I'll chase everyone away somewhere around 4pm.
 
 
-.. _breadability: https://github.com/mitechie/breadability
-.. _bookie_parser: https://github.com/mitechie/bookie_parser
-.. _bookie_firefox: https://github.com/mitechie/bookie-firefox
-.. _bookie_android: https://github.com/DerekV/Bookie-Android
+.. _breadability: https://github.com/bookieio/breadability
+.. _bookie_parser: https://github.com/bookieio/bookie_parser
+.. _bookie_firefox: https://github.com/bookieio/bookie-firefox
+.. _bookie_android: https://github.com/bookieio/Bookie-Android
 .. _coverage.py: http://nedbatchelder.com/code/coverage/
 .. _@mitechie: https://twitter.com/mitechie
