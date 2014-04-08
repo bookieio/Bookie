@@ -620,6 +620,24 @@ def account_update(request):
     return _api_response(request, user_acct.safe_data())
 
 
+@view_config(route_name="api_reset_api_key", renderer="jsonp")
+@api_auth('api_key', UserMgr.get)
+def reset_api_key(request):
+    """Generate and Return the currently logged in user's new api key
+
+       Callable by either a logged in user or the api key for mobile apps/etc
+
+    """
+    print("R")
+    user = request.user
+    #change Api Key
+    user.api_key = User.gen_api_key()    
+    return _api_response(request, {
+                'api_key': user.api_key,
+                'message': 'Api Key was successfully changed',
+           })
+
+
 @view_config(route_name="api_user_api_key", renderer="jsonp")
 @api_auth('api_key', UserMgr.get)
 def api_key(request):
