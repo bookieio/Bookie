@@ -25,3 +25,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Pradyumna
 - Sambuddha Basu
 - Fernando César
+- Jelmer Vernooij
