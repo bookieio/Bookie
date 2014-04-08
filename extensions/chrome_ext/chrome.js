@@ -281,7 +281,9 @@ YUI().add('bookie-chrome', function (Y) {
             // fire the ajax request to see if the model can be updated
             var m = this.get('model');
             m.load({
-                hash_id: m.get('hash_id')
+                hash_id: m.get('hash_id'),
+                tab_url: m.get('url'),
+                tab_title: m.get('description')
             });
 
             // setup the form with the current model data
