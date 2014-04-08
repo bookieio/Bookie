@@ -32,8 +32,6 @@
 /usr/bin/pip install --no-install -d /home/ubuntu/packages repoze.lru==0.3
 /usr/bin/pip install --no-install -d /home/ubuntu/packages repoze.tm2==1.0b1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages rope==0.9.3
-/usr/bin/pip install --no-install -d /home/ubuntu/packages ropemode==0.1-rc2
-/usr/bin/pip install --no-install -d /home/ubuntu/packages ropevim==0.3-rc
 /usr/bin/pip install --no-install -d /home/ubuntu/packages sqlalchemy-migrate==0.6.1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages transaction==1.1.1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages translationstring==0.3
