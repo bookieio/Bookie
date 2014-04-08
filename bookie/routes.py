@@ -112,6 +112,8 @@ def build_routes(config):
                      request_method="POST")
     config.add_route("api_user_api_key",
                      "/api/v1/{username}/api_key")
+    config.add_route("api_reset_api_key",
+                     "/api/v1/{username}/reset_api_key")                 
     config.add_route("api_user_reset_password",
                      "/api/v1/{username}/password",
                      request_method="POST")
@@ -125,7 +127,8 @@ def build_routes(config):
     config.add_route("api_user_invite",
                      "api/v1/{username}/invite",
                      request_method="POST")
-
+    
+    
     # many bookmark api calls
     config.add_route("api_bmarks_export", "api/v1/{username}/bmarks/export")
 
