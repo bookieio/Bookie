@@ -186,7 +186,11 @@ def bmark_get(request):
     if bookmark is None:
         request.response.status_int = 404
         ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
+        # Pack the response with Suggested Tags.
+        resp_tags = {'tags': list(tag_list)}
         ret.update(last_bmark)
+        ret.update(resp_tags)
+        print(ret)
         return _api_response(request, ret)
     else:
         return_obj = dict(bookmark)
@@ -194,9 +198,11 @@ def bmark_get(request):
         if 'with_content' in params and params['with_content'] != 'false':
             if bookmark.readable:
                 return_obj['readable'] = dict(bookmark.readable)
-        return_obj['tags'] = [dict(tag) for tag in tag_list]
+        # Pack the response with Suggested Tags.                
+        return_obj['tags'] = list(tag_list)
         ret = {'bmark': return_obj}
         ret.update(last_bmark)
+        print(ret)
         return _api_response(request, ret)
 
 
