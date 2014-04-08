@@ -190,7 +190,6 @@ def bmark_get(request):
         resp_tags = {'tags': list(tag_list)}
         ret.update(last_bmark)
         ret.update(resp_tags)
-        print(ret)
         return _api_response(request, ret)
     else:
         return_obj = dict(bookmark)
@@ -202,7 +201,6 @@ def bmark_get(request):
         return_obj['tags'] = list(tag_list)
         ret = {'bmark': return_obj}
         ret.update(last_bmark)
-        print(ret)
         return _api_response(request, ret)
 
 
