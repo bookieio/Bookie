@@ -22,8 +22,6 @@
 /usr/bin/pip install --no-install -d /home/ubuntu/packages coverage==3.4
 /usr/bin/pip install --no-install -d /home/ubuntu/packages decorator==3.3.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages docutils==0.7
-/usr/bin/pip install --no-install -d /home/ubuntu/packages logilab-astng==0.21.1
-/usr/bin/pip install --no-install -d /home/ubuntu/packages logilab-common==0.55.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages mock==0.7.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages nose==1.0.0
 /usr/bin/pip install --no-install -d /home/ubuntu/packages paramiko==1.7.6
@@ -34,8 +32,6 @@
 /usr/bin/pip install --no-install -d /home/ubuntu/packages repoze.lru==0.3
 /usr/bin/pip install --no-install -d /home/ubuntu/packages repoze.tm2==1.0b1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages rope==0.9.3
-/usr/bin/pip install --no-install -d /home/ubuntu/packages ropemode==0.1-rc2
-/usr/bin/pip install --no-install -d /home/ubuntu/packages ropevim==0.3-rc
 /usr/bin/pip install --no-install -d /home/ubuntu/packages sqlalchemy-migrate==0.6.1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages transaction==1.1.1
 /usr/bin/pip install --no-install -d /home/ubuntu/packages translationstring==0.3
