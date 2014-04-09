@@ -737,6 +737,35 @@ Example
             "api_key": "12345..."
         }
 
+/:username/api_key
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage
+'''''
+
+*POST* `/api/v1/admin/reset_api_key`
+
+Request a brand new API key. The old API key will be invalidated.
+A new key will be generated and tied to your account.
+Please do not forget to update the API key in the browser extensions and
+other places where the API is used.
+
+:post param: api_key *required* - the api key for your account to make the call with
+:post param: username *required* - the username whose api key has to be reset
+
+Status Codes
+'''''''''''''
+:success 200: If successful a "200 OK" will be returned, with json body of message: done
+:error 403: If the api key is not valid or missing then this is an unauthorized request
+
+Example
+''''''''
+::
+
+    requests.post('http://127.0.0.1:6543/api/v1/admin/api_key?api_key=12345...')
+    >>> {
+            "api_key": "98765...",
+            "message": "API key was..."
+        }
 
 /:username/password
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1346,7 +1375,7 @@ Usage
 Admin override and add a new user to the system.
 
 :query param: api_key *required* - the api key for your account to make the call with
-:query param: username *required* - the email address of the new user
+:query param: username *required* - the username of the new user
 :query param: email *required* - the email address of the new user
 :query param: callback - wrap JSON response in an optional callback
 
