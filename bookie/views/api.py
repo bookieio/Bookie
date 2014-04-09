@@ -629,7 +629,7 @@ def reset_api_key(request):
 
     """
     user = request.user
-    #change Api Key
+    # Generate a new api key and assign it to current user's api key.
     user.api_key = User.gen_api_key()
     return _api_response(request, {
         'api_key': user.api_key,
