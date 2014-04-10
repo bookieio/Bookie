@@ -153,7 +153,7 @@ Get the Chrome extension from the Chrome web store:
 https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega
 
 If you have any issues feel free to join #bookie on freenode.net or report
-the issue or idea on http://github.com/mitechie/Bookie/issues.
+the issue or idea on https://github.com/bookieio/Bookie/issues.
 
 We also encourage you to sign up for our mailing list at:
 https://groups.google.com/forum/#!forum/bookie_bookmarks
@@ -162,7 +162,7 @@ and our Twitter account:
 http://twitter.com/BookieBmarks
 
 Bookie is open source. Check out the source at:
-https://github.com/mitechie/Bookie
+https://github.com/bookieio/Bookie
 
 ---
 The Bookie Team""".format(message_data)
@@ -196,7 +196,7 @@ class UserImportFailureMessage(Message):
 
         msg = """
 Your import has failed. The error is listed below. Please file a bug at
-https://github.com/mitechie/bookie/issues if this error continues. You may
+https://github.com/bookieio/bookie/issues if this error continues. You may
 also join #bookie on freenode irc if you wish to aid in debugging the issue.
 If the error pertains to a specific bookmark in your import file you might try
 removing it and importing the file again.

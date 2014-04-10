@@ -40,7 +40,7 @@
         <div>Participate</div>
         <ul class="features">
             <li>
-                <a href="https://github.com/mitechie/Bookie" title="Bookie on github">Get the source</a>
+                <a href="https://github.com/bookieio/Bookie" title="Bookie on github">Get the source</a>
             </li>
             <li>
                 <a href="http://docs.bmark.us" title="Bookie docs">Check out the docs</a>

@@ -71,7 +71,7 @@ class BookieViewsTest(TestViewBase):
 
     def test_changes_link_in_footer(self):
         """Changes link should go to the bookie commits github page."""
-        changes_link = "https://github.com/mitechie/Bookie/commits/develop"
+        changes_link = "https://github.com/bookieio/Bookie/commits/develop"
         res = self.app.get('/')
 
         self.assertEqual(
