@@ -9,6 +9,7 @@ import unittest
 from pyramid import testing
 
 from bookie.models import DBSession
+from bookie.models.auth import Activation
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 from bookie.tests import factory
@@ -642,6 +643,48 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(
             'api_key' in user,
             "Should have an api key in there: {0}".format(user))
+        self._check_cors_headers(res)
+
+    def test_account_reset_apikey(self):
+        """Reset User's api key"""
+
+        # Create a fake user
+        test_user = factory.make_user(username='test_user')
+        # Set and Get the current api key
+        # make_user doesn't set the api key of user so set it explicitly
+        current_apikey = test_user.api_key = "random_key"
+        test_user.activation = Activation(u'signup')
+        transaction.commit()
+
+        # send a request to reset the api key
+        res = self.testapp.post(
+            "/api/v1/test_user/api_key?api_key=" + current_apikey,
+            content_type='application/json',
+            params={u'username': 'test_user',
+                    u'api_key': current_apikey},
+            status=200)
+
+        # Get the user's api key from db
+        fetch_api = DBSession.execute(
+            "SELECT api_key FROM users WHERE username='test_user'").fetchone()
+        new_apikey = fetch_api['api_key']
+
+        # make sure we can decode the body
+        response = json.loads(res.body)
+
+        # old and new api keys must not be the same
+        self.assertNotEqual(
+            current_apikey, new_apikey,
+            "Api key must be changed after reset request")
+        self.assertTrue(
+            'api_key' in response,
+            "Should have an api key in there: {0}".format(response))
+
+        # Api key in response must be the new one
+        self.assertEqual(
+            response['api_key'], new_apikey,
+            "Should have a api key of user {0}".format(response))
+
         self._check_cors_headers(res)
 
     def test_account_password_change(self):

@@ -111,7 +111,11 @@ def build_routes(config):
                      "/api/v1/{username}/account",
                      request_method="POST")
     config.add_route("api_user_api_key",
-                     "/api/v1/{username}/api_key")
+                     "/api/v1/{username}/api_key",
+                     request_method="GET")
+    config.add_route("api_reset_api_key",
+                     "/api/v1/{username}/api_key",
+                     request_method="POST")
     config.add_route("api_user_reset_password",
                      "/api/v1/{username}/password",
                      request_method="POST")
