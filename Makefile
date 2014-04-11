@@ -169,7 +169,7 @@ smtp:
 
 .PHONY: test
 test:
-	INI="test.ini" $(PYTEST) -s bookie/tests
+	INI="test.ini" $(PYTEST) -q -s bookie/tests
 
 .PHONY: testcoverage
 testcoverage:

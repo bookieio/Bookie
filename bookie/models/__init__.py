@@ -252,7 +252,11 @@ class TagMgr(object):
             else:
                 bmark = BmarkMgr.get_by_url(url)
                 # If bmark is not parsed return recent tag list
-                if bmark.readable.status_code == '900':
+                if bmark.readable is None:
+                    return recent_tags
+                # Some times parsing may fail and we cannot parse the webpage
+                # then satus_code will be set to 900
+                elif bmark.readable.status_code == '900':
                     return recent_tags
                 else:
                     content = bmark.readable.content

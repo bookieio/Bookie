@@ -1,15 +1,22 @@
 """Test the basics including the bmark and tags"""
+import transaction
 from pyramid import testing
 
-from bookie.models import DBSession
-from bookie.models import Tag
-from bookie.models import TagMgr
-from bookie.models import BmarkMgr
+from bookie.models import (
+    Readable,
+    DBSession,
+    Tag,
+    TagMgr,
+    BmarkMgr,
+)
 
 from bookie.tests import empty_db
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
-from bookie.tests.factory import make_tag
+from bookie.tests.factory import (
+    make_bookmark,
+    make_tag,
+)
 
 import os
 
@@ -81,10 +88,7 @@ class TestTagMgrStats(TestDBBase):
         url = u'http://testing_tags.com'
         # set the readable content for the bookmark
         path = os.getcwd()+"/bookie/tests/test_models/tag_test.txt"
-        test_content_file = open(path, 'r')
-        content = ""
-        for word in test_content_file:
-                content += word
+        content = open(path, 'r').read()
         test_bmark = {
             'url': url,
             'description': u'Bookie',
@@ -110,4 +114,54 @@ class TestTagMgrStats(TestDBBase):
                                 params=edit_bmark,
                                 status=200)
         for tag in tags_expected:
+            self.assertIn(tag, res.body)
+
+    def test_suggested_tags_for_unparsed_bookmark(self):
+        """Suggested tags for a bookmarked page whose readable is None"""
+        # Login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        res = self.testapp.post('/login',
+                                params=user_data)
+        # Add a bookmark
+        test_bmark = make_bookmark()
+        test_bmark.url = u'http://testing_tags.com'
+        test_bmark.description = u'Bookie'
+        path = os.getcwd() + "/bookie/tests/test_models/tag_test.txt"
+        content = open(path, 'r').read()
+        test_bmark.readable = Readable(content=content)
+
+        # Get the recent bookmark and its tags
+        recent = BmarkMgr.get_recent_bmark(username='admin')
+        recent_tags = []
+        if recent:
+            recent_tags.extend(recent.tag_str.split(u" "))
+        recent_tags = list(set(recent_tags))
+
+        # Add another bookmark with readable as None
+        new_url = u'http://testing_readable_none.com'
+        no_readable_bmark = make_bookmark()
+        no_readable_bmark.url = new_url
+        no_readable_bmark.description = u'Readable of this bookmark is None'
+
+        DBSession.add(test_bmark)
+        DBSession.add(no_readable_bmark)
+        DBSession.flush()
+        no_readable_hash = no_readable_bmark.hash_id
+
+        transaction.commit()
+
+        edit_bmark = {
+            'hash_id': no_readable_hash,
+            'username': 'admin',
+        }
+        res = self.testapp.post(
+            u'/admin/edit/' + no_readable_hash,
+            params=edit_bmark,
+            status=200)
+
+        # As the Bookmark's readable is None, suggested tags must be recent
+        # tags
+        for tag in recent_tags:
             self.assertIn(tag, res.body)
