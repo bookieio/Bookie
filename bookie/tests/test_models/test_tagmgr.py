@@ -150,7 +150,6 @@ class TestTagMgrStats(TestDBBase):
             'extended': u'',
             'tags': u'',
             'api_key': key,
-            'content': None,
         }
         res = self.testapp.post('/api/v1/admin/bmark',
                                 params=new_test_bmark,
