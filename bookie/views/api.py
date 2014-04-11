@@ -16,6 +16,7 @@ from bookie.lib.message import ReactivateMsg
 from bookie.lib.message import ActivationMsg
 from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
+from bookie.lib.utils import suggest_tags
 
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
@@ -116,34 +117,59 @@ def bmark_get(request):
     params = request.params
     hash_id = rdict.get('hash_id', None)
     username = rdict.get('username', None)
+    title = params.get('description', None)
+    url = params.get('url', None)
     if username:
         username = username.lower()
 
-    # the hash id will always be there or the route won't match
-    bookmark = BmarkMgr.get_by_hash(hash_id,
-                                    username=username)
+    # The hash id will always be there or the route won't match.
+    bookmark = BmarkMgr.get_by_hash(hash_id, username=username)
+
+    # tag_list is a set - no duplicates
+    tag_list = set()
+    recent_tags = []
+
+    if title or url:
+        suggested_tags = suggest_tags(url)
+        suggested_tags.update(suggest_tags(title))
+        tag_list.update(suggested_tags)
+
+    # Get the recent tags of the user
+    recent = BmarkMgr.get_recent_bmark(username=username)
+    if recent:
+        recent_tags.extend(recent.tag_str.split(u" "))
+    recent_tags = set(recent_tags)
+    tag_list.update(recent_tags)
 
     last_bmark = {}
     if 'last_bmark' in params and params['last_bmark'] != "false":
         last = BmarkMgr.get_recent_bmark(username=username)
         if last is not None:
             last_bmark = {'last': dict(last)}
+            last_bmark['last']['tags'] = [
+                dict(tag[1]) for tag in last.tags.items()
+            ]
 
     if bookmark is None:
         request.response.status_int = 404
         ret = {'error': "Bookmark for hash id {0} not found".format(hash_id)}
+        # Pack the response with Suggested Tags.
+        resp_tags = {'tag_suggestions': list(tag_list)}
         ret.update(last_bmark)
+        ret.update(resp_tags)
         return _api_response(request, ret)
     else:
         return_obj = dict(bookmark)
+        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
 
         if 'with_content' in params and params['with_content'] != 'false':
             if bookmark.readable:
                 return_obj['readable'] = dict(bookmark.readable)
-
-        return_obj['tags'] = [dict(tag[1]) for tag in bookmark.tags.items()]
-
-        ret = {'bmark': return_obj}
+        # Pack the response with Suggested Tags.
+        ret = {
+            'bmark': return_obj,
+            'tag_suggestions': list(tag_list)
+        }
         ret.update(last_bmark)
         return _api_response(request, ret)
 

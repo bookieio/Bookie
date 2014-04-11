@@ -17,6 +17,7 @@ BOOKIE_INI = bookie.ini
 SAURL = $(shell grep sqlalchemy.url $(BOOKIE_INI) | cut -d "=" -f 2 | tr -d " ")
 
 CACHE := "$(WD)/download-cache"
+NLTK_DATA := "$(WD)/download-cache/nltk"
 BOOKIE_JS = bookie/static/js/bookie
 JS_BUILD_PATH = bookie/static/js/build
 JS_META_SCRIPT = $(PY) scripts/js/generate_meta.py
@@ -158,6 +159,9 @@ deps: venv
 	@echo "Making sure the latest version of pip is available"
 	# $(PIP) install -U pip
 	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
+	# Fetch the nltk data we need.
+	mkdir $(NLTK_DATA)
+	NLTK_DATA=$(NLTK_DATA) $(PY) -m textblob.download_corpora lite
 
 # TESTS
 #
@@ -169,11 +173,11 @@ smtp:
 
 .PHONY: test
 test:
-	INI="test.ini" $(PYTEST) -q -s bookie/tests
+	INI="test.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: testcoverage
 testcoverage:
-	$(NOSE) --with-coverage --cover-html --cover-package=bookie bookie/tests
+	NLTK_DATA=$(NLTK_DATA) $(PYTEST) --cov=bookie -s bookie/tests
 
 .PHONY: clean_testdb
 clean_testdb:
@@ -367,7 +371,7 @@ run_prod:
 	$(PASTER) --pid-file=app.pid $(BOOKIE_INI) &
 .PHONY: run_app
 run_app:
-	$(PASTER) --reload $(BOOKIE_INI)
+	NLTK_DATA=$(NLTK_DATA) $(PASTER) --reload $(BOOKIE_INI)
 .PHONY: run_livereload
 run_livereload:
 	livereload

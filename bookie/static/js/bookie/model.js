@@ -198,6 +198,10 @@ YUI.add('bookie-model', function (Y) {
                         if (data.last) {
                             that.set('last', data.last);
                         }
+
+                        if (data.tag_suggestions) {
+                            that.set('tag_suggestions', data.tag_suggestions);
+                        }
                     },
                     'error': function (data, status_str, response, args) {
                         // We might also get a last bookmark data on not
@@ -205,6 +209,10 @@ YUI.add('bookie-model', function (Y) {
                         // go ahead and set it on the current bookmark.
                         if (data.last) {
                             that.set('last', data.last);
+                        }
+
+                        if (data.tag_suggestions) {
+                            that.set('tag_suggestions', data.tag_suggestions);
                         }
                     }
                 });
@@ -416,6 +424,16 @@ YUI.add('bookie-model', function (Y) {
                  */
                 'tag_str': {
                     value: ''
+                },
+
+                /**
+                 * @attribute tag_suggestions
+                 * @default []
+                 * @type Array
+                 *
+                 */
+                tag_suggestions: {
+                    value: []
                 },
 
                 /**
@@ -667,7 +685,7 @@ YUI.add('bookie-model', function (Y) {
          *
          */
         _read: function (options, callback) {
-            this.set('api_url',
+           this.set('api_url',
                 this._get_data('api_url', this.get('api_url')));
            this.set('api_username',
                 this._get_data('api_username', this.get('api_username')));

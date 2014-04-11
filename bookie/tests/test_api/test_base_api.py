@@ -238,6 +238,57 @@ class BookieAPITest(unittest.TestCase):
             bmark['readable']['content'])
         self._check_cors_headers(res)
 
+    def test_bookmark_fetch_with_last(self):
+        """When a very recent bookmark is present return it."""
+        self._get_good_request(content=True, second_bmark=True)
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}&last_bmark=true'.format(
+                GOOGLE_HASH,
+                API_KEY),
+            status=200)
+
+        # make sure we can decode the body
+        bmark = json.loads(res.body)
+        self.assertIn('last', bmark)
+        self.assertIn('bookmark', bmark['last']['tag_str'])
+
+        self._check_cors_headers(res)
+
+    def test_bookmark_fetch_with_suggestions(self):
+        """When a very recent bookmark is present return it."""
+        self._get_good_request(content=True, second_bmark=True)
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH),
+            {
+                'api_key': API_KEY,
+                'url': 'http://google.com',
+                'description': 'The best search engine for Python things.'
+            },
+            status=200)
+
+        # make sure we can decode the body
+        bmark = json.loads(res.body)
+        self.assertIn('tag_suggestions', bmark)
+        self.assertIn('search', bmark['tag_suggestions'])
+        self._check_cors_headers(res)
+
+    def test_no_bookmark_fetch_with_suggestions(self):
+        """When a very recent bookmark is present return it."""
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH),
+            {
+                'api_key': API_KEY,
+                'url': 'http://google.com',
+                'description': 'The best search engine for Python things.'
+            },
+            status=404)
+
+        # make sure we can decode the body
+        bmark = json.loads(res.body)
+        self.assertIn('tag_suggestions', bmark)
+        self.assertIn('search', bmark['tag_suggestions'])
+        self._check_cors_headers(res)
+
     def test_bookmark_fetch_fail(self):
         """Verify we get a failed response when wrong bookmark"""
         self._get_good_request()

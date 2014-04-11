@@ -37,7 +37,7 @@ YUI().add('bookie-chrome', function (Y) {
             var tag_html = new Y.NodeList();
                 tag_container = Y.one('#latest_tags');
 
-            for (tag in suggestions) {
+            for (var tag in suggestions) {
                  tag_html.push(Y.Node.create('<a href="" class="prev_tag">' + suggestions[tag] + '</a>'));
             }
 
@@ -177,13 +177,10 @@ YUI().add('bookie-chrome', function (Y) {
 
             // if we've gotten back a last bookmark, then make sure we build a
             // list of tags for the clicking in the view
-            if (!this.loaded_recent && model.get('last')) {
+            if (model.get('tag_suggestions')) {
                 // find any tags and pass them to the suggestion handler
                 this.loaded_recent = true;
-                var tag_str = model.get('last').tag_str;
-                if (tag_str.length) {
-                    this._build_suggested_tags(tag_str.split(' '));
-                }
+                this._build_suggested_tags(model.get('tag_suggestions'));
             }
 
             if (model.get('bid')) {
@@ -281,7 +278,9 @@ YUI().add('bookie-chrome', function (Y) {
             // fire the ajax request to see if the model can be updated
             var m = this.get('model');
             m.load({
-                hash_id: m.get('hash_id')
+                hash_id: m.get('hash_id'),
+                tab_url: m.get('url'),
+                tab_title: m.get('description')
             });
 
             // setup the form with the current model data
@@ -503,7 +502,7 @@ YUI().add('bookie-chrome', function (Y) {
             // Keep checking until the user configures a working
             // combination for the first time.
             chrome.storage.local.get("optionsConfigured", function(obj) {
-                if (!obj["optionsConfigured"]) {
+                if (!obj.optionsConfigured) {
                     chrome.tabs.create({
                         url: "options.html"
                     });

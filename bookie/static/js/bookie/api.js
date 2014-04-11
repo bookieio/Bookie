@@ -150,14 +150,20 @@ YUI.add('bookie-api', function (Y) {
          *
          */
         build_url: function (data) {
+            var resource = this.get('resource');
+
             // make sure the username is in the config as well
             if (Y.Lang.isObject(data)) {
                 data.username = this.get('username');
-                data.resource = this.get('resource');
+                if (resource) {
+                    data.resource = resource;
+                }
             } else {
                 data = {};
                 data.username = this.get('username');
-                data.resource = this.get('resource');
+                if (resource) {
+                    data.resource = resource;
+                }
             }
 
             return this.get('url') +
@@ -528,7 +534,9 @@ YUI.add('bookie-api', function (Y) {
                 this.data = {
                     hash_id: this.get('hash_id'),
                     username: this.get('username'),
-                    last_bmark: this.get('last_bmark')
+                    last_bmark: this.get('last_bmark'),
+                    url: cfg.tab_url,
+                    description: cfg.tab_title
                 };
             }
         }, {
@@ -577,6 +585,34 @@ YUI.add('bookie-api', function (Y) {
                  */
                 last_bmark: {
                     value: false
+                },
+
+                /**
+                 * We suggest tags based on the title of the page
+                 * If the page has no title , url will be sent in
+                 * place of title.
+                 *
+                 * @attribute description
+                 * @default undefined
+                 * @required
+                 * @type String
+                 *
+                 */
+                description: {
+                    required: true
+                },
+
+                /**
+                 * We suggest tags based on the url of the page
+                 *
+                 * @attribute description
+                 * @default undefined
+                 * @required
+                 * @type String
+                 *
+                 */
+                url: {
+                    required: true
                 }
             }
         }
