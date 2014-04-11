@@ -81,10 +81,7 @@ class TestTagMgrStats(TestDBBase):
         url = u'http://testing_tags.com'
         # set the readable content for the bookmark
         path = os.getcwd()+"/bookie/tests/test_models/tag_test.txt"
-        test_content_file = open(path, 'r')
-        content = ""
-        for word in test_content_file:
-                content += word
+        content = open(path, 'r').read()
         test_bmark = {
             'url': url,
             'description': u'Bookie',
@@ -127,10 +124,7 @@ class TestTagMgrStats(TestDBBase):
         url = u'http://testing_tags.com'
         # set the readable content for the bookmark
         path = os.getcwd()+"/bookie/tests/test_models/tag_test.txt"
-        test_content_file = open(path, 'r')
-        content = ""
-        for word in test_content_file:
-                content += word
+        content = open(path, 'r').read()
         test_bmark = {
             'url': url,
             'description': u'Bookie',
