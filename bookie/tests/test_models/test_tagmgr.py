@@ -81,10 +81,7 @@ class TestTagMgrStats(TestDBBase):
         url = u'http://testing_tags.com'
         # set the readable content for the bookmark
         path = os.getcwd()+"/bookie/tests/test_models/tag_test.txt"
-        test_content_file = open(path, 'r')
-        content = ""
-        for word in test_content_file:
-                content += word
+        content = open(path, 'r').read()
         test_bmark = {
             'url': url,
             'description': u'Bookie',
@@ -110,4 +107,65 @@ class TestTagMgrStats(TestDBBase):
                                 params=edit_bmark,
                                 status=200)
         for tag in tags_expected:
+            self.assertIn(tag, res.body)
+
+    def test_suggested_tags_for_unparsed_bookmark(self):
+        """Suggested tags for a bookmarked page whose readable is None"""
+        # login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        res = self.testapp.post('/login',
+                                params=user_data)
+        # Add a bookmark
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+        url = u'http://testing_tags.com'
+        # set the readable content for the bookmark
+        path = os.getcwd()+"/bookie/tests/test_models/tag_test.txt"
+        content = open(path, 'r').read()
+        test_bmark = {
+            'url': url,
+            'description': u'Bookie',
+            'extended': u'',
+            'tags': u'',
+            'api_key': key,
+            'content': content,
+        }
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                params=test_bmark,
+                                status=200)
+        # Get the recent bookmark and its tags
+        recent = BmarkMgr.get_recent_bmark(username='admin')
+        recent_tags = []
+        if recent:
+            recent_tags.extend(recent.tag_str.split(u" "))
+        recent_tags = list(set(recent_tags))
+        # Add another bookmark with readable as None
+        new_url = u'http://testing_readable_none.com'
+        new_test_bmark = {
+            'url': new_url,
+            'description': u'Readable of this bookmark is None',
+            'extended': u'',
+            'tags': u'',
+            'api_key': key,
+        }
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                params=new_test_bmark,
+                                status=200)
+        # Now edit the bookmark with readable as None.
+        bmark = BmarkMgr.get_by_url(new_url)
+        hash_id = bmark.hash_id
+        edit_bmark = {
+            'hash_id': hash_id,
+            'username': 'admin',
+            'url': new_url
+        }
+        res = self.testapp.post('/admin/edit/'+str(hash_id),
+                                params=edit_bmark,
+                                status=200)
+        # As the Bookmark's readable is None ,
+        # Suggested tags must be recent tags
+        for tag in recent_tags:
             self.assertIn(tag, res.body)
