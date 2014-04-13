@@ -1154,7 +1154,7 @@ YUI.add('bookie-view', function (Y) {
      */
     ns.AccountView = Y.Base.create('bookie-account-view', Y.View, [], {
         _blet_visible: false,
-        _api_visibile: false,
+        _api_visible: false,
 
         /**
          * Bind all events for this html view.
@@ -1171,6 +1171,11 @@ YUI.add('bookie-view', function (Y) {
             Y.one('#show_bookmarklet').on(
                 'click',
                 this._show_bookmarklet,
+                this
+            );
+            Y.one('#new_api_key').on(
+                'click',
+                this._new_api_key,
                 this
             );
         },
@@ -1205,7 +1210,6 @@ YUI.add('bookie-view', function (Y) {
                         key_div.setContent(data.api_key);
                         key_container.show(true);
                     }
-
                 });
             }
         },
@@ -1234,6 +1238,89 @@ YUI.add('bookie-view', function (Y) {
             }
         },
 
+        /**
+         * Handle new API key request.
+         *
+         * @method _new_api_key
+         * @param {Event} e
+         *
+         */
+        _new_api_key: function(e) {
+            e.preventDefault();
+            var that = this;
+            this._show_message('', false);
+
+            // Safety check.
+            if (this._api_visible) {
+                var keyHandle = Y.one('#api_key'),
+                    oldKey = keyHandle.get('text');
+
+                var cfg = this.get('api_cfg');
+                var api = new Y.bookie.Api.route.NewApiKey(cfg);
+
+                keyHandle.setContent('Requesting a new key...');
+
+                // Send a POST request to the Bookie server.
+                api.call({
+                    success: function(data, request) {
+                        var msg = "";
+                        // Make sure we don't run into errors.
+                        if (!data || !data.api_key) {
+                            msg = 'Unexpected response from server';
+                            that._show_message(msg, false);
+                            keyHandle.setContent(oldKey);
+                            return;
+                        }
+
+                        // Unable to reset API key due to some reason.
+                        if (data.api_key === oldKey) {
+                            msg = 'Could not generate new API key.';
+                            msg += 'Please try later.';
+                            that._show_message(msg, false);
+
+                            keyHandle.setContent(oldKey);
+                            return;
+                        }
+
+                        // Update the Account View instance so that 
+                        // subsequent requests originating from this
+                        // instance use the new API key that is generated.
+                        var cfg = that.get('api_cfg');
+                        cfg.api_key = data.api_key;
+                        that.set('api_cfg', cfg);
+
+                        if (data.message) {
+                            that._show_message(data.message, true);
+                        }
+
+                        keyHandle.setContent(data.api_key);
+                    }
+                });
+            } else {
+                return;
+            }
+        },
+
+        /**
+         * Keep the user updated about the current process.
+         *
+         * @method _show_message
+         * @param {String} msg
+         * @param {Boolean} success
+         *
+         */
+        _show_message: function(msg, success) {
+            var msg_div = Y.one('#new_key_msg');
+            msg_div.setContent(msg);
+
+            if (success) {
+                msg_div.replaceClass('error', 'success');
+            } else {
+                msg_div.replaceClass('success', 'error');
+            }
+
+            msg_div.show(true);
+        },
         /**
          * General initializer
          *

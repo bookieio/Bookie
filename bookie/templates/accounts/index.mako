@@ -83,6 +83,11 @@ ${account_nav()}
                     <label>Api Key</label>
                     <span id="api_key"></span>
                 </li>
+                <li>
+                    <label></label>
+                    <input type="button" id="new_api_key" value="Generate New Key"
+                        class="button" />
+                </li>
             </ul>
             <div class="details">
             Your Api Key is used to validate your account when using outside
@@ -90,6 +95,7 @@ ${account_nav()}
             as the mobile site, outside scripts, or client applications.
             </div>
         </form>
+        <div id="new_key_msg" class="error"></div>
     </div>
 </div>
 
