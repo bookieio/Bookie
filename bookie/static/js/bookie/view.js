@@ -954,9 +954,9 @@ YUI.add('bookie-view', function (Y) {
         initializer: function () {
             // The url is not editable. So if we don't have the input, assume
             // it's an edit and skip.
-            var url_input = Y.one('input#url');
+            var url_input = Y.one('#url');
             if (url_input) {
-                url_input.on('onblur', this._check_and_edit_url);
+                Y.one('#url').set('onblur', this._check_and_edit_url);
             }
         }
 
