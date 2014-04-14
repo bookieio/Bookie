@@ -26,6 +26,10 @@ If you're on Ubuntu, you should be able to get started with:
     $ git clone git://github.com/bookieio/Bookie.git
     $ cd Bookie && make sysdeps && make install && make run
     $ google-chrome (or other browser) http://127.0.0.1:6543
+    
+Note: If you run into problems during the `make sysdeps && make install` process, run `make clean_all` to reset the environment prior to re-running `make sysdeps && make install`.
+
+If you're unable to complete the install process and need additional help please feel freeo to contact us in the #bookie IRC channel on Freenode, or the mailing lists.
 
 Developing
 -----------
