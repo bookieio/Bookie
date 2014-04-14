@@ -937,11 +937,11 @@ YUI.add('bookie-view', function (Y) {
          *
          */
         _check_and_edit_url: function (e) {
-            string = e.target.value;
-		if(!(/^(f|ht)tps?:\/\//.test(string))){
-			string = "http://" + string;
-		}
-		e.target.value=string;
+            var str = e.target.get('value');
+            if(!(/^(f|ht)tps?:\/\//.test(str))){
+                str = "http://" + str;
+            }
+            e.target.set('value', str);
         },
 
         /**
@@ -956,7 +956,7 @@ YUI.add('bookie-view', function (Y) {
             // it's an edit and skip.
             var url_input = Y.one('input#url');
             if (url_input) {
-                url_input.on('onblur', this._check_and_edit_url);
+                url_input.on('blur', this._check_and_edit_url);
             }
         }
 
@@ -1016,8 +1016,8 @@ YUI.add('bookie-view', function (Y) {
                     var myDataValues = [];
                     data.count.forEach(function(value) {
                         myDataValues.push({
-                            date: value['tstamp'].split(' ')[0],
-                            bookmarks: value['data']
+                            date: value.tstamp.split(' ')[0],
+                            bookmarks: value.data
                         });
                     });
                     var user_graph = Y.one('#bmark_count_graph');
