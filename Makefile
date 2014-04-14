@@ -80,7 +80,7 @@ sysdeps:
 	fi
 
 .PHONY: install
-install: $(BOOKIE_INI) all first_bookmark css
+install: $(BOOKIE_INI) all css first_bookmark
 
 .PHONY: develop
 develop: lib/python*/site-packages/bookie.egg-link
