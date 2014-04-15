@@ -160,7 +160,7 @@ deps: venv
 	# $(PIP) install -U pip
 	$(PIP) install --no-index --no-dependencies --find-links file:///$(CACHE)/python -r requirements.txt
 	# Fetch the nltk data we need.
-	mkdir $(NLTK_DATA)
+	mkdir $(NLTK_DATA) || true
 	NLTK_DATA=$(NLTK_DATA) $(PY) -m textblob.download_corpora lite
 
 # TESTS
