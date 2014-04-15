@@ -141,9 +141,13 @@ docs_open: docs
 tags:
 	ctags --tag-relative --python-kinds=-iv -Rf tags-py --sort=yes --exclude=.git --languages=python
 
+
+bin/flake8: bin/python
+	bin/pip install flake8
+
 .PHONY: lint
-lint:
-	flake8 bookie/
+lint: bin/flake8
+	bin/flake8 bookie/
 
 # DEPS
 #
