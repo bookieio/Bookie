@@ -27,7 +27,7 @@ WIX = None
 
 def _reset_index():
     """Used by the test suite to reset the fulltext index."""
-    WIX = create_in(INDEX_NAME, BmarkSchema)
+    WIX = create_in(INDEX_NAME, BmarkSchema)  # noqa
 
 
 def set_index(index_type, index_path):

@@ -15,6 +15,6 @@ class TestUrlHashing(TestCase):
 
     def test_unicode_url(self):
         """Hashes with unicode correctly"""
-        url = u'http://www.bizrevolution.com.br/bizrevolution/2011/02/somos-t\xe3o-jovens-no-campus-party-.html'
+        url = u'http://www.bizrevolution.com.br/bizrevolution/2011/02/somos-t\xe3o-jovens-no-campus-party-.html'  # noqa
         hashed = generate_hash(url)
         self.assertEqual('bd846e7222adf2', hashed)

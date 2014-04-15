@@ -699,7 +699,7 @@ def reset_password(request):
     new = params.get('new_password', None)
 
     # if we don't have any password info, try a json_body in case it's a json
-    #POST
+    # POST
     if current is None and new is None:
         params = request.json_body
         current = params.get('current_password', None)

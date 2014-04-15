@@ -182,7 +182,7 @@ class DelImporter(Importer):
             link = tag.a
 
             # Skip any bookmarks with an attribute of PRIVATE.
-            if link.has_key('PRIVATE'):
+            if link.has_key('PRIVATE'):  # noqa
                 continue
 
             import_add_date = float(link['add_date'])
@@ -400,7 +400,7 @@ class GBookmarkImporter(Importer):
 
                         # Must use has_key here due to the link coming from
                         # the parser and it's not a true dict.
-                        if link.has_key('add_date'):
+                        if link.has_key('add_date'):  # noqa
                             if int(link['add_date']) < 9999999999:
                                 timestamp_added = int(link['add_date'])
                             else:
@@ -547,7 +547,7 @@ class FBookmarkImporter(Importer):
                         bmark.get("uri") and \
                         is_good(bmark):
                     self.bmap_add(bmark, bmap)
-                    if not "tags" in bmap[bmark["uri"]]:
+                    if "tags" not in bmap[bmark["uri"]]:
                         bmap[bmark["uri"]]["tags"] = []
                     bmap[bmark["uri"]]["tags"].append(
                         tag["title"].replace(" ", "-"))

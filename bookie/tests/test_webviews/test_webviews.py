@@ -223,7 +223,7 @@ class ReadableTest(TestViewBase):
         transaction.commit()
 
     def _add_bmark_wt_desc(self):
-        #setup the default google bookmark
+        # Setup the default google bookmark.
         bmark_us = Bmark(u'http://google.com',
                          username=u"admin",
                          desc=u"",
