@@ -43,6 +43,7 @@ def main(global_config, **settings):
                           authentication_policy=authn_policy,
                           authorization_policy=authz_policy)
     config.set_request_factory(RequestWithUserAttribute)
+    config.include('pyramid_mako')
 
     config = build_routes(config)
     config.add_static_view('static', 'bookie:static')

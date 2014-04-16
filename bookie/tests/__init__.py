@@ -85,7 +85,8 @@ class TestViewBase(unittest.TestCase):
         app = get_app(BOOKIE_TEST_INI, 'bookie')
         from webtest import TestApp
         self.app = TestApp(app)
-        testing.setUp()
+        self.config = testing.setUp()
+        self.config.include('pyramid_mako')
         res = DBSession.execute(
             "SELECT api_key FROM users WHERE username = 'admin'").\
             fetchone()
