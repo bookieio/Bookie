@@ -9,6 +9,7 @@ import transaction
 from datetime import datetime
 from ConfigParser import ConfigParser
 from os import path
+import sys
 
 from bookie.models import initialize_sql
 
@@ -24,9 +25,10 @@ if __name__ == "__main__":
     from bookie.models import DBSession
     from bookie.models import Bmark, BmarkMgr
     url = u'http://bmark.us'
-    # make sure the bookmark isn't already there
-    if (BmarkMgr.get_by_url(url)):
-        return
+
+    # Make sure the bookmark isn't already there.
+    if (BmarkMgr.find()):
+        sys.exit(0)
 
     bmark_us = Bmark(url,
                      u'admin',
