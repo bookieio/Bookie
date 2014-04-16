@@ -242,6 +242,9 @@ test_tagcontrol:
 .PHONY: test_userstats
 test_userstats:
 	xdg-open $(JSTESTURL)/test_user_stats.html
+.PHONY: test_stats
+test_stats:
+	xdg-open $(JSTESTURL)/test_stats.html
 .PHONY: test_view
 test_view:
 	xdg-open $(JSTESTURL)/test_view.html

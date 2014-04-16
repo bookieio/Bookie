@@ -962,6 +962,83 @@ YUI.add('bookie-view', function (Y) {
 
     });
 
+
+    /**
+     * Generate the view for user stats
+     * @class UserStatsView
+     * @extends Y.View
+     *
+     */
+    ns.UserStatsView = Y.Base.create('user-stats-view', Y.View, [], {
+        /**
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function () {
+            this.count = Y.one('#user_stats_count');
+            this.activations = Y.one('#user_stats_activations');
+            this.with_bookmarks = Y.one('#user_stats_with_bookmarks');
+            this.user_stats_error = Y.one('#user_stats_msg');
+            this.api_cfg = this.get('api_cfg');
+            this.api = new Y.bookie.Api.route.UserStats(this.api_cfg);
+        },
+        render: function () {
+            that = this;
+            this.api.call({
+                success: function(data, request) {
+                    that.count.setContent(data.count);
+                    that.activations.setContent(data.activations);
+                    that.with_bookmarks.setContent(data.with_bookmarks);
+                    that.user_stats_error.setContent('');
+		},
+                error: function (data, status_str, response, args) {
+                    that.user_stats_error.setContent('Error fetching stats');
+                }
+            });
+        }
+    });
+
+
+    /**Generate the view for bookmark stats
+     * @class BookmarkStatsView
+     * extends Y.View
+     *
+     */
+    ns.BookmarkStatsView = Y.Base.create('bookmark-stats-view', Y.View, [], {
+        /**
+         *
+         * General initializer
+         *
+         * @method initializer
+         * @param none
+         *
+         */
+        initializer: function() {
+            this.count = Y.one('#bookmark_stats_count');
+            this.unique_count = Y.one('#bookmark_stats_unique_count');
+            this.bookmark_stats_error = Y.one('#bookmark_stats_msg');
+            this.api_cfg = this.get('api_cfg');
+            this.api = new Y.bookie.Api.route.BookmarkStats(this.api_cfg);
+        },
+        render: function () {
+            that = this;
+            this.api.call({
+                success: function(data, request) {
+                    that.count.setContent(data.count);
+                    that.unique_count.setContent(data.unique_count);
+                    that.bookmark_stats_error.setContent('');
+                },
+                error: function (data, status_str, response, args) {
+                    that.bookmark_stats_error.setContent('Error fetching stats');
+                }
+            });
+	}
+    });
+
+
     /**
      * Generate the graph for user bookmark count
      *

@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script src="../build/y/yui/yui.js"></script>
+    <script src="../bookie/api.js"></script>
+    <script src="../bookie/view.js"></script>
+    <script src="test_stats.js"></script>
+    <title>User Stats Tests</title>
+</head>
+<body class="yui3-skin-sam">
+    <div id="log"></div>
+    <div id="user_stats_msg"></div>
+    <div id="bookmark_stats_msg"></div>
+    <span id="user_stats_count"></span>
+    <span id="user_stats_activations"></span>
+    <span id="user_stats_with_bookmarks"></span>
+    <span id="bookmark_stats_count"></span>
+    <span id="bookmark_stats_unique_count"></span>
+    <script type="text/javascript">
+        YUI().use('test-console', 'bookie-test-stats', function (Y) {
+            // RUN ALL THE TESTS!!!!!
+            var yconsole = new Y.Test.Console({
+                filters: {
+                    pass: true,
+                    fail: true
+                },
+                newestOnTop: false
+            });
+            yconsole.render('#log');
+
+            Y.Test.Runner.add(Y.bookie.test.stats.suite);
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>
