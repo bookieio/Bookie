@@ -16,19 +16,23 @@ from bookie.models import initialize_sql
 if __name__ == "__main__":
     ini = ConfigParser()
     ini_path = path.join(path.dirname(path.dirname(path.dirname(__file__))),
-        'bookie.ini')
+                         'bookie.ini')
 
     ini.readfp(open(ini_path))
     initialize_sql(dict(ini.items("app:bookie")))
 
     from bookie.models import DBSession
-    from bookie.models import Bmark
+    from bookie.models import Bmark, BmarkMgr
+    url = u'http://bmark.us'
+    # make sure the bookmark isn't already there
+    if (BmarkMgr.get_by_url(url)):
+        return
 
-    bmark_us = Bmark(u'http://bmark.us',
+    bmark_us = Bmark(url,
                      u'admin',
                      desc=u'Bookie Website',
-                     ext= u'Bookie Documentation Home',
-                     tags = u'bookmarks')
+                     ext=u'Bookie Documentation Home',
+                     tags=u'bookmarks')
 
     bmark_us.stored = datetime.now()
     bmark_us.updated = datetime.now()
