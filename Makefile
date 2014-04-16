@@ -7,7 +7,7 @@ PEP8 := $(PY) bin/pep8
 PIP := $(PY) bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 NOSE := $(PY) bin/nose2
-PYTEST := $(PY) bin/py.test
+PYTEST := $(PY) bin/py.test -q --tb=short
 PASTER := $(PY) bin/pserve
 PYSCSS := $(PY) bin/pyscss
 GUNICORN := $(PY) bin/gunicorn
