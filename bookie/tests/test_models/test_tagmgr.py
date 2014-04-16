@@ -103,18 +103,24 @@ class TestTagMgrStats(TestDBBase):
 
         bmark = BmarkMgr.get_by_url(url)
         hash_id = bmark.hash_id
-        tags_expected = ['network', 'simulator', 'NS', 'user', 'project']
+        tags_expected = ['network', 'new', 'simulator', 'user']
         edit_bmark = {
             'hash_id': hash_id,
             'username': 'admin',
             'url': url
         }
         hash_id = str(hash_id)
-        res = self.testapp.post('/admin/edit/'+hash_id,
+        res = self.testapp.post('/admin/edit/' + hash_id,
                                 params=edit_bmark,
                                 status=200)
+        # pure numbers are eliminated
+        self.assertNotIn('2014', res.body)
+        # tags with length less than 3 are omitted
+        self.assertNotIn('NS', res.body)
+        # all tags are lower cased
+        self.assertNotIn('NEW', res.body)
         for tag in tags_expected:
-            self.assertIn(tag, res.body)
+                self.assertIn(tag, res.body)
 
     def test_suggested_tags_for_unparsed_bookmark(self):
         """Suggested tags for a bookmarked page whose readable is None"""

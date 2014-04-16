@@ -3,14 +3,10 @@ import logging
 from pyramid.view import view_config
 
 from bookie.lib.access import ReqAuthorize
-from bookie.models import BmarkMgr
-from bookie.models.auth import ActivationMgr
 from bookie.models.auth import UserMgr
-from bookie.views import BookieView
 
 
 LOG = logging.getLogger(__name__)
-
 
 
 @view_config(route_name="dashboard",

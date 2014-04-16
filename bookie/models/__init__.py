@@ -24,7 +24,6 @@ from urlparse import urlparse
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -273,8 +272,11 @@ class TagMgr(object):
                         # If it has a space in it, split it.
                         tags = result[0].split()
                         for tag in tags:
+                            # Require at least 3 chars long and ignore pure
+                            # numbers.
                             if tag not in tag_list and tag not in bmark.tags:
-                                tag_list.append(tag)
+                                if len(tag) > 2 and not tag.isdigit():
+                                    tag_list.append(tag.lower())
 
                     # return maximum of 5 tags
                     # extend the list with recent tags
