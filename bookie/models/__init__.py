@@ -429,6 +429,9 @@ class BmarkMgr(object):
              with_content=False, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
+        qry = qry.join(Bmark.hashed).\
+            options(contains_eager(Bmark.hashed))
+
         offset = limit * page
 
         if with_content:
@@ -487,10 +490,6 @@ class BmarkMgr(object):
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
                 options(contains_eager(Bmark.tags))
-
-        # join to hashed so we always have the url
-        # if we have with_content, this is already done
-        qry = qry.options(joinedload('hashed'))
 
         return qry.all()
 
@@ -618,11 +617,11 @@ class BmarkMgr(object):
             filter(Bmark.username == username).\
             all()
         if len(bids):
-            Bmark.query.filter(Bmark.username == username).delete()
             deltags = bmarks_tags.delete().where(
                 bmarks_tags.c.bmark_id.in_([i[0] for i in bids])
             )
             DBSession.execute(deltags)
+            Bmark.query.filter(Bmark.username == username).delete()
             return len(bids)
         else:
             return None

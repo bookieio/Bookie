@@ -18,12 +18,16 @@ from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 from bookie.lib.utils import suggest_tags
 
-from bookie.models import Bmark
-from bookie.models import BmarkMgr
-from bookie.models import DBSession
-from bookie.models import NoResultFound
-from bookie.models import Readable
-from bookie.models import TagMgr
+from bookie.models import (
+    bmarks_tags,
+    Bmark,
+    BmarkMgr,
+    DBSession,
+    Hashed,
+    NoResultFound,
+    Readable,
+    TagMgr,
+)
 from bookie.models.applog import AppLogMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
@@ -343,17 +347,21 @@ def bmark_recent(request, with_content=False):
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
 
-    # We need to check if we have an ordering crtieria specified.
-    order_by = params.get('sort', None)
-    if order_by == "popular":
-        order_by = Bmark.clicks.desc()
-    else:
-        order_by = Bmark.stored.desc()
-
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
     if username:
         username = username.lower()
+
+    # We need to check if we have an ordering crtieria specified.
+    order_by = params.get('sort', None)
+    if order_by == "popular":
+        if username:
+            order_by = Bmark.clicks.desc()
+        else:
+            order_by = Hashed.clicks.desc()
+
+    else:
+        order_by = Bmark.stored.desc()
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting
@@ -1139,6 +1147,13 @@ def del_user(request):
         })
 
     try:
+        # First delete all the tag references for this user's bookmarks.
+        res = DBSession.query(Bmark.bid).filter(Bmark.username == u.username)
+        bids = [b[0] for b in res]
+
+        qry = bmarks_tags.delete(bmarks_tags.c.bmark_id.in_(bids))
+        qry.execute()
+
         # Delete all of the bmarks for this year.
         Bmark.query.filter(Bmark.username == u.username).delete()
         DBSession.delete(u)

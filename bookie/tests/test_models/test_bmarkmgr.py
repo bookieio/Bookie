@@ -5,6 +5,7 @@ from pyramid import testing
 
 from bookie.models import (
     DBSession,
+    bmarks_tags,
     Bmark,
     BmarkMgr,
     TagMgr,

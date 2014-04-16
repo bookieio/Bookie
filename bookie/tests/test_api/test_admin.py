@@ -201,7 +201,7 @@ class AdminApiTest(unittest.TestCase):
             '/api/v1/a/users/delete/{0}?api_key={1}'.format(
                 'bob',
                 self.api_key),
-            status=200)
+            )
 
         # we should get back dict of count, users.
         data = json.loads(res.body)

@@ -7,7 +7,7 @@ PEP8 := $(PY) bin/pep8
 PIP := $(PY) bin/pip
 PIP_MIR = PIP_FIND_LINKS='http://mypi http://simple.crate.io/'
 NOSE := $(PY) bin/nose2
-PYTEST := $(PY) bin/py.test
+PYTEST := $(PY) bin/py.test -q --tb=short
 PASTER := $(PY) bin/pserve
 PYSCSS := $(PY) bin/pyscss
 GUNICORN := $(PY) bin/gunicorn
@@ -202,13 +202,13 @@ mysql_test:
 
 .PHONY: pgsql_test
 pgsql_test:
-	#$(PIP_MIR) $(PIP) install PyMySQL
-	#mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
-	#mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
-	bin/alembic -c test_alembic_pgsql.ini upgrade head
-	BOOKIE_TEST_INI=test_pgsql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
-
-
+	# dropdb bookie || true
+	# dropuser jenkins_bookie || true
+	# createdb -U rharding bookie
+	# psql -c "CREATE USER jenkins_bookie WITH PASSWORD 'bookie';" template1
+	# psql -c "GRANT ALL PRIVILEGES ON DATABASE bookie to jenkins_bookie;" template1
+	# bin/alembic -c test_alembic_pgsql.ini upgrade head
+	BOOKIE_TEST_INI=test_pgsql.ini INI="test_pgsql.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: jstestserver
 jstestserver:
