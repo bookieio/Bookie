@@ -18,12 +18,15 @@ from bookie.lib.readable import ReadContent
 from bookie.lib.tagcommands import Commander
 from bookie.lib.utils import suggest_tags
 
-from bookie.models import Bmark
-from bookie.models import BmarkMgr
-from bookie.models import DBSession
-from bookie.models import NoResultFound
-from bookie.models import Readable
-from bookie.models import TagMgr
+from bookie.models import (
+    bmarks_tags,
+    Bmark,
+    BmarkMgr,
+    DBSession,
+    NoResultFound,
+    Readable,
+    TagMgr,
+)
 from bookie.models.applog import AppLogMgr
 from bookie.models.auth import ActivationMgr
 from bookie.models.auth import get_random_word
@@ -1139,6 +1142,13 @@ def del_user(request):
         })
 
     try:
+        # First delete all the tag references for this user's bookmarks.
+        res = DBSession.query(Bmark.bid).filter(Bmark.username == u.username)
+        bids = [b[0] for b in res]
+
+        qry = bmarks_tags.delete(bmarks_tags.c.bmark_id.in_(bids))
+        qry.execute()
+
         # Delete all of the bmarks for this year.
         Bmark.query.filter(Bmark.username == u.username).delete()
         DBSession.delete(u)

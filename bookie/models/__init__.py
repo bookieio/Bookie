@@ -618,11 +618,11 @@ class BmarkMgr(object):
             filter(Bmark.username == username).\
             all()
         if len(bids):
-            Bmark.query.filter(Bmark.username == username).delete()
             deltags = bmarks_tags.delete().where(
                 bmarks_tags.c.bmark_id.in_([i[0] for i in bids])
             )
             DBSession.execute(deltags)
+            Bmark.query.filter(Bmark.username == username).delete()
             return len(bids)
         else:
             return None
