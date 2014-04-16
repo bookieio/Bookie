@@ -15,6 +15,7 @@ parts
 .hg
 .bzr
 .svn
+.vagrant
 /include
 /bin
 /man
