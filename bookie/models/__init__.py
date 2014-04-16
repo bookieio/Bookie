@@ -273,8 +273,11 @@ class TagMgr(object):
                         # If it has a space in it, split it.
                         tags = result[0].split()
                         for tag in tags:
-                            if tag not in tag_list and tag not in bmark.tags:
-                                tag_list.append(tag)
+                            # Include Tags with length of atleast 3
+                            # Exclude pure numbers
+                            if (tag not in tag_list and tag not in bmark.tags
+                               and len(tag) > 2 and not tag.isdigit()):
+                                tag_list.append(tag.lower())
 
                     # return maximum of 5 tags
                     # extend the list with recent tags
