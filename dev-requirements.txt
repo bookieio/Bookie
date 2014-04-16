@@ -1,6 +1,8 @@
+coverage
 flake8
 mock
 pytest
+pytest-cov
 rope
 unittest2
 WebTest

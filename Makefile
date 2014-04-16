@@ -186,6 +186,10 @@ test: bin/py.test
 testcoverage: bin/py.test
 	NLTK_DATA=$(NLTK_DATA) $(PYTEST) --cov=bookie -s bookie/tests
 
+.PHONY: testcoverage-html
+testcoverage-html: bin/py.test
+	NLTK_DATA=$(NLTK_DATA) $(PYTEST) --cov-report=html --cov=bookie -s bookie/tests
+
 .PHONY: clean_testdb
 clean_testdb:
 	- rm test_bookie.db
