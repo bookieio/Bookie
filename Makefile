@@ -202,13 +202,7 @@ mysql_test:
 
 .PHONY: pgsql_test
 pgsql_test:
-	#$(PIP_MIR) $(PIP) install PyMySQL
-	#mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
-	#mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
-	bin/alembic -c test_alembic_pgsql.ini upgrade head
-	BOOKIE_TEST_INI=test_pgsql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
-
-
+	BOOKIE_TEST_INI=test_pgsql.ini INI="test_pgsql.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: jstestserver
 jstestserver:
