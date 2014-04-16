@@ -30,8 +30,12 @@ class BCeleryTaskTest(TestDBBase):
             DBSession.add(b)
 
         # add bookmark with duplicate url
-        self.new_username = gen_random_word(10)
-        b = self.__create_bookmark(url, self.new_username)
+        new_user = User()
+        new_user.username = gen_random_word(10)
+        self.new_username = new_user.username
+        DBSession.add(new_user)
+
+        b = self.__create_bookmark(url, new_user.username)
         DBSession.add(b)
 
         trans.commit()

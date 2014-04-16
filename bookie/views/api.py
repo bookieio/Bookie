@@ -23,6 +23,7 @@ from bookie.models import (
     Bmark,
     BmarkMgr,
     DBSession,
+    Hashed,
     NoResultFound,
     Readable,
     TagMgr,
@@ -346,17 +347,21 @@ def bmark_recent(request, with_content=False):
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
 
-    # We need to check if we have an ordering crtieria specified.
-    order_by = params.get('sort', None)
-    if order_by == "popular":
-        order_by = Bmark.clicks.desc()
-    else:
-        order_by = Bmark.stored.desc()
-
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
     if username:
         username = username.lower()
+
+    # We need to check if we have an ordering crtieria specified.
+    order_by = params.get('sort', None)
+    if order_by == "popular":
+        if username:
+            order_by = Bmark.clicks.desc()
+        else:
+            order_by = Hashed.clicks.desc()
+
+    else:
+        order_by = Bmark.stored.desc()
 
     # thou shalt not have more then the HARD MAX
     # @todo move this to the .ini as a setting

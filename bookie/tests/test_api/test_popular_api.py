@@ -65,12 +65,15 @@ class BookiePopularAPITest(unittest.TestCase):
         b.hash_id = gen_random_word(5)
 
         DBSession.add(b)
-        transaction.commit()
         DBSession.flush()
+        b.hashed.clicks = b.clicks
+        DBSession.flush()
+        transaction.commit()
 
     def test_bookmark_popular_user(self):
         """Test that we can get a list of bookmarks
            added by admin and sorted by popularity."""
+
         # Populating DB with some bookmarks of random users.
         user_bmark_count = randint(1, 5)
         for i in range(user_bmark_count):
@@ -103,11 +106,9 @@ class BookiePopularAPITest(unittest.TestCase):
                 bmark[u'username'],
                 u'admin',
                 "Only bookmarks by admin must be displayed")
-            self.assertLessEqual(
-                bmark[u'clicks'],
-                previous_clicks,
-                "Current bookmark's clicks must not be greater" +
-                "than previous bookmark's clicks")
+            self.assertTrue(
+                bmark['clicks'] <= previous_clicks,
+                '{0} < {1}'.format(bmark['clicks'], previous_clicks))
             previous_clicks = bmark[u'clicks']
 
         self._check_cors_headers(res)
@@ -138,18 +139,16 @@ class BookiePopularAPITest(unittest.TestCase):
         self.assertEqual(
             len(bmarks),
             admin_bmark_count + user_bmark_count,
-            "All bookmarks are retreived"
+            "All bookmarks are retrieved"
         )
 
         # Initializing number of clicks
         previous_clicks = MAX_CLICKS
         for bmark in bmarks:
-            self.assertLessEqual(
-                bmark[u'clicks'],
-                previous_clicks,
-                "Current bookmark's clicks must not be greater" +
-                "than previous bookmark's clicks")
-            previous_clicks = bmark[u'clicks']
+            self.assertTrue(
+                bmark['total_clicks'] <= previous_clicks,
+                '{0} <= {1}'.format(bmark['total_clicks'], previous_clicks))
+            previous_clicks = bmark[u'total_clicks']
 
         self._check_cors_headers(res)
         empty_db()

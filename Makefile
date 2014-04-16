@@ -202,13 +202,13 @@ mysql_test:
 
 .PHONY: pgsql_test
 pgsql_test:
-	dropdb bookie || true
-	dropuser jenkins_bookie || true
-	createdb -U rharding bookie
-	psql -c "CREATE USER jenkins_bookie WITH PASSWORD 'bookie';" template1
-	psql -c "GRANT ALL PRIVILEGES ON DATABASE bookie to jenkins_bookie;" template1
-	bin/alembic -c test_alembic_pgsql.ini upgrade head
-	BOOKIE_TEST_INI=test_pgsql.ini INI="test_pgsql.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests 
+	# dropdb bookie || true
+	# dropuser jenkins_bookie || true
+	# createdb -U rharding bookie
+	# psql -c "CREATE USER jenkins_bookie WITH PASSWORD 'bookie';" template1
+	# psql -c "GRANT ALL PRIVILEGES ON DATABASE bookie to jenkins_bookie;" template1
+	# bin/alembic -c test_alembic_pgsql.ini upgrade head
+	BOOKIE_TEST_INI=test_pgsql.ini INI="test_pgsql.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: jstestserver
 jstestserver:
