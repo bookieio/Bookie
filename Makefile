@@ -143,7 +143,7 @@ tags:
 
 
 bin/flake8: bin/python
-	bin/pip install flake8
+	$(PIP) install -r dev-requirements.txt
 
 .PHONY: lint
 lint: bin/flake8
@@ -175,12 +175,15 @@ deps: venv
 smtp:
 	$(PY) scripts/misc/smtpsink.py
 
+bin/py.test:
+	$(PIP) install -r dev-requirements.txt
+
 .PHONY: test
-test:
+test: bin/py.test
 	INI="test.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: testcoverage
-testcoverage:
+testcoverage: bin/py.test
 	NLTK_DATA=$(NLTK_DATA) $(PYTEST) --cov=bookie -s bookie/tests
 
 .PHONY: clean_testdb
@@ -193,7 +196,7 @@ builder_test: clean_testdb test_bookie.db
 	$(NOSE) -v --with-coverage --with-id --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: mysql_test
-mysql_test:
+mysql_test: bin/py.test
 	$(PIP_MIR) $(PIP) install PyMySQL
 	mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
 	mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
@@ -201,7 +204,7 @@ mysql_test:
 	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
 
 .PHONY: pgsql_test
-pgsql_test:
+pgsql_test: bin/py.test
 	# dropdb bookie || true
 	# dropuser jenkins_bookie || true
 	# createdb -U rharding bookie

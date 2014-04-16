@@ -1,0 +1,6 @@
+flake8
+mock
+pytest
+rope
+unittest2
+WebTest
