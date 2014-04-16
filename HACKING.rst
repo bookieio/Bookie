@@ -91,15 +91,9 @@ You should see messages for each landed branch getting rebased into your work.
     Applying: Refactored local charm upload helpers to support multiple service upgrades
 
 
-Helpful Git tools and aliases
-=============================
+Helpful Git aliases
+===================
 
-Tools
------
-
-`Git Remote Branch
-<https://github.com/webmat/git_remote_branch>`_ - A tool to simplify working
-with remote branches (Detailed installation instructions are in their readme).
 
 Aliases
 -------
