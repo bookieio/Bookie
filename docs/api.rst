@@ -42,7 +42,7 @@ Example
 '''''''
 ::
 
-    requests.post('http://127.0.0.1:6543/api/v1/bmark/admin?api_key=12345...')
+    requests.post('http://127.0.0.1:6543/api/v1/admin/bmark?api_key=12345...')
     >>> {
             "bmark": {
                 "username": "admin",
