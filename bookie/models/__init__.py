@@ -24,6 +24,7 @@ from urlparse import urlparse
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm import contains_eager
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -431,8 +432,8 @@ class BmarkMgr(object):
              with_content=False, with_tags=True):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
-        qry = qry.join(Bmark.hashed).\
-            options(contains_eager(Bmark.hashed))
+        # qry = qry.join(Bmark.hashed).\
+        #     options(contains_eager(Bmark.hashed))
 
         offset = limit * page
 
@@ -492,6 +493,8 @@ class BmarkMgr(object):
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
                 options(contains_eager(Bmark.tags))
+
+        qry = qry.options(joinedload('hashed'))
 
         return qry.all()
 
