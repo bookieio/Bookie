@@ -4,16 +4,20 @@
 <div id="welcome" class="" style="max-width: 1000px;">
     <div class="signup">
         <div class="form">
-            <h2>Enter Email to Signup</h2>
-            <form id="#signup_form" action="signup_process" method="POST">
-                <ul>
-                    <li>
-                        <input type="email" id="email" name="email"
-                        placeholder="email address" />
-                        <input type="submit" id="send_signup" name="send_signup" value="Sign Up" />
-                    </li>
-                </ul>
-            </form>
+            % if signup:
+                <h2>Enter Email to Signup</h2>
+                <form id="#signup_form" action="signup_process" method="POST">
+                    <ul>
+                        <li>
+                            <input type="email" id="email" name="email"
+                            placeholder="email address" />
+                            <input type="submit" id="send_signup" name="send_signup" value="Sign Up" />
+                        </li>
+                    </ul>
+                </form>
+            % else:
+                <h2>This site is private please contact admin for invitation.</h2>
+            %endif
         </div>
     </div>
 

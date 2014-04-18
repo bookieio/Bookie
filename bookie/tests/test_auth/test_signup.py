@@ -7,6 +7,8 @@ from urllib import (
     urlencode,
 )
 import transaction
+from pyramid import testing
+from unittest import TestCase
 
 from bookie.models import DBSession
 from bookie.models.auth import Activation
@@ -204,3 +206,42 @@ class TestOpenSignup(TestViewBase):
             email,
             act.user.email,
             "The activation email is the correct one.")
+
+
+class TestPrivateHosting(TestCase):
+    """Check if Signup is disabled in private hosting"""
+
+    message = 'This site is private please contact admin for invitation.'
+
+    def setUp(self):
+        from pyramid.paster import get_app
+        from bookie.tests import BOOKIE_TEST_INI
+        app = get_app(BOOKIE_TEST_INI, 'bookie')
+        # Changing signup_process to false to disable signups
+        app.registry.settings['signup_process'] = "false"
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+        testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def testSignupPage(self):
+        """A signup form is not available."""
+        res = self.testapp.get('/signup')
+        self.assertIn(self.message, res.body)
+
+    def testMainPage(self):
+        """A signup form is not available in main page."""
+        res = self.testapp.get('/')
+        self.assertIn(self.message, res.body)
+
+    def testManualHit(self):
+        """Message should be shown if /signup_process is hit manually"""
+        res = self.testapp.post(
+            '/signup_process',
+            params={
+                'email': 'testing@dummy.com'
+            }
+        )
+        self.assertIn(self.message, res.body)

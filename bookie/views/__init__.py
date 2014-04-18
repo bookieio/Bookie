@@ -1,6 +1,7 @@
 """Basic views with no home"""
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.settings import asbool
 from pyramid.view import view_config
 
 from bookie.models.auth import UserMgr
@@ -30,7 +31,12 @@ def home(request):
         username = username.lower()
 
     if not request.user:
-        return {}
+        if asbool(request.registry.settings.get('signup_process')):
+            return {
+                'signup': True
+            }
+        else:
+            return {}
     else:
         if not username:
             return HTTPFound(location=request.route_url("bmark_recent"))
