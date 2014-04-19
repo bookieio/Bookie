@@ -128,8 +128,8 @@ class TestTagMgrStats(TestDBBase):
         user_data = {'login': u'admin',
                      'password': u'admin',
                      'form.submitted': u'true'}
-        res = self.testapp.post('/login',
-                                params=user_data)
+        self.testapp.post('/login',
+                          params=user_data)
         # Add a bookmark
         test_bmark = make_bookmark()
         test_bmark.url = u'http://testing_tags.com'
@@ -137,13 +137,6 @@ class TestTagMgrStats(TestDBBase):
         path = os.getcwd() + "/bookie/tests/test_models/tag_test.txt"
         content = open(path, 'r').read()
         test_bmark.readable = Readable(content=content)
-
-        # Get the recent bookmark and its tags
-        recent = BmarkMgr.get_recent_bmark(username='admin')
-        recent_tags = []
-        if recent:
-            recent_tags.extend(recent.tag_str.split(u" "))
-        recent_tags = list(set(recent_tags))
 
         # Add another bookmark with readable as None
         new_url = u'http://testing_readable_none.com'
@@ -162,12 +155,10 @@ class TestTagMgrStats(TestDBBase):
             'hash_id': no_readable_hash,
             'username': 'admin',
         }
-        res = self.testapp.post(
+
+        # As the Bookmark's readable is None the page should load without
+        # error.
+        self.testapp.post(
             u'/admin/edit/' + no_readable_hash,
             params=edit_bmark,
             status=200)
-
-        # As the Bookmark's readable is None, suggested tags must be recent
-        # tags
-        for tag in recent_tags:
-            self.assertIn(tag, res.body)

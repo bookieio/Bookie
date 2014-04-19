@@ -6,7 +6,6 @@ from BeautifulSoup import BeautifulSoup
 from bookie.lib.urlhash import generate_hash
 
 from datetime import datetime
-from datetime import timedelta
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import event
@@ -236,28 +235,21 @@ class TagMgr(object):
 
         """
         tag_suggest = []
-        recent_tags = []
         tag_list = []
         MAX_TAGS = 5
-        # Lets find the tags from the most recent bookmark if available
-        recent = BmarkMgr.get_recent_bmark(username=username)
-        if recent:
-            recent_tags.extend(recent.tag_str.split(u" "))
-        recent_tags = list(set(recent_tags))
         # Suggested tags feature only supported for edits.
         if not new:
-            #  If url is None return recent tags
+            #  If url is None return empty tag list.
             if url is None:
-                return recent_tags
+                return tag_list
             else:
                 bmark = BmarkMgr.get_by_url(url)
-                # If bmark is not parsed return recent tag list
                 if bmark.readable is None:
-                    return recent_tags
+                    return tag_list
                 # Some times parsing may fail and we cannot parse the webpage
                 # then satus_code will be set to 900
                 elif bmark.readable.status_code == '900':
-                    return recent_tags
+                    return tag_list
                 else:
                     content = bmark.readable.content
                     # Remove unicode character while printing
@@ -280,14 +272,12 @@ class TagMgr(object):
                                     tag_list.append(tag.lower())
 
                     # return maximum of 5 tags
-                    # extend the list with recent tags
-                    tag_list.extend(recent_tags)
                     if len(tag_list) >= MAX_TAGS:
                         return tag_list[0:MAX_TAGS]
                     else:
                         return tag_list
-        # If not an edit request , return recent tags
-        return recent_tags
+        # If not an edit request, return the tag_list
+        return tag_list
 
     @staticmethod
     def count():
@@ -411,21 +401,6 @@ class BmarkMgr(object):
             qry = qry.filter(Bmark.username == username)
 
         return qry.first()
-
-    @staticmethod
-    def get_recent_bmark(username=None):
-        """Get the last bookmark a user submitted
-
-        Only check for a recent one, last 3 hours
-
-        """
-        last_hours = datetime.utcnow() - timedelta(hours=RECENT)
-        qry = Bmark.query.filter(Bmark.stored > last_hours)
-
-        if username:
-            qry = qry.filter(Bmark.username == username)
-
-        return qry.order_by(Bmark.stored.desc()).first()
 
     @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, username=None,

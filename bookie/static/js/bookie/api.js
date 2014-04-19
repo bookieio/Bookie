@@ -534,7 +534,6 @@ YUI.add('bookie-api', function (Y) {
                 this.data = {
                     hash_id: this.get('hash_id'),
                     username: this.get('username'),
-                    last_bmark: this.get('last_bmark'),
                     url: cfg.tab_url,
                     description: cfg.tab_title
                 };
@@ -571,20 +570,6 @@ YUI.add('bookie-api', function (Y) {
                  */
                 username: {
                     required: true
-                },
-
-                /**
-                 * If we want, we can set this to true to get the tags from
-                 * our last bookmark as something of a suggestion for the
-                 * current.
-                 *
-                 * @attribute last_bmark
-                 * @default true
-                 * @type Boolean
-                 *
-                 */
-                last_bmark: {
-                    value: false
                 },
 
                 /**
