@@ -5,7 +5,10 @@ from bookie.bcelery.celery import celery
 
 
 import transaction
-from whoosh.store import LockError
+try:
+    from whoosh.store import LockError
+except ImportError:
+    from whoosh.index import LockError
 from whoosh.writing import IndexingError
 
 from bookie.lib.importer import Importer
