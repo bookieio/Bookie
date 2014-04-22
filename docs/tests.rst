@@ -35,8 +35,8 @@ Other ways to run tests
   for processing.
 
 
-Test Types
------------
+Test Types (OUT OF DATE)
+-------------------------
 
 Unit Tests
 ~~~~~~~~~~

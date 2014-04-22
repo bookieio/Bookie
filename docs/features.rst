@@ -1,5 +1,4 @@
-=======================
-Bookie Features Details
+Bookie Features
 =======================
 
 Open source!

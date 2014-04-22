@@ -36,6 +36,8 @@ Bookie Features
 
 See the features_ page for full length details.
 
+.. _features: features.html
+
 
 Important Links
 ----------------
@@ -63,22 +65,15 @@ Contents:
 ---------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    install
    user
    extensions
    hosting
    development
+   features
    events
-
-.. Indices and tables
-.. ==================
-..
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
-
 
 Upcoming Bookie Events
 =======================
