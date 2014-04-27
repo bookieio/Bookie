@@ -7,6 +7,7 @@ from pyramid.view import view_config
 
 from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
+from bookie.lib.utils import suggest_tags
 from bookie.lib.urlhash import generate_hash
 from bookie.models import (
     Bmark,
@@ -116,7 +117,12 @@ def edit(request):
     """
     rdict = request.matchdict
     params = request.params
+    url = params.get('url', u"")
+    title = params.get('description', None)
     new = False
+    MAX_TAGS = 10
+    tag_suggest = []
+    base_tags = set()
 
     with ReqAuthorize(request, username=rdict['username'].lower()):
 
@@ -129,17 +135,19 @@ def edit(request):
 
         if hash_id:
             bmark = BmarkMgr.get_by_hash(hash_id, request.user.username)
-
             if bmark is None:
                 return HTTPNotFound()
+            else:
+                title = bmark.description
+                url = bmark.hashed.url
         else:
-            # hash the url and make sure that it doesn't exist
-            url = params.get('url', u"")
+            # Hash the url and make sure that it doesn't exist
             if url != u"":
                 new_url_hash = generate_hash(url)
 
-                test_exists = BmarkMgr.get_by_hash(new_url_hash,
-                                                   request.user.username)
+                test_exists = BmarkMgr.get_by_hash(
+                    new_url_hash,
+                    request.user.username)
 
                 if test_exists:
                     location = request.route_url(
@@ -148,22 +156,37 @@ def edit(request):
                         username=request.user.username)
                     return HTTPFound(location)
 
+            # No url info given so shown the form to the user.
             new = True
-            desc = params.get('description', None)
-            bmark = Bmark(url, request.user.username, desc=desc)
+            # Setup a dummy bookmark so the template can operate
+            # correctly.
+            bmark = Bmark(url, request.user.username, desc=title)
 
-        tag_suggest = TagMgr.suggestions(
-            bmark=bmark,
-            url=bmark.hashed.url,
-            username=request.user.username,
-            new=new
-        )
+        # Title and url will be in params for new bookmark and
+        # fetched from database if it is an edit request
+        if title or url:
+            suggested_tags = suggest_tags(url)
+            suggested_tags.update(suggest_tags(title))
+            base_tags.update(suggested_tags)
 
+        # If user is editing a bookmark, suggested tags will include tags
+        # based on readable content also
+        if not new:
+            tag_suggest = TagMgr.suggestions(
+                bmark=bmark,
+                url=bmark.hashed.url,
+                username=request.user.username
+            )
+        # tags based on url and title will always be there
+        # order of tags is important so convert set to list
+        tag_suggest.extend(list(base_tags))
+        tag_suggest = (tag_suggest[0:MAX_TAGS],
+                       tag_suggest)[len(tag_suggest) < MAX_TAGS]
         return {
             'new': new,
             'bmark': bmark,
             'user': request.user,
-            'tag_suggest': tag_suggest,
+            'tag_suggest': list(set(tag_suggest)),
         }
 
 

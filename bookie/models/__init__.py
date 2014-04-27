@@ -41,7 +41,6 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 LOG = logging.getLogger(__name__)
-RECENT = 24  # number of hours to consider a bookmark as recent
 
 
 def initialize_sql(settings):
@@ -223,61 +222,50 @@ class TagMgr(object):
             return DBSession.execute(query)
 
     @staticmethod
-    def suggestions(bmark=None, recent=True, url=None, username=None,
-                    new=False):
-        """Find suggestions for tags for a bookmark
+    def suggestions(bmark=None, url=None, username=None):
+        """Find suggestions for tags for an existing bookmark
 
         The plan:
-            Suggest recent tags if there's a recent bookmark to pull tags from
-            Suggest related tags if there are other tags in bookmarks related
-            somehow (tbd)
-            Suggested other tags based on other people bookmarking this url
+            Suggest tags based on the readable content of the Bookmark
+            that the user is editing. New Bookmarks won't end up here.
 
         """
         tag_suggest = []
         tag_list = []
-        MAX_TAGS = 5
-        # Suggested tags feature only supported for edits.
-        if not new:
-            #  If url is None return empty tag list.
-            if url is None:
+
+        #  If url is None return empty tags
+        if url is None:
+            return tag_list
+        else:
+            bmark = BmarkMgr.get_by_url(url)
+            # If bmark is not parsed return empty tag list
+            if bmark.readable is None:
+                return tag_list
+            # Some times parsing may fail and we cannot parse the webpage
+            # then satus_code will be set to 900
+            elif bmark.readable.status_code == '900':
                 return tag_list
             else:
-                bmark = BmarkMgr.get_by_url(url)
-                if bmark.readable is None:
-                    return tag_list
-                # Some times parsing may fail and we cannot parse the webpage
-                # then satus_code will be set to 900
-                elif bmark.readable.status_code == '900':
-                    return tag_list
-                else:
-                    content = bmark.readable.content
-                    # Remove unicode character while printing
-                    clean_content = (
-                        "".join(
-                            BeautifulSoup(content).findAll(text=True)).encode(
-                            'ascii', 'ignore'))
-                    get_tags = extract.TermExtractor()
-                    tag_suggest = get_tags(clean_content)
-                    tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
-                                         tag_suggest[1], reverse=True)
-                    for result in tag_suggest:
-                        # If it has a space in it, split it.
-                        tags = result[0].split()
-                        for tag in tags:
-                            # Require at least 3 chars long and ignore pure
-                            # numbers.
-                            if tag not in tag_list and tag not in bmark.tags:
-                                if len(tag) > 2 and not tag.isdigit():
-                                    tag_list.append(tag.lower())
-
-                    # return maximum of 5 tags
-                    if len(tag_list) >= MAX_TAGS:
-                        return tag_list[0:MAX_TAGS]
-                    else:
-                        return tag_list
-        # If not an edit request, return the tag_list
-        return tag_list
+                content = bmark.readable.content
+                # Remove unicode character while printing
+                clean_content = (
+                    "".join(
+                        BeautifulSoup(content).findAll(text=True)).encode(
+                        'ascii', 'ignore'))
+                get_tags = extract.TermExtractor()
+                tag_suggest = get_tags(clean_content)
+                tag_suggest = sorted(tag_suggest, key=lambda tag_suggest:
+                                     tag_suggest[1], reverse=True)
+                for result in tag_suggest:
+                    # If it has a space in it, split it.
+                    tags = result[0].split()
+                    for tag in tags:
+                        # Require at least 3 chars long and ignore pure
+                        # numbers.
+                        if tag not in tag_list and tag not in bmark.tags:
+                            if len(tag) > 2 and not tag.isdigit():
+                                tag_list.append(tag.lower())
+                return tag_list
 
     @staticmethod
     def count():
@@ -487,23 +475,6 @@ class BmarkMgr(object):
                 contains_eager(Bmark.hashed)
             ).\
             filter(Bmark.username == username).all()
-
-    @staticmethod
-    def recent(limit=50, page=0, with_tags=False):
-        """Get a recent set of bookmarks"""
-        qry = Bmark.query
-
-        offset = limit * page
-        qry = qry.order_by(Bmark.stored.desc()).\
-            limit(limit).\
-            offset(offset).\
-            from_self()
-
-        if with_tags:
-            qry = qry.outerjoin(Bmark.tags).\
-                options(contains_eager(Bmark.tags))
-
-        return qry.all()
 
     @staticmethod
     def popular(limit=50, page=0, with_tags=False):
