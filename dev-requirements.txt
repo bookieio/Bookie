@@ -1,7 +1,7 @@
 coverage
 flake8
 mock
-pytest
+-e hg+ssh://hg@bitbucket.org/hpk42/pytest/#egg=pytest
 pytest-cov
 rope
 unittest2
