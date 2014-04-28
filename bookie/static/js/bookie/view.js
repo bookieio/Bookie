@@ -834,7 +834,8 @@ YUI.add('bookie-view', function (Y) {
          * @method remove
          *
          */
-        remove: function () {
+        remove: function (ev) {
+            ev.halt();
             var that = this;
             this.get('model').remove();
             this.get('container').transition({
