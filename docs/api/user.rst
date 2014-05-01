@@ -469,7 +469,7 @@ query parameter from below.
 :query param: api_key *optional* - the api key for your account to make the call with
 :query param: count - the number in the result you wish to return
 :query param: page - the page number to get results for based off of the count specified
-:query param: search_content - include the readable text in the fulltext search.  This can slow down the response.
+:query param: with_content - include the readable text in the fulltext search.  This can slow down the response.
 :query param: callback - wrap JSON response in an optional callback
 
 Status Codes
