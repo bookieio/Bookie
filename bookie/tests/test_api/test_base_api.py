@@ -123,6 +123,43 @@ class BookieAPITest(unittest.TestCase):
         transaction.commit()
         return [stat1, stat2, stat3]
 
+    def test_api_bmarks_with_content(self):
+        """:username/bmarks?with_content=true should return content"""
+        self._get_good_request(content=True)
+
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks?&with_content=true',
+            status=200)
+
+        bmark = json.loads(res.body)['bmarks'][0]
+
+        self.assertTrue(
+            u'readable' in bmark,
+            "We should have readable content")
+
+        self.assertTrue(
+            'dude' in bmark['readable']['content'],
+            "We should have 'dude' in our content: " +
+            bmark['readable']['content'])
+
+        self._check_cors_headers(res)
+
+    def test_api_bmarks_without_content(self):
+        """:username/bmarks should not return content"""
+        self._get_good_request(content=True)
+
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks',
+            status=200)
+
+        bmark = json.loads(res.body)['bmarks'][0]
+
+        self.assertFalse(
+            u'readable' in bmark,
+            "We should not have readable content")
+
+        self._check_cors_headers(res)
+
     def test_add_bookmark(self):
         """We should be able to add a new bookmark to the system"""
         # we need to know what the current admin's api key is so we can try to
