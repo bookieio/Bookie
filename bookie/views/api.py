@@ -507,7 +507,7 @@ def search_results(request):
     rdict = request.GET
 
     if 'terms' in mdict:
-        phrase = " ".join(mdict['terms'])
+        phrase = " ".join(mdict['terms']).split("?")[0]
     else:
         phrase = rdict.get('search', '')
 
@@ -521,7 +521,9 @@ def search_results(request):
         if 'username' in mdict:
             username = mdict.get('username')
         elif request.user and request.user.username:
-            username = request.user.username
+           username = request.user.username
+
+    username = username or rdict.get('username', False)
 
     # with content is always in the get string
     search_content = asbool(rdict.get('with_content', False))
