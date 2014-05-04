@@ -507,7 +507,7 @@ def search_results(request):
     rdict = request.GET
 
     if 'terms' in mdict:
-        phrase = " ".join(mdict['terms']).split("?")[0]
+        phrase = " ".join(mdict['terms'])
     else:
         phrase = rdict.get('search', '')
 
