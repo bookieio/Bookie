@@ -423,6 +423,35 @@ class BookieAPITest(unittest.TestCase):
             "The bmark.us hash id should be in the json: " + res.body)
         self._check_cors_headers(res)
 
+    def test_search_with_content(self):
+        """Test that /bmarks/search/google%20stuff?&with_content=true
+        returns with_content=true and phrase=google stuff"""
+        self._get_good_request(content=True, second_bmark=True)
+
+        res = self.testapp.get('/api/v1/admin/bmarks/search/google%20stuff?with_content=true', status=200)
+
+        ret = json.loads(res.body)
+
+        phrase = ret['phrase']
+        with_content = ret['with_content']
+        username = ret['username']
+
+        self.assertEqual(
+            phrase,
+            u"google stuff",
+            "phrase should be google stuff")
+
+        self.assertEqual(
+            username,
+            "admin",
+            "username should be admin")
+
+        self.assertTrue(
+            with_content,
+            "should return with_content")
+
+        self._check_cors_headers(res)
+
     def test_search_api(self):
         """Test that we can get list of bookmarks ordered by clicks"""
         self._get_good_request(content=True, second_bmark=True)
