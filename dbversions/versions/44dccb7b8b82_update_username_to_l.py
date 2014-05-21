@@ -24,7 +24,7 @@ def upgrade():
     try:
         op.drop_constraint("bmarks_username_fkey", "bmarks")
         print 'dropped constraint'
-    except sa.exc.OperationalError:
+    except (sa.exc.OperationalError, NotImplementedError) as exc:
         # If it's not supported then pass
         pass
 
@@ -50,7 +50,7 @@ def upgrade():
             "users", ["username"], ["username"])
 
         print 'added constraint'
-    except sa.exc.OperationalError:
+    except (sa.exc.OperationalError, NotImplementedError) as exc:
         # If it's not supported then pass
         pass
 
