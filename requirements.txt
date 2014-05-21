@@ -1,4 +1,4 @@
-alembic==0.3.4
+alembic==0.6.5
 amqp==1.0.12
 anyjson==0.3.3
 argparse==1.2.1
