@@ -15,6 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
+    pass
     # connection = op.get_bind()
     # current_context = op.get_context()
     # meta = current_context.opts['target_metadata']
