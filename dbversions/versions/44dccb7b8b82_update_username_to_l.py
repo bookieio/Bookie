@@ -23,6 +23,7 @@ def upgrade():
 
     try:
         op.drop_constraint("bmarks_username_fkey", "bmarks", type="foreignkey")
+        op.drop_constraint("bmarks_username_fkey", "bmarks", type="index")
         print 'dropped constraint'
     except sa.exc.OperationalError:
         # If it's not supported then pass
