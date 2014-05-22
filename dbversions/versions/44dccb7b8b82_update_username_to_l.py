@@ -22,8 +22,8 @@ def upgrade():
     bmarks = sa.Table('bmarks', meta, autoload=True)
 
     try:
-        op.drop_constraint("bmarks_username_fkey", "bmarks", type="foreignkey")
         op.drop_index("bmarks_username_fkey", "bmarks")
+        op.drop_constraint("bmarks_username_fkey", "bmarks", type="foreignkey")
         print 'dropped constraint'
     except sa.exc.OperationalError:
         # If it's not supported then pass
