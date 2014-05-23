@@ -3,6 +3,5 @@ flake8
 mock
 -e hg+https://bitbucket.org/hpk42/pytest/#egg=pytest
 pytest-cov
-rope
 unittest2
 WebTest
