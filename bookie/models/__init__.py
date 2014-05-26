@@ -9,6 +9,7 @@ from datetime import datetime
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import event
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
@@ -606,6 +607,7 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.utcnow)
     updated = Column(DateTime, onupdate=datetime.utcnow)
     clicks = Column(Integer, default=0)
+    is_private = Column(Boolean, nullable=False, default=True)
 
     # this could be chrome_extension, firefox_extension, website, browser XX,
     # import, etc
@@ -636,7 +638,8 @@ class Bmark(Base):
                         primaryjoin="Readable.bid == Bmark.bid",
                         uselist=False)
 
-    def __init__(self, url, username, desc=None, ext=None, tags=None):
+    def __init__(self, url, username, desc=None, ext=None, tags=None,
+                 is_private=True):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark
@@ -657,6 +660,7 @@ class Bmark(Base):
         self.username = username
         self.description = desc
         self.extended = ext
+        self.is_private = is_private
 
         # tags are space separated
         if tags:
