@@ -80,7 +80,7 @@ The recommended pattern would be to
   # Then check back out your feature branch and sync it with your new local
   # develop.
   git checkout {featureBranch}
-  git sync-trunk
+  git rebase develop
 
 You should see messages for each landed branch getting rebased into your work.
 
