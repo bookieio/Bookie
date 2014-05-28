@@ -42,13 +42,33 @@ class TestBmarkMgrStats(TestDBBase):
         for i in range(ct):
             b = Bmark(
                 url=gen_random_word(12),
-                username=user.username
+                username=user.username,
+                is_private=False
             )
             b.hash_id = gen_random_word(3)
             DBSession.add(b)
 
         ct = BmarkMgr.count()
-        self.assertEqual(5, ct, 'We should have a total of 5: ' + str(ct))
+        self.assertEqual(5, ct,
+                         'We should have 5 public bookmarks: ' + str(ct))
+
+    def test_total_ct_accounts_for_privacy(self):
+        """Verify that our total count method is working"""
+        ct = 5
+        user = User()
+        user.username = gen_random_word(10)
+        DBSession.add(user)
+        for i in range(ct):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+            )
+            b.hash_id = gen_random_word(3)
+            DBSession.add(b)
+
+        ct = BmarkMgr.count(is_private=True)
+        self.assertEqual(5, ct,
+                         'We should have 5 private bookmarks: ' + str(ct))
 
     def test_unique_ct(self):
         """Verify that our unique count method is working"""
@@ -64,27 +84,68 @@ class TestBmarkMgrStats(TestDBBase):
         for i in range(ct - 2):
             b = Bmark(
                 url=gen_random_word(12),
-                username=users[i].username
+                username=users[i].username,
+                is_private=False
             )
             DBSession.add(b)
 
         # Add in our dupes
         c = Bmark(
             url=common,
-            username=users[3].username
+            username=users[3].username,
+            is_private=False
         )
         DBSession.add(c)
         DBSession.flush()
 
         d = Bmark(
             url=common,
-            username=users[4].username
+            username=users[4].username,
+            is_private=False
         )
         DBSession.add(d)
         DBSession.flush()
 
         ct = BmarkMgr.count(distinct=True)
-        self.assertEqual(4, ct, 'We should have a total of 4: ' + str(ct))
+        self.assertEqual(4, ct,
+                         'We should have 4 public bookmarks: ' + str(ct))
+
+    def test_unique_ct_accounts_for_privacy(self):
+        """Verify that our unique count method is working"""
+        ct = 5
+        common = u'testing.com'
+        users = []
+        for i in range(ct):
+            user = User()
+            user.username = gen_random_word(10)
+            DBSession.add(user)
+            users.append(user)
+
+        for i in range(ct - 2):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=users[i].username,
+            )
+            DBSession.add(b)
+
+        # Add in our dupes
+        c = Bmark(
+            url=common,
+            username=users[3].username,
+        )
+        DBSession.add(c)
+        DBSession.flush()
+
+        d = Bmark(
+            url=common,
+            username=users[4].username,
+        )
+        DBSession.add(d)
+        DBSession.flush()
+
+        ct = BmarkMgr.count(distinct=True, is_private=True)
+        self.assertEqual(4, ct,
+                         'We should have 4 private bookmarks: ' + str(ct))
 
     def test_per_user(self):
         """We should only get a pair of results for this single user"""
@@ -101,11 +162,51 @@ class TestBmarkMgrStats(TestDBBase):
         for i in range(ct - 2):
             b = Bmark(
                 url=gen_random_word(12),
-                username=user.username
+                username=user.username,
+                is_private=False
             )
             DBSession.add(b)
 
         # add in our dupes
+        c = Bmark(
+            url=gen_random_word(10),
+            username=usercommon.username,
+            is_private=False
+        )
+        DBSession.add(c)
+        DBSession.flush()
+
+        d = Bmark(
+            url=gen_random_word(10),
+            username=usercommon.username,
+            is_private=False
+        )
+        DBSession.add(d)
+        DBSession.flush()
+
+        ct = BmarkMgr.count(username=usercommon.username)
+        self.assertEqual(2, ct,
+                         'We should have 2 public bookmarks: ' + str(ct))
+
+    def test_per_user_accounts_for_privacy(self):
+        """We should only get a pair of results for this single user"""
+        ct = 5
+        common = u'testing.com'
+        user = User()
+        user.username = gen_random_word(10)
+        DBSession.add(user)
+
+        usercommon = User()
+        usercommon.username = common
+        DBSession.add(usercommon)
+
+        for i in range(ct - 2):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+            )
+            DBSession.add(b)
+
         c = Bmark(
             url=gen_random_word(10),
             username=usercommon.username,
@@ -120,8 +221,9 @@ class TestBmarkMgrStats(TestDBBase):
         DBSession.add(d)
         DBSession.flush()
 
-        ct = BmarkMgr.count(username=usercommon.username)
-        self.assertEqual(2, ct, 'We should have a total of 2: ' + str(ct))
+        ct = BmarkMgr.count(username=usercommon.username, is_private=True)
+        self.assertEqual(2, ct,
+                         'We should only have 2 private bookmarks: ' + str(ct))
 
     def test_delete_all_bookmarks(self):
         """Testing working of delete all bookmarks
