@@ -34,7 +34,8 @@ if __name__ == "__main__":
                      u'admin',
                      desc=u'Bookie Website',
                      ext=u'Bookie Documentation Home',
-                     tags=u'bookmarks')
+                     tags=u'bookmarks',
+                     is_private=False)
 
     bmark_us.stored = datetime.now()
     bmark_us.updated = datetime.now()
