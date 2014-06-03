@@ -60,6 +60,7 @@ class BookiePopularAPITest(unittest.TestCase):
             url=gen_random_word(12),
             username=username,
             tags=gen_random_word(4),
+            is_private=False,
         )
 
         b.clicks = randint(0, MAX_CLICKS)
