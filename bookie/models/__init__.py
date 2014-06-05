@@ -502,7 +502,8 @@ class BmarkMgr(object):
         return res
 
     @staticmethod
-    def store(url, username, desc, ext, tags, dt=None, inserted_by=None):
+    def store(url, username, desc, ext, tags, dt=None, inserted_by=None,
+              is_private=True):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -522,6 +523,7 @@ class BmarkMgr(object):
             desc=desc,
             ext=ext,
             tags=tags,
+            is_private=is_private,
         )
 
         mark.inserted_by = inserted_by

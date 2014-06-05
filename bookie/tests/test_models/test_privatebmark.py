@@ -2,7 +2,10 @@
 
 from pyramid import testing
 
-from bookie.models import Bmark
+from bookie.models import (
+    Bmark,
+    BmarkMgr,
+)
 from bookie.models.auth import User
 
 from bookie.tests import empty_db
@@ -60,6 +63,45 @@ class TestPrivateBmark(TestDBBase):
         bmark = Bmark(
             url=gen_random_word(12),
             username=user.username,
+            is_private=False
+        )
+        self.assertEqual(
+            False,
+            bmark.is_private)
+
+    def test_storing_private_true(self):
+        """Verify the value of is_private defaults to True"""
+        user = User()
+        user.username = gen_random_word(10)
+        bmark_url = u'http://bmark.us'
+        bmark_desc = u'This is a test bookmark'
+        bmark_ext = u'Some extended notes'
+        bmark_tags = u'python test'
+        bmark = BmarkMgr.store(
+            url=bmark_url,
+            username=user.username,
+            desc=bmark_desc,
+            ext=bmark_ext,
+            tags=bmark_tags
+        )
+        self.assertEqual(
+            True,
+            bmark.is_private)
+
+    def test_storing_private_false(self):
+        """Verify the value of is_private is False"""
+        user = User()
+        user.username = gen_random_word(10)
+        bmark_url = u'http://bmark.us'
+        bmark_desc = u'This is a test bookmark'
+        bmark_ext = u'Some extended notes'
+        bmark_tags = u'python test'
+        bmark = BmarkMgr.store(
+            url=bmark_url,
+            username=user.username,
+            desc=bmark_desc,
+            ext=bmark_ext,
+            tags=bmark_tags,
             is_private=False
         )
         self.assertEqual(
