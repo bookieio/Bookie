@@ -24,11 +24,9 @@ MarkupSafe==0.12
 Paste==1.7.5.1
 PasteDeploy==1.5.0
 PasteScript==1.7.5
-psycopg2==2.4.6
 py==1.4.20
 py-bcrypt==0.3
 Pygments==1.4
-pyinotify==0.9.4
 pyramid==1.5
 pyramid_mako==1.0.1
 pyramid-celery==1.3
