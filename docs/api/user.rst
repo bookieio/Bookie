@@ -17,6 +17,7 @@ Submit a new bookmark for storing
 :post param: extended
 :post param: tags - space separated tag string
 :post param: content - html content of the page to readable parse
+:post param: is_private - specifies whether the bookmark is private or not. By default the bookmarks are stored as private
 
 Status Codes
 ''''''''''''''
@@ -46,6 +47,7 @@ Example
                 "bid": 1,
                 "stored": "2011-08-06 20:35:54",
                 "inserted_by": "unknown_api",
+                "is_private": true,
                 "tag_str": "bookmarks",
                 "clicks": 0,
                 "hash_id": "c5c21717c99797"
@@ -90,6 +92,7 @@ Example
             "extended": "",
             "hash_id": "c605a21cf19560",
             "inserted_by": null,
+            "is_private": true,
             "stored": "2011-06-21 13:20:26",
             "tag_str": "test bookmarks",
             "tags": [

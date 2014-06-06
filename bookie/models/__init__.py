@@ -683,6 +683,18 @@ class Bmark(Base):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
 
+    def has_access(self, username):
+        """Check if a user has access to view a bookmark"""
+        if self.is_private:
+            if self.username == username:
+                return True
+            elif username:
+                logging.warning(username + " requested for " + self.username +
+                                " bookmark")
+            return False
+        else:
+            return True
+
 
 def bmark_fulltext_tag_str_update(mapper, connection, target):
     """Update things before insert/update for fulltext needs"""
