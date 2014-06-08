@@ -10,6 +10,17 @@ from sqlalchemy import (
 
 from bookie.models import Base
 
+twitter_connection = 'TwitterConnection'
+
+
+class SocialMgr(object):
+    """Class to handle non-instance BaseConnection functions"""
+    @staticmethod
+    def get_all_connections(username):
+        connections = BaseConnection.query.filter(
+            BaseConnection.username == username)
+        return connections
+
 
 class BaseConnection(Base):
     """Table to store User basic social information"""
@@ -29,7 +40,7 @@ class BaseConnection(Base):
 
 class TwitterConnection(BaseConnection):
     """ Table to store User Twitter information"""
-    __tablename__ = "TwitterConnection"
+    __tablename__ = twitter_connection
 
     connection_id = Column(Integer, ForeignKey('BaseConnection.id'),
                            primary_key=True)
@@ -42,5 +53,15 @@ class TwitterConnection(BaseConnection):
     refresh_date = Column(DateTime)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'TwitterConnection'
+        'polymorphic_identity': twitter_connection
     }
+
+    def __todict__(self):
+        yield('username', self.username)
+        yield('type', self.type)
+        social_info = {}
+        social_info['uid'] = self.uid
+        social_info['twitter_username'] = self.twitter_username
+        social_info['refresh_date'] = str(self.refresh_date)
+        yield('twitter_connection', social_info)
+        yield('last_connection', str(self.last_connection))
