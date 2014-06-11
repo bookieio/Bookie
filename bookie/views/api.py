@@ -366,6 +366,12 @@ def bmark_recent(request, with_content=False):
     if username:
         username = username.lower()
 
+    # We need to check who has requested for the bookmarks.
+    if request.user:
+        requested_by = request.user.username
+    else:
+        requested_by = None
+
     # We need to check if we have an ordering crtieria specified.
     order_by = params.get('sort', None)
     if order_by == "popular":
@@ -405,6 +411,7 @@ def bmark_recent(request, with_content=False):
         tags=tags,
         username=username,
         with_tags=True,
+        requested_by=requested_by,
     )
 
     result_set = []

@@ -264,3 +264,78 @@ class TestBmarkMgrStats(TestDBBase):
                 'There should be no tags left: ' + str(len(tags))
             )
             DBSession.flush()
+
+    def test_find_bookmarks_same_user(self):
+        """A user requesting their bookmarks includes private ones"""
+        bookmark_count_private = 5
+        bookmark_count_public = 5
+        user = User()
+        user.username = gen_random_word(19)
+        DBSession.add(user)
+
+        for i in range(bookmark_count_private):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+            )
+            DBSession.add(b)
+
+        for i in range(bookmark_count_public):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+                is_private=False,
+            )
+            DBSession.add(b)
+
+        DBSession.flush()
+        res = BmarkMgr.find(username=user.username, requested_by=user.username)
+        self.assertEqual(
+            bookmark_count_private + bookmark_count_public,
+            len(res),
+            'There should be ' + str(bookmark_count_private +
+                                     bookmark_count_public) +
+            ' bookmarks present: ' + str(len(res))
+        )
+
+    def test_find_bookmarks_diff_user(self):
+        """A user requesting another user's bookmarks get public only"""
+        bookmark_count_private = 5
+        bookmark_count_public = 5
+        user = User()
+        user.username = gen_random_word(19)
+        DBSession.add(user)
+
+        for i in range(bookmark_count_private):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+            )
+            DBSession.add(b)
+
+        for i in range(bookmark_count_public):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+                is_private=False,
+            )
+            DBSession.add(b)
+
+        DBSession.flush()
+        res = BmarkMgr.find(username=user.username,
+                            requested_by=gen_random_word(19))
+        self.assertEqual(
+            bookmark_count_public,
+            len(res),
+            'There should be ' + str(bookmark_count_public) +
+            ' bookmarks present: ' + str(len(res))
+        )
+
+        # Also check if requested_by is None.
+        res = BmarkMgr.find(username=user.username, requested_by=None)
+        self.assertEqual(
+            bookmark_count_public,
+            len(res),
+            'There should be ' + str(bookmark_count_public) +
+            ' bookmarks present: ' + str(len(res))
+        )
