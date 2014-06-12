@@ -393,13 +393,19 @@ class BmarkMgr(object):
 
     @staticmethod
     def find(limit=50, order_by=None, page=0, tags=None, username=None,
-             with_content=False, with_tags=True):
+             with_content=False, with_tags=True, requested_by=None):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
         # qry = qry.join(Bmark.hashed).\
         #     options(contains_eager(Bmark.hashed))
 
         offset = limit * page
+
+        if requested_by != username:
+            qry = qry.filter(Bmark.is_private == False)    # noqa
+            # If noqa is not used here the below error occurs with make lint.
+            # comparison to False should be 'if cond is False:'
+            # or 'if not cond:'
 
         if with_content:
             qry = qry.outerjoin(Bmark.readable).\

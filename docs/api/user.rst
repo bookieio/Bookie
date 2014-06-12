@@ -155,6 +155,7 @@ Example
                 "bid": 1,
                 "stored": "2011-08-06 20:35:54",
                 "inserted_by": "unknown_api",
+                "is_private": true,
                 "tag_str": "bookmarks",
                 "clicks": 0,
                 "hash_id": "c5c21717c99797"
@@ -238,6 +239,7 @@ Example
                 "bid": 2,
                 "stored": "2011-06-21 13:20:26",
                 "inserted_by": null,
+                "is_private": true,
                 "tag_str": "test bookmarks",
                 "clicks": 1,
                 "hash_id": "c605a21cf19560",
@@ -258,6 +260,7 @@ Example
                 "bid": 1,
                 "stored": "2011-06-20 11:42:47",
                 "inserted_by": null,
+                "is_private": true,
                 "tag_str": "bookmarks",
                 "clicks": 1,
                 "hash_id": "c5c21717c99797",

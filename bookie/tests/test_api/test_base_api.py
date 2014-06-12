@@ -13,6 +13,7 @@ from bookie.models.auth import Activation
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 from bookie.tests import factory
+from bookie.tests import gen_random_word
 
 from datetime import datetime
 
@@ -417,27 +418,43 @@ class BookieAPITest(unittest.TestCase):
             "Should have the bmark.us hash: " + res.body)
         self._check_cors_headers(res)
 
-    def test_bookmark_recent_user(self):
-        """Test that we can get list of bookmarks with details"""
-        self._get_good_request(content=True)
+    def test_bookmark_recent_same_user(self):
+        """Test that we can get list of all bookmarks with details"""
+        self._get_good_request(content=True, second_bmark=True)
         res = self.testapp.get('/api/v1/admin/bmarks?api_key=' + API_KEY,
                                status=200)
 
         # make sure we can decode the body
-        bmark = json.loads(res.body)['bmarks'][0]
+        first_bmark = json.loads(res.body)['bmarks'][0]
+        second_bmark = json.loads(res.body)['bmarks'][1]
         self.assertEqual(
-            GOOGLE_HASH,
-            bmark[u'hash_id'],
-            "The hash_id should match: " + str(bmark[u'hash_id']))
+            BMARKUS_HASH,
+            first_bmark[u'hash_id'],
+            "The hash_id should match: " + str(first_bmark[u'hash_id']))
 
         self.assertTrue(
-            u'tags' in bmark,
+            u'tags' in first_bmark,
+            "We should have a list of tags in the bmark returned")
+
+        self.assertEqual(
+            u'bookmarks',
+            first_bmark[u'tags'][0][u'name'],
+            "Tag should be bookmarks: " +
+            str(first_bmark[u'tags'][0][u'name']))
+
+        self.assertEqual(
+            GOOGLE_HASH,
+            second_bmark[u'hash_id'],
+            "The hash_id should match: " + str(second_bmark[u'hash_id']))
+
+        self.assertTrue(
+            u'tags' in second_bmark,
             "We should have a list of tags in the bmark returned")
 
         self.assertTrue(
-            bmark[u'tags'][0][u'name'] in [u'python', u'search'],
+            second_bmark[u'tags'][0][u'name'] in [u'python', u'search'],
             "Tag should be either python or search:" +
-            str(bmark[u'tags'][0][u'name']))
+            str(second_bmark[u'tags'][0][u'name']))
 
         res = self.testapp.get(
             '/api/v1/admin/bmarks?with_content=true&api_key=' + API_KEY,
@@ -450,6 +467,36 @@ class BookieAPITest(unittest.TestCase):
         # bmark = json.loads(res.body)['bmarks'][0]
         # self.assertTrue('here dude' in bmark[u'readable']['content'],
         #     "There should be content: " + str(bmark))
+
+    def test_bookmark_recent_diff_user(self):
+        """Test that we can get a list of only public bookmarks with details"""
+        self._get_good_request(content=True, second_bmark=True)
+        diff_user_api_key = gen_random_word(6)
+        res = self.testapp.get('/api/v1/admin/bmarks?api_key=' +
+                               diff_user_api_key,
+                               status=200)
+
+        # Make sure we can decode the body.
+        bmark = json.loads(res.body)['bmarks'][0]
+        self.assertEqual(
+            GOOGLE_HASH,
+            bmark[u'hash_id'],
+            "The hash_id should match: " + str(bmark[u'hash_id']))
+
+        self.assertTrue(
+            u'tags' in bmark,
+            "We should have a list of tags in the bmark returned")
+
+        self.assertTrue(
+            bmark[u'tags'][0][u'name'] in [u'python', u'search'],
+            "Tag should be either python or search: " +
+            str(bmark[u'tags'][0][u'name']))
+
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks?with_content=true&api_key=' +
+            diff_user_api_key,
+            status=200)
+        self._check_cors_headers(res)
 
     def test_bookmark_recent(self):
         """Test that we can get list of bookmarks with details"""
