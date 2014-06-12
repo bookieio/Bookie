@@ -28,7 +28,7 @@ from sqlalchemy.orm import synonym
 
 from bookie.models import Base
 from bookie.models import DBSession
-
+from bookie.models.social import BaseConnection
 
 LOG = logging.getLogger(__name__)
 GROUPS = ['admin', 'user']
@@ -269,6 +269,8 @@ class User(Base):
     api_key = Column(Unicode(12))
     invite_ct = Column(Integer, default=0)
     invited_by = Column('invited_by', Unicode(255))
+    BaseConnection = relation(BaseConnection,
+                              backref="users")
 
     activation = relation(
         Activation,

@@ -44,7 +44,8 @@ class BCeleryTaskTest(TestDBBase):
         """Helper that creates a bookmark object with a random tag"""
         b = Bmark(
             url=url,
-            username=username
+            username=username,
+            is_private=False
         )
         tagname = gen_random_word(5)
         b.tags[tagname] = Tag(tagname)

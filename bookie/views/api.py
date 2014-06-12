@@ -153,6 +153,14 @@ def bmark_get(request):
     # The hash id will always be there or the route won't match.
     bookmark = BmarkMgr.get_by_hash(hash_id, username=username)
 
+    if request.user:
+        request_username = request.user.username
+    else:
+        request_username = None
+
+    if bookmark and not bookmark.has_access(request_username):
+        bookmark = None
+
     # tag_list is a set - no duplicates
     tag_list = set()
 
@@ -281,6 +289,7 @@ def bmark_add(request):
                 params.get('tags', u''),
                 dt=stored_time,
                 inserted_by=inserted_by,
+                is_private=params.get('is_private', True),
             )
 
         # we need to process any commands associated as well

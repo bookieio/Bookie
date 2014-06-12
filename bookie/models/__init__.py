@@ -9,6 +9,7 @@ from datetime import datetime
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import event
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
@@ -501,7 +502,8 @@ class BmarkMgr(object):
         return res
 
     @staticmethod
-    def store(url, username, desc, ext, tags, dt=None, inserted_by=None):
+    def store(url, username, desc, ext, tags, dt=None, inserted_by=None,
+              is_private=True):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -521,6 +523,7 @@ class BmarkMgr(object):
             desc=desc,
             ext=ext,
             tags=tags,
+            is_private=is_private,
         )
 
         mark.inserted_by = inserted_by
@@ -543,13 +546,15 @@ class BmarkMgr(object):
         return qry.all()
 
     @staticmethod
-    def count(username=None, distinct=False, distinct_users=False):
+    def count(username=None, distinct=False, distinct_users=False,
+              is_private=False):
         """How many bookmarks are there
 
         :param username: should we limit to a username?
 
         """
         qry = DBSession.query(Bmark.hash_id)
+        qry = qry.filter(Bmark.is_private == is_private)
         if username:
             qry = qry.filter(Bmark.username == username)
         if distinct:
@@ -606,6 +611,7 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.utcnow)
     updated = Column(DateTime, onupdate=datetime.utcnow)
     clicks = Column(Integer, default=0)
+    is_private = Column(Boolean, nullable=False, default=True)
 
     # this could be chrome_extension, firefox_extension, website, browser XX,
     # import, etc
@@ -636,7 +642,8 @@ class Bmark(Base):
                         primaryjoin="Readable.bid == Bmark.bid",
                         uselist=False)
 
-    def __init__(self, url, username, desc=None, ext=None, tags=None):
+    def __init__(self, url, username, desc=None, ext=None, tags=None,
+                 is_private=True):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark
@@ -657,6 +664,7 @@ class Bmark(Base):
         self.username = username
         self.description = desc
         self.extended = ext
+        self.is_private = is_private
 
         # tags are space separated
         if tags:
@@ -674,6 +682,18 @@ class Bmark(Base):
     def update_tags(self, tag_string):
         """Given a tag string, split and update our tags to be these"""
         self.tags = TagMgr.from_string(tag_string)
+
+    def has_access(self, username):
+        """Check if a user has access to view a bookmark"""
+        if self.is_private:
+            if self.username == username:
+                return True
+            elif username:
+                logging.warning(username + " requested for " + self.username +
+                                " bookmark")
+            return False
+        else:
+            return True
 
 
 def bmark_fulltext_tag_str_update(mapper, connection, target):

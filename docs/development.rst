@@ -16,23 +16,13 @@ when you check out Bookie, make sure to start out using the `develop` branch.
 If you want to help out with the hacking of Bookie, here's some info you might
 want to check out:
 
-Working on signup process
---------------------------
-When working on the signup process make sure to check out the instructions_ for
-setting up smtp communication so that you can easily receive and activate
-signup emails.
-
-.. _instructions: emailserver.rst
-
-
-Contents:
----------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    changes
    makefile
+   emailserver
    tests
    api
    todo

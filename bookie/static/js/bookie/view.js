@@ -985,7 +985,6 @@ YUI.add('bookie-view', function (Y) {
             var that = this;
             this.api.call({
                 success: function(data, request) {
-                    debugger;
                     var cont = that.get('container');
                     cont.one('#user_stats_count').setContent(
                         data.count);
@@ -996,7 +995,6 @@ YUI.add('bookie-view', function (Y) {
                     cont.one('#user_stats_msg').setContent('');
                 },
                 error: function (data, status_str, response, args) {
-                    debugger;
                     var cont = that.get('container');
                     cont.one('#user_stats_msg').setContent(
                         'Error fetching stats');
@@ -1006,7 +1004,9 @@ YUI.add('bookie-view', function (Y) {
     });
 
 
-    /**Generate the view for bookmark stats
+    /**
+     * Generate the view for bookmark stats
+     *
      * @class BookmarkStatsView
      * extends Y.View
      *
@@ -1027,7 +1027,6 @@ YUI.add('bookie-view', function (Y) {
             var that = this;
             this.api.call({
                 success: function(data, request) {
-                    debugger;
                     var cont = that.get('container');
                     cont.one('#bookmark_stats_count').setContent(
                         data.count);
@@ -1036,7 +1035,6 @@ YUI.add('bookie-view', function (Y) {
                     cont.one('#bookmark_stats_msg').setContent('');
                 },
                 error: function (data, status_str, response, args) {
-                    debugger;
                     var cont = that.get('container');
                     cont.one('#bookmark_stats_msg').setContent('Error fetching stats');
                 }

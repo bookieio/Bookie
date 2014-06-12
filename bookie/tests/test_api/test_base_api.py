@@ -50,7 +50,8 @@ class BookieAPITest(unittest.TestCase):
         self.assertEqual(
             res.headers['access-control-allow-headers'], 'X-Requested-With')
 
-    def _get_good_request(self, content=False, second_bmark=False):
+    def _get_good_request(self, content=False, second_bmark=False,
+                          is_private=False):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
 
@@ -63,6 +64,7 @@ class BookieAPITest(unittest.TestCase):
             'api_key': API_KEY,
             'username': u'admin',
             'inserted_by': u'chrome_ext',
+            'is_private': is_private,
         }
 
         # if we want to test the readable fulltext side we want to make sure we
@@ -124,7 +126,7 @@ class BookieAPITest(unittest.TestCase):
         return [stat1, stat2, stat3]
 
     def test_add_bookmark(self):
-        """We should be able to add a new bookmark to the system"""
+        """We should be able to add a new public bookmark to the system"""
         # we need to know what the current admin's api key is so we can try to
         # add
         res = DBSession.execute(
@@ -137,10 +139,13 @@ class BookieAPITest(unittest.TestCase):
             'extended': u'Extended notes',
             'tags': u'bookmarks',
             'api_key': key,
+            'username': u'admin',
+            'is_private': False,
         }
 
         res = self.testapp.post('/api/v1/admin/bmark',
-                                params=test_bmark,
+                                content_type='application/json',
+                                params=json.dumps(test_bmark),
                                 status=200)
 
         self.assertTrue(
@@ -149,6 +154,42 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(
             'description": "Bookie"' in res.body,
             "Should have Bookie in description: " + res.body)
+        self.assertTrue(
+            '"is_private": false' in res.body,
+            "Should have is_private as false: " + res.body)
+        self._check_cors_headers(res)
+
+    def test_add_private_bookmark(self):
+        """We should be able to add a new private bookmark to the system"""
+        # we need to know what the current admin's api key is so we can try to
+        # add
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+
+        test_bmark = {
+            'url': u'http://bmark.us',
+            'description': u'Bookie',
+            'extended': u'Extended notes',
+            'tags': u'bookmarks',
+            'api_key': key,
+            'username': u'admin',
+        }
+
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                content_type='application/json',
+                                params=json.dumps(test_bmark),
+                                status=200)
+
+        self.assertTrue(
+            '"location":' in res.body,
+            "Should have a location result: " + res.body)
+        self.assertTrue(
+            'description": "Bookie"' in res.body,
+            "Should have Bookie in description: " + res.body)
+        self.assertTrue(
+            '"is_private": true' in res.body,
+            "Should have is_private as true: " + res.body)
         self._check_cors_headers(res)
 
     def test_add_bookmark_empty_body(self):
@@ -285,22 +326,64 @@ class BookieAPITest(unittest.TestCase):
         self._check_cors_headers(res)
 
     def test_bookmark_diff_user(self):
-        """Verify that anon users can access the bookmark"""
+        """Verify that anon users can access the public bookmark"""
         self._get_good_request()
 
-        # test that we get a 404
+        # test that we get a 200
         res = self.testapp.get(
             '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH),
             status=200)
         self._check_cors_headers(res)
 
-    def test_bookmark_diff_user_authed(self):
-        """Verify an auth'd user can fetch another's bookmark"""
-        self._get_good_request()
+    def test_no_access_to_private_bookmark(self):
+        """Verify that anon users cannot access the private bookmark"""
+        self._get_good_request(is_private=True)
 
         # test that we get a 404
         res = self.testapp.get(
-            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH, 'invalid'),
+            '/api/v1/admin/bmark/{0}'.format(GOOGLE_HASH),
+            status=404)
+        self._check_cors_headers(res)
+
+    def test_bookmark_diff_user_authed(self):
+        """Verify an auth'd user can fetch another's public bookmark"""
+        self._get_good_request()
+
+        # test that we get a 200
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}'.format(GOOGLE_HASH,
+                                                         'invalid'),
+            status=200)
+        self._check_cors_headers(res)
+
+    def test_bookmark_diff_user_authed_accounts_for_privacy(self):
+        """Verify an auth'd user cannot fetch another's private bookmark"""
+        self._get_good_request(is_private=True)
+
+        # test that we get a 404
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}'.format(GOOGLE_HASH,
+                                                         'invalid'),
+            status=404)
+        self._check_cors_headers(res)
+
+    def test_bookmark_same_user_authed(self):
+        """Verify an auth'd user can fetch their public bookmark"""
+        self._get_good_request()
+
+        # test that we get a 200
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}'.format(GOOGLE_HASH, API_KEY),
+            status=200)
+        self._check_cors_headers(res)
+
+    def test_bookmark_same_user_authed_accounts_for_privacy(self):
+        """Verify an auth'd user can fetch their private bookmark"""
+        self._get_good_request(is_private=True)
+
+        # test that we get a 200
+        res = self.testapp.get(
+            '/api/v1/admin/bmark/{0}?api_key={1}'.format(GOOGLE_HASH, API_KEY),
             status=200)
         self._check_cors_headers(res)
 
