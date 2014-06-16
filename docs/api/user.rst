@@ -312,6 +312,7 @@ Example
                 "url": "http://bmark.us"
               },
               "inserted_by": null,
+              "is_private": true,
               "stored": "2011-06-20 11:42:47",
               "tag_str": "bookmarks",
               "updated": "2011-07-15 14:25:16",
@@ -329,6 +330,7 @@ Example
                 "url": "https://bmark.us/recent"
               },
               "inserted_by": null,
+              "is_private": true,
               "stored": "2011-06-21 13:20:26",
               "tag_str": "test bookmarks",
               "updated": "2011-07-29 22:23:42",
@@ -388,6 +390,7 @@ Example
                 "bid": 2,
                 "stored": "2011-06-21 13:20:26",
                 "inserted_by": null,
+                "is_private": true,
                 "tag_str": "test bookmarks",
                 "clicks": 3,
                 "hash_id": "c605a21cf19560",
@@ -408,6 +411,7 @@ Example
                 "bid": 1,
                 "stored": "2011-06-20 11:42:47",
                 "inserted_by": null,
+                "is_private": true,
                 "tag_str": "bookmarks",
                 "clicks": 1,
                 "hash_id": "c5c21717c99797",

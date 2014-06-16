@@ -168,7 +168,8 @@ class TagMgr(object):
         return qry.all()
 
     @staticmethod
-    def complete(prefix, current=None, limit=5, username=None):
+    def complete(prefix, current=None, limit=5, username=None,
+                 requested_by=None):
         """Find all of the tags that begin with prefix
 
         :param current: a list of current tags to compare with
@@ -184,8 +185,20 @@ class TagMgr(object):
             qry = Tag.query.filter(Tag.name.startswith(prefix))
 
             # if we have a username limit to only bookmarks of that user
-            if username is not None:
+            if username:
                 qry = qry.filter(Tag.bmark.any(username=username))
+                # If username == requested_by, we want all the bookmarks so,
+                # no need to filter on is_private.
+                # If username != requested_by, we want to limit to only
+                # public bookmarks.
+                if username != requested_by:
+                    bmark = aliased(Bmark)
+                    qry = qry.join((bmark, Tag.bmark)).\
+                        filter(bmark.is_private == False)   # noqa
+            else:
+                bmark = aliased(Bmark)
+                qry = qry.join((bmark, Tag.bmark)).\
+                    filter(bmark.is_private == False)   # noqa
 
             qry = qry.order_by(Tag.name).limit(limit)
             return qry.all()
@@ -209,8 +222,14 @@ class TagMgr(object):
 
             good_bmarks = DBSession.query(Bmark.bid)
 
-            if username is not None:
+            if username:
                 good_bmarks = good_bmarks.filter(Bmark.username == username)
+                if username != requested_by:
+                    good_bmarks = good_bmarks.\
+                        filter(Bmark.is_private == False)   # noqa
+            else:
+                good_bmarks = good_bmarks.\
+                    filter(Bmark.is_private == False)   # noqa
 
             good_bmarks = good_bmarks.\
                 filter(Bmark.tags.any(Tag.tid.in_(current_tags))).\
