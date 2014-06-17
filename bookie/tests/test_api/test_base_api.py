@@ -2,18 +2,24 @@
 # Need to create a new renderer that wraps the jsonp renderer and adds these
 # heads to all responses. Then the api needs to be adjusted to use this new
 # renderer type vs jsonp.
-import logging
 import json
+import logging
+import os
 import transaction
 import unittest
 from pyramid import testing
 
-from bookie.models import DBSession
+from bookie.models import (
+    BmarkMgr,
+    DBSession,
+    Readable,
+)
 from bookie.models.auth import Activation
 from bookie.tests import BOOKIE_TEST_INI
 from bookie.tests import empty_db
 from bookie.tests import factory
 from bookie.tests import gen_random_word
+from bookie.tests.factory import make_bookmark
 
 from datetime import datetime
 
@@ -314,6 +320,96 @@ class BookieAPITest(unittest.TestCase):
         self.assertIn('tag_suggestions', bmark)
         self.assertIn('search', bmark['tag_suggestions'])
         self._check_cors_headers(res)
+
+    def test_suggested_tags(self):
+        """Suggestions based on the content of the bookmarked page"""
+        # login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        res = self.testapp.post('/login',
+                                params=user_data)
+        # Add a bookmark
+        res = DBSession.execute(
+            "SELECT api_key FROM users WHERE username = 'admin'").fetchone()
+        key = res['api_key']
+        url = u'http://testing_tags.com'
+        # set the readable content for the bookmark
+        path = os.getcwd()+"/bookie/tests/test_api/tag_test.txt"
+        content = open(path, 'r').read()
+        test_bmark = {
+            'url': url,
+            'description': u'Bookie',
+            'extended': u'',
+            'tags': u'',
+            'api_key': key,
+            'content': content,
+        }
+        res = self.testapp.post('/api/v1/admin/bmark',
+                                params=test_bmark,
+                                status=200)
+
+        bmark = BmarkMgr.get_by_url(url)
+        hash_id = bmark.hash_id
+        tags_expected = ['network', 'new', 'simulator', 'user']
+        edit_bmark = {
+            'hash_id': hash_id,
+            'username': 'admin',
+            'url': url
+        }
+        hash_id = str(hash_id)
+        res = self.testapp.post('/admin/edit/' + hash_id,
+                                params=edit_bmark,
+                                status=200)
+        # pure numbers are eliminated
+        self.assertNotIn('2014', res.body)
+        # tags with length less than 3 are omitted
+        self.assertNotIn('NS', res.body)
+        # all tags are lower cased
+        self.assertNotIn('NEW', res.body)
+        for tag in tags_expected:
+            self.assertIn(tag, res.body)
+
+    def test_suggested_tags_for_unparsed_bookmark(self):
+        """Suggested tags for a bookmarked page whose readable is None"""
+        # Login into bookie
+        user_data = {'login': u'admin',
+                     'password': u'admin',
+                     'form.submitted': u'true'}
+        self.testapp.post('/login',
+                          params=user_data)
+        # Add a bookmark
+        test_bmark = make_bookmark()
+        test_bmark.url = u'http://testing_tags.com'
+        test_bmark.description = u'Bookie'
+        path = os.getcwd() + "/bookie/tests/test_api/tag_test.txt"
+        content = open(path, 'r').read()
+        test_bmark.readable = Readable(content=content)
+
+        # Add another bookmark with readable as None
+        new_url = u'http://testing_readable_none.com'
+        no_readable_bmark = make_bookmark()
+        no_readable_bmark.url = new_url
+        no_readable_bmark.description = u'Readable of this bookmark is None'
+
+        DBSession.add(test_bmark)
+        DBSession.add(no_readable_bmark)
+        DBSession.flush()
+        no_readable_hash = no_readable_bmark.hash_id
+
+        transaction.commit()
+
+        edit_bmark = {
+            'hash_id': no_readable_hash,
+            'username': 'admin',
+        }
+
+        # As the Bookmark's readable is None the page should load without
+        # error.
+        self.testapp.post(
+            u'/admin/edit/' + no_readable_hash,
+            params=edit_bmark,
+            status=200)
 
     def test_bookmark_fetch_fail(self):
         """Verify we get a failed response when wrong bookmark"""
