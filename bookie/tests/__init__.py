@@ -35,6 +35,7 @@ if not test_ini:
 
 ini.read(test_ini)
 settings = dict(ini.items('app:bookie'))
+from bookie.models import initialize_sql
 # Setup logging to read from the test ini file.
 fileConfig(test_ini)
 LOG = logging.getLogger(__name__)
@@ -65,6 +66,7 @@ def gen_random_word(wordLen):
 class TestDBBase(unittest.TestCase):
     def setUp(self):
         """Setup Tests"""
+        initialize_sql(settings)
         testing.setUp()
         self.trans = transaction.begin()
 
