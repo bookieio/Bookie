@@ -20,6 +20,10 @@ from bookie.models.applog import AppLog
 from bookie.models.auth import Activation
 from bookie.models.auth import User
 from bookie.models.queue import ImportQueue
+from bookie.models.social import (
+    BaseConnection,
+    TwitterConnection,
+)
 from bookie.models.stats import StatBookmark
 from bookie.models.fulltext import _reset_index
 
@@ -117,6 +121,11 @@ def empty_db():
     Readable.query.delete()
     Bmark.query.delete()
     StatBookmark.query.delete()
+    # BaseConnection and TwitterConnection should be individually
+    # deleted https://bitbucket.org/zzzeek/sqlalchemy/issue/2349
+    BaseConnection.query.delete()
+    TwitterConnection.query.delete()
+
     Tag.query.delete()
     # we can't remove the toread tag we have from our commands
     Hashed.query.delete()
