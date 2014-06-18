@@ -547,6 +547,53 @@ Example
          }
 
 
+/:username/social_connections/
+---------------------------
+
+Usage
+''''''
+*GET* `/api/v1/admin/social_connections/`
+
+Get a json dump of the social connections count for a user's account, usernames
+used in the social connections and refresh date i.e last time respective bot 
+parsed the data from the social connection.
+
+:query param: api_key *required* - the api key for your account to make the call with
+
+Status Codes
+''''''''''''
+:success 200: If successful a "200 OK" will be returned
+:error 403: if the api key is not valid or missing then this is an unauthorized request
+
+Example
+'''''''
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/admin/social_connections/api_key=12345..')
+    >>> {
+            "count": 2
+            "social_connections": [{
+             "username": "admin", 
+             "last_connection": "2014-06-12 17:39:41.855184",
+             "uid": "1234",
+             "type": "TwitterConnection"
+             "twitterConnection": {
+                "twitter_username": "bookie",
+                "refresh_date": "2014-06-12 17:39:41.855202"
+             }
+            },{
+             "username": "admin", 
+             "last_connection": "2014-06-12 17:41:09.720954",
+             "uid": "1234",
+             "type": "TwitterConnection"
+             "twitterConnection": {
+                  "twitter_username": "bookie",
+                  "refresh_date": "2014-06-12 17:41:09.720954"
+              }
+            }]
+        }
+
+
 /:username/stats/bmarkcount
 ---------------------------
 

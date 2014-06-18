@@ -35,7 +35,7 @@ from bookie.models.auth import User
 from bookie.models.auth import UserMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
-
+from bookie.models.social import SocialMgr
 from bookie.models.fulltext import get_fulltext_handler
 
 LOG = logging.getLogger(__name__)
@@ -957,6 +957,16 @@ def invite_user(request):
             'username': user.username,
             'error': "You have no invites left at this time."
         })
+
+
+@view_config(route_name="api_social_connections", renderer="jsonp")
+@api_auth('api_key', UserMgr.get)
+def social_connections(request):
+    rdict = request.matchdict
+    username = rdict.get('username', None)
+    res = [dict(con) for con in SocialMgr.get_all_connections(username)]
+    return _api_response(request, {'count': len(res),
+                                   'social_connections': res})
 
 
 @view_config(route_name="api_admin_readable_todo", renderer="jsonp")

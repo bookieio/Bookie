@@ -175,6 +175,9 @@ def build_routes(config):
     config.add_route("api_tag_complete",
                      "/api/v1/tags/complete")
 
+    config.add_route("api_social_connections",
+                     "/api/v1/{username}/social_connections")
+
     # admin api calls
     config.add_route("api_admin_readable_todo", "/api/v1/a/readable/todo")
     config.add_route(
