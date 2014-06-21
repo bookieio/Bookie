@@ -699,7 +699,7 @@ class BookieAPITest(unittest.TestCase):
 
         self._check_cors_headers(res)
 
-    def test_bookmark_tag_complete(self):
+    def test_bookmark_tag_complete_same_user(self):
         """Test we can complete tags in the system
 
         By default we should have tags for python, search, bookmarks
@@ -733,6 +733,67 @@ class BookieAPITest(unittest.TestCase):
             'python' not in res.body,
             "Should not have python as a tag completion: " + res.body)
         self._check_cors_headers(res)
+
+    def test_bookmark_tag_complete_same_user_accounts_for_privacy(self):
+        """Test that same user gets back tag completion from their
+        private bookmarks"""
+        self._get_good_request(is_private=True)
+
+        res = self.testapp.get(
+            '/api/v1/admin/tags/complete',
+            params={
+                'tag': 'py',
+                'api_key': API_KEY},
+            status=200)
+
+        self.assertTrue(
+            'python' in res.body,
+            "Should have python as a tag completion: " + res.body)
+        self._check_cors_headers(res)
+
+    def test_bookmark_tag_complete_anon_user(self):
+        """Test that anon user gets back tag completion from others
+        public bookmarks"""
+        self._get_good_request()
+
+        res = self.testapp.get(
+            '/api/v1/tags/complete',
+            params={
+                'tag': 'py'
+            },
+            status=200)
+
+        self.assertTrue(
+            'python' in res.body,
+            "Should have python as a tag completion: " + res.body)
+        self._check_cors_headers(res)
+
+    def test_bookmark_tag_complete_anon_user_accounts_for_privacy(self):
+        """Test that anon user does not get back tag completion from others
+        private bookmarks"""
+        self._get_good_request(is_private=True)
+
+        res = self.testapp.get(
+            '/api/v1/tags/complete',
+            params={
+                'tag': 'py'
+            },
+            status=200)
+
+        self.assertTrue(
+            'python' not in res.body,
+            "Should not have python as a tag completion: " + res.body)
+        self._check_cors_headers(res)
+
+    def test_bookmark_tag_complete_unauthorized_access(self):
+        self._get_good_request()
+
+        self.testapp.get(
+            '/api/v1/admin/tags/complete',
+            params={
+                'tag': 'py'
+            },
+            status=403)
 
     def test_start_defined_end(self):
         """Test getting a user's bookmark count over a period of time when
