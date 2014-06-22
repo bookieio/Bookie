@@ -594,12 +594,21 @@ def tag_complete(request):
     :@param current: GET string of tags we already have python+database
 
     """
+    rdict = request.matchdict
     params = request.GET
 
+    username = rdict.get('username', None)
+    if username:
+        username = username.lower()
+
     if request.user:
-        username = request.user.username
+        requested_by = request.user.username
     else:
-        username = None
+        requested_by = None
+
+    if username != requested_by:
+        request.response.status_int = 403
+        return _api_response(request, {})
 
     if 'current' in params and params['current'] != "":
         current_tags = params['current'].split()
@@ -611,7 +620,8 @@ def tag_complete(request):
 
         tags = TagMgr.complete(tag,
                                current=current_tags,
-                               username=username)
+                               username=username,
+                               requested_by=requested_by)
     else:
         tags = []
 
