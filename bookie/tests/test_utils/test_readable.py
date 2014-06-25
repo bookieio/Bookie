@@ -156,7 +156,8 @@ class TestReadableFulltext(TestCase):
         self._get_good_request()
 
         search_res = self.testapp.get(
-            '/api/v1/admin/bmarks/search/search?search_content=True')
+            '/api/v1/admin/bmarks/search/search?search_content=True',
+            params={'api_key': API_KEY})
 
         self.assertTrue(
             search_res.status == '200 OK',
@@ -164,3 +165,29 @@ class TestReadableFulltext(TestCase):
         self.assertTrue(
             'python' in search_res.body,
             "We should find the python tag in the results: " + search_res.body)
+
+    def test_fulltext_schema(self):
+        """Verify the fulltext schema"""
+        from bookie.models.fulltext import WIX
+        schema = WIX.schema
+        self.assertTrue(
+            'bid' in schema,
+            "We should find bid in schema: " + str(schema))
+        self.assertTrue(
+            'description' in schema,
+            "We should find description in schema: " + str(schema))
+        self.assertTrue(
+            'extended' in schema,
+            "We should find extended in schema: " + str(schema))
+        self.assertTrue(
+            'is_private' in schema,
+            "We should find is_private in schema: " + str(schema))
+        self.assertTrue(
+            'readable' in schema,
+            "We should find readable in schema: " + str(schema))
+        self.assertTrue(
+            'tags' in schema,
+            "We should find tags in schema: " + str(schema))
+        self.assertTrue(
+            'username' in schema,
+            "We should find username in schema: " + str(schema))
