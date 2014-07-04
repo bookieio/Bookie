@@ -255,6 +255,8 @@ def fulltext_index_bookmark(bid, content):
                 extended=b.extended if b.extended else u"",
                 tags=b.tag_str if b.tag_str else u"",
                 readable=found_content,
+                username=b.username,
+                is_private=b.is_private,
             )
             writer.commit()
             logger.debug('writer commit')

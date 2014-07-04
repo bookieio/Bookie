@@ -10,11 +10,22 @@ import os
 from sqlalchemy.orm import joinedload
 
 from whoosh import qparser
-from whoosh.fields import SchemaClass, TEXT, KEYWORD, ID
+from whoosh.fields import (
+    BOOLEAN,
+    ID,
+    KEYWORD,
+    SchemaClass,
+    TEXT,
+)
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.index import create_in
 from whoosh.index import open_dir
 from whoosh.writing import AsyncWriter
+from whoosh.query import (
+    And,
+    Or,
+    Term,
+)
 
 from bookie.models import Bmark
 
@@ -54,6 +65,8 @@ class BmarkSchema(SchemaClass):
     extended = TEXT
     tags = KEYWORD
     readable = TEXT(analyzer=StemmingAnalyzer())
+    username = ID
+    is_private = BOOLEAN
 
 
 def get_fulltext_handler(engine):
@@ -75,7 +88,8 @@ class WhooshFulltext(object):
     """
     global WIX
 
-    def search(self, phrase, content=False, username=None, ct=10, page=0):
+    def search(self, phrase, content=False, username=None, ct=10, page=0,
+               requested_by=None):
         """Implement the search, returning a list of bookmarks"""
         page = int(page) + 1
 
@@ -90,6 +104,24 @@ class WhooshFulltext(object):
                                               group=qparser.OrGroup)
             qry = parser.parse(phrase)
 
+            if username:
+                if requested_by and username == requested_by:
+                    qry = And([
+                        qry,
+                        Or([
+                            Term('is_private', 'f'),
+                            And([
+                                Term('username', username),
+                                Term('is_private', 't')
+                            ])
+                        ])
+                    ])
+                else:
+                    qry = And([qry, Term('username', username),
+                              Term('is_private', 'f')])
+            else:
+                qry = And([qry, Term('is_private', 'f')])
+
             try:
                 res = search.search_page(qry, page, pagelen=int(ct))
             except ValueError, exc:
@@ -99,9 +131,6 @@ class WhooshFulltext(object):
                 qry = Bmark.query.filter(
                     Bmark.bid.in_([r['bid'] for r in res])
                 )
-
-                if username:
-                    qry = qry.filter(Bmark.username == username)
 
                 qry = qry.options(joinedload('hashed'))
 

@@ -58,18 +58,25 @@ class BookieAPITest(unittest.TestCase):
             res.headers['access-control-allow-headers'], 'X-Requested-With')
 
     def _get_good_request(self, content=False, second_bmark=False,
-                          is_private=False):
+                          is_private=False, username=None, api_key=None,
+                          url=None):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
+        if not username:
+            username = u'admin'
+        if not api_key:
+            api_key = API_KEY
+        if not url:
+            url = u'http://google.com'
 
         # the main bookmark, added second to prove popular will sort correctly
         prms = {
-            'url': u'http://google.com',
+            'url': url,
             'description': u'This is my google desc',
             'extended': u'And some extended notes about it in full form',
             'tags': u'python search',
-            'api_key': API_KEY,
-            'username': u'admin',
+            'api_key': api_key,
+            'username': username,
             'inserted_by': u'chrome_ext',
             'is_private': is_private,
         }
@@ -81,7 +88,7 @@ class BookieAPITest(unittest.TestCase):
 
         # rself.assertEqualparams = urllib.urlencode(prms)
         res = self.testapp.post(
-            '/api/v1/admin/bmark?',
+            '/api/v1/{0}/bmark?'.format(username),
             content_type='application/json',
             params=json.dumps(prms),
         )
@@ -131,6 +138,50 @@ class BookieAPITest(unittest.TestCase):
                                                  tstamp=test_date_3)
         transaction.commit()
         return [stat1, stat2, stat3]
+
+    def _make_test_bookmarks(self):
+        """Create a new test user and bookmarks by admin and test user"""
+        # Make a test user.
+        test_user_username = u'test_user'
+        test_user = factory.make_user(username=test_user_username)
+        test_user.api_key = u'random_key'
+        transaction.commit()
+        test_user = DBSession.merge(test_user)
+
+        bmark_test = {}
+        bmark_test['admin_public_bmark'] = {
+            'url': u'http://google1.com',
+            'username': u'admin',
+            'api_key': API_KEY,
+            'is_private': False,
+        }
+        bmark_test['admin_private_bmark'] = {
+            'url': u'http://google2.com',
+            'username': u'admin',
+            'api_key': API_KEY,
+            'is_private': True,
+        }
+        bmark_test['user_public_bmark'] = {
+            'url': u'http://google3.com',
+            'username': test_user.username,
+            'api_key': test_user.api_key,
+            'is_private': False,
+        }
+        bmark_test['user_private_bmark'] = {
+            'url': u'http://google4.com',
+            'username': test_user.username,
+            'api_key': test_user.api_key,
+            'is_private': True,
+        }
+
+        # Make the bookmarks.
+        for bmark in bmark_test.keys():
+            self._get_good_request(url=bmark_test[bmark]['url'],
+                                   username=bmark_test[bmark]['username'],
+                                   api_key=bmark_test[bmark]['api_key'],
+                                   is_private=bmark_test[bmark]['is_private'])
+
+        return (test_user, bmark_test)
 
     def test_add_bookmark(self):
         """We should be able to add a new public bookmark to the system"""
@@ -675,6 +726,102 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(
             'clicks' in bmark,
             "The clicks field should be in there")
+        self._check_cors_headers(res)
+
+    def test_search_api_same_user(self):
+        """Test that when username and requested_by are same, the user
+        gets back their own bookmarks and other's public bookmarks"""
+        test_user, bmark_test = self._make_test_bookmarks()
+
+        expected_res = [bmark_test['admin_public_bmark'],
+                        bmark_test['admin_private_bmark'],
+                        bmark_test['user_public_bmark']]
+
+        # Search for bookmarks.
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks/search/google',
+            params={'api_key': API_KEY},
+            status=200
+        )
+
+        # Make sure we can decode the body.
+        bmark_list = json.loads(res.body)
+        results = bmark_list['search_results']
+        self.assertEqual(
+            len(results),
+            3,
+            "We should have three results coming back: {0}".
+            format(len(results)))
+        for bmark in range(len(results)):
+            self.assertTrue(
+                results[bmark][u'username'] == expected_res[bmark]['username']
+                and results[bmark][u'is_private'] ==
+                expected_res[bmark]['is_private'] and
+                results[bmark][u'url'] == expected_res[bmark]['url'],
+                "We should have a bookmark from {0}".
+                format(expected_res[bmark]['username']))
+        self._check_cors_headers(res)
+
+    def test_search_api_diff_user(self):
+        """Test that when a user requests for other's bookmarks,
+        they get only the public ones"""
+        test_user, bmark_test = self._make_test_bookmarks()
+
+        expected_res = [bmark_test['admin_public_bmark']]
+
+        # Search for bookmarks.
+        res = self.testapp.get(
+            '/api/v1/admin/bmarks/search/google',
+            status=200
+        )
+
+        # Make sure we can decode the body.
+        bmark_list = json.loads(res.body)
+        results = bmark_list['search_results']
+        self.assertEqual(
+            len(results),
+            1,
+            "We should have one result coming back: {0}".
+            format(len(results)))
+        for bmark in range(len(results)):
+            self.assertTrue(
+                results[bmark][u'username'] == expected_res[bmark]['username']
+                and results[bmark][u'is_private'] ==
+                expected_res[bmark]['is_private'] and
+                results[bmark][u'url'] == expected_res[bmark]['url'],
+                "We should have a bookmark from {0}".
+                format(expected_res[bmark]['username']))
+        self._check_cors_headers(res)
+
+    def test_search_api_anon_user(self):
+        """Test that an anonymous user gets only public bookmarks"""
+        test_user, bmark_test = self._make_test_bookmarks()
+
+        expected_res = [bmark_test['admin_public_bmark'],
+                        bmark_test['user_public_bmark']]
+
+        # Search for bookmarks.
+        res = self.testapp.get(
+            '/api/v1/bmarks/search/google',
+            status=200
+        )
+
+        # Make sure we can decode the body.
+        bmark_list = json.loads(res.body)
+        results = bmark_list['search_results']
+        self.assertEqual(
+            len(results),
+            2,
+            "We should have two results coming back: {0}".
+            format(len(results)))
+        for bmark in range(len(results)):
+            self.assertTrue(
+                results[bmark][u'username'] == expected_res[bmark]['username']
+                and results[bmark][u'is_private'] ==
+                expected_res[bmark]['is_private'] and
+                results[bmark][u'url'] == expected_res[bmark]['url'],
+                "We should have a bookmark from {0}".
+                format(expected_res[bmark]['username']))
         self._check_cors_headers(res)
 
     def test_search_api_fail(self):

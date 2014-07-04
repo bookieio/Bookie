@@ -504,6 +504,7 @@ Example
                  "extended": "This is the extended description",
                  "hash_id": "adb017923e1f56",
                  "inserted_by": "importer",
+                 "is_private": true,
                  "stored": "2011-02-25 15:13:00",
                  "tag_str": "nickelanddime kerfuffle banshee amazon ubuntu ubuntu-one canonical",
                  "tags": [
@@ -528,6 +529,7 @@ Example
                  "extended": "",
                  "hash_id": "3e9a37d4f7cd74",
                  "inserted_by": "importer",
+                 "is_private": true,
                  "stored": "2010-07-08 19:30:18",
                  "tag_str": "ham linux",
                  "tags": [
