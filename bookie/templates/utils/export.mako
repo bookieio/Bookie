@@ -9,8 +9,13 @@
 <DL><p>
     % for bmark in bmark_list:
         <DT>
-            <A HREF="${bmark.hashed.url}" LAST_VISIT="" ADD_DATE="${time.mktime(bmark.stored.timetuple())}"
-               TAGS="${','.join([tag for tag in bmark.tags])}">
+            % if bmark.is_private:
+                <A HREF="${bmark.hashed.url}" LAST_VISIT="" ADD_DATE="${time.mktime(bmark.stored.timetuple())}"
+                    TAGS="${','.join([tag for tag in bmark.tags])}" PRIVATE="1">
+            % else:
+                <A HREF="${bmark.hashed.url}" LAST_VISIT="" ADD_DATE="${time.mktime(bmark.stored.timetuple())}"
+                    TAGS="${','.join([tag for tag in bmark.tags])}">
+            % endif
                      % if bmark.description:
                          ${bmark.description}
                      % else:
