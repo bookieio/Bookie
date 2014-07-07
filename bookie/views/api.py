@@ -527,17 +527,11 @@ def search_results(request):
     else:
         phrase = rdict.get('search', '')
 
-    if rdict.get('search_mine') or 'username' in mdict:
-        with_user = True
+    username = mdict.get('username', None)
+    if request.user:
+        requested_by = request.user.username
     else:
-        with_user = False
-
-    username = None
-    if with_user:
-        if 'username' in mdict:
-            username = mdict.get('username')
-        elif request.user and request.user.username:
-            username = request.user.username
+        requested_by = None
 
     # with content is always in the get string
     search_content = asbool(rdict.get('with_content', False))
@@ -553,7 +547,8 @@ def search_results(request):
         res_list = searcher.search(
             phrase,
             content=search_content,
-            username=username if with_user else None,
+            username=username,
+            requested_by=requested_by,
             ct=count,
             page=page
         )

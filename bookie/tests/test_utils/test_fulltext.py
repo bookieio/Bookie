@@ -1,6 +1,6 @@
 """Test the fulltext implementation"""
+import json
 import transaction
-import urllib
 
 from pyramid import testing
 from unittest import TestCase
@@ -36,7 +36,7 @@ class TestFulltext(TestCase):
         testing.tearDown()
         empty_db()
 
-    def _get_good_request(self, new_tags=None):
+    def _get_good_request(self, new_tags=None, is_private=False):
         """Return the basics for a good add bookmark request"""
         session = DBSession()
         prms = {
@@ -45,14 +45,18 @@ class TestFulltext(TestCase):
             'extended': u'And some extended notes about it in full form',
             'tags': u'python search',
             'api_key': API_KEY,
+            'username': u'admin',
+            'is_private': is_private,
         }
 
         if new_tags:
             prms['tags'] = new_tags
 
-        req_params = urllib.urlencode(prms)
-        res = self.testapp.post('/api/v1/admin/bmark',
-                                params=req_params)
+        res = self.testapp.post(
+            '/api/v1/admin/bmark?',
+            content_type='application/json',
+            params=json.dumps(prms),
+        )
 
         session.flush()
         transaction.commit()
