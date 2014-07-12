@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.renderers import render_to_response
 from pyramid.security import remember
 from pyramid.security import forget
+from pyramid.settings import asbool
 from pyramid.url import route_url
 from pyramid.view import view_config
 
@@ -105,7 +106,12 @@ def signup(request):
     this time so that we can stage invites across a specific number in waves.
 
     """
-    return {}
+    if not asbool(request.registry.settings.get('signup_process')):
+        return {
+            'message': 'This site is private please contact admin for invitation.'
+        }
+    else:
+        return {}
 
 
 @view_config(route_name="signup_process", renderer="/auth/signup.mako")
@@ -116,6 +122,10 @@ def signup_process(request):
     information.
 
     """
+    if not asbool(request.registry.settings.get('signup_process')):
+        return {
+            'message': 'This site is private please contact admin for invitation.'
+        }
     params = request.params
     email = params.get('email', None)
 
