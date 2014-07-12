@@ -40,6 +40,13 @@ class TestImports(unittest.TestCase):
             19,
             "We should have 19 results, we got: " + str(len(res)))
 
+        # Check for the private bookmarks.
+        private_res = Bmark.query.filter(Bmark.is_private == True).all()   # noqa
+        self.assertEqual(
+            len(private_res),
+            1,
+            "We should have 1 private bookmark: " + str(len(private_res)))
+
         # verify we can find a bookmark by url and check tags, etc
         check_url = u'http://www.ndftz.com/nickelanddime.png'
         check_url_hashed = generate_hash(check_url)
@@ -73,6 +80,13 @@ class TestImports(unittest.TestCase):
             len(res),
             25,
             "We should have 25 results, we got: " + str(len(res)))
+
+        # Check for the private bookmarks.
+        private_res = Bmark.query.filter(Bmark.is_private == True).all()   # noqa
+        self.assertEqual(
+            len(private_res),
+            20,
+            "We should have 20 private bookmarks: " + str(len(private_res)))
 
         # verify we can find a bookmark by url and check tags, etc
         check_url = 'http://jekyllrb.com/'
