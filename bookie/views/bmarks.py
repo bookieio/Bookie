@@ -198,6 +198,10 @@ def edit_error(request):
     post = request.POST
 
     with ReqAuthorize(request, username=rdict['username'].lower()):
+        if 'is_private' in post:
+            post['is_private'] = True
+        else:
+            post['is_private'] = False
         if 'new' in request.url:
             try:
                 try:
@@ -215,11 +219,12 @@ def edit_error(request):
                     }
                 else:
                     bmark = BmarkMgr.store(
-                        post['url'],
-                        request.user.username,
-                        post['description'],
-                        post['extended'],
-                        post['tags'])
+                        url=post['url'],
+                        username=request.user.username,
+                        desc=post['description'],
+                        ext=post['extended'],
+                        tags=post['tags'],
+                        is_private=post['is_private'])
 
                     # Assign a task to fetch this pages content and parse it
                     # out for storage and indexing.
@@ -235,7 +240,8 @@ def edit_error(request):
                     request.user.username,
                     desc=post['description'],
                     ext=post['extended'],
-                    tags=post['tags'])
+                    tags=post['tags'],
+                    is_private=post['is_private'])
 
                 return {
                     'new': True,

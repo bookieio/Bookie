@@ -21,7 +21,17 @@
             action="${request.route_url('user_bmark_edit_error', username=request.user.username, hash_id=bmark.hash_id)}"
         % endif
         method="post" class="login form">
-        <div class="heading">${"Add" if bmark and bmark.hashed.url == "" else "Edit"} bookmark</div>
+        <div class="heading">
+            % if bmark and bmark.hashed.url == "":
+                Add
+            % elif bmark.is_private:
+                <div style="background-color: #ff4040;">
+                    Edit <span aria-hidden="true" class="icon icon-lock" title="Private Bookmark"></span> private bookmark
+                </div>
+            % else:
+                Edit bookmark
+            % endif
+        </div>
         % if message:
             <p class="error">${message}</p>
         % endif
@@ -68,6 +78,15 @@
                 <input type="text" name="extended"
                        value="${bmark.extended if bmark.extended else ''}"
                        placeholder="extended description..."/>
+            </li>
+
+            <li>
+                <label>Private</label>
+                % if new or not bmark.is_private:
+                    <input type="checkbox" name="is_private" />
+                % else:
+                    <input type="checkbox" name="is_private" checked="checked" />
+                % endif
             </li>
 
             % if new and bmark.hashed.url != "":
