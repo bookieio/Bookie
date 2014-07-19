@@ -48,6 +48,7 @@ textblob==0.8.4
 topia.termextract==1.1.0
 transaction==1.4.1
 translationstring==0.4
+tweepy==2.3.0
 Unidecode==0.04.7
 venusian==1.0a8
 virtualenv==1.5.2

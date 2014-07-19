@@ -69,7 +69,7 @@ def make_twitter_connection():
     tconnection = TwitterConnection(username='admin',
                                     is_active=True,
                                     last_connection=datetime.now(),
-                                    uid=u'1234',
+                                    uid=u'1022699448',
                                     access_key=u'dummy',
                                     access_secret=u'dummy',
                                     twitter_username='bookie',
