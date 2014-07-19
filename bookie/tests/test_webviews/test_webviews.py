@@ -5,7 +5,10 @@ import time
 import transaction
 from datetime import datetime
 from bookie.models import DBSession
-from bookie.models import Bmark
+from bookie.models import (
+    Bmark,
+    BmarkMgr,
+)
 from bookie.tests import TestViewBase
 from bookie.tests.factory import make_bookmark
 
@@ -139,6 +142,106 @@ class TestNewBookmark(TestViewBase):
                 'tags': ''
             })
         self.assertIn(existing_url_message, res.body)
+
+    def test_bookmark_privacy(self):
+        """Verify the bookmark's privacy"""
+        self._login_admin()
+        test_url = u"http://bmark.us/test"
+        test_url_private = u"http://bmark.us/test/private"
+
+        # Add the public bookmark.
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': '',
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='Recent status is 302 Found: ' + res.status)
+
+        bmark = BmarkMgr.get_by_url(test_url)
+        self.assertEqual(bmark.is_private, False)
+
+        # Add the private bookmark.
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url_private,
+                'description': '',
+                'extended': '',
+                'tags': '',
+                'is_private': 'on',
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='Recent status is 302 Found: ' + res.status)
+
+        bmark = BmarkMgr.get_by_url(test_url_private)
+        self.assertEqual(bmark.is_private, True)
+
+    def test_edit_bookmark_privacy(self):
+        """Verify that we can edit bookmark's privacy"""
+        self._login_admin()
+        test_url = u"http://bmark.us/test"
+
+        # Add the bookmark.
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': '',
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='Recent status is 302 Found: ' + res.status)
+
+        bmark = BmarkMgr.get_by_url(test_url)
+        self.assertEqual(bmark.is_private, False)
+
+        # Make the bookmark private.
+        res = self.app.post(
+            '/admin/edit_error/{0}'.format(bmark.hash_id),
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': '',
+                'is_private': 'on',
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='Recent status is 302 Found: ' + res.status)
+
+        # Verify that the bookmark is a private bookmark.
+        bmark = BmarkMgr.get_by_url(test_url)
+        self.assertEqual(bmark.is_private, True)
+
+        # Make the bookmark public again.
+        res = self.app.post(
+            '/admin/edit_error/{0}'.format(bmark.hash_id),
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': '',
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='Recent status is 302 Found: ' + res.status)
+
+        # Verify that the bookmark is a public bookmark.
+        bmark = BmarkMgr.get_by_url(test_url)
+        self.assertEqual(bmark.is_private, False)
 
 
 class TestRSSFeeds(TestViewBase):
