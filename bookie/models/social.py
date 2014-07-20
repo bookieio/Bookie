@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean)
 
 from bookie.models import Base
+from bookie.models import DBSession
 
 twitter_connection = 'TwitterConnection'
 
@@ -20,6 +21,20 @@ class SocialMgr(object):
         connections = BaseConnection.query.filter(
             BaseConnection.username == username)
         return connections
+
+    @staticmethod
+    def store_twitter_connection(username, credentials):
+        tconnection = TwitterConnection(
+            username=username,
+            is_active=credentials['is_active'],
+            last_connection=credentials['last_connection'],
+            uid=credentials['uid'],
+            access_key=credentials['access_key'],
+            access_secret=credentials['access_secret'],
+            twitter_username=credentials['twitter_username'],
+            refresh_date=credentials['refresh_date'])
+        DBSession.add(tconnection)
+        return 'Successfully Done'
 
 
 class BaseConnection(Base):
