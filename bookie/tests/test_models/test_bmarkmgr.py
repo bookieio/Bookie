@@ -3,12 +3,16 @@
 from random import randint
 
 from bookie.models import (
-    DBSession,
     Bmark,
     BmarkMgr,
+    DBSession,
     TagMgr,
 )
 from bookie.models.auth import User
+from bookie.models.stats import (
+    StatBookmark,
+    StatBookmarkMgr,
+)
 
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
@@ -208,6 +212,43 @@ class TestBmarkMgrStats(TestDBBase):
         ct = BmarkMgr.count(username=usercommon.username, is_private=True)
         self.assertEqual(2, ct,
                          'We should only have 2 private bookmarks: ' + str(ct))
+
+    def test_count_user_bookmarks(self):
+        """We should get a total count of both private and public bookmarks"""
+        public_bmark_count = 5
+        private_bmark_count = 5
+        total_bmark_count = public_bmark_count + private_bmark_count
+        user = User()
+        user.username = gen_random_word(10)
+        DBSession.add(user)
+        stat_username = "user_bookmarks_{0}".format(user.username)
+
+        # Add the public bookmarks.
+        for i in range(public_bmark_count):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+                is_private=False,
+            )
+            DBSession.add(b)
+
+        # Add the private bookmarks.
+        for i in range(private_bmark_count):
+            b = Bmark(
+                url=gen_random_word(12),
+                username=user.username,
+                is_private=True,
+            )
+            DBSession.add(b)
+
+        StatBookmarkMgr.count_user_bookmarks(username=user.username)
+        res = DBSession.query(StatBookmark).\
+            filter(StatBookmark.attrib == stat_username).first()
+
+        self.assertEqual(
+            total_bmark_count, res.data,
+            'We should have {0} bookmarks: '.format(total_bmark_count) +
+            str(res.data))
 
     def test_delete_all_bookmarks(self):
         """Testing working of delete all bookmarks
