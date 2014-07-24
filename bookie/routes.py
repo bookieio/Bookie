@@ -88,6 +88,9 @@ def build_routes(config):
     config.add_route("user_export", "{username}/export")
     config.add_route("user_stats", "{username}/stats")
 
+    # oauth urls
+    config.add_route("twitter_connect", "oauth/twitter_connect")
+
     #
     # NEW API
     #
