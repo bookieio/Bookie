@@ -105,7 +105,9 @@ class StatBookmarkMgr(object):
     @staticmethod
     def count_user_bookmarks(username):
         """Count the total number of bookmarks for the user in the system"""
-        total = BmarkMgr.count(username)
+        # We need a count of both public bookmarks and private bookmarks.
+        total = BmarkMgr.count(username, is_private=False) + BmarkMgr.count(
+            username, is_private=True)
         stat = StatBookmark(
             attrib=USER_CT.format(username),
             data=total
