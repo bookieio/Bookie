@@ -18,6 +18,9 @@
             {{else}}
                 [no title]
             {{/if}}
+            {{#if is_private}}
+                <span aria-hidden="true" class="icon icon-lock" title="Private Bookmark"></span>
+            {{/if}}
         </a>
     </div>
 

@@ -111,6 +111,52 @@ YUI.add('bookie-test-view', function (Y) {
             );
         },
 
+        test_render_public_bookmark: function () {
+            var model = new Y.bookie.Bmark({
+                    url: 'http://google.com',
+                }),
+                test = this;
+
+            // Set the model username to admin so owner is true.
+            model.set('username', 'admin');
+
+            var testview = new Y.bookie.BmarkView({
+                model: model,
+                current_user: 'admin',
+                resource_user: 'admin'
+            });
+            var html = testview.render();
+            Y.one('.view').appendChild(html);
+            Y.Assert.isTrue(
+                Y.one('.view').get('innerHTML').search('<span aria-hidden="true" class="icon icon-lock" title="Private Bookmark"></span>') == -1,
+                'We should find a public bookmark'
+            );
+        },
+
+        test_render_private_bookmark: function () {
+            var model = new Y.bookie.Bmark({
+                    url: 'http://google.com',
+                    is_private: 'true',
+                }),
+                test = this;
+
+            // Set the model username to admin so owner is true.
+            model.set('username', 'admin');
+
+            var testview = new Y.bookie.BmarkView({
+                model: model,
+                current_user: 'admin',
+                resource_user: 'admin'
+            });
+            var html = testview.render();
+            Y.one('.view').appendChild(html);
+            Y.Assert.isTrue(
+                Y.one('.view').get('innerHTML').search('<span aria-hidden="true" class="icon icon-lock" title="Private Bookmark"></span>') != -1,
+                'We should find a private bookmark'
+            );
+        },
+
+
         test_remove_event: function () {
             var model = new Y.bookie.Bmark({
                     url: 'http://google.com'
