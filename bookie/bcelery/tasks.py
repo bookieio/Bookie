@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+import tweepy
 from celery.utils.log import get_task_logger
 
 from bookie.bcelery.celery import celery
@@ -13,11 +15,13 @@ from whoosh.writing import IndexingError
 
 from bookie.lib.importer import Importer
 from bookie.lib.readable import ReadUrl
+from bookie.lib.social_utils import get_url_title
 from bookie.models import initialize_sql
 from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import Readable
 from bookie.models.auth import UserMgr
+from bookie.models.social import SocialMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
 
@@ -45,12 +49,20 @@ def hourly_stats():
 
 
 @celery.task(ignore_result=True)
+def daily_jobs():
+    """Daily jobs that are to be run
+    - Refresh's Twitter fetch from user's accounts
+    """
+    process_twitter_connections.delay()
+
+
+@celery.task(ignore_result=True)
 def daily_stats():
     """Daily we want to run a series of numbers to track
 
     Currently we're monitoring:
     - Total number of bookmarks for each user in the system
-
+    - Delete's inactive accounts if any
     """
     count_total_each_user.delay()
     delete_non_activated_account.delay()
@@ -285,6 +297,15 @@ def reindex_fulltext_allbookmarks(sync=False):
 
 
 @celery.task(ignore_result=True)
+def process_twitter_connections(username=None):
+    """
+    Run twitter fetch for required username's
+    """
+    for connection in SocialMgr.get_twitter_connections(username):
+        create_twitter_api(connection)
+
+
+@celery.task(ignore_result=True)
 def fetch_unfetched_bmark_content(ignore_result=True):
     """Check the db for any unfetched content. Fetch and index."""
     logger.info("Checking for unfetched bookmarks")
@@ -359,3 +380,37 @@ def fetch_bmark_content(bid):
             'No readable record '
             'during existing processing')
         trans.commit()
+
+
+@celery.task(ignore_result=True)
+def create_twitter_api(connection):
+    oauth_token = INI.get('twitter_consumer_key')
+    oauth_verifier = INI.get('twitter_consumer_secret')
+    try:
+        auth = tweepy.OAuthHandler(oauth_token, oauth_verifier)
+        auth.set_access_token(
+            connection.access_key, connection.access_secret)
+        twitter_user = tweepy.API(auth)
+        fetch_tweets(twitter_user, connection)
+    except (tweepy.TweepError, IOError):
+        logger.error('Twitter connection denied tweepy IOError')
+
+
+@celery.task(ignore_result=True)
+def fetch_tweets(twitter_user, connection):
+    tweets = twitter_user.user_timeline(
+        id=connection.twitter_username,
+        include_entities=True,
+        since_id=connection.last_tweet_seen)
+    if tweets:
+        for tweet in tweets:
+            for url in tweet.entities['urls']:
+                expanded_url, title = get_url_title(url['expanded_url'])
+                new = BmarkMgr.get_by_url(
+                    expanded_url, connection.username)
+                if not new:
+                    BmarkMgr.store(expanded_url, connection.username,
+                                   title, '', 'twitter')
+        SocialMgr.update_last_tweet_data(connection, tweets[0].id)
+    else:
+        pass

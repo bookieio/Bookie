@@ -65,8 +65,8 @@ def make_tag(name=None):
     return Tag(name)
 
 
-def make_twitter_connection():
-    tconnection = TwitterConnection(username='admin',
+def make_twitter_connection(username='admin'):
+    tconnection = TwitterConnection(username=username,
                                     is_active=True,
                                     last_connection=datetime.now(),
                                     uid=u'1022699448',

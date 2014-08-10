@@ -278,3 +278,39 @@ GET `/api/v1/admin/stats/bmarks`
 
     requests.get('http://127.0.0.1:6543/api/v1/admin/stats/bmarks?api_key=12345...')
     >>> ...
+
+
+/a/social/twitter_refresh/:username
+-------------------
+GET `/a/social/twitter_refresh/:username`
+
+    Refresh twitter fetch for specific user
+
+    :query param: api_key *required* - the api key for your account to make the call with
+    :query param: callback - wrap JSON response in an optional callback
+
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/social/twitter_refresh/admin?api_key=12345...')
+    >>> {
+            "message": "running bot to fetch user's tweets"
+            "success": true,
+        }
+
+
+/a/social/twitter_refresh/all
+-------------------
+GET `/a/social/twitter_refresh/all`
+
+    Refresh twitter fetch for all the users
+
+    :query param: api_key *required* - the api key for your account to make the call with
+    :query param: callback - wrap JSON response in an optional callback
+
+::
+
+    requests.get('http://127.0.0.1:6543/api/v1/a/social/twitter_refresh/all?api_key=12345...')
+    >>> {
+            "message": "running bot to fetch user's tweets"            
+            "success": true,
+        }

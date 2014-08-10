@@ -1,3 +1,4 @@
+from mock import patch
 import transaction
 
 from bookie.bcelery import tasks
@@ -9,6 +10,7 @@ from bookie.models.auth import User
 from bookie.models.stats import StatBookmark
 
 from bookie.tests import empty_db
+from bookie.tests import factory
 from bookie.tests import gen_random_word
 from bookie.tests import TestDBBase
 
@@ -97,3 +99,14 @@ class BCeleryTaskTest(TestDBBase):
             username = user_key[2]
             self.assertTrue(username in expected)
             self.assertEqual(expected[username], stat.data)
+
+    @patch('bookie.bcelery.tasks.create_twitter_api')
+    def test_process_twitter_connections(self, mock_create_twitter_api):
+        """test if create_twitter_api is called"""
+        tasks.process_twitter_connections()
+        self.assertFalse(mock_create_twitter_api.called)
+
+        factory.make_twitter_connection()
+
+        tasks.process_twitter_connections()
+        self.assertTrue(mock_create_twitter_api.called)

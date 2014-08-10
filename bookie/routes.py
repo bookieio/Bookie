@@ -205,6 +205,14 @@ def build_routes(config):
         "api_admin_imports_reset",
         "/api/v1/a/imports/reset/{id}",
         request_method="POST")
+    config.add_route(
+        "api_admin_twitter_refresh_all",
+        "/api/v1/a/social/twitter_refresh/all",
+        request_method="GET")
+    config.add_route(
+        "api_admin_twitter_refresh",
+        "/api/v1/a/social/twitter_refresh/{username}",
+        request_method="GET")
 
     config.add_route(
         "api_admin_users_list",

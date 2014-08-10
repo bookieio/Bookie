@@ -23,6 +23,16 @@ class SocialMgr(object):
         return connections
 
     @staticmethod
+    def get_twitter_connections(username=None):
+        """ Returns all twitter connections based on username """
+        if username:
+            connections = TwitterConnection.query.filter(
+                TwitterConnection.username == username).all()
+        else:
+            connections = TwitterConnection.query.all()
+        return connections
+
+    @staticmethod
     def store_twitter_connection(username, credentials):
         tconnection = TwitterConnection(
             username=username,
@@ -35,6 +45,12 @@ class SocialMgr(object):
             refresh_date=credentials['refresh_date'])
         DBSession.add(tconnection)
         return tconnection
+
+    @staticmethod
+    def update_last_tweet_data(connection, tweet_id):
+        connection.last_tweet_seen = tweet_id
+        connection.refresh_date = datetime.now()
+        return connection
 
 
 class BaseConnection(Base):
@@ -66,6 +82,7 @@ class TwitterConnection(BaseConnection):
     access_secret = Column(Unicode(255))
     twitter_username = Column(Unicode(255))
     refresh_date = Column(DateTime)
+    last_tweet_seen = Column(Unicode(255))
 
     __mapper_args__ = {
         'polymorphic_identity': twitter_connection
