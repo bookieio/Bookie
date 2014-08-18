@@ -41,6 +41,10 @@ celery.conf.update(
     CELERY_TASK_RESULT_EXPIRES=3600,
     CELERY_RESULT_BACKEND=INI.get('celery_broker'),
     CELERYBEAT_SCHEDULE={
+        'daily_jobs': {
+            'task': 'bookie.bcelery.tasks.daily_jobs',
+            'schedule': timedelta(seconds=24*60*60),
+        },
         'daily_stats': {
             'task': 'bookie.bcelery.tasks.daily_stats',
             'schedule': timedelta(seconds=24*60*60),

@@ -995,6 +995,21 @@ def to_readable(request):
     })
 
 
+@view_config(route_name="api_admin_twitter_refresh", renderer="jsonp")
+@view_config(route_name="api_admin_twitter_refresh_all", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def twitter_refresh(request):
+    """Update tweets fetched from user account """
+    mdict = request.matchdict
+    username = mdict.get('username', None)
+    tasks.process_twitter_connections(username)
+    ret = {
+        'success': True,
+        'message': "running bot to fetch user's tweets"
+    }
+    return _api_response(request, ret)
+
+
 @view_config(route_name="api_admin_readable_reindex", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def readable_reindex(request):
