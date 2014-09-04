@@ -241,6 +241,8 @@ Then you need to create a pyramid.wsgi file in the root of your Bookie virtualen
 
 ::
 
+    import os
+    os.environ['NLTK_DATA'] = '/home/user/bookie/bookie/download-cache/nltk'
     from pyramid.paster import get_app
     application = get_app('/home/user/bookie/bookie/mybookie.ini', 'bookie')
 
