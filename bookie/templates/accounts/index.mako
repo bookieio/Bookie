@@ -3,6 +3,8 @@
 <%namespace file="func.mako" import="account_nav, password_reset"/>
 <%
     date_fmt = "%m/%d/%Y"
+    app_url = request.route_url('home').rstrip('/')
+    app_path = request.route_path('home').rstrip('/')
 %>
 ${account_nav()}
 
@@ -102,7 +104,7 @@ ${account_nav()}
 ${password_reset(user, reset=False)}
 
 <div class="form">
-    <div class="heading"><img src="/static/images/logo.128.svg" style="height: 16px; padding: 0 5px;" alt="Bookie Extensions"/>Extensions</div>
+    <div class="heading"><img src="${app_path}/static/images/logo.128.svg" style="height: 16px; padding: 0 5px;" alt="Bookie Extensions"/>Extensions</div>
     <p>We have browser extensions that work with Bookie for:</p>
     <ul>
         <li><a href="https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega">Google Chrome</a></li>
@@ -118,14 +120,14 @@ ${password_reset(user, reset=False)}
     from other browsers.
 
      <div><a title="Bookmark with Bookie" href="javascript:(function() {
-        location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())">Bookmark to Bookie</a></div>
+        location.href='${app_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())">Bookmark to Bookie</a></div>
 
     <div style="padding-top: 1em;">
         <a href="" id="show_bookmarklet" title="show bookmarklet code">Show
         Bookmarklet code</a> <div>(Handy for Android and other browsers that can't
                 save a link direct to bookmark.)</div>
         <br />
-        <textarea style="display: none; opacity: 0; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${request.host_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea>
+        <textarea style="display: none; opacity: 0; width: 25em; height: 8em; padding: 1em; margin-top: 1em;" id="bookmarklet_text">javascript:(function() {location.href='${app_url}/${request.user.username}/new?url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(document.title)}())</textarea>
     </div>
     </p>
 </div>
