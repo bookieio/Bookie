@@ -232,6 +232,7 @@ class BookieAPITest(unittest.TestCase):
             'tags': u'bookmarks',
             'api_key': key,
             'username': u'admin',
+            'is_private': 'true',
         }
 
         res = self.testapp.post('/api/v1/admin/bmark',
@@ -624,7 +625,7 @@ class BookieAPITest(unittest.TestCase):
                                status=200)
 
         # Make sure we can decode the body.
-        bmark = json.loads(res.body)['bmarks'][0]
+        bmark = json.loads(res.body)['bmarks'][1]
         self.assertEqual(
             GOOGLE_HASH,
             bmark[u'hash_id'],

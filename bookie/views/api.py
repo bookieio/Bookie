@@ -193,8 +193,13 @@ def bmark_get(request):
 
 def _update_mark(mark, params):
     """Update the bookmark found with settings passed in"""
-    mark.description = params.get('description', mark.description)
+    description = params.get('description', None)
+    if not description and mark:
+        description = mark.description
+
+    mark.description = description
     mark.extended = params.get('extended', mark.extended)
+    mark.is_private = asbool(params.get('is_private', False))
 
     new_tag_str = params.get('tags', None)
 
@@ -250,9 +255,13 @@ def bmark_add(request):
                 rdict['hash_id'],
                 username=user.username
             )
-            mark = _update_mark(mark, params)
 
         except NoResultFound:
+            mark = None
+
+        if mark:
+            mark = _update_mark(mark, params)
+        else:
             request.response.status_code = 404
             return _api_response(request, {
                 'error': 'Bookmark with hash id {0} not found.'.format(
@@ -260,13 +269,17 @@ def bmark_add(request):
             })
 
     else:
-        # check if we already have this
+        # Check if we already have this bookmark.
         try:
             mark = BmarkMgr.get_by_url(params['url'],
                                        username=user.username)
-            mark = _update_mark(mark, params)
 
         except NoResultFound:
+            mark = None
+
+        if mark:
+            mark = _update_mark(mark, params)
+        else:
             # then let's store this thing
             # if we have a dt param then set the date to be that manual
             # date
@@ -289,7 +302,7 @@ def bmark_add(request):
                 params.get('tags', u''),
                 dt=stored_time,
                 inserted_by=inserted_by,
-                is_private=params.get('is_private', True),
+                is_private=asbool(params.get('is_private', False)),
             )
 
         # we need to process any commands associated as well
@@ -360,6 +373,8 @@ def bmark_recent(request, with_content=False):
     # check if we have a page count submitted
     page = int(params.get('page', '0'))
     count = int(params.get('count', RESULTS_MAX))
+    if not with_content:
+        with_content = asbool(params.get('with_content', False))
 
     # we only want to do the username if the username is in the url
     username = rdict.get('username', None)
@@ -403,7 +418,6 @@ def bmark_recent(request, with_content=False):
     # if we allow showing of content the query hangs and fails on the
     # postgres side. Need to check the query and figure out what's up.
     # see bug #142
-    # We don't allow with_content by default because of this bug.
     recent_list = BmarkMgr.find(
         limit=count,
         order_by=order_by,
@@ -411,6 +425,7 @@ def bmark_recent(request, with_content=False):
         tags=tags,
         username=username,
         with_tags=True,
+        with_content=with_content,
         requested_by=requested_by,
     )
 

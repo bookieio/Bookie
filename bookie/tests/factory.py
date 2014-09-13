@@ -79,12 +79,13 @@ def make_twitter_connection(username='admin'):
     return tconnection
 
 
-def make_bookmark(user=None):
+def make_bookmark(user=None, is_private=False):
     """Generate a fake bookmark for testing use."""
     bmark = Bmark(random_url(),
                   username=u"admin",
                   desc=random_string(),
                   ext=random_string(),
+                  is_private=is_private,
                   tags=u"bookmarks")
 
     if user:

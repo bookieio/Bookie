@@ -50,6 +50,7 @@ class TestBmarkMgrStats(TestDBBase):
             b = Bmark(
                 url=gen_random_word(12),
                 username=user.username,
+                is_private=True
             )
             b.hash_id = gen_random_word(3)
             DBSession.add(b)
@@ -113,6 +114,7 @@ class TestBmarkMgrStats(TestDBBase):
             b = Bmark(
                 url=gen_random_word(12),
                 username=users[i].username,
+                is_private=True
             )
             DBSession.add(b)
 
@@ -120,6 +122,7 @@ class TestBmarkMgrStats(TestDBBase):
         c = Bmark(
             url=common,
             username=users[3].username,
+            is_private=True
         )
         DBSession.add(c)
         DBSession.flush()
@@ -127,6 +130,7 @@ class TestBmarkMgrStats(TestDBBase):
         d = Bmark(
             url=common,
             username=users[4].username,
+            is_private=True,
         )
         DBSession.add(d)
         DBSession.flush()
@@ -192,12 +196,14 @@ class TestBmarkMgrStats(TestDBBase):
             b = Bmark(
                 url=gen_random_word(12),
                 username=user.username,
+                is_private=True,
             )
             DBSession.add(b)
 
         c = Bmark(
             url=gen_random_word(10),
             username=usercommon.username,
+            is_private=True,
         )
         DBSession.add(c)
         DBSession.flush()
@@ -205,6 +211,7 @@ class TestBmarkMgrStats(TestDBBase):
         d = Bmark(
             url=gen_random_word(10),
             username=usercommon.username,
+            is_private=True,
         )
         DBSession.add(d)
         DBSession.flush()
@@ -335,6 +342,7 @@ class TestBmarkMgrStats(TestDBBase):
             b = Bmark(
                 url=gen_random_word(12),
                 username=user.username,
+                is_private=True,
             )
             DBSession.add(b)
 

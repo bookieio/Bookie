@@ -395,7 +395,7 @@ class BmarkMgr(object):
         if username:
             qry = qry.filter(Bmark.username == username)
 
-        return qry.one()
+        return qry.first()
 
     @staticmethod
     def get_by_hash(hash_id, username=None):
@@ -415,20 +415,18 @@ class BmarkMgr(object):
              with_content=False, with_tags=True, requested_by=None):
         """Search for specific sets of bookmarks"""
         qry = Bmark.query
-        # qry = qry.join(Bmark.hashed).\
-        #     options(contains_eager(Bmark.hashed))
+        qry = qry.join(Bmark.hashed).\
+            options(contains_eager(Bmark.hashed))
 
         offset = limit * page
 
-        if requested_by != username:
+        # If noqa is not used here the below error occurs with make lint.
+        # comparison to False should be 'if cond is False:'
+        # or 'if not cond:'
+        if not requested_by:
             qry = qry.filter(Bmark.is_private == False)    # noqa
-            # If noqa is not used here the below error occurs with make lint.
-            # comparison to False should be 'if cond is False:'
-            # or 'if not cond:'
-
-        if with_content:
-            qry = qry.outerjoin(Bmark.readable).\
-                options(contains_eager(Bmark.readable))
+        elif requested_by != username:
+            qry = qry.filter(Bmark.is_private == False)    # noqa
 
         if username:
             qry = qry.filter(Bmark.username == username)
@@ -453,6 +451,14 @@ class BmarkMgr(object):
                     offset(offset).\
                     from_self()
             else:
+                if username:
+                    good_filter = and_(
+                        Bmark.bid == bmarks_tags.c.bmark_id,
+                        Bmark.username == username
+                    )
+                else:
+                    good_filter = (Bmark.bid == bmarks_tags.c.bmark_id)
+
                 bids_we_want = select(
                     [bmarks_tags.c.bmark_id.label('good_bmark_id')],
                     from_obj=[
@@ -463,7 +469,7 @@ class BmarkMgr(object):
                                 bmarks_tags.c.tag_id == Tag.tid
                             )
                         ).
-                        join('bmarks', Bmark.bid == bmarks_tags.c.bmark_id)
+                        join('bmarks', good_filter)
                     ]).\
                     group_by(bmarks_tags.c.bmark_id, Bmark.stored).\
                     having(
@@ -478,14 +484,17 @@ class BmarkMgr(object):
                 )
 
         # now outer join with the tags again so that we have the
-        # full list of tags for each bmark we filterd down to
+        # full list of tags for each bmark we filtered down to
         if with_tags:
             qry = qry.outerjoin(Bmark.tags).\
                 options(contains_eager(Bmark.tags))
 
-        qry = qry.options(joinedload('hashed'))
+        if with_content:
+            qry = qry.outerjoin(Bmark.readable).\
+                options(contains_eager(Bmark.readable))
 
-        return qry.all()
+        qry = qry.options(joinedload('hashed'))
+        return qry.order_by(order_by).all()
 
     @staticmethod
     def user_dump(username):
@@ -528,7 +537,7 @@ class BmarkMgr(object):
 
     @staticmethod
     def store(url, username, desc, ext, tags, dt=None, inserted_by=None,
-              is_private=True):
+              is_private=False):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -636,7 +645,7 @@ class Bmark(Base):
     stored = Column(DateTime, default=datetime.utcnow)
     updated = Column(DateTime, onupdate=datetime.utcnow)
     clicks = Column(Integer, default=0)
-    is_private = Column(Boolean, nullable=False, default=True)
+    is_private = Column(Boolean, nullable=False, default=False)
 
     # this could be chrome_extension, firefox_extension, website, browser XX,
     # import, etc
@@ -668,7 +677,7 @@ class Bmark(Base):
                         uselist=False)
 
     def __init__(self, url, username, desc=None, ext=None, tags=None,
-                 is_private=True):
+                 is_private=False):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark

@@ -20,7 +20,8 @@ class TestPrivateBmark(TestDBBase):
         user.username = gen_random_word(10)
         bmark = Bmark(
             url=gen_random_word(12),
-            username=user.username
+            username=user.username,
+            is_private=True,
         )
         self.assertEqual(
             True,
@@ -66,7 +67,8 @@ class TestPrivateBmark(TestDBBase):
             username=user.username,
             desc=bmark_desc,
             ext=bmark_ext,
-            tags=bmark_tags
+            is_private=True,
+            tags=bmark_tags,
         )
         self.assertEqual(
             True,
