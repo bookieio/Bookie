@@ -57,6 +57,10 @@ celery.conf.update(
             'task': 'bookie.bcelery.tasks.fetch_unfetched_bmark_content',
             'schedule': timedelta(seconds=60*60),
         },
+        'fulltext_missing': {
+            'task': 'bookie.bcelery.tasks.missing_fulltext_index',
+            'schedule': timedelta(seconds=60),
+        },
     }
 )
 

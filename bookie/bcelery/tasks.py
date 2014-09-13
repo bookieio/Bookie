@@ -21,6 +21,7 @@ from bookie.models import Bmark
 from bookie.models import BmarkMgr
 from bookie.models import Readable
 from bookie.models.auth import UserMgr
+from bookie.models.fulltext import get_fulltext_handler
 from bookie.models.social import SocialMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
@@ -294,6 +295,20 @@ def reindex_fulltext_allbookmarks(sync=False):
             fulltext_index_bookmark(b.bid, None)
         else:
             fulltext_index_bookmark.delay(b.bid, None)
+
+
+@celery.task(ignore_result=True)
+def missing_fulltext_index(sync=False):
+    """Find and add fulltext for bookmarks missing from fulltext."""
+    logger.debug("Searching for missing fulltext bookmarks")
+    bookmarks = Bmark.query.limit(500).all()
+    searcher = get_fulltext_handler(None)
+
+    for bmark in bookmarks:
+        if searcher.findByID(bmark.bid):
+            continue
+        else:
+            fulltext_index_bookmark.delay(bmark.bid, None)
 
 
 @celery.task(ignore_result=True)

@@ -1032,6 +1032,9 @@ YUI.add('bookie-view', function (Y) {
                         data.count);
                     cont.one('#bookmark_stats_unique_count').setContent(
                         data.unique_count);
+                    cont.one('#bookmark_stats_fulltext_count').setContent(
+                        data.in_fulltext);
+
                     cont.one('#bookmark_stats_msg').setContent('');
                 },
                 error: function (data, status_str, response, args) {
