@@ -25,6 +25,11 @@
         <span class="label">Unique Urls:</span>
         <span id="bookmark_stats_unique_count"></span>
     </li>
+    <li>
+        <span class="label">Fulltext Urls:</span>
+        <span id="bookmark_stats_fulltext_count"></span>
+    </li>
+
 </ul>
 </div>
 <%def name="add_js()">

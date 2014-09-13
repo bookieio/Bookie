@@ -88,6 +88,20 @@ class WhooshFulltext(object):
     """
     global WIX
 
+    def doc_count(self):
+        with WIX.searcher() as search:
+            return search.doc_count()
+
+    def findByID(self, bid):
+        """Find the item in the fulltext index by id"""
+        with WIX.searcher() as search:
+            found = search.documents(bid=unicode(bid))
+            res = [b for b in found]
+        if res:
+            return res[0]
+        else:
+            return None
+
     def search(self, phrase, content=False, username=None, ct=10, page=0,
                requested_by=None):
         """Implement the search, returning a list of bookmarks"""

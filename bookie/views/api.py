@@ -80,9 +80,12 @@ def bookmark_stats(request):
     """Return all the bookmark stats"""
     bookmark_count = BmarkMgr.count()
     unique_url_count = BmarkMgr.count(distinct=True)
+    search = get_fulltext_handler(None)
+
     return _api_response(request, {
         'count': bookmark_count,
-        'unique_count': unique_url_count
+        'unique_count': unique_url_count,
+        'in_fulltext': search.doc_count()
     })
 
 
