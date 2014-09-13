@@ -55,7 +55,7 @@ celery.conf.update(
         },
         'fetch_unfetched': {
             'task': 'bookie.bcelery.tasks.fetch_unfetched_bmark_content',
-            'schedule': timedelta(seconds=60),
+            'schedule': timedelta(seconds=60*60),
         },
     }
 )

@@ -47,7 +47,7 @@ class TestTagMgrStats(TestDBBase):
         bmark_ext = u'Some extended notes'
 
         # Store the bookmark.
-        bmark = make_bookmark()
+        bmark = make_bookmark(is_private=True)
         bmark.url = bmark_url
         bmark.username = user.username
         bmark.description = bmark_desc
@@ -82,7 +82,7 @@ class TestTagMgrStats(TestDBBase):
         bmark_ext = u'Some extended notes'
 
         # Store the bookmark.
-        bmark = make_bookmark()
+        bmark = make_bookmark(is_private=True)
         bmark.url = bmark_url
         bmark.username = user.username
         bmark.description = bmark_desc
@@ -116,7 +116,7 @@ class TestTagMgrStats(TestDBBase):
         bmark_ext = u'Some extended notes'
 
         # Store the bookmark.
-        bmark = make_bookmark()
+        bmark = make_bookmark(is_private=True)
         bmark.url = bmark_url
         bmark.username = user.username
         bmark.description = bmark_desc
@@ -157,7 +157,7 @@ class TestTagMgrStats(TestDBBase):
         bmark_ext = u'Some extended notes'
 
         # Store the bookmark.
-        bmark = make_bookmark()
+        bmark = make_bookmark(is_private=True)
         bmark.url = bmark_url
         bmark.username = user.username
         bmark.description = bmark_desc
@@ -197,7 +197,7 @@ class TestTagMgrStats(TestDBBase):
         bmark_ext = u'Some extended notes'
 
         # Store the bookmark.
-        bmark = make_bookmark()
+        bmark = make_bookmark(is_private=True)
         bmark.url = bmark_url
         bmark.username = user.username
         bmark.description = bmark_desc
