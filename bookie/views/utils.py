@@ -184,23 +184,24 @@ class ImportViews(BookieView):
         mdict = self.matchdict
         username = mdict.get('username')
 
-        if self.request.user is not None:
-            current_user = self.request.user.username
-        else:
-            current_user = None
+        with ReqAuthorize(self.request, username):
+            if self.request.user is not None:
+                current_user = self.request.user.username
+            else:
+                current_user = None
 
-        bmark_list = BmarkMgr.user_dump(username)
-        BmarkLog.export(username, current_user)
+            bmark_list = BmarkMgr.user_dump(username, current_user)
+            BmarkLog.export(username, current_user)
 
-        self.request.response_content_type = 'text/html'
+            self.request.response_content_type = 'text/html'
 
-        headers = [('Content-Disposition',
-                    'attachment; filename="bookie_export.html"')]
-        setattr(self.request, 'response_headerlist', headers)
+            headers = [('Content-Disposition',
+                        'attachment; filename="bookie_export.html"')]
+            setattr(self.request, 'response_headerlist', headers)
 
-        return {
-            'bmark_list': bmark_list,
-        }
+            return {
+                'bmark_list': bmark_list,
+            }
 
     @view_config(route_name="redirect", renderer="/utils/redirect.mako")
     @view_config(route_name="user_redirect", renderer="/utils/redirect.mako")

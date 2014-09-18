@@ -52,6 +52,7 @@ class TestExport(TestViewBase):
         """Test that we can upload/import our test file"""
         self._get_good_request()
 
+        self._login_admin()
         res = self.app.get(
             '/api/v1/admin/bmarks/export?api_key={0}'.format(
                 self.api_key),
@@ -71,6 +72,7 @@ class TestExport(TestViewBase):
         """Test that we can upload/import our test file"""
         self._get_good_request_wo_tags()
 
+        self._login_admin()
         res = self.app.get(
             '/api/v1/admin/bmarks/export?api_key={0}'.format(
                 self.api_key),
@@ -91,7 +93,8 @@ class TestExport(TestViewBase):
         export"""
         self._get_good_request()
 
-        res = self.app.get('/admin/export', status=200)
+        self._login_admin()
+        res = self.app.get('/admin/export?api_key=' + self.api_key, status=200)
 
         self.assertTrue(
             "google.com" in res.body,
@@ -105,8 +108,8 @@ class TestExport(TestViewBase):
         """Test that we get IS_PRIVATE attribute for each bookmark during
         export"""
         self._get_good_request(is_private=True)
-
-        res = self.app.get('/admin/export', status=200)
+        self._login_admin()
+        res = self.app.get('/admin/export?api_key=' + self.api_key, status=200)
 
         self.assertTrue(
             "google.com" in res.body,
