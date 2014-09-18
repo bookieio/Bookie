@@ -492,7 +492,7 @@ def bmark_export(request):
     """
     username = request.user.username
 
-    bmark_list = BmarkMgr.user_dump(username)
+    bmark_list = BmarkMgr.user_dump(username, username)
     # log that the user exported this
     BmarkLog.export(username, username)
 

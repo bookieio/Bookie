@@ -497,11 +497,11 @@ class BmarkMgr(object):
         return qry.order_by(order_by).all()
 
     @staticmethod
-    def user_dump(username):
+    def user_dump(username, requested_by):
         """Get a list of all of the user's bookmarks for an export dump usually
 
         """
-        return Bmark.query.outerjoin(Bmark.tags).\
+        qry = Bmark.query.outerjoin(Bmark.tags).\
             options(
                 contains_eager(Bmark.tags)
             ).\
@@ -509,7 +509,12 @@ class BmarkMgr(object):
             options(
                 contains_eager(Bmark.hashed)
             ).\
-            filter(Bmark.username == username).all()
+            filter(Bmark.username == username)
+
+        if requested_by != username:
+            qry = qry.filter(Bmark.is_private == False)  # noqa
+
+        return qry.all()
 
     @staticmethod
     def popular(limit=50, page=0, with_tags=False):
