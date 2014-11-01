@@ -14,10 +14,13 @@ API_KEY = None
 class TestExport(TestViewBase):
     """Test the web export"""
 
-    def _get_good_request(self, is_private=False):
+    def _get_good_request(self, is_private=False, url=None):
         """Return the basics for a good add bookmark request"""
+        if not url:
+            url = u'http://google.com'
+
         prms = {
-            'url': u'http://google.com',
+            'url': url,
             'description': u'This is my google desc',
             'extended': u'And some extended notes about it in full form',
             'tags': u'python search',
@@ -118,3 +121,30 @@ class TestExport(TestViewBase):
         self.assertTrue(
             'PRIVATE="1"' in res.body,
             "Bookmark should be a private bookmark: " + res.body)
+
+    def test_export_view_is_sorted(self):
+        """Test that we get bookmarks sorted by 'stored' attribute in descending order
+        during export"""
+        self._get_good_request()
+        self._get_good_request(url=u"https://twitter.com")
+        self._get_good_request(url=u"https://github.com")
+        res = self.app.get(
+            '/api/v1/admin/bmarks/export?api_key={0}'.format(
+                self.api_key),
+            status=200)
+
+        data = json.loads(res.body)
+
+        self.assertEqual(
+            3,
+            data['count'],
+            msg="Should be three results: " + str(data['count']))
+
+        res_bmarks = data['bmarks']
+        sorted_bmarks = sorted(res_bmarks, key=lambda k: k['stored'], reverse=True)
+
+        self.assertEqual(
+            res_bmarks,
+            sorted_bmarks,
+            msg="Bookmarks should be sorted in descending order"
+        )
