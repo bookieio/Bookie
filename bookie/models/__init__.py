@@ -514,6 +514,8 @@ class BmarkMgr(object):
         if requested_by != username:
             qry = qry.filter(Bmark.is_private == False)  # noqa
 
+        qry = qry.order_by(Bmark.stored.desc())
+
         return qry.all()
 
     @staticmethod
