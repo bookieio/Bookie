@@ -1294,3 +1294,28 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(
             'with_bookmarks' in data,
             "Should have count of users with bookmarks: " + str(data))
+            
+    def test_tag_search_casing(self):
+        """Test that search works same with all types of casing"""
+
+        # Adding the tags 'python' and 'search'
+        self._get_good_request()
+
+        # Testing the tag 'python' and 'search' with different cases
+        word_list = ['python', 'Python', 'pYthon', 'PYTHoN', 'pythON',
+                     'PythON', 'pYthON', 'PYthON', 'pYTHON', 'PYTHON']
+        word_list += ['search', 'Search', 'sEARCh', 'SEARCh', 'searcH',
+                      'searCH', 'SearCH', 'sEarCH', 'seARCH', 'SEARCH']
+
+        for word in word_list:
+            res = self.testapp.get(
+                u'/api/v1/admin/bmarks/{0}?&api_key={1}'.format(
+                    word, API_KEY),
+                status=200)
+            data = json.loads(res.body)
+
+            self.assertTrue(
+                data['count'] > 0,
+                "Should have found > 0 bookmarks")
+
+        self._check_cors_headers(res)
