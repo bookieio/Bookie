@@ -28,3 +28,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Jelmer Vernooij
 - Kyle Adams
 - Surya Pappoppula
+- Yash Mehrotra
