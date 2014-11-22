@@ -441,7 +441,7 @@ class BmarkMgr(object):
                 from_self()
 
         if tags:
-            tags = [tag.lower() for tag in tags] # For case matching
+            tags = [tag.lower() for tag in tags]  # For case matching
             qry = qry.join(Bmark.tags).\
                 options(contains_eager(Bmark.tags))
 
