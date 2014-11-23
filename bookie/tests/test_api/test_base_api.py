@@ -1294,7 +1294,7 @@ class BookieAPITest(unittest.TestCase):
         self.assertTrue(
             'with_bookmarks' in data,
             "Should have count of users with bookmarks: " + str(data))
-            
+
     def test_tag_search_casing(self):
         """Test that search works same with all types of casing"""
 
