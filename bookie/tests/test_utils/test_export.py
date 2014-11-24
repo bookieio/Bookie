@@ -15,7 +15,7 @@ API_KEY = None
 class TestExport(TestViewBase):
     """Test the web export"""
 
-    def _get_good_request(self, is_private=False, url=False, dt=None):
+    def _get_good_request(self, is_private=False, url=None, dt=None):
         """Return the basics for a good add bookmark request"""
         if not url:
             url = u'http://google.com'
@@ -58,8 +58,8 @@ class TestExport(TestViewBase):
         iso_format = "{year}-{month}-{day}T{hour}:{minute}:{second}Z"
         year_range = [str(i) for i in range(1900, 2014)]
         month_range = [str(i).zfill(2) for i in range(1, 13)]
-        day_range = [str(i).zfill(2) for i in range(1,28)]
-        hour_range = [str(i).zfill(2) for i in range(1,25)]
+        day_range = [str(i).zfill(2) for i in range(1, 28)]
+        hour_range = [str(i).zfill(2) for i in range(1, 25)]
         min_range = [str(i).zfill(2) for i in range(1, 60)]
 
         args = {
@@ -147,9 +147,12 @@ class TestExport(TestViewBase):
     def test_export_view_is_sorted(self):
         """Test that we get bookmarks sorted by 'stored' attribute during
         export"""
-        self._get_good_request(url=u'https://google.com', dt=self._get_random_date())
-        self._get_good_request(url=u'https://twitter.com', dt=self._get_random_date())
-        self._get_good_request(url=u'https://github.com', dt=self._get_random_date())
+        self._get_good_request(url=u'https://google.com',
+                               dt=self._get_random_date())
+        self._get_good_request(url=u'https://twitter.com',
+                               dt=self._get_random_date())
+        self._get_good_request(url=u'https://github.com',
+                               dt=self._get_random_date())
 
         res = self.app.get(
             '/api/v1/admin/bmarks/export?api_key={0}'.format(
@@ -164,7 +167,9 @@ class TestExport(TestViewBase):
             msg="Should be three results: " + str(data['count']))
 
         res_bmarks = data['bmarks']
-        sorted_bmarks = sorted(res_bmarks, key=lambda k: k['stored'], reverse=True)
+        sorted_bmarks = sorted(res_bmarks,
+                               key=lambda k: k['stored'],
+                               reverse=True)
 
         self.assertEqual(
             res_bmarks,
