@@ -9,8 +9,10 @@ from bookie.models import DBSession
 from bookie.models import Tag
 from bookie.models import stats
 from bookie.models.auth import User
-from bookie.models.auth import UserMgr
-from bookie.models.auth import Activation
+from bookie.models.auth import (
+    UserMgr,
+    Activation,
+)
 from bookie.models.stats import StatBookmark
 
 from bookie.tests import empty_db
@@ -124,12 +126,12 @@ class BCeleryTaskTest(TestDBBase):
         self.assertEqual(
             4,
             len(users),
-            'We should have a total of 3 users : ' + str(len(users))
+            'We should have a total of 4 users : ' + str(len(users))
         )
         self.assertEqual(
             3,
             len(activations),
-            'We should have a total of 2 activations: ' + str(len(activations))
+            'We should have a total of 3 activations: ' + str(len(activations))
         )
         new_user.activation.valid_until = datetime.utcnow() - timedelta(days=35)
         tasks.delete_non_activated_account()
