@@ -16,7 +16,7 @@ Submit a new bookmark for storing
 :post param: description
 :post param: extended
 :post param: tags - space separated tag string
-:post param: content - html content of the page to readable parse
+:post param: content - html content of the page to be parsed as the readable version. if not provided, will be rendered by the celery job at some point in the future (or never if celery is not running).
 :post param: is_private - specifies whether the bookmark is private or not. By default the bookmarks are stored as private
 
 Status Codes
