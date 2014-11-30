@@ -51,3 +51,8 @@ Developing
 -----------
 If you wish to hack on Bookie with the rest of us please check out the
 `HACKING.rst` doc in this tree.
+
+Related
+-------
+
+The [Willie](http://willie.dftba.net/) bot has a [contrib module to post bookmarks from IRC](https://github.com/anarcat/willie-extras/blob/bookie/bookie.py).
