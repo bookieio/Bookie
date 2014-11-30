@@ -55,4 +55,4 @@ If you wish to hack on Bookie with the rest of us please check out the
 Related
 -------
 
-The [Willie](http://willie.dftba.net/) bot has a [contrib module to post bookmarks from IRC](https://github.com/anarcat/willie-extras/blob/bookie/bookie.py).
+The [Willie](http://willie.dftba.net/) bot has a [contrib module to post bookmarks from IRC](https://github.com/anarcat/willie-extras/blob/bookie/bookie.py). It is [not yet part of the extras repository](https://github.com/embolalia/willie-extras/pull/55).
