@@ -133,7 +133,7 @@ class BCeleryTaskTest(TestDBBase):
             len(activations),
             'We should have a total of 3 activations: ' + str(len(activations))
         )
-        new_user.activation.valid_until = datetime.utcnow() - timedelta(days=35)
+        new_user.activation.valid_until = datetime.utcnow()-timedelta(days=35)
         tasks.delete_non_activated_account()
         users = User.query.all()
         activations = Activation.query.all()
