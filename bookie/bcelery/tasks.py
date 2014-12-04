@@ -74,7 +74,7 @@ def delete_non_activated_account():
     """Delete user accounts which are not verified since
     30 days of signup"""
     trans = transaction.begin()
-    UserMgr.delete_non_activated_account()
+    UserMgr.non_activated_account(delete=True)
     trans.commit()
 
 
