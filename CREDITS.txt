@@ -29,3 +29,4 @@ Thanks to these people that have contributed code/assistance to bookie
 - Kyle Adams
 - Surya Pappoppula
 - Yash Mehrotra
+- Anish Shah
