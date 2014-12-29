@@ -123,3 +123,28 @@ class TestAuthWeb(TestCase):
         self.assertTrue(
             'Failed login' in str(res),
             "Should have 'Failed login' in the resp: " + str(res))
+
+    def test_login_after_successful_login(self):
+        """Verify it redirects to the user's /recent after
+        succesful login"""
+
+        user_data = {
+            'login': u'admin',
+            'password': u'admin',
+            'form.submitted': u'true'
+        }
+
+        res = self.testapp.post('/login',
+                                params=user_data)
+
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='status is 302 Found, ' + res.status)
+
+        res = self.testapp.get('/login')
+
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='status is 302 Found, ' + res.status)

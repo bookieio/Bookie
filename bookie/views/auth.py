@@ -14,6 +14,7 @@ from bookie.lib.applog import AuthLog
 from bookie.models import IntegrityError
 from bookie.models.auth import UserMgr
 from bookie.models.auth import ActivationMgr
+from bookie.models.auth import User
 
 LOG = logging.getLogger(__name__)
 
@@ -81,6 +82,12 @@ def login(request):
         elif auth is None:
             message = "Failed login"
             AuthLog.login(login, False, password=password)
+
+    if isinstance(request.user, User):
+        return HTTPFound(
+            location=request.route_url(
+                'user_bmark_recent',
+                username=request.user.username))
 
     return {
         'message': message,
