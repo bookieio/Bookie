@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import tweepy
+import requests
 from celery.utils.log import get_task_logger
 
 from bookie.bcelery.celery import celery
@@ -321,6 +322,13 @@ def process_twitter_connections(username=None):
 
 
 @celery.task(ignore_result=True)
+def process_github_connections(username=None):
+    """Run github fetch for required usernames"""
+    for connection in SocialMgr.get_github_connections(username):
+        fetch_starred_repos(connection)
+
+
+@celery.task(ignore_result=True)
 def fetch_unfetched_bmark_content(ignore_result=True):
     """Check the db for any unfetched content. Fetch and index."""
     logger.info("Checking for unfetched bookmarks")
@@ -427,5 +435,25 @@ def fetch_tweets(twitter_user, connection):
                     BmarkMgr.store(expanded_url, connection.username,
                                    title, '', 'twitter')
         SocialMgr.update_last_tweet_data(connection, tweets[0].id)
+    else:
+        pass
+
+
+@celery.task(ignore_result=True)
+def fetch_starred_repos(connection):
+    access_token = connection.access_token
+    params = {'access_token': access_token}
+    url = 'https://api.github.com/user/starred'
+    res = requests.get(url, params=params)
+    starred_repos = res.json()
+    if starred_repos:
+        for repo in starred_repos:
+            url, title = repo['html_url'], repo['name']
+            description = repo['description']
+            new = BmarkMgr.get_by_url(
+                url, connection.username)
+            if not new:
+                BmarkMgr.store(url, connection.username,
+                               title, description, 'github')
     else:
         pass

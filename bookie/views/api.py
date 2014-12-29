@@ -1028,6 +1028,21 @@ def twitter_refresh(request):
     return _api_response(request, ret)
 
 
+@view_config(route_name="api_admin_github_refresh", renderer="jsonp")
+@view_config(route_name="api_admin_github_refresh_all", renderer="jsonp")
+@api_auth('api_key', UserMgr.get, admin_only=True)
+def github_refresh(request):
+    """Update starred repos fetched from user account"""
+    mdict = request.matchdict
+    username = mdict.get('username', None)
+    tasks.process_github_connections(username)
+    ret = {
+        'success': True,
+        'message': "running bot to fetch user's tweets"
+    }
+    return _api_response(request, ret)
+
+
 @view_config(route_name="api_admin_readable_reindex", renderer="jsonp")
 @api_auth('api_key', UserMgr.get, admin_only=True)
 def readable_reindex(request):
