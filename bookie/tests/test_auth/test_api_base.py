@@ -124,9 +124,9 @@ class TestAuthWeb(TestCase):
             'Failed login' in str(res),
             "Should have 'Failed login' in the resp: " + str(res))
 
-    def test_login_after_successful_login(self):
-        """Verify it redirects to the user's /recent after
-        succesful login"""
+    def test_redirect_for_authenticated_user(self):
+        """Verify if authenticated user gets redirect when
+        it hits login URL"""
 
         user_data = {
             'login': u'admin',
