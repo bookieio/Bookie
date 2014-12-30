@@ -48,7 +48,10 @@ def get_github_access_token(github_client_id, github_client_secret, code):
     url = 'https://github.com/login/oauth/access_token'
     res = requests.post(url, headers=headers, params=params)
     data = res.json()
-    return data['access_token']
+    try:
+        return data['access_token']
+    except:
+        raise KeyError("The code passed is incorrect or expired")
 
 
 def get_github_user_data(access_token):

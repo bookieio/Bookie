@@ -26,6 +26,7 @@ from bookie.models.fulltext import get_fulltext_handler
 from bookie.models.social import SocialMgr
 from bookie.models.stats import StatBookmarkMgr
 from bookie.models.queue import ImportQueueMgr
+from requests.exceptions import ConnectionError
 
 from .celery import load_ini
 
@@ -444,16 +445,19 @@ def fetch_starred_repos(connection):
     access_token = connection.access_token
     params = {'access_token': access_token}
     url = 'https://api.github.com/user/starred'
-    res = requests.get(url, params=params)
-    starred_repos = res.json()
-    if starred_repos:
-        for repo in starred_repos:
-            url, title = repo['html_url'], repo['name']
-            description = repo['description']
-            new = BmarkMgr.get_by_url(
-                url, connection.username)
-            if not new:
-                BmarkMgr.store(url, connection.username,
-                               title, description, 'github')
-    else:
-        pass
+    try:
+        res = requests.get(url, params=params)
+        starred_repos = res.json()
+        if starred_repos:
+            for repo in starred_repos:
+                url, title = repo['html_url'], repo['name']
+                description = repo['description']
+                new = BmarkMgr.get_by_url(
+                    url, connection.username)
+                if not new:
+                    BmarkMgr.store(url, connection.username,
+                                   title, description, 'github')
+        else:
+            pass
+    except ConnectionError:
+        logger.error("Github connection denied")

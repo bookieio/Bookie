@@ -39,3 +39,17 @@ class TestSocialOauthView(TestViewBase):
         self.assertTrue(
             error_msg in res.body,
             'Denied message displayed to the user.')
+
+    def test_github_access_token(self):
+        """Verify that if the code is wrong/expired,
+        Github API returns an error"""
+        self._login_admin()
+        res = self.app.get('/oauth/github_connect',
+                           params={
+                               'code': 'dummy'
+                           },
+                           status=200)
+        error_msg = 'The code passed is incorrect or expired'
+        self.assertTrue(
+            error_msg in res.body,
+            'Denied message displayed to the user.')

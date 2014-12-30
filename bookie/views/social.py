@@ -14,6 +14,7 @@ from bookie.models.social import (
     SocialMgr,
     TwitterConnection,
     GithubConnection)
+from requests.exceptions import ConnectionError
 
 LOG = logging.getLogger(__name__)
 
@@ -101,9 +102,20 @@ def github_connect(request):
     code = request.params.get('code', False)
     if code:
         # Github API uses two factor authentication. First get access token
-        access_token = get_github_access_token(github_client_id,
-                                               github_client_secret,
-                                               code)
+        try:
+            access_token = get_github_access_token(github_client_id,
+                                                   github_client_secret,
+                                                   code)
+        except KeyError:
+            LOG.error('Incorrect or expired code passed')
+            return{
+                'result': 'The code passed is incorrect or expired'
+            }
+        except ConnectionError:
+            LOG.error('Github Connection denied')
+            return{
+                'result': 'Github has returned an error. Try connecting again'
+            }
 
         # First make sure these credentials do not exist for another user.
         found = GithubConnection.query.filter(
@@ -115,7 +127,13 @@ def github_connect(request):
 
         # After making sure that same credentials are not provided by other
         # user, get github user data and save it in GithubConnection table
-        github_user = get_github_user_data(access_token)
+        try:
+            github_user = get_github_user_data(access_token)
+        except ConnectionError:
+            LOG.error('Github Connection denied')
+            return{
+                'result': 'Github has returned an error. Try connecting again'
+            }
 
         connections = GithubConnection.query.filter(
             GithubConnection.uid == unicode(github_user['id'])).all()
