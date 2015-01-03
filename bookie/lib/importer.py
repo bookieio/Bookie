@@ -10,7 +10,7 @@ from dateutil import parser as dateparser
 from BeautifulSoup import BeautifulSoup
 from lxml import etree
 from lxml.etree import XMLSyntaxError
-
+from HTMLParser import HTMLParser
 from bookie.lib.urlhash import generate_hash
 from bookie.models import (
     BmarkMgr,
@@ -167,6 +167,7 @@ class DelImporter(Importer):
     def process(self):
         """Given a file, process it"""
         soup = BeautifulSoup(self.file_handle)
+        htmlParser = HTMLParser()
         count = 0
 
         ids = []
@@ -196,7 +197,7 @@ class DelImporter(Importer):
             try:
                 bmark = self.save_bookmark(
                     unicode(link['href']),
-                    unicode(link.text),
+                    unicode(htmlParser.unescape(link.text)),
                     unicode(extended),
                     u" ".join(unicode(link.get('tags', '')).split(u',')),
                     dt=add_date,
@@ -377,6 +378,7 @@ class GBookmarkImporter(Importer):
         if not soup.contents[0] == "DOCTYPE NETSCAPE-Bookmark-file-1":
             raise Exception("File is not a google bookmarks file")
 
+        htmlParser = HTMLParser()
         urls = dict()  # url:url_metadata
 
         # we don't want to just import all the available urls, since each url
@@ -417,7 +419,7 @@ class GBookmarkImporter(Importer):
                             link['add_date'] = time.time()
 
                         urls[url] = {
-                            'description': link.text,
+                            'description': htmlParser.unescape(link.text),
                             'tags': tags,
                             'extended': extended,
                             'date_added': datetime.fromtimestamp(

@@ -49,6 +49,8 @@ class TestImports(unittest.TestCase):
 
         # verify we can find a bookmark by url and check tags, etc
         check_url = u'http://www.ndftz.com/nickelanddime.png'
+        url_description = u'nickelanddime.png (PNG Image, 1200x1400 pixels)' \
+                          u' - Scaled (64%) - "Test"'
         check_url_hashed = generate_hash(check_url)
         found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
@@ -72,6 +74,12 @@ class TestImports(unittest.TestCase):
         self.assertTrue(
             "description" in found.extended,
             "The extended attrib should have a nice long string in it")
+
+        # verify html entities in descriptioin are decoded
+        self.assertEqual(
+            url_description,
+            found.description,
+            "The description of URL should not have any XML/HTML entities")
 
     def _delicious_xml_data_test(self):
         """Test that we find the correct google bmark data after import"""
@@ -120,6 +128,7 @@ class TestImports(unittest.TestCase):
         # verify we can find a bookmark by url and check tags, etc
         check_url = 'http://www.alistapart.com/'
         check_url_hashed = generate_hash(check_url)
+        url_description = u'A List Apart "Test"'
         found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
 
         self.assertTrue(
@@ -138,6 +147,12 @@ class TestImports(unittest.TestCase):
         self.assertTrue(
             "make websites" in found.extended,
             "'make websites' should be in the extended description")
+
+        # verify html entities in descriptioin are decoded
+        self.assertEqual(
+            url_description,
+            found.description,
+            "The description of URL should not have any XML/HTML entities")
 
     def _chrome_data_test(self):
         """Test that we find the correct Chrome bmark data after import"""
