@@ -102,6 +102,25 @@ ${account_nav()}
 ${password_reset(user, reset=False)}
 
 <div class="form">
+    <div class="heading">Social Profiles</div>
+    <table>
+        % if connections:
+        % for connection in connections:
+        % if connection.type == 'TwitterConnection':
+        <tr>
+            <td style="border: 0px; width: 120px"><img src="/static/images/twitter-icon.png" style="padding: 0 5px;">Twitter</td>
+            <td style="border: 0px;">Connected as:
+                <a href="http://twitter.com/${connection.twitter_username}"> @${connection.twitter_username}
+            </td>
+        </tr>
+        % endif
+        % endfor
+        % endif
+    </table>
+    <a href="/oauth/twitter_connect">Add Twitter Profile</a>
+</div>
+
+<div class="form">
     <div class="heading"><img src="/static/images/logo.128.svg" style="height: 16px; padding: 0 5px;" alt="Bookie Extensions"/>Extensions</div>
     <p>We have browser extensions that work with Bookie for:</p>
     <ul>
