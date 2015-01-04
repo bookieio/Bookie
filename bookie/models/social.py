@@ -12,6 +12,7 @@ from bookie.models import Base
 from bookie.models import DBSession
 
 twitter_connection = 'TwitterConnection'
+github_connection = 'GithubConnection'
 
 
 class SocialMgr(object):
@@ -45,6 +46,29 @@ class SocialMgr(object):
             refresh_date=credentials['refresh_date'])
         DBSession.add(tconnection)
         return tconnection
+
+    @staticmethod
+    def get_github_connections(username=None):
+        """ Returns all twitter connections based on username """
+        if username:
+            connections = GithubConnection.query.filter(
+                GithubConnection.username == username).all()
+        else:
+            connections = GithubConnection.query.all()
+        return connections
+
+    @staticmethod
+    def store_github_connection(username, credentials):
+        githubconnection = GithubConnection(
+            username=username,
+            is_active=credentials['is_active'],
+            last_connection=credentials['last_connection'],
+            uid=credentials['uid'],
+            access_token=credentials['access_token'],
+            github_username=credentials['github_username'],
+            refresh_date=credentials['refresh_date'])
+        DBSession.add(githubconnection)
+        return githubconnection
 
     @staticmethod
     def update_last_tweet_data(connection, tweet_id):
@@ -97,3 +121,21 @@ class TwitterConnection(BaseConnection):
         social_info['refresh_date'] = str(self.refresh_date)
         yield('twitter_connection', social_info)
         yield('last_connection', str(self.last_connection))
+
+
+class GithubConnection(BaseConnection):
+    """ Table to store User Github information """
+    __tablename__ = github_connection
+
+    connection_id = Column(Integer, ForeignKey('BaseConnection.id'),
+                           primary_key=True)
+
+    # User Github Data
+    uid = Column(Unicode(255))
+    access_token = Column(Unicode(255))
+    github_username = Column(Unicode(255))
+    refresh_date = Column(DateTime)
+
+    __mapper_args__ = {
+        'polymorphic_identity': github_connection
+    }

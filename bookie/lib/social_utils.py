@@ -30,3 +30,34 @@ def get_url_title(url):
         return webpage.url, parsed_html.title.string
     except:
         return url, ''
+
+
+def create_github_OAuthHandler(github_client_id):
+    """Return Github link to get OAuth permission for Bookie"""
+    auth_url = 'https://github.com/login/oauth/authorize'
+    return '%s?client_id=%s' % (auth_url, github_client_id)
+
+
+def get_github_access_token(github_client_id, github_client_secret, code):
+    """Return access token of github user"""
+    params = {'client_id': github_client_id,
+              'client_secret': github_client_secret,
+              'code': code}
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json'}
+    url = 'https://github.com/login/oauth/access_token'
+    res = requests.post(url, headers=headers, params=params)
+    data = res.json()
+    try:
+        return data['access_token']
+    except:
+        raise KeyError("The code passed is incorrect or expired")
+
+
+def get_github_user_data(access_token):
+    """Return details of authenticated user to save in database"""
+    params = {'access_token': access_token}
+    url = 'https://api.github.com/user'
+    res = requests.get(url, params=params)
+    user_data = res.json()
+    return user_data

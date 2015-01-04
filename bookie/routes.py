@@ -90,6 +90,7 @@ def build_routes(config):
 
     # oauth urls
     config.add_route("twitter_connect", "oauth/twitter_connect")
+    config.add_route("github_connect", "oauth/github_connect")
 
     #
     # NEW API
@@ -212,6 +213,14 @@ def build_routes(config):
     config.add_route(
         "api_admin_twitter_refresh",
         "/api/v1/a/social/twitter_refresh/{username}",
+        request_method="GET")
+    config.add_route(
+        "api_admin_github_refresh_all",
+        "/api/v1/a/social/github_refresh/all",
+        request_method="GET")
+    config.add_route(
+        "api_admin_github_refresh",
+        "/api/v1/a/social/github_refresh/{username}",
         request_method="GET")
 
     config.add_route(
