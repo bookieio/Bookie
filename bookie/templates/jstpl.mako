@@ -1,3 +1,6 @@
+<%
+    app_path = request.route_path('home').rstrip('/')
+%>
 <script type="text/template" id="bmark_row">
     <div class="tags">
         {{#each tags}}
@@ -7,9 +10,9 @@
 
     <div class="description">
     {{#if username}}
-        <a href="/{{username}}/redirect/{{hash_id}}"
+        <a href="${app_path}/{{username}}/redirect/{{hash_id}}"
     {{else}}
-        <a href="/redirect/{{hash_id}}"
+        <a href="${app_path}/redirect/{{hash_id}}"
     {{/if}}
             title="{{extended}}">
             <img class="favicon" src="https://s2.googleusercontent.com/s2/favicons?domain={{domain}}" />
@@ -27,7 +30,7 @@
     <div class="actions">
         <span class="days-ago">{{prettystored}}</span>
 
-        <a href="/bmark/readable/{{hash_id}}"
+        <a href="${app_path}/bmark/readable/{{hash_id}}"
            title="View readable content"
            alt="View readable content"
            class="readable">
@@ -36,7 +39,7 @@
         </a>
 
         {{#if owner}}
-            <a href="/{{username}}/edit/{{hash_id}}"
+            <a href="${app_path}/{{username}}/edit/{{hash_id}}"
                 title="Edit the bookmark" alt="Edit the bookmark"
                 class="edit">
                 <span aria-hidden="true" class="icon icon-pencil"></span>
@@ -52,11 +55,11 @@
     </div>
     {{#unless owner}}
         <div class="user">
-            <a href="/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
+            <a href="${app_path}/{{username}}/recent" title="View {{username}}'s bookmarks">{{username}}</a>
         </div>
     {{/unless}}
     <div class="url" title="{{url}}">
-        <a href="/bmark/readable/{{hash_id}}"
+        <a href="${app_path}/bmark/readable/{{hash_id}}"
            title="View readable content" alt="View readable content">
            <span aria-hidden="true" class="icon icon-eye-open"></span>
            <em class="icon">View readable content</em>
@@ -88,7 +91,7 @@
 
         {{#if current_user}}
             <div class="buttons add" style="display: inline-block; vertical-align: middle;">
-                <a href="/{{current_user}}/new"
+                <a href="${app_path}/{{current_user}}/new"
                     class="button">
                     <span class="icon icon-plus"
                     aria-hidden="true"></span> <span class="desc">Add Bookmark</span>
@@ -154,11 +157,11 @@
             <span aria-hidden="true" class="icon icon-share" title="import your bookmarks"></span>
             <em class="icon">import your bookmarks</em>
             You can import your bookmarks from Delicious or Google Bookmarks by going to
-            the <a href="/{{username}}/import">import page</a>.
+            the <a href="${app_path}/{{username}}/import">import page</a>.
         </p>
 
         <p>
-        <img src="/static/images/logo.128.svg" style="height: 32px; padding: 0
+        <img src="${app_path}/static/images/logo.128.svg" style="height: 32px; padding: 0
         5px;" alt="Google Chrome Extension"/> You might want to get a hold of the <a
         href="https://chrome.google.com/webstore/detail/knnbmilfpmbmlglpeemajjkelcbaaega">extension
         for Google Chrome</a> which will help you save pages to your Bookie

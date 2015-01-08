@@ -1,11 +1,14 @@
 <%inherit file="/main_wrap.mako" />
 <%def name="title()">Welcome to Bookie</%def>
+<%
+    app_path = request.route_path('home').rstrip('/')
+%>
 
 <div id="welcome" class="" style="max-width: 1000px;">
     <div class="signup">
         <div class="form">
             <h2>Enter Email to Signup</h2>
-            <form id="#signup_form" action="signup_process" method="POST">
+            <form id="#signup_form" action="${app_path}/signup_process" method="POST">
                 <ul>
                     <li>
                         <input type="email" id="email" name="email"

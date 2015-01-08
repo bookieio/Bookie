@@ -8,6 +8,6 @@
     <p><em>${bmark_description}</em></p>
     <input type="hidden" id="bid" name="bid" value="${bid}" />
     <!-- ew, onclick. This page will be replaced by a nice ajaxy delete confirmation, so it's ok. -->
-    <input id="cancel" type="button" value="Cancel" style="padding:2px;margin-right:40px" onclick="location.href='/'" />
+    <input id="cancel" type="button" value="Cancel" style="padding:2px;margin-right:40px" onclick="location.href='${app_url}'" />
     <input id="delete" type="submit" value="Delete" style="padding:2px;" />
 </form>
