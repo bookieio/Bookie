@@ -12,8 +12,11 @@ from pyramid.view import view_config
 from bookie.bcelery import tasks
 from bookie.lib.applog import AuthLog
 from bookie.models import IntegrityError
-from bookie.models.auth import UserMgr
-from bookie.models.auth import ActivationMgr
+from bookie.models.auth import (
+    UserMgr,
+    User,
+    ActivationMgr,
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -81,6 +84,12 @@ def login(request):
         elif auth is None:
             message = "Failed login"
             AuthLog.login(login, False, password=password)
+
+    if isinstance(request.user, User) and request.user.activated:
+        return HTTPFound(
+            location=request.route_url(
+                'user_bmark_recent',
+                username=request.user.username))
 
     return {
         'message': message,
