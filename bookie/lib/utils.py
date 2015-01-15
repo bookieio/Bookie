@@ -1,6 +1,10 @@
 """Generic and small utilities that are used in Bookie"""
 import re
-from urlparse import urlparse
+import urllib
+from urlparse import (
+    urlparse,
+    urlsplit,
+    urlunsplit)
 from textblob import TextBlob
 
 
@@ -39,3 +43,14 @@ def suggest_tags(data):
         tag_set.update(_generate_nouns_from_url(data))
 
     return tag_set
+
+
+def url_fix(string, charset='UTF-8'):
+    """Properly encodes the URL if it contains extended chars."""
+    if isinstance(string, unicode):
+        string = string.encode(charset)
+    scheme, netloc, path, query, fragment = urlsplit(string)
+    path = urllib.quote(path, safe='/%+$!*\'(),')
+    query = urllib.quote_plus(query, safe=':&%=+$!*\'(),')
+    fragment = urllib.quote_plus(fragment, safe=':&%=+$!*\'(),')
+    return urlunsplit((scheme, netloc, path, query, fragment))
