@@ -148,8 +148,8 @@ class TestNewBookmark(TestViewBase):
         """Verify that the URL containing Non-ASCII chars are normalized"""
         self._login_admin()
 
-        test_url = u"http://www.amazon.de/Molwanien-schadhaften-" \
-                   u"Lächelns-Santo-Cilauro/dp/3453811380".encode('UTF-8')
+        test_url = "http://www.amazon.de/Molwanien-schadhaften-" \
+                   "Lächelns-Santo-Cilauro/dp/3453811380"
 
         res = self.app.post(
             '/admin/new_error',
