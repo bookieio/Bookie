@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Test that we're meeting delicious API specifications"""
 import feedparser
 import logging
@@ -142,6 +143,33 @@ class TestNewBookmark(TestViewBase):
                 'tags': ''
             })
         self.assertIn(existing_url_message, res.body)
+
+    def test_bookmark_url_encoding(self):
+        """Verify that the URL containing Non-ASCII chars are normalized"""
+        self._login_admin()
+
+        test_url = u"http://www.amazon.de/Molwanien-schadhaften-" \
+                   u"Lächelns-Santo-Cilauro/dp/3453811380".encode('UTF-8')
+
+        res = self.app.post(
+            '/admin/new_error',
+            params={
+                'url': test_url,
+                'description': '',
+                'extended': '',
+                'tags': ''
+            })
+        self.assertEqual(
+            res.status,
+            "302 Found",
+            msg='recent status is 302 Found, ' + res.status)
+
+        saved_url = u"http://www.amazon.de/Molwanien-schadhaften-" \
+                    u"L%C3%A4chelns-Santo-Cilauro/dp/3453811380"
+
+        bmark = BmarkMgr.get_by_url(saved_url)
+        self.assertNotEqual(bmark, None)
+        self.assertEqual(bmark.hashed.url, saved_url)
 
     def test_bookmark_privacy(self):
         """Verify the bookmark's privacy"""

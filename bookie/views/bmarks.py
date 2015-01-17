@@ -7,7 +7,9 @@ from pyramid.view import view_config
 
 from bookie.bcelery import tasks
 from bookie.lib.access import ReqAuthorize
-from bookie.lib.utils import suggest_tags
+from bookie.lib.utils import (
+    suggest_tags,
+    url_fix)
 from bookie.lib.urlhash import generate_hash
 from bookie.models import (
     Bmark,
@@ -219,7 +221,7 @@ def edit_error(request):
                     }
                 else:
                     bmark = BmarkMgr.store(
-                        url=post['url'],
+                        url=url_fix(post['url']),
                         username=request.user.username,
                         desc=post['description'],
                         ext=post['extended'],
