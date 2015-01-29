@@ -20,6 +20,7 @@ want to check out:
 .. toctree::
    :maxdepth: 2
 
+   contribute
    changes
    makefile
    emailserver
