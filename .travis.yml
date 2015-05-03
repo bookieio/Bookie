@@ -5,9 +5,10 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
-before_install: sudo make sysdeps
+before_install: sudo apt-get update
 # command to install dependencies
 install:
+  - sudo make sysdeps
   - make install
 # command to run tests
 script: py.test -q --tb native -s tests
