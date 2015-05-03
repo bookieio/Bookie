@@ -1,8 +1,6 @@
 language: python
-env:
-  global:
-    - INI=test.ini
-    - NLTK_DATA=./download-cache/nltk
+env: INI=test.ini
+env: NLTK_DATA=./download-cache/nltk
     
 python:
   - "2.6"
