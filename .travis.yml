@@ -8,6 +8,7 @@ python:
 before_install: sudo apt-get update
 # command to install dependencies
 install:
+  - make clean_all
   - sudo make sysdeps
   - make install
 # command to run tests
