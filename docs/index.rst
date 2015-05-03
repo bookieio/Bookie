@@ -38,6 +38,12 @@ See the features_ page for full length details.
 
 .. _features: features.html
 
+Contributing to Bookie
+----------------------
+
+Learn more about contributing_ to Bookie.
+
+.. _contributing: contribute.html
 
 Important Links
 ----------------
