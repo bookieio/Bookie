@@ -2,7 +2,7 @@ coverage==3.7.1
 flake8==2.2.2
 mock==1.0.1
 pyinotify==0.9.4
-pytest=-2.7.0
+pytest==2.7.0
 pytest-cov==1.7.0
 unittest2==0.5.1
 WebTest==2.0.15

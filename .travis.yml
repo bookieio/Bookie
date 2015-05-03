@@ -1,4 +1,9 @@
 language: python
+env:
+  global:
+    - INI=test.ini
+    - NLTK_DATA=./download-cache/nltk
+    
 python:
   - "2.6"
   - "2.7"
@@ -10,6 +15,8 @@ before_install: sudo apt-get update
 install:
   - make clean_all
   - sudo make sysdeps
+  - pip install -r dev-requirements.txt
   - make install
+  - sudo service redis-server start
 # command to run tests
 script: py.test -q --tb native -s tests
