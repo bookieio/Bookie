@@ -1,7 +1,6 @@
---
 language: python
 env: NLTK_DATA=./download-cache/nltk, INI=test.ini
-sudo: false
+sudo: true
 services:
   - redis-server
 python:
