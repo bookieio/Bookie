@@ -1,6 +1,7 @@
 Bookie
 ========
 :Main Site: https://bmark.us
+:Public Bookie Instances: https://github.com/bookieio/Bookie/wiki/Bookie-instances
 :Docs: http://docs.bmark.us
 :Mailing List: https://groups.google.com/forum/?hl=en#!forum/bookie_bookmarks
 :Twitter: http://twitter.com/BookieBmarks
