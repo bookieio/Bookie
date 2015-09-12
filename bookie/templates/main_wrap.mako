@@ -19,7 +19,7 @@
         <link rel="stylesheet" type="text/css"
         href="${combo}/combo?y/cssreset/reset-min.css&y/cssfonts/cssfonts-min.css&y/cssgrids/cssgrids-min.css&y/cssbase/cssbase-min.css&y/widget-base/assets/skins/sam/widget-base.css&y/autocomplete-list/assets/skins/sam/autocomplete-list.css"/>
         <link
-            href='https://fonts.googleapis.com/css?family=Cabin|Cabin+Sketch:bold&v2'
+            href='/static/css/cabin-sketch.css'
             rel='stylesheet' type='text/css'/>
         <link rel="stylesheet" type="text/css" href="${app_path}/static/css/responsive.css"/>
         <script type="text/javascript">
