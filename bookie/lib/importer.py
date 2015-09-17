@@ -16,6 +16,8 @@ from bookie.models import (
     BmarkMgr,
     DBSession,
     InvalidBookmark,
+    Hashed,
+    Readable,
 )
 
 
@@ -70,6 +72,9 @@ class Importer(object):
         if FBookmarkImporter.can_handle(args[0]):
             return super(Importer, cls).__new__(FBookmarkImporter)
 
+        if BookieExportImporter.can_handle(args[0]):
+            return super(Importer, cls).__new__(BookieExportImporter)
+
         return super(Importer, cls).__new__(Importer)
 
     @staticmethod
@@ -81,7 +86,8 @@ class Importer(object):
         """Meant to be implemented in subclasses"""
         raise NotImplementedError("Please implement this in your importer")
 
-    def save_bookmark(self, url, desc, ext, tags, dt=None, is_private=False):
+    def save_bookmark(self, url, desc, ext, tags, dt=None, is_private=False,
+                      readable=None, bookie_hash=None, clicks=0):
         """Save the bookmark to the db
 
         :param url: bookmark url
@@ -110,11 +116,33 @@ class Importer(object):
                 dt=dt,
                 inserted_by=IMPORTED,
                 is_private=is_private,
+                clicks=clicks,
             )
+
+            if bookie_hash:
+                if bmark.hashed.clicks is None:
+                    bmark.hashed.clicks = bookie_hash['clicks']
+                else:
+                    bmark.hashed.clicks += bookie_hash['clicks']
 
             # Add this hash to the list so that we can skip dupes in the
             # same import set.
             self.hash_list.add(check_hash)
+
+            if readable:
+                bmark.readable = Readable(
+                    hash_id=bmark.hashed.hash_id,
+                    content=readable['content'],
+                    clean_content=readable['clean_content'],
+                    imported=datetime.strptime(
+                        readable['imported'],
+                        '%Y-%m-%d %H:%M:%S'
+                    ),
+                    content_type=readable['content_type'],
+                    status_code=readable['status_code'],
+                    status_message=readable['status_message']
+                )
+
             return bmark
 
         # If we don't store a bookmark then just return None back to the
@@ -468,7 +496,7 @@ class FBookmarkImporter(Importer):
         Firefox json file has a variable "type" which is equal to
         "text/x-moz-place-container"
         """
-        if json['type'] == FBookmarkImporter.MOZ_CONTAINER:
+        if 'type' in json and json['type'] == FBookmarkImporter.MOZ_CONTAINER:
             can_handle = True
 
         return can_handle
@@ -601,3 +629,73 @@ class FBookmarkImporter(Importer):
         # fetch its content.
         for bid in ids:
             tasks.fetch_bmark_content.delay(bid)
+
+
+class BookieExportImporter(Importer):
+    @staticmethod
+    def can_handle(file_io):
+        """Check if this file is a Bookie json export
+
+        """
+        if (file_io.closed):
+            file_io = open(file_io.name)
+        file_io.seek(0)
+
+        try:
+            bookie_json = json.load(file_io)
+        except ValueError:
+            file_io.seek(0)
+            return False
+
+        # make sure we reset the file_io object so that we can use it again
+        file_io.seek(0)
+        return True
+
+    def process(self):
+        """Process an json bookie bookmarks export and import it
+        """
+        count = 0
+        if (self.file_handle.closed):
+            self.file_handle = open(self.file_handle.name)
+
+        content = self.file_handle.read().decode("UTF-8")
+        root = json.loads(content)
+
+        # make a dictionary of unique bookmarks
+        bids = []
+
+        for json_bmark in root['bmarks']:
+            try:
+                bookmark = self.save_bookmark(
+                    unicode(json_bmark['hashed']['url']),
+                    unicode(json_bmark['description']),
+                    unicode(json_bmark['extended']),
+                    unicode(json_bmark['tag_str']),
+                    dt=datetime.strptime(
+                        json_bmark['stored'],
+                        '%Y-%m-%d %H:%M:%S'
+                    ),
+                    is_private=json_bmark['is_private'],
+                    readable=json_bmark['readable'],
+                    bookie_hash=json_bmark['hashed'],
+                    clicks=json_bmark['clicks'],
+                )
+                count += 1
+                DBSession.flush()
+            except InvalidBookmark:
+                bookmark = None
+            if bookmark:
+                bids.append(bookmark.bid)
+            if count % COMMIT_SIZE == 0:
+                transaction.commit()
+                # Start a new transaction for the next grouping.
+                transaction.begin()
+
+        # Commit any that are left since the last commit performed.
+        transaction.commit()
+
+        from bookie.bcelery import tasks
+        # For each bookmark in this set that we saved, sign up to
+        # put its content into the fulltext index.
+        for bid in bids:
+            tasks.fulltext_index_bookmark.delay(bid, None)

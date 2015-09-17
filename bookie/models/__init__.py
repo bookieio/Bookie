@@ -545,7 +545,7 @@ class BmarkMgr(object):
 
     @staticmethod
     def store(url, username, desc, ext, tags, dt=None, inserted_by=None,
-              is_private=False):
+              is_private=False, clicks=0):
         """Store a bookmark
 
         :param url: bookmarked url
@@ -553,6 +553,7 @@ class BmarkMgr(object):
         :param ext: the extended description/notes
         :param dt: The original stored time of this bmark
         :param fulltext: an instance of a fulltext handler
+        :param clicks: an initil number of clicks
 
         """
         parsed_url = urlparse(url)
@@ -566,6 +567,7 @@ class BmarkMgr(object):
             ext=ext,
             tags=tags,
             is_private=is_private,
+            clicks=clicks,
         )
 
         mark.inserted_by = inserted_by
@@ -685,7 +687,7 @@ class Bmark(Base):
                         uselist=False)
 
     def __init__(self, url, username, desc=None, ext=None, tags=None,
-                 is_private=False):
+                 is_private=False, clicks=0):
         """Create a new bmark instance
 
         :param url: string of the url to be added as a bookmark
@@ -707,6 +709,7 @@ class Bmark(Base):
         self.description = desc
         self.extended = ext
         self.is_private = is_private
+        self.clicks = clicks
 
         # tags are space separated
         if tags:

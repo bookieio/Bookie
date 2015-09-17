@@ -18,6 +18,7 @@ from bookie.lib.importer import DelImporter
 from bookie.lib.importer import DelXMLImporter
 from bookie.lib.importer import GBookmarkImporter
 from bookie.lib.importer import FBookmarkImporter
+from bookie.lib.importer import BookieExportImporter
 
 from bookie.tests import TestViewBase
 from bookie.tests import empty_db
@@ -31,7 +32,7 @@ API_KEY = None
 class TestImports(unittest.TestCase):
 
     def _delicious_data_test(self):
-        """Test that we find the correct set of declicious data after import"""
+        """Test that we find the correct set of delicious data after import"""
         # Blatant copy/paste, but I'm on a plane right now so oh well.
         # Now let's do some db sanity checks.
         res = Bmark.query.all()
@@ -214,6 +215,55 @@ class TestImports(unittest.TestCase):
         date_should_be = datetime.fromtimestamp(1394649032847102/1e6)
         self.assertEqual(date_should_be, found.stored)
 
+    def _bookie_export_data_test(self):
+        """Verify we find the correct Bookie export bmark data after import"""
+        res = Bmark.query.all()
+        self.assertEqual(
+            len(res),
+            2,
+            "We should have 2 results, we got: " + str(len(res)))
+
+        # Verify we can find a bookmark by url and check tags, etc
+        check_url = 'https://some.fakeurl1.com'
+        check_url_hashed = generate_hash(check_url)
+        found = Bmark.query.filter(Bmark.hash_id == check_url_hashed).one()
+
+        self.assertTrue(
+            found.hashed.url == check_url, "The url should match our search")
+        self.assertEqual(
+            len(found.tags),
+            2,
+            "We should have gotten 2 tags, got: " + str(len(found.tags)))
+
+        # and check we have a right tag or two
+        self.assertTrue(
+            'tag3' in found.tag_string(),
+            'tag3 should be a valid tag in the bookmark')
+
+        # and check the timestamp is correct
+        # relative to user's timezone
+        date_should_be = datetime.strptime('2014-07-12 04:05:01',
+                                           '%Y-%m-%d %H:%M:%S')
+        self.assertEqual(date_should_be, found.stored)
+
+        # and check we populated clicks
+        self.assertEquals(
+            found.clicks,
+            21)
+
+        # and clicks in the hashed record
+        self.assertEquals(
+            found.hashed.clicks,
+            40)
+
+        # check that the Readable entry is right
+        readable_content_should_be =\
+            '<div id="readabilityBody">'\
+            '<div class="markdown-body entry-content" '\
+            'itemprop="mainContentOfPage"></div>'\
+            '</div>'
+        self.assertEqual(readable_content_should_be, found.readable.content)
+
 
 class ImporterBaseTest(TestImports):
     """Verify the base import class is working"""
@@ -251,6 +301,18 @@ class ImporterBaseTest(TestImports):
             self.assertTrue(
                 isinstance(imp, GBookmarkImporter),
                 "Instance should be a GBookmarkImporter instance")
+
+    def test_factory_gives_bookie(self):
+        """"Verify that the base importer will give BookieExportImporter"""
+        loc = os.path.dirname(__file__)
+        bookie_file = os.path.join(loc, 'bookie_export.json')
+
+        with open(bookie_file) as bookie_io:
+            imp = Importer(bookie_io, username=u"admin")
+
+            self.assertTrue(
+                isinstance(imp, BookieExportImporter),
+                "Instance should be a BookieExportImporter instance")
 
 
 class ImportDeliciousTest(TestImports):
@@ -524,6 +586,51 @@ class ImportFirefoxTest(TestImports):
 
         self.assertTrue(
             found.hashed.url == check_url, "The url should match our search")
+
+
+class ImportBookieExportTest(TestImports):
+    """Test the Bookie importer for Bookie JSON export"""
+
+    def _get_file(self):
+        loc = os.path.dirname(__file__)
+        del_file = os.path.join(loc, 'bookie_export.json')
+
+        return open(del_file)
+
+    def tearDown(self):
+        """Regular tear down method"""
+        empty_db()
+
+    def test_is_bookie_export_file(self):
+        """Verify that this is a Bookie export json file"""
+        good_file = self._get_file()
+
+        self.assertTrue(
+            BookieExportImporter.can_handle(good_file),
+            "BookieExportImporter should handle this file")
+
+        good_file.close()
+
+    def test_is_not_bookie_export_file(self):
+        """And that it returns false when it should"""
+        bad_file = StringIO.StringIO()
+        bad_file.write('failing tests please')
+        bad_file.seek(0)
+
+        self.assertTrue(
+            not BookieExportImporter.can_handle(bad_file),
+            "BookieExportImporter cannot handle this file")
+
+        bad_file.close()
+
+    def test_import_process(self):
+        """Verify importer inserts the correct Bookie export bookmarks"""
+        good_file = self._get_file()
+        imp = Importer(good_file, username=u"admin")
+        imp.process()
+
+        # now let's do some db sanity checks
+        self._bookie_export_data_test()
 
 
 class ImportViews(TestViewBase):
