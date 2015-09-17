@@ -92,11 +92,20 @@ class Message(object):
             try:
                 all_emails = msg['To']
                 smtp_server = self.settings.get('email.host')
+                starttls = self.settings.get('email.starttls', False)
+                smtp_user = self.settings.get('email.smtp_user', None)
+                smtp_password = self.settings.get('email.smtp_password', None)
 
                 if smtp_server == 'sendmail':
                     sendmail(msg['To'], msg['From'], msg['Subject'], self.body)
                 else:
                     mail_server = smtplib.SMTP(smtp_server)
+                    if starttls:
+                        mail_server.starttls()
+
+                    if smtp_user is not None and smtp_password is not None:
+                        mail_server.login(smtp_user, smtp_password)
+
                     mail_server.sendmail(msg['From'],
                                          all_emails,
                                          msg.as_string())

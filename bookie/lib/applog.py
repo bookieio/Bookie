@@ -131,10 +131,14 @@ class LogRecord(object):
 class SignupLog(object):
     """Signup Log records."""
 
-    def __init__(self, status, message, **kwargs):
+    ERROR = 0
+
+    def __init__(self, user, status, message, **kwargs):
         """A record in the log"""
+        kwargs['user'] = user
         kwargs['status'] = status
         kwargs['message'] = message
+        kwargs['component'] = u'SIGNUPLOG'
 
         # we need to hash down the payload if there is one
         if 'payload' in kwargs and kwargs['payload'] is not None:

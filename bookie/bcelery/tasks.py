@@ -232,7 +232,7 @@ def email_signup_user(email, msg, settings, message_data):
     if status == 4:
         from bookie.lib.applog import SignupLog
         trans = transaction.begin()
-        SignupLog(SignupLog.ERROR,
+        SignupLog(email, SignupLog.ERROR,
                   'Could not send smtp email to signup: ' + email)
         trans.commit()
 
