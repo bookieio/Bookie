@@ -205,7 +205,7 @@ mysql_test: bin/py.test
 	mysql -u jenkins_bookie --password=bookie -e "DROP DATABASE jenkins_bookie;"
 	mysql -u jenkins_bookie --password=bookie -e "CREATE DATABASE jenkins_bookie;"
 	bin/alembic -c test_alembic_mysql.ini upgrade head
-	BOOKIE_TEST_INI=test_mysql.ini $(NOSE) -xv --with-coverage --cover-package=bookie --cover-erase --with-xunit bookie/tests
+	BOOKIE_TEST_INI=test_mysql.ini INI="test_mysql.ini" NLTK_DATA=$(NLTK_DATA) $(PYTEST) -s bookie/tests
 
 .PHONY: pgsql_test
 pgsql_test: bin/py.test

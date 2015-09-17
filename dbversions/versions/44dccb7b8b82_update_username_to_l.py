@@ -1,10 +1,10 @@
-"""update username to lowercase
+'''update username to lowercase
 
 Revision ID: 44dccb7b8b82
 Revises: 9f274a38d84
 Create Date: 2014-02-27 00:55:59.913206
 
-"""
+'''
 
 # revision identifiers, used by Alembic.
 revision = '44dccb7b8b82'
@@ -22,9 +22,10 @@ def upgrade():
     bmarks = sa.Table('bmarks', meta, autoload=True)
 
     try:
-        op.drop_constraint("bmarks_username_fkey", "bmarks")
+        op.drop_index('bmarks_username_fkey', 'bmarks', 'unique')
+        op.drop_constraint('bmarks_username_fkey', 'bmarks', 'foreignkey')
         print 'dropped constraint'
-    except (sa.exc.OperationalError, NotImplementedError) as exc:
+    except (sa.exc.OperationalError, NotImplementedError):
         # If it's not supported then pass
         pass
 
@@ -45,12 +46,17 @@ def upgrade():
         print 'done user: ' + user['username']
 
     try:
+        op.create_index(
+            'bmarks_username_fkey',
+            'bmarks',
+            ['username', 'hash_id'],
+            'unique')
         op.create_foreign_key(
-            "bmarks_username_fkey", "bmarks",
-            "users", ["username"], ["username"])
+            'bmarks_username_fkey', 'bmarks',
+            'users', ['username'], ['username'])
 
         print 'added constraint'
-    except (sa.exc.OperationalError, NotImplementedError) as exc:
+    except (sa.exc.OperationalError, NotImplementedError):
         # If it's not supported then pass
         pass
 
