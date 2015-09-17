@@ -1,0 +1,12 @@
+#!/bin/sh
+exec 2>&1
+set -e
+
+PASTER=/home/bookie/Bookie/bin/paster
+ROOT=/home/bookie/Bookie
+VENV=/home/bookie/Bookie/bin/activate
+
+cd $ROOT
+. $VENV
+
+exec chpst -u root $PASTER serve bookie.ini

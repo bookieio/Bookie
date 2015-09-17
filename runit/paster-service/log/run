@@ -1,0 +1,2 @@
+#!/bin/sh
+exec chpst -u root svlogd -tt /home/bookie/Bookie/runit/paster-service/logs
