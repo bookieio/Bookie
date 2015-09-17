@@ -134,7 +134,7 @@ class DelImporter(Importer):
 
         """
         if (soup.contents and
-                soup.contents[0] == delicious_doctype and
+                soup.contents[0].lower() == delicious_doctype.lower() and
                 not soup.find('h3')):
             can_handle = True
 
