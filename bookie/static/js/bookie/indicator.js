@@ -70,7 +70,7 @@ YUI.add('bookie-indicator', function (Y) {
         renderUI: function () {
             var node_html = '<img/>';
             var img = Y.Node.create(node_html);
-            img.set('src', '/static/images/spinner-big.gif');
+            img.set('src', APP_PATH + '/static/images/spinner-big.gif');
             this.get('contentBox').append(img);
         },
 
