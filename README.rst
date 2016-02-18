@@ -57,3 +57,7 @@ Related
 -------
 
 The `Willie <http://willie.dftba.net/>`_ bot has a `contrib module to post bookmarks from IRC <https://github.com/anarcat/willie-extras/blob/bookie/bookie.py>`_. It is `not yet part of the extras repository <https://github.com/embolalia/willie-extras/pull/55>`_.
+
+MERGED
+https://github.com/sopel-irc/sopel-extras/commit/df85e1f55e549a6162048dc8593138f1f805590e
+https://github.com/sopel-irc/sopel-extras/blob/master/bookie.py
