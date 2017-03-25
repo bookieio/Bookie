@@ -350,7 +350,7 @@ event.listen(Readable, 'after_update', sync_readable_content)
 class HashedMgr(object):
     """Manage non-instance methods of Hashed objects"""
 
-    def count():
+    def count(self):
         """Count how many unique hashed urls we've got."""
         return Hashed.query.count()
 
